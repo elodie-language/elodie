@@ -12,6 +12,7 @@ pub enum Error {
     OutOfBounds,
     UnexpectedEndOfFile,
     UnknownOperator(String),
+    UnknownSeparator(String),
 }
 
 pub type Result<T, E = Error> = core::result::Result<T, E>;
@@ -114,6 +115,7 @@ impl<'a> Lexer<'a> {
             match next {
                 _ if self.is_whitespace(next) => self.consume_whitespace(),
                 _ if self.is_operator(next) => self.consume_operator(),
+                _ if self.is_separator(next) => self.consume_separator(),
                 _ => unimplemented!()
             }
         } else {
