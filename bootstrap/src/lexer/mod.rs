@@ -6,11 +6,13 @@ use crate::lexer::Error::UnexpectedEndOfFile;
 
 mod separator;
 mod operator;
+mod keyword;
 
 #[derive(Debug)]
 pub enum Error {
     OutOfBounds,
     UnexpectedEndOfFile,
+    UnknownKeyword(String),
     UnknownOperator(String),
     UnknownSeparator(String),
 }
@@ -71,6 +73,26 @@ impl<'a> Reader<'a> {
         }
     }
 
+    pub fn consume_if(&self, sequence: &str) -> Option<String> {
+        let pos = *self.pos.borrow();
+        if pos >= self.data.len() {
+            return None;
+        }
+
+        let result: String = self.data.chars().skip(pos).take(sequence.len()).collect();
+        if result.is_empty() {
+            return None;
+        }
+
+        if result == sequence {
+            let mut pos = self.pos.borrow_mut();
+            *pos += result.len();
+            Some(result)
+        } else {
+            None
+        }
+    }
+
     pub fn peek_next(&self) -> Option<char> {
         let pos = *self.pos.borrow();
         if pos >= self.data.len() {
@@ -92,6 +114,24 @@ impl<'a> Reader<'a> {
         }
 
         Some(chars.into_iter().collect())
+    }
+
+    pub fn peek_if(&self, sequence: &str) -> Option<String> {
+        let pos = *self.pos.borrow();
+        if pos >= self.data.len() {
+            return None;
+        }
+
+        let chars: String = self.data.chars().skip(pos).take(sequence.len()).collect();
+        if chars.is_empty() {
+            return None;
+        }
+
+        if chars == sequence {
+            Some(chars)
+        } else {
+            None
+        }
     }
 }
 
@@ -116,6 +156,7 @@ impl<'a> Lexer<'a> {
                 _ if self.is_whitespace(next) => self.consume_whitespace(),
                 _ if self.is_operator(next) => self.consume_operator(),
                 _ if self.is_separator(next) => self.consume_separator(),
+                _ if self.is_keyword(next) => self.consume_keyword(),
                 _ => unimplemented!()
             }
         } else {
@@ -139,6 +180,10 @@ impl<'a> Lexer<'a> {
         self.reader.peek_many(window)
     }
 
+    pub(crate) fn peek_if(&self, sequence: &str) -> Option<String> {
+        self.reader.peek_if(sequence)
+    }
+
     pub(crate) fn consume_next(&self) -> Result<char> {
         let result = self.reader.consume_next()?;
         self.current_column.borrow_mut().0 += 1;
@@ -149,5 +194,9 @@ impl<'a> Lexer<'a> {
         let result = self.reader.consume_while(test)?;
         self.current_column.borrow_mut().0 += result.len();
         Ok(result)
+    }
+
+    pub(crate) fn consume_if(&self, sequence: &str) -> Option<String> {
+        self.reader.consume_if(sequence)
     }
 }

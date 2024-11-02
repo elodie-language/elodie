@@ -18,43 +18,43 @@ pub enum TokenKind {
 
 #[derive(Debug, PartialEq)]
 pub enum Keyword {
-    Function,
-    Let,
-    If,
-    Else,
-    For,
-    In,
-    Return,
     Break,
-    Continue,
-    Import,
-    Export,
-    Readonly,
-    From,
-    Loop,
-    Implement,
-    Type,
-    Trait,
-    Const,
     ConsoleLog, // Temporary hack to facilitate easy tests
+    Const,
+    Continue,
+    Else,
+    Export,
+    From,
+    For,
+    Function,
+    If,
+    Implement,
+    Import,
+    In,
+    Let,
+    Loop,
+    Readonly,
+    Return,
+    Trait,
+    Type,
 }
 
 #[derive(Debug, PartialEq)]
 pub enum Literal {
     Identifier,
 
-    S8(i8),
-    S16(i16),
-    S32(i32),
-    S64(i64),
+    Int8(i8),
+    Int16(i16),
+    Int32(i32),
+    Int64(i64),
 
-    U8(u8),
-    U16(u16),
-    U32(u32),
-    U64(u64),
+    UInt8(u8),
+    Uint16(u16),
+    UInt32(u32),
+    UInt64(u64),
 
-    F32(f32),
-    F64(f64),
+    Float32(f32),
+    FloatF64(f64),
 
     String,
     True,
@@ -98,7 +98,7 @@ pub enum Operator {
 }
 
 #[derive(Debug, PartialEq)]
-pub enum Separator{
+pub enum Separator {
     Semicolon,         // ;
     Comma,             // ,
     NewLine,
