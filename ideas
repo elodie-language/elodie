@@ -1,0 +1,99 @@
+// in nested object - if outer object is readonly, all children are readonly as well
+
+type Point (
+    x: Float32,
+    y: Float32
+)
+
+# derive Eq for Point // compile time magic
+
+static impl Point {
+
+    fn new() -> Self{
+        // GC managed
+        GC::new(Self(x = 1.2, y = 2.4))
+    }
+
+    fn new() -> Self{
+        // RC managed
+        RC::new(Self(x = 1.2, y = 2.4))
+    }
+
+    fn new() -> Self {
+        allocator::new(Self(x = 1.2, y = 2.4))
+    }
+}
+
+readonly impl SomeTrait for Point{
+
+}
+
+impl Drop for Point{
+    fn drop() {
+
+    }
+}
+
+// can be applied on a readonly type
+readonly trait PartialEq<Rhs> {
+    fn eq(other: readonly Rhs) -> Bool
+    fn ne(other: readonly Rhs) -> Bool
+}
+
+fn some_fn() -> { name: String } + to_string {
+
+}
+
+value type Count = usize
+
+typealias Long = Int64
+
+import println from { core::io }
+
+if { } else { }
+
+match some_var {
+    2 => {
+        println(2)
+    }
+
+    3 => {
+        println(3)
+    }
+
+    otherwise => {
+
+    }
+}
+
+for x in 0..10 { }
+
+for x in array_of(1,2,3){
+
+}
+
+loop {
+
+    break
+}
+
+array_of(1,2,3).map{val -> val * 2}
+
+if some_var {
+    true => ...
+    false =>
+}
+
+describe('Array'){
+    describe('index_of'){
+            it('should return -1 when the value is not present') {
+              expect(array_of(1, 2, 3).index_of(4)).to_be(-1);
+            }
+        }
+    }
+}
+
+
+fn main(args: Array<String>) -> Int32 {
+    console.log("Elodie says hi")
+}
