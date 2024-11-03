@@ -12,6 +12,7 @@ pub enum TokenKind {
     Literal(Literal),
     Operator(Operator),
     Separator(Separator),
+    Identifier,
     Comment,
     EOF,
 }
@@ -41,7 +42,6 @@ pub enum Keyword {
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum Literal {
-    Identifier,
     Number,
     String,
     True,

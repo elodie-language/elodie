@@ -14,7 +14,8 @@ fn main() {
     // let ast = parser.parse().unwrap();
     // println!("{ast:?}");
 
-    let lexer = Lexer::new("3 + 5 * 2");
+    // let lexer = Lexer::new("3 + 5 * 2");
+    let lexer = Lexer::new("console.log('Elodie says hi')");
     let tokens = lexer.all().unwrap();
 
     let mut parser = Parser::new(&tokens);

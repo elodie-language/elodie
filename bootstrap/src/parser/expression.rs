@@ -1,7 +1,7 @@
 use std::str::FromStr;
 
 use crate::core::ast;
-use crate::core::ast::{BinaryOperation, Expression, UnaryOperation, UnaryOperator};
+use crate::core::ast::{BinaryOperation, CallExpression, Expression, UnaryOperation, UnaryOperator};
 use crate::core::token::{Literal, Operator, TokenKind};
 use crate::parser::Error::UnexpectedToken;
 use crate::parser::Parser;
@@ -25,15 +25,21 @@ impl<'a> Parser<'a> {
         let token = self.advance()?;
 
         let expression = match &token.kind {
+            TokenKind::Identifier => {
+                let identifier = token.span.text.clone();
+                Expression::Identifier(identifier)
+            }
             TokenKind::Keyword(_) => return Err(UnexpectedToken(token.clone())),
             TokenKind::Literal(literal) => {
                 match literal {
-                    Literal::Identifier => unimplemented!(),
                     Literal::Number => {
                         let value = f64::from_str(&token.span.text).unwrap();
                         Expression::Literal(ast::Literal::Number(value))
                     }
-                    Literal::String => unimplemented!(),
+                    Literal::String => {
+                        let value = token.span.text.clone();
+                        Expression::Literal(ast::Literal::String(value))
+                    }
                     Literal::True => unimplemented!(),
                     Literal::False => unimplemented!()
                 }
@@ -93,6 +99,18 @@ impl<'a> Parser<'a> {
     }
 
     pub(crate) fn parse_infix_expression(&mut self, left: Expression) -> crate::parser::Result<Expression> {
+        let current = self.current_token()?;
+        if current.kind == TokenKind::Operator(Operator::OpenParen) {
+            return self.parse_call_expression(left);
+        }
+
+        if current.kind == TokenKind::Operator(Operator::Dot) {
+            let previous = self.previous()?;
+            assert_eq!(previous.kind, TokenKind::Identifier);
+            let _ = self.consume(TokenKind::Operator(Operator::Dot));
+            return self.parse_property_access(left);
+        }
+
         let operator = self.parse_binary_operator()?;
 
         let precedence = self.current_precedence()?;
@@ -102,6 +120,19 @@ impl<'a> Parser<'a> {
             left: Box::new(left),
             operator,
             right: Box::new(right),
+        }))
+    }
+
+    fn parse_call_expression(&mut self, callee: Expression) -> crate::parser::Result<Expression> {
+        let arguments = self.parse_arguments()?;
+
+        self.consume(TokenKind::Operator(Operator::CloseParen))?;
+
+        Ok(Expression::Call(CallExpression {
+            expression: Box::new(callee),
+            arguments,
+            type_args: vec![],
+            lambda: None,
         }))
     }
 }

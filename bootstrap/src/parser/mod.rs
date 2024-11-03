@@ -9,6 +9,8 @@ mod expression;
 mod statement;
 mod precedence;
 mod operator;
+mod call;
+mod access;
 
 #[derive(Debug)]
 pub enum Error {
@@ -32,6 +34,8 @@ impl<'a> Parser<'a> {
         precedence_map.insert(TokenKind::Operator(Operator::Minus), Precedence::Term);
         precedence_map.insert(TokenKind::Operator(Operator::Asterisk), Precedence::Factor);
         precedence_map.insert(TokenKind::Operator(Operator::Slash), Precedence::Factor);
+        precedence_map.insert(TokenKind::Operator(Operator::OpenParen), Precedence::Call);
+        precedence_map.insert(TokenKind::Operator(Operator::Dot), Precedence::Primary);
 
         Self {
             tokens,
@@ -96,8 +100,19 @@ impl<'a> Parser<'a> {
         }
     }
 
+    pub(crate) fn peek_token(&self) -> Result<&Token> {
+        if self.current + 1 < self.tokens.len() {
+            Ok(&self.tokens[self.current + 1])
+        } else {
+            Err(UnexpectedEndOfFile)
+        }
+    }
+
     pub(crate) fn current_token_kind(&self) -> Result<&TokenKind> {
         Ok(&self.current_token()?.kind)
+    }
+    pub(crate) fn peek_token_kind(&self) -> Result<&TokenKind> {
+        Ok(&self.peek_token()?.kind)
     }
 
     pub(crate) fn current_precedence(&self) -> Result<Precedence> {

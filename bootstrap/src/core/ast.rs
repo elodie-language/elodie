@@ -109,12 +109,14 @@ pub enum Expression {
     Call(CallExpression),
     Continue(ContinueExpression),
     For(ForExpression),
+    Identifier(String),
     If(IfExpression),
     Lambda(LambdaBlock),
     Loop(LoopExpression),
     Match(MatchExpression),
     Object(ObjectExpression),
     Parenthesized(ParenthesizedExpression),
+    PropertyAccess(PropertyAccessExpression),
     Return(ReturnExpression),
     StringTemplate(StringTemplateExpression),
     UnaryOp(UnaryOperation),
@@ -243,8 +245,8 @@ pub struct BreakExpression {
 
 #[derive(Debug, PartialEq, Clone)]
 pub struct CallExpression {
-    pub expr: Box<Expression>,
-    pub args: Vec<CallArg>,
+    pub expression: Box<Expression>,
+    pub arguments: Vec<CallArg>,
     pub type_args: Vec<Type>,
     pub lambda: Option<Box<Expression>>,
 }
@@ -260,6 +262,12 @@ pub struct LambdaBlock {
 pub struct ArrayAccessExpression {
     pub expr: Box<Expression>,
     pub index: Vec<Expression>,
+}
+
+#[derive(Debug, PartialEq, Clone)]
+pub struct PropertyAccessExpression {
+    pub lhs: Option<Box<Expression>>,
+    pub rhs: Box<Expression>,
 }
 
 #[derive(Debug, PartialEq, Clone)]
@@ -324,7 +332,6 @@ pub enum BoundKind {
 pub struct CallArg {
     pub name: Option<String>,
     pub value: Box<Expression>,
-    pub is_spread: bool,
 }
 
 #[derive(Debug, PartialEq, Clone)]
