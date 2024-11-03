@@ -8,6 +8,7 @@ mod separator;
 mod operator;
 mod keyword;
 mod literal;
+mod identifier;
 
 #[derive(Debug)]
 pub enum Error {
@@ -168,7 +169,7 @@ impl<'a> Lexer<'a> {
                 _ if self.is_string(next) => self.consume_string(),
                 _ if self.is_number(next) => self.consume_number(),
                 _ if self.is_bool(next) => self.consume_bool(),
-                _ => unimplemented!()
+                _ => self.consume_identifier()
             }
         } else {
             return Err(UnexpectedEndOfFile);
