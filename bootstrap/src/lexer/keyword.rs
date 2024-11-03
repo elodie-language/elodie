@@ -24,7 +24,6 @@ impl Lexer<'_> {
 
         for (keyword_str, keyword_enum) in Self::keyword_map() {
             if let Some(value) = self.consume_if(keyword_str) {
-                self.current_column.borrow_mut().0 += value.len();
                 let text = value.to_string();
 
                 return Ok(Token {

@@ -7,6 +7,7 @@ use crate::lexer::Error::UnexpectedEndOfFile;
 mod separator;
 mod operator;
 mod keyword;
+mod literal;
 
 #[derive(Debug)]
 pub enum Error {
@@ -19,6 +20,7 @@ pub enum Error {
 
 pub type Result<T, E = Error> = core::result::Result<T, E>;
 
+#[derive(Clone)]
 pub struct Reader<'a> {
     data: &'a str,
     pos: RefCell<usize>,
@@ -133,6 +135,12 @@ impl<'a> Reader<'a> {
             None
         }
     }
+
+    pub(crate) fn peek_while(&self, test: impl Fn(char) -> bool) -> Result<String> {
+        let mut result = String::new();
+        let temp_reader = self.clone();
+        temp_reader.consume_while(test)
+    }
 }
 
 pub struct Lexer<'a> {
@@ -157,6 +165,9 @@ impl<'a> Lexer<'a> {
                 _ if self.is_operator(next) => self.consume_operator(),
                 _ if self.is_separator(next) => self.consume_separator(),
                 _ if self.is_keyword(next) => self.consume_keyword(),
+                _ if self.is_string(next) => self.consume_string(),
+                _ if self.is_number(next) => self.consume_number(),
+                _ if self.is_bool(next) => self.consume_bool(),
                 _ => unimplemented!()
             }
         } else {
@@ -184,6 +195,11 @@ impl<'a> Lexer<'a> {
         self.reader.peek_if(sequence)
     }
 
+    pub(crate) fn peek_while(&self, test: impl Fn(char) -> bool) -> Result<String> {
+        let result = self.reader.peek_while(test)?;
+        Ok(result)
+    }
+
     pub(crate) fn consume_next(&self) -> Result<char> {
         let result = self.reader.consume_next()?;
         self.current_column.borrow_mut().0 += 1;
@@ -197,6 +213,10 @@ impl<'a> Lexer<'a> {
     }
 
     pub(crate) fn consume_if(&self, sequence: &str) -> Option<String> {
-        self.reader.consume_if(sequence)
+        if let Some(result) = self.reader.consume_if(sequence) {
+            self.current_column.borrow_mut().0 += result.len();
+            return Some(result);
+        }
+        None
     }
 }
