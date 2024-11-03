@@ -1,7 +1,9 @@
 use std::cell::RefCell;
 
 use crate::core::position::{LineColumn, LineNumber, Position, SourceIndex};
-use crate::core::token::Token;
+use crate::core::span::TextSpan;
+use crate::core::token::{Token, TokenKind};
+use crate::core::token::TokenKind::EOF;
 use crate::lexer::Error::UnexpectedEndOfFile;
 
 mod separator;
@@ -23,20 +25,20 @@ pub type Result<T, E = Error> = core::result::Result<T, E>;
 
 #[derive(Clone)]
 pub struct Reader<'a> {
-    data: &'a str,
+    content: &'a str,
     pos: RefCell<usize>,
 }
 
 impl<'a> Reader<'a> {
-    pub(crate) fn new(data: &'a str) -> Self {
+    pub(crate) fn new(content: &'a str) -> Self {
         Reader {
-            data,
+            content,
             pos: RefCell::new(0),
         }
     }
 
     pub(crate) fn length(&self) -> usize {
-        self.data.len()
+        self.content.len()
     }
 
     pub(crate) fn pos(&self) -> usize {
@@ -45,17 +47,17 @@ impl<'a> Reader<'a> {
 
     pub(crate) fn consume_next(&self) -> Result<char> {
         let mut pos = self.pos.borrow_mut();
-        if *pos >= self.data.len() {
+        if *pos >= self.content.len() {
             return Err(UnexpectedEndOfFile);
         }
 
-        let next_char = self.data.chars().nth(*pos).ok_or(UnexpectedEndOfFile)?;
+        let next_char = self.content.chars().nth(*pos).ok_or(UnexpectedEndOfFile)?;
         *pos += 1;
         Ok(next_char)
     }
 
     pub(crate) fn at_the_end(&self) -> bool {
-        *self.pos.borrow() >= self.data.len()
+        *self.pos.borrow() >= self.content.len()
     }
 
     pub(crate) fn consume_while(&self, test: impl Fn(char) -> bool) -> Result<String> {
@@ -78,11 +80,11 @@ impl<'a> Reader<'a> {
 
     pub fn consume_if(&self, sequence: &str) -> Option<String> {
         let pos = *self.pos.borrow();
-        if pos >= self.data.len() {
+        if pos >= self.content.len() {
             return None;
         }
 
-        let result: String = self.data.chars().skip(pos).take(sequence.len()).collect();
+        let result: String = self.content.chars().skip(pos).take(sequence.len()).collect();
         if result.is_empty() {
             return None;
         }
@@ -98,20 +100,20 @@ impl<'a> Reader<'a> {
 
     pub fn peek_next(&self) -> Option<char> {
         let pos = *self.pos.borrow();
-        if pos >= self.data.len() {
+        if pos >= self.content.len() {
             return None;
         }
 
-        self.data.chars().nth(pos).map(|c| Some(c)).unwrap_or(None)
+        self.content.chars().nth(pos).map(|c| Some(c)).unwrap_or(None)
     }
 
     pub fn peek_many(&self, window: usize) -> Option<String> {
         let pos = *self.pos.borrow();
-        if pos >= self.data.len() {
+        if pos >= self.content.len() {
             return None;
         }
 
-        let chars: Vec<char> = self.data.chars().skip(pos).take(window).collect();
+        let chars: Vec<char> = self.content.chars().skip(pos).take(window).collect();
         if chars.is_empty() {
             return None;
         }
@@ -121,11 +123,11 @@ impl<'a> Reader<'a> {
 
     pub fn peek_if(&self, sequence: &str) -> Option<String> {
         let pos = *self.pos.borrow();
-        if pos >= self.data.len() {
+        if pos >= self.content.len() {
             return None;
         }
 
-        let chars: String = self.data.chars().skip(pos).take(sequence.len()).collect();
+        let chars: String = self.content.chars().skip(pos).take(sequence.len()).collect();
         if chars.is_empty() {
             return None;
         }
@@ -159,7 +161,32 @@ impl<'a> Lexer<'a> {
         }
     }
 
+    pub fn all(&self) -> Result<Vec<Token>> {
+        let mut result = vec![];
+        loop {
+            let token = self.advance()?;
+            if token.kind == EOF {
+                result.push(token);
+                break;
+            } else {
+                result.push(token);
+            }
+        }
+
+        Ok(result)
+    }
+
     pub fn advance(&self) -> Result<Token> {
+        if self.reader.at_the_end() {
+            return Ok(Token {
+                kind: TokenKind::EOF,
+                span: TextSpan {
+                    start: self.position(),
+                    end: self.position(),
+                    text: "".to_string(),
+                },
+            });
+        }
         if let Some(next) = self.reader.peek_next() {
             match next {
                 _ if self.is_whitespace(next) => self.consume_whitespace(),
@@ -219,5 +246,59 @@ impl<'a> Lexer<'a> {
             return Some(result);
         }
         None
+    }
+}
+
+#[cfg(test)]
+mod test {
+    use crate::core::token::{Literal, Operator, TokenKind};
+    use crate::lexer::Lexer;
+
+    #[test]
+    fn console_log() {
+        let text = "console.log('test')";
+        let lexer = Lexer::new(text);
+
+        let result = lexer.advance().unwrap();
+        assert_eq!(result.kind, TokenKind::Literal(Literal::Identifier));
+        assert_eq!(result.span.start, (1, 1, 0));
+        assert_eq!(result.span.end, (1, 8, 7));
+        assert_eq!(result.span.text, "console");
+
+        let result = lexer.advance().unwrap();
+        assert_eq!(result.kind, TokenKind::Operator(Operator::Dot));
+        assert_eq!(result.span.start, (1, 8, 7));
+        assert_eq!(result.span.end, (1, 9, 8));
+        assert_eq!(result.span.text, ".");
+
+        let result = lexer.advance().unwrap();
+        assert_eq!(result.kind, TokenKind::Literal(Literal::Identifier));
+        assert_eq!(result.span.start, (1, 9, 8));
+        assert_eq!(result.span.end, (1, 12, 11));
+        assert_eq!(result.span.text, "log");
+
+        let result = lexer.advance().unwrap();
+        assert_eq!(result.kind, TokenKind::Operator(Operator::OpenParen));
+        assert_eq!(result.span.start, (1, 12, 11));
+        assert_eq!(result.span.end, (1, 13, 12));
+        assert_eq!(result.span.text, "(");
+
+        let result = lexer.advance().unwrap();
+        assert_eq!(result.kind, TokenKind::Literal(Literal::String));
+        assert_eq!(result.span.start, (1, 13, 12));
+        assert_eq!(result.span.end, (1, 19, 18));
+        assert_eq!(result.span.text, "test");
+
+        let result = lexer.advance().unwrap();
+        assert_eq!(result.kind, TokenKind::Operator(Operator::CloseParen));
+        assert_eq!(result.span.start, (1, 19, 18));
+        assert_eq!(result.span.end, (1, 20, 19));
+        assert_eq!(result.span.text, ")");
+
+        let result = lexer.advance().unwrap();
+        assert_eq!(result.kind, TokenKind::EOF);
+        assert_eq!(result.span.start, (1, 20, 19));
+        assert_eq!(result.span.end, (1, 20, 19));
+        assert_eq!(result.span.text, "");
     }
 }

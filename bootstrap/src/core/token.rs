@@ -1,12 +1,12 @@
 use crate::core::span::TextSpan;
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Token {
     pub kind: TokenKind,
     pub span: TextSpan,
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum TokenKind {
     Keyword(Keyword),
     Literal(Literal),
@@ -16,7 +16,7 @@ pub enum TokenKind {
     EOF,
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum Keyword {
     Break,
     ConsoleLog, // Temporary hack to facilitate easy tests
@@ -39,7 +39,7 @@ pub enum Keyword {
     Type,
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum Literal {
     Identifier,
     Number,
@@ -48,7 +48,7 @@ pub enum Literal {
     False,
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum Operator {
     OpenParen,         // (
     CloseParen,        // )
@@ -84,7 +84,7 @@ pub enum Operator {
     QuestionMark,      // ?
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug,Clone, PartialEq, Eq, Hash)]
 pub enum Separator {
     Semicolon,         // ;
     Comma,             // ,

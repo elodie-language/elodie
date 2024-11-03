@@ -1,7 +1,7 @@
 use crate::core::position::Position;
 
 /// Represents a span of text between two positions, including the literal text.
-#[derive(Debug)]
+#[derive(Debug,Clone)]
 pub struct TextSpan {
     pub start: Position,
     pub end: Position,

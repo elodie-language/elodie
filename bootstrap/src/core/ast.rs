@@ -3,6 +3,7 @@ pub struct ElodieFile {
     pub imports: Vec<Import>,
     // exports
     pub declarations: Vec<Declaration>,
+    pub block: Block,
 }
 
 #[derive(Debug, PartialEq, Clone)]
@@ -51,7 +52,7 @@ pub struct FunctionDeclaration {
     pub receiver: Option<Type>,
     pub name: Option<String>,
     pub params: Vec<Param>,
-    pub return_typepe: Option<Type>,
+    pub return_type: Option<Type>,
     pub bounds: Vec<TypeBound>,
     pub body: Option<Block>,
 }
@@ -103,7 +104,7 @@ pub struct EnumEntryDeclaration {
 pub enum Expression {
     Literal(Literal),
     ArrayAccess(ArrayAccessExpression),
-    BinaryOp(BinaryOperation),
+    BinaryOperation(BinaryOperation),
     Break(BreakExpression),
     Call(CallExpression),
     Continue(ContinueExpression),
@@ -116,19 +117,14 @@ pub enum Expression {
     Parenthesized(ParenthesizedExpression),
     Return(ReturnExpression),
     StringTemplate(StringTemplateExpression),
-    r#Self(SelfExpression),
     UnaryOp(UnaryOperation),
 }
 
 #[derive(Debug, PartialEq, Clone)]
 pub enum Literal {
-    UnsignedInteger(u64),
-    Integer(i64),
-    Decimal(f64),
+    Number(f64),
     String(String),
-    Char(char),
     Boolean(bool),
-    Null,
 }
 
 #[derive(Debug, PartialEq, Clone)]
@@ -152,19 +148,13 @@ pub struct LoopExpression {
 
 #[derive(Debug, PartialEq, Clone)]
 pub struct BinaryOperation {
-    pub lhs: Box<Expression>,
-    pub op: BinaryOperator,
-    pub rhs: Box<Expression>,
+    pub left: Box<Expression>,
+    pub operator: BinaryOperator,
+    pub right: Box<Expression>,
 }
 
 #[derive(Debug, PartialEq, Clone)]
 pub enum BinaryOperator {
-    Operator(BinaryOp),
-    Infix(String),
-}
-
-#[derive(Debug, PartialEq, Clone)]
-pub enum BinaryOp {
     Assign,
     AddAssign,
     SubtractAssign,
@@ -203,22 +193,13 @@ pub enum BinaryOp {
 pub struct UnaryOperation {
     pub op: UnaryOperator,
     pub expr: Box<Expression>,
-    pub is_prefix: bool,
 }
 
 #[derive(Debug, PartialEq, Clone)]
 pub enum UnaryOperator {
     Plus,
     Minus,
-    Increment,
-    Decrement,
     Not,
-    NullDeref,
-}
-
-#[derive(Debug, PartialEq, Clone)]
-pub struct SelfExpression {
-    pub label: Option<String>,
 }
 
 #[derive(Debug, PartialEq, Clone)]
@@ -356,18 +337,6 @@ pub struct Tuple {
 pub struct VarDefinition {
     pub name: String,
     pub r#type: Option<Type>,
-}
-
-#[derive(Debug, PartialEq, Clone)]
-pub enum AnnotationSite {
-    Field,
-    Property,
-    Get,
-    Set,
-    Receiver,
-    Param,
-    SetParam,
-    Delegate,
 }
 
 #[derive(Debug, PartialEq, Clone)]

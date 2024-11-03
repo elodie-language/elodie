@@ -27,7 +27,7 @@ impl PartialEq<usize> for SourceIndex {
     }
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct Position {
     pub line: LineNumber,
     pub column: LineColumn,
