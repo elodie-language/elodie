@@ -90,11 +90,14 @@ impl<'a> Parser<'a> {
 
     pub(crate) fn consume(&mut self, expected: TokenKind) -> Result<()> {
         self.skip_whitespace()?;
-        if self.current_token_kind()? == &expected {
+        let current = self.current_token_kind()?;
+        if current == &TokenKind::EOF { return Ok(()); }
+
+        if current == &expected {
             self.advance()?;
             Ok(())
         } else {
-            panic!("Expected token {:?}", expected);
+            panic!("Expected token {:?} but was {:?}", expected, current);
         }
     }
 

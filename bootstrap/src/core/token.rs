@@ -20,7 +20,6 @@ pub enum TokenKind {
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum Keyword {
     Break,
-    ConsoleLog, // Temporary hack to facilitate easy tests
     Const,
     Continue,
     Else,

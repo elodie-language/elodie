@@ -40,7 +40,6 @@ impl Lexer<'_> {
     fn keyword_map() -> HashMap<&'static str, Keyword> {
         let mut keywords = HashMap::new();
         keywords.insert("break", Keyword::Break);
-        keywords.insert("console_log", Keyword::ConsoleLog);
         keywords.insert("const", Keyword::Const);
         keywords.insert("continue", Keyword::Continue);
         keywords.insert("else", Keyword::Else);
@@ -76,17 +75,6 @@ mod test {
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 6, 5));
         assert_eq!(result.span.text, "break");
-    }
-
-    #[test]
-    fn r#console_log() {
-        let text = "console_log";
-        let lexer = Lexer::new(text);
-        let result = lexer.advance().unwrap();
-        assert_eq!(result.kind, TokenKind::Keyword(Keyword::ConsoleLog));
-        assert_eq!(result.span.start, (1, 1, 0));
-        assert_eq!(result.span.end, (1, 12, 11));
-        assert_eq!(result.span.text, "console_log");
     }
 
     #[test]
