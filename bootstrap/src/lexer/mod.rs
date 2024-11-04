@@ -153,7 +153,12 @@ pub struct Lexer<'a> {
 }
 
 impl<'a> Lexer<'a> {
-    pub fn new(str: &'a str) -> Self {
+    pub fn lex(str: &'a str) -> Result<Vec<Token>> {
+        let lexer = Lexer::new(str);
+        lexer.all()
+    }
+
+    pub(crate) fn new(str: &'a str) -> Self {
         Self {
             reader: Reader::new(str),
             current_line: RefCell::new(LineNumber(1)),
@@ -161,7 +166,7 @@ impl<'a> Lexer<'a> {
         }
     }
 
-    pub fn all(&self) -> Result<Vec<Token>> {
+    pub(crate) fn all(&self) -> Result<Vec<Token>> {
         let mut result = vec![];
         loop {
             let token = self.advance()?;

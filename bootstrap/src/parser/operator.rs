@@ -4,6 +4,7 @@ use crate::parser::Error::UnexpectedToken;
 use crate::parser::Parser;
 
 impl<'a> Parser<'a> {
+
     pub(crate) fn parse_binary_operator(&mut self) -> crate::parser::Result<BinaryOperator> {
         let token = self.advance()?;
         return match &token.kind {

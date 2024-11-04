@@ -18,14 +18,10 @@ fn main() {
     let args: Vec<String> = env::args().collect();
 
     let mut path = PathBuf::from(args.get(1).unwrap());
-
     let content = load_text_from_file(path.to_str().unwrap()).unwrap();
 
-    let lexer = Lexer::new(content.as_str());
-    let tokens = lexer.all().unwrap();
-
-    let mut parser = Parser::new(&tokens);
-    let result = parser.parse().unwrap();
+    let tokens = Lexer::lex(content.as_str()).unwrap();
+    let result = Parser::parse(&tokens).unwrap();
     // println!("{result:?}");
 
     let interpreter = Interpreter::new();

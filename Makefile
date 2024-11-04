@@ -1,6 +1,6 @@
 BOOTSTRAP_DIR = ./bootstrap
-E2E_TEST_SCRIPT = ./test/e2e/test.sh
-SMOKE_TEST_SCRIPT = ./test/smoke/test.sh
+BOOTSTRAP_E2E_TEST_SCRIPT = ./test/e2e/test-bootstrap.sh
+BOOTSTRAP_SMOKE_TEST_SCRIPT = ./test/smoke/test-bootstrap.sh
 
 # Default target
 .PHONY: all
@@ -19,12 +19,12 @@ test-bootstrap: bootstrap
 # Run the smoke tests
 .PHONY: test-smoke
 test-smoke: bootstrap
-	$(SMOKE_TEST_SCRIPT) ./test/smoke ./bootstrap/target/debug/bootstrap
+	$(BOOTSTRAP_SMOKE_TEST_SCRIPT) ./test/smoke ./bootstrap/target/debug/bootstrap
 
 # Run the e2e tests
 .PHONY: test-e2e
 test-e2e: bootstrap
-	$(E2E_TEST_SCRIPT) ./test/e2e ./bootstrap/target/debug/bootstrap
+	$(BOOTSTRAP_E2E_TEST_SCRIPT) ./test/e2e ./bootstrap/target/debug/bootstrap
 
 # Run the tests
 .PHONY: test

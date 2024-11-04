@@ -35,7 +35,7 @@ done
 
 # Summary
 echo "----------------------"
-echo -e "Smoke - Passed:\e[32m $OK_COUNT" "\e[0mFailed:\e[31m $ERR_COUNT\e[0m"
+echo -e "bootstrap::smoke - Passed:\e[32m $OK_COUNT" "\e[0mFailed:\e[31m $ERR_COUNT\e[0m"
 echo "----------------------"
 
 exit $EXIT_CODE

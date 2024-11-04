@@ -27,7 +27,12 @@ pub struct Parser<'a> {
 }
 
 impl<'a> Parser<'a> {
-    pub fn new(tokens: &'a [Token]) -> Self {
+    pub fn parse(tokens: &'a [Token]) -> Result<ElodieFile> {
+        let mut parser = Parser::new(tokens);
+        parser.parse_file()
+    }
+
+    pub(crate) fn new(tokens: &'a [Token]) -> Self {
         let mut precedence_map = HashMap::new();
 
         precedence_map.insert(TokenKind::Operator(Operator::Plus), Precedence::Term);
@@ -45,7 +50,7 @@ impl<'a> Parser<'a> {
     }
 
 
-    pub fn parse(&mut self) -> Result<ElodieFile> {
+    pub(crate) fn parse_file(&mut self) -> Result<ElodieFile> {
         let mut result = ElodieFile {
             imports: vec![],
             declarations: vec![],
@@ -128,5 +133,21 @@ impl<'a> Parser<'a> {
         let current = self.current_token_kind()?;
         let precedence = self.precedence_map.get(current).cloned();
         Ok(precedence.unwrap_or(Precedence::None))
+    }
+}
+
+#[cfg(test)]
+mod test {
+    use crate::ast::{Block, Expression};
+    use crate::lexer::Lexer;
+    use crate::parser::Parser;
+
+    #[test]
+    fn parse_empty_string() {
+        let tokens = Lexer::lex("").unwrap();
+        let result = Parser::parse(&tokens).unwrap();
+        assert_eq!(result.imports, vec![]);
+        assert_eq!(result.declarations, vec![]);
+        assert_eq!(result.block, Block { statements: vec![] })
     }
 }
