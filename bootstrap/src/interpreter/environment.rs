@@ -12,8 +12,7 @@ impl Environment {
         let mut env = Self {
             values: HashMap::new(),
         };
-
-        // Create a console object with a log function
+        
         let mut console = Object::new();
         console.set_property(
             "log",

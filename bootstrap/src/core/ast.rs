@@ -162,7 +162,6 @@ pub enum BinaryOperator {
     Divide,
     Modulo,
     As,
-    AsNullable,
     Elvis,
     Dot,
     DotSafe,
@@ -263,7 +262,6 @@ pub enum Type {
 pub struct SimpleType {
     pub name: Option<String>,
     pub type_args: Vec<Type>,
-    pub is_nullable: bool,
 }
 
 #[derive(Debug, PartialEq, Clone)]
@@ -271,7 +269,6 @@ pub struct FunctionType {
     pub receiver: Option<Type>,
     pub params: Vec<AnonymousParam>,
     pub return_type: Type,
-    pub is_nullable: bool,
 }
 
 #[derive(Debug, PartialEq, Clone)]

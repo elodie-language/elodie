@@ -4,6 +4,7 @@ use crate::core::token::Separator::{Comma, NewLine, Semicolon, Whitespace};
 use crate::lexer::Lexer;
 
 impl Lexer<'_> {
+
     pub(crate) fn is_whitespace(&self, c: char) -> bool {
         match c {
             | '\u{0009}' // \t

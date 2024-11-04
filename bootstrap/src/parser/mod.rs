@@ -76,7 +76,7 @@ impl<'a> Parser<'a> {
     pub(crate) fn skip_whitespace(&mut self) -> Result<()> {
         loop {
             let token = self.current_token()?;
-            if token.kind == TokenKind::Separator(Separator::Whitespace) {
+            if token.kind == TokenKind::Separator(Separator::Whitespace) || token.kind == TokenKind::Comment {
                 self.advance()?;
             } else {
                 return Ok(());

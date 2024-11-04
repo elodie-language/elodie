@@ -6,6 +6,7 @@ use crate::core::token::{Token, TokenKind};
 use crate::core::token::TokenKind::EOF;
 use crate::lexer::Error::UnexpectedEndOfFile;
 
+mod comment;
 mod separator;
 mod operator;
 mod keyword;
@@ -189,6 +190,7 @@ impl<'a> Lexer<'a> {
         if let Some(next) = self.reader.peek_next() {
             match next {
                 _ if self.is_whitespace(next) => self.consume_whitespace(),
+                _ if self.is_comment(next) => self.consume_comment(),
                 _ if self.is_operator(next) => self.consume_operator(),
                 _ if self.is_separator(next) => self.consume_separator(),
                 _ if self.is_keyword(next) => self.consume_keyword(),
