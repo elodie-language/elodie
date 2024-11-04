@@ -1,4 +1,4 @@
-use crate::core::ast::BinaryOperator;
+use crate::ast::BinaryOperator;
 use crate::core::token::{Operator, TokenKind};
 use crate::parser::Error::UnexpectedToken;
 use crate::parser::Parser;

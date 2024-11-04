@@ -1,4 +1,4 @@
-use crate::core::ast::{ElodieFile, Statement};
+use crate::ast::{ElodieFile, Statement};
 use crate::interpreter::environment::Environment;
 
 mod statement;

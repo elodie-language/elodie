@@ -1,4 +1,4 @@
-use crate::core::ast::{Expression, PropertyAccessExpression};
+use crate::ast::{Expression, PropertyAccessExpression};
 use crate::core::token::TokenKind;
 use crate::parser::Error::UnexpectedToken;
 use crate::parser::Parser;

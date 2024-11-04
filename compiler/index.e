@@ -1,6 +1,4 @@
 
-
-
 fs.create_directory('/tmp/target')
 fs.create_directory('/tmp/target/debug')
 fs.create_file('/tmp/target/debug/main.c')

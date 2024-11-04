@@ -1,4 +1,4 @@
-use crate::core::ast::Statement;
+use crate::ast::Statement;
 use crate::core::token::{Separator, TokenKind};
 use crate::parser::Parser;
 use crate::parser::precedence::Precedence;

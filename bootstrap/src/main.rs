@@ -12,6 +12,7 @@ mod parser;
 mod core;
 mod interpreter;
 mod cli;
+mod ast;
 
 fn main() {
     let args: Vec<String> = env::args().collect();

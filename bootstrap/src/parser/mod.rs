@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 
-use crate::core::ast::{Block, ElodieFile};
+use crate::ast::{Block, ElodieFile};
 use crate::core::token::{Operator, Separator, Token, TokenKind};
 use crate::parser::Error::UnexpectedEndOfFile;
 use crate::parser::precedence::Precedence;
