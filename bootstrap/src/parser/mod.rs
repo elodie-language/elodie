@@ -54,8 +54,14 @@ impl<'a> Parser<'a> {
             },
         };
 
-        let expr = self.parse_expression(Precedence::None)?;
-        println!("{:#?}", expr);
+        loop {
+            let current_kind = self.current_token_kind()?;
+            if current_kind == &TokenKind::EOF {
+                break;
+            }
+
+            result.block.statements.push(self.parse_statement()?);
+        }
 
         Ok(result)
     }

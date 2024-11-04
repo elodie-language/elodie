@@ -1,3 +1,4 @@
+use crate::interpreter::Interpreter;
 use crate::lexer::Lexer;
 use crate::parser::Parser;
 
@@ -8,16 +9,13 @@ mod interpreter;
 mod cli;
 
 fn main() {
-    println!("This is where it all began!");
-
-    // let parser = Parser::new("console.log('Elodie says hi')");
-    // let ast = parser.parse().unwrap();
-    // println!("{ast:?}");
-
-    // let lexer = Lexer::new("3 + 5 * 2");
     let lexer = Lexer::new("console.log('Elodie says hi')");
     let tokens = lexer.all().unwrap();
 
     let mut parser = Parser::new(&tokens);
     let result = parser.parse().unwrap();
+    // println!("{result:?}");
+
+    let interpreter = Interpreter::new();
+    interpreter.interpret(result).unwrap();
 }

@@ -14,7 +14,6 @@ mod identifier;
 
 #[derive(Debug)]
 pub enum Error {
-    OutOfBounds,
     UnexpectedEndOfFile,
     UnknownKeyword(String),
     UnknownOperator(String),

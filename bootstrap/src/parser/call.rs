@@ -1,4 +1,4 @@
-use crate::core::ast::CallArg;
+use crate::core::ast::{CallArg, CallExpression, Expression};
 use crate::core::token::{Operator, Separator, TokenKind};
 use crate::parser::Parser;
 use crate::parser::precedence::Precedence;
@@ -33,5 +33,18 @@ impl<'a> Parser<'a> {
         }
 
         Ok(result)
+    }
+
+    pub(crate) fn parse_call_expression(&mut self, callee: Expression) -> crate::parser::Result<Expression> {
+        let arguments = self.parse_arguments()?;
+
+        self.consume(TokenKind::Operator(Operator::CloseParen))?;
+
+        Ok(Expression::Call(CallExpression {
+            expression: Box::new(callee),
+            arguments,
+            type_args: vec![],
+            lambda: None,
+        }))
     }
 }

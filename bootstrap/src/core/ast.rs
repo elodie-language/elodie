@@ -63,28 +63,6 @@ pub struct Block {
 }
 
 #[derive(Debug, PartialEq, Clone)]
-pub enum PropertyAccessor {
-    Getter {
-        modifiers: Vec<Modifier>,
-        return_type: Option<Type>,
-        body: Option<Block>,
-    },
-    Setter {
-        modifiers: Vec<Modifier>,
-        field: PropertySetterField,
-        body: Option<Block>,
-    },
-}
-
-#[derive(Debug, PartialEq, Clone)]
-pub struct PropertySetterField {
-    pub name: String,
-    pub r#type: Option<Type>,
-    pub return_type: Option<Type>,
-    pub body: Option<Block>,
-}
-
-#[derive(Debug, PartialEq, Clone)]
 pub struct TypeAliasDeclaration {
     pub modifiers: Vec<Modifier>,
     pub name: String,
@@ -178,7 +156,6 @@ pub enum BinaryOperator {
     Is,
     IsNot,
     RangeTo,
-    RangeUntil,
     Add,
     Subtract,
     Multiply,

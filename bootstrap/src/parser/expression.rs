@@ -123,16 +123,4 @@ impl<'a> Parser<'a> {
         }))
     }
 
-    fn parse_call_expression(&mut self, callee: Expression) -> crate::parser::Result<Expression> {
-        let arguments = self.parse_arguments()?;
-
-        self.consume(TokenKind::Operator(Operator::CloseParen))?;
-
-        Ok(Expression::Call(CallExpression {
-            expression: Box::new(callee),
-            arguments,
-            type_args: vec![],
-            lambda: None,
-        }))
-    }
 }
