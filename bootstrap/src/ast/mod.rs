@@ -90,6 +90,7 @@ pub enum Expression {
     Identifier(String),
     If(IfExpression),
     Lambda(LambdaBlock),
+    Let(LetExpression),
     Loop(LoopExpression),
     Match(MatchExpression),
     Object(ObjectExpression),
@@ -251,6 +252,13 @@ pub enum StringTemplateExpression {
     Simple(String),
     Block(Block),
 }
+
+#[derive(Debug, PartialEq, Clone)]
+pub struct LetExpression {
+    pub name: Box<Expression>,
+    pub value: Box<Expression>,
+}
+
 
 #[derive(Debug, PartialEq, Clone)]
 pub enum Type {

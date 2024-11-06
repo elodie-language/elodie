@@ -110,7 +110,7 @@ impl Lexer<'_> {
                         text.push('=');
                         TokenKind::Operator(DoubleEqual)
                     }
-                    _ => TokenKind::Operator(Equals)
+                    _ => TokenKind::Operator(Equal)
                 }
             }
             "!" => {
@@ -442,7 +442,7 @@ mod test {
         let text = "=";
         let lexer = Lexer::new(text);
         let result = lexer.advance().unwrap();
-        assert_eq!(result.kind, TokenKind::Operator(Equals));
+        assert_eq!(result.kind, TokenKind::Operator(Equal));
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 2, 1));
         assert_eq!(result.span.text, "=");

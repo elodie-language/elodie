@@ -107,3 +107,9 @@ export function assert_true(value: Boolean, message: String? = 'default string')
         assert_true(false, message = 'Some message')
     }
 }
+
+let x : Int16 = loop {
+    if true{
+        return 10;
+    }
+}

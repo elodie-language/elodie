@@ -76,7 +76,7 @@ pub enum Operator {
     DoublePipe,        // ||
     Caret,             // ^
     Percent,           // %
-    Equals,            // =
+    Equal,            // =
     DoubleEqual,      // ==
     Bang,              // !
     BangEqual,        // !=

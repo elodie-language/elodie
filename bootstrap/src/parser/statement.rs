@@ -9,7 +9,9 @@ impl Parser<'_> {
             self.parse_expression(Precedence::None)?
         );
 
-        self.consume(TokenKind::Separator(Separator::NewLine))?;
+        if self.current_token_kind()? != &TokenKind::EOF {
+            self.consume(TokenKind::Separator(Separator::NewLine))?;
+        }
         Ok(result)
     }
 }

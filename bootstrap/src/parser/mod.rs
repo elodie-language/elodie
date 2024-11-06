@@ -9,8 +9,6 @@ mod expression;
 mod statement;
 mod precedence;
 mod operator;
-mod call;
-mod access;
 
 #[derive(Debug)]
 pub enum Error {
@@ -104,14 +102,13 @@ impl<'a> Parser<'a> {
         Ok(&self.tokens[self.current - 1])
     }
 
-    pub(crate) fn consume(&mut self, expected: TokenKind) -> Result<()> {
+    pub(crate) fn consume(&mut self, expected: TokenKind) -> Result<&Token> {
         self.skip_whitespace()?;
         let current = self.current_token_kind()?;
-        if current == &TokenKind::EOF { return Ok(()); }
+        if current == &TokenKind::EOF { return Err(UnexpectedEndOfFile); }
 
         if current == &expected {
-            self.advance()?;
-            Ok(())
+            self.advance()
         } else {
             panic!("Expected token {:?} but was {:?}", expected, current);
         }
@@ -149,7 +146,7 @@ impl<'a> Parser<'a> {
 
 #[cfg(test)]
 mod test {
-    use crate::ast::{Block, Expression};
+    use crate::ast::Block;
     use crate::lexer::Lexer;
     use crate::parser::Parser;
 

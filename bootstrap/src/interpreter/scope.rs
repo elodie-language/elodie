@@ -1,21 +1,24 @@
+use std::{fs, vec};
 use std::collections::HashMap;
-use std::fs;
 use std::io::Write;
+use std::ops::Index;
 use std::path::Path;
 use std::rc::Rc;
 
 use crate::interpreter::value::{Function, Object, Value};
 
-
-pub struct Environment {
-    values: HashMap<String, Value>,
+pub struct Scope {
+    values: Vec<HashMap<String, Value>>,
 }
 
-impl Environment {
+impl Scope {
+
     pub fn new() -> Self {
-        let mut env = Self {
-            values: HashMap::new(),
+        let mut result = Self {
+            values: vec![],
         };
+
+        let mut root = HashMap::new();
 
         let mut console = Object::new();
         console.set_property(
@@ -29,12 +32,12 @@ impl Environment {
             }))),
         );
 
-        env.values.insert("console".to_string(), Value::Object(console));
+        root.insert("console".to_string(), Value::Object(console));
 
 
         let mut fs = Object::new();
 
-       fs.set_property(
+        fs.set_property(
             "create_directory",
             Value::Function(Function(Rc::new(|args: &[Value]| {
                 if let Some(Value::String(dir)) = args.get(0) {
@@ -96,12 +99,18 @@ impl Environment {
             }))),
         );
 
-        env.values.insert("fs".to_string(), Value::Object(fs));
+        root.insert("fs".to_string(), Value::Object(fs));
 
-        env
+        result.values.push(root);
+
+        result
     }
 
     pub fn get(&self, name: &str) -> Option<&Value> {
-        self.values.get(name)
+        self.values.last()?.get(name)
+    }
+
+    pub fn insert(&mut self, name: impl Into<String>, value: Value){
+        self.values.last_mut().unwrap().insert(name.into(), value);
     }
 }

@@ -1,8 +1,8 @@
 use crate::ast::{ElodieFile, Statement};
-use crate::interpreter::environment::Environment;
+use crate::interpreter::scope::Scope;
 
 mod statement;
-mod environment;
+mod scope;
 mod value;
 mod expression;
 
@@ -15,17 +15,17 @@ pub type Result<T, E = Error> = core::result::Result<T, E>;
 
 
 pub struct Interpreter {
-    env: Environment,
+    scope: Scope,
 }
 
 impl Interpreter {
     pub fn new() -> Self {
         Self {
-            env: Environment::new()
+            scope: Scope::new()
         }
     }
 
-    pub fn interpret(&self, file: ElodieFile) -> Result<()> {
+    pub fn interpret(&mut self, file: ElodieFile) -> Result<()> {
         for stmt in &file.block.statements {
             match stmt {
                 Statement::Declaration(_) => unimplemented!(),

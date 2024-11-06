@@ -24,7 +24,7 @@ fn main() {
     let result = Parser::parse(&tokens).unwrap();
     // println!("{result:?}");
 
-    let interpreter = Interpreter::new();
+    let mut interpreter = Interpreter::new();
     interpreter.interpret(result).unwrap();
 }
 
