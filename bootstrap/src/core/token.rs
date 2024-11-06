@@ -57,10 +57,10 @@ pub enum Operator {
     CloseBracket,      // ]
     LeftAngle,         // <
     DoubleLeftAngle,   // <<
-    LeftAngleEquals,   // <=
+    LeftAngleEqual,   // <=
     RightAngle,        // >
     DoubleRightAngle,  // >>
-    RightAngleEquals,  // >=
+    RightAngleEqual,  // >=
     Dot,               // .
     Colon,             // :
     DoubleColon,       // ::
@@ -77,9 +77,9 @@ pub enum Operator {
     Caret,             // ^
     Percent,           // %
     Equals,            // =
-    DoubleEquals,      // ==
+    DoubleEqual,      // ==
     Bang,              // !
-    BangEquals,        // !=
+    BangEqual,        // !=
     QuestionMark,      // ?
 }
 

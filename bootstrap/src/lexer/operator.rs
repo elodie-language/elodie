@@ -30,7 +30,7 @@ impl Lexer<'_> {
                     Some('=') => {
                         let _ = self.consume_next()?;
                         text.push('=');
-                        TokenKind::Operator(LeftAngleEquals)
+                        TokenKind::Operator(LeftAngleEqual)
                     }
                     _ => TokenKind::Operator(LeftAngle)
                 }
@@ -45,7 +45,7 @@ impl Lexer<'_> {
                     Some('=') => {
                         let _ = self.consume_next()?;
                         text.push('=');
-                        TokenKind::Operator(RightAngleEquals)
+                        TokenKind::Operator(RightAngleEqual)
                     }
                     _ => TokenKind::Operator(RightAngle)
                 }
@@ -108,7 +108,7 @@ impl Lexer<'_> {
                     Some('=') => {
                         let _ = self.consume_next()?;
                         text.push('=');
-                        TokenKind::Operator(DoubleEquals)
+                        TokenKind::Operator(DoubleEqual)
                     }
                     _ => TokenKind::Operator(Equals)
                 }
@@ -118,7 +118,7 @@ impl Lexer<'_> {
                     Some('=') => {
                         let _ = self.consume_next()?;
                         text.push('=');
-                        TokenKind::Operator(BangEquals)
+                        TokenKind::Operator(BangEqual)
                     }
                     _ => TokenKind::Operator(Bang)
                 }
@@ -232,7 +232,7 @@ mod test {
         let text = "<=";
         let lexer = Lexer::new(text);
         let result = lexer.advance().unwrap();
-        assert_eq!(result.kind, TokenKind::Operator(LeftAngleEquals));
+        assert_eq!(result.kind, TokenKind::Operator(LeftAngleEqual));
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 3, 2));
         assert_eq!(result.span.text, "<=");
@@ -265,7 +265,7 @@ mod test {
         let text = ">=";
         let lexer = Lexer::new(text);
         let result = lexer.advance().unwrap();
-        assert_eq!(result.kind, TokenKind::Operator(RightAngleEquals));
+        assert_eq!(result.kind, TokenKind::Operator(RightAngleEqual));
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 3, 2));
         assert_eq!(result.span.text, ">=");
@@ -453,7 +453,7 @@ mod test {
         let text = "==";
         let lexer = Lexer::new(text);
         let result = lexer.advance().unwrap();
-        assert_eq!(result.kind, TokenKind::Operator(DoubleEquals));
+        assert_eq!(result.kind, TokenKind::Operator(DoubleEqual));
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 3, 2));
         assert_eq!(result.span.text, "==");
@@ -475,7 +475,7 @@ mod test {
         let text = "!=";
         let lexer = Lexer::new(text);
         let result = lexer.advance().unwrap();
-        assert_eq!(result.kind, TokenKind::Operator(BangEquals));
+        assert_eq!(result.kind, TokenKind::Operator(BangEqual));
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 3, 2));
         assert_eq!(result.span.text, "!=");
