@@ -29,7 +29,6 @@ impl<'a> Parser<'a> {
                 let identifier = token.span.text.clone();
                 Expression::Identifier(identifier)
             }
-            TokenKind::Keyword(_) => return Err(UnexpectedToken(token.clone())),
             TokenKind::Literal(literal) => {
                 match literal {
                     Literal::Number => {
@@ -51,23 +50,6 @@ impl<'a> Parser<'a> {
                         self.consume(TokenKind::Operator(Operator::CloseParen))?;
                         expr
                     }
-                    Operator::CloseParen => unimplemented!(),
-                    Operator::OpenCurly => unimplemented!(),
-                    Operator::CloseCurly => unimplemented!(),
-                    Operator::OpenBracket => unimplemented!(),
-                    Operator::CloseBracket => unimplemented!(),
-                    Operator::LeftAngle => unimplemented!(),
-                    Operator::DoubleLeftAngle => unimplemented!(),
-                    Operator::LeftAngleEqual => unimplemented!(),
-                    Operator::RightAngle => unimplemented!(),
-                    Operator::DoubleRightAngle => unimplemented!(),
-                    Operator::RightAngleEqual => unimplemented!(),
-                    Operator::Dot => unimplemented!(),
-                    Operator::Colon => unimplemented!(),
-                    Operator::DoubleColon => unimplemented!(),
-                    Operator::Arrow => unimplemented!(),
-                    Operator::DoubleDot => unimplemented!(),
-                    Operator::Plus => unimplemented!(),
                     Operator::Minus => {
                         let right = self.parse_expression(Precedence::Unary)?;
                         Expression::UnaryOp(UnaryOperation {
@@ -75,24 +57,10 @@ impl<'a> Parser<'a> {
                             expr: Box::new(right),
                         })
                     }
-                    Operator::Asterisk => unimplemented!(),
-                    Operator::Slash => unimplemented!(),
-                    Operator::Ampersand => unimplemented!(),
-                    Operator::DoubleAmpersand => unimplemented!(),
-                    Operator::Pipe => unimplemented!(),
-                    Operator::DoublePipe => unimplemented!(),
-                    Operator::Caret => unimplemented!(),
-                    Operator::Percent => unimplemented!(),
-                    Operator::Equals => unimplemented!(),
-                    Operator::DoubleEqual => unimplemented!(),
-                    Operator::Bang => unimplemented!(),
-                    Operator::BangEqual => unimplemented!(),
-                    Operator::QuestionMark => unimplemented!()
+                    _ => unimplemented!(),
                 }
             }
-            TokenKind::Separator(_) => return Err(UnexpectedToken(token.clone())),
-            TokenKind::Comment => return Err(UnexpectedToken(token.clone())),
-            TokenKind::EOF => return Err(UnexpectedToken(token.clone()))
+            _ => return Err(UnexpectedToken(token.clone()))
         };
 
         Ok(expression)
