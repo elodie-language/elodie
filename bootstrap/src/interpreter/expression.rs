@@ -21,7 +21,7 @@ impl Interpreter {
         match literal {
             Literal::Number(f) => Ok(Value::Number(f.clone())),
             Literal::String(s) => Ok(Value::String(s.clone())),
-            _ => unimplemented!()
+            Literal::Boolean(v) => Ok(Value::Bool(v.clone()))
         }
     }
 

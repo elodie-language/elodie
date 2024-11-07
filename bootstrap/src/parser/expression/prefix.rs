@@ -28,8 +28,8 @@ impl<'a> Parser<'a> {
                         let value = token.span.text.clone();
                         Expression::Literal(ast::Literal::String(value))
                     }
-                    Literal::True => unimplemented!(),
-                    Literal::False => unimplemented!()
+                    Literal::True => Expression::Literal(ast::Literal::Boolean(true)),
+                    Literal::False => Expression::Literal(ast::Literal::Boolean(false))
                 }
             }
             TokenKind::Operator(operator) => {
