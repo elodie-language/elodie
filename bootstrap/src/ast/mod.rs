@@ -83,6 +83,7 @@ pub enum Expression {
     Literal(Literal),
     ArrayAccess(ArrayAccessExpression),
     BinaryOperation(BinaryOperation),
+    Block(BlockExpression),
     Break(BreakExpression),
     Call(CallExpression),
     Continue(ContinueExpression),
@@ -102,6 +103,11 @@ pub enum Expression {
 }
 
 #[derive(Debug, PartialEq, Clone)]
+pub struct BlockExpression {
+    pub body: Vec<Expression>,
+}
+
+#[derive(Debug, PartialEq, Clone)]
 pub struct IdentifierExpression(pub String);
 
 #[derive(Debug, PartialEq, Clone)]
@@ -113,9 +119,9 @@ pub enum Literal {
 
 #[derive(Debug, PartialEq, Clone)]
 pub struct IfExpression {
-    pub expr: Box<Expression>,
-    pub then: Box<Expression>,
-    pub otherwise: Option<Box<Expression>>,
+    pub condition: Box<Expression>,
+    pub then: BlockExpression,
+    pub otherwise: Option<BlockExpression>,
 }
 
 #[derive(Debug, PartialEq, Clone)]

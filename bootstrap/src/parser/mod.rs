@@ -2,7 +2,7 @@ use std::collections::HashMap;
 
 use crate::ast::{Block, ElodieFile};
 use crate::core::token::{Operator, Separator, Token, TokenKind};
-use crate::parser::Error::UnexpectedEndOfFile;
+use crate::parser::Error::{UnexpectedEndOfFile, UnexpectedToken};
 use crate::parser::precedence::Precedence;
 
 mod expression;
@@ -13,7 +13,11 @@ mod operator;
 #[derive(Debug)]
 pub enum Error {
     UnexpectedEndOfFile,
-    UnexpectedToken(Token),
+    UnexpectedToken {
+        expected: TokenKind,
+        got: Token,
+    },
+    UnsupportedToken(Token)
 }
 
 pub type Result<T, E = Error> = core::result::Result<T, E>;
@@ -83,35 +87,20 @@ impl<'a> Parser<'a> {
     pub(crate) fn advance(&mut self) -> Result<&Token> {
         let result = &self.tokens[self.current];
         self.current += 1;
-        self.skip_whitespace()?;
         Ok(result)
     }
 
-    pub(crate) fn skip_whitespace(&mut self) -> Result<()> {
-        loop {
-            let token = self.current_token()?;
-            if token.kind == TokenKind::Separator(Separator::Whitespace) || token.kind == TokenKind::Comment {
-                self.advance()?;
-            } else {
-                return Ok(());
-            }
-        }
-    }
 
     pub(crate) fn previous(&self) -> Result<&Token> {
         Ok(&self.tokens[self.current - 1])
     }
 
     pub(crate) fn consume(&mut self, expected: TokenKind) -> Result<&Token> {
-        self.skip_whitespace()?;
         let current = self.current_token_kind()?;
         if current == &TokenKind::EOF { return Err(UnexpectedEndOfFile); }
+        self.current_expect(expected)?;
 
-        if current == &expected {
-            self.advance()
-        } else {
-            panic!("Expected token {:?} but was {:?}", expected, current);
-        }
+        self.advance()
     }
 
     pub(crate) fn current_token(&self) -> Result<&Token> {
@@ -141,6 +130,32 @@ impl<'a> Parser<'a> {
         let current = self.current_token_kind()?;
         let precedence = self.precedence_map.get(current).cloned();
         Ok(precedence.unwrap_or(Precedence::None))
+    }
+
+    pub(crate) fn current_expect(&self, expected: TokenKind) -> Result<()> {
+        let got = self.current_token()?;
+
+        if got.kind == expected {
+            Ok(())
+        } else {
+            return Err(UnexpectedToken {
+                expected,
+                got: got.clone(),
+            });
+        }
+    }
+
+    pub(crate) fn previous_expect(&self, expected: TokenKind) -> Result<()> {
+        let got = self.previous()?;
+
+        if got.kind == expected {
+            Ok(())
+        } else {
+            return Err(UnexpectedToken {
+                expected,
+                got: got.clone(),
+            });
+        }
     }
 }
 

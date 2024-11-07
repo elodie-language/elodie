@@ -3,14 +3,12 @@ use std::str::FromStr;
 use crate::ast;
 use crate::ast::{Expression, IdentifierExpression, UnaryOperation, UnaryOperator};
 use crate::core::token::{Keyword, Literal, Operator, TokenKind};
-use crate::parser::Error::UnexpectedToken;
+use crate::parser::Error::UnsupportedToken;
 use crate::parser::Parser;
 use crate::parser::precedence::Precedence;
 
 impl<'a> Parser<'a> {
     pub(crate) fn parse_prefix_expression(&mut self) -> crate::parser::Result<Expression> {
-        self.skip_whitespace()?;
-
         let token = self.advance()?;
 
         let expression = match &token.kind {
@@ -46,16 +44,20 @@ impl<'a> Parser<'a> {
                             expr: Box::new(right),
                         })
                     }
-                    _ => unimplemented!(),
+                    Operator::OpenCurly => {
+                        Expression::Block(self.parse_block_expression()?)
+                    }
+                    _ => return Err(UnsupportedToken(token.clone())),
                 }
             }
             TokenKind::Keyword(keyword) => {
                 match keyword {
                     Keyword::Let => self.parse_let_expression()?,
-                    _ => return Err(UnexpectedToken(token.clone()))
+                    Keyword::If => self.parse_if_expression()?,
+                    _ => return Err(UnsupportedToken(token.clone()))
                 }
             }
-            _ => return Err(UnexpectedToken(token.clone()))
+            _ => return Err(UnsupportedToken(token.clone()))
         };
 
         Ok(expression)

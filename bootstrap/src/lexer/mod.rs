@@ -192,10 +192,30 @@ impl<'a> Lexer<'a> {
                 },
             });
         }
+
+        loop {
+            if let Some(next) = self.reader.peek_next() {
+                if self.is_whitespace(next) {
+                    self.consume_whitespace()?;
+                } else if self.is_comment(next) {
+                    self.consume_comment()?;
+                } else {
+                    break;
+                }
+            } else {
+                return Ok(Token {
+                    kind: TokenKind::EOF,
+                    span: TextSpan {
+                        start: self.position(),
+                        end: self.position(),
+                        text: "".to_string(),
+                    },
+                });
+            }
+        }
+
         if let Some(next) = self.reader.peek_next() {
             match next {
-                _ if self.is_whitespace(next) => self.consume_whitespace(),
-                _ if self.is_comment(next) => self.consume_comment(),
                 _ if self.is_operator(next) => self.consume_operator(),
                 _ if self.is_separator(next) => self.consume_separator(),
                 _ if self.is_keyword(next) => self.consume_keyword(),

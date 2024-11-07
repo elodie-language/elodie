@@ -7,7 +7,10 @@ impl<'a> Parser<'a> {
     pub(crate) fn parse_property_access(&mut self, object: Expression) -> crate::parser::Result<Expression> {
         let next = self.advance()?;
         if next.kind != TokenKind::Identifier {
-            return Err(UnexpectedToken(next.clone()));
+            return Err(UnexpectedToken{
+                expected: TokenKind::Identifier,
+                got: next.clone(),
+            });
         }
 
         Ok(Expression::PropertyAccess(PropertyAccessExpression {

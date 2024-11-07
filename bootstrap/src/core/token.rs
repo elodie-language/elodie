@@ -13,7 +13,6 @@ pub enum TokenKind {
     Operator(Operator),
     Separator(Separator),
     Identifier,
-    Comment,
     EOF,
 }
 
@@ -88,5 +87,4 @@ pub enum Separator {
     Semicolon,         // ;
     Comma,             // ,
     NewLine,
-    Whitespace,
 }

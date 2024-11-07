@@ -1,6 +1,6 @@
 use crate::ast::BinaryOperator;
 use crate::core::token::{Operator, TokenKind};
-use crate::parser::Error::UnexpectedToken;
+use crate::parser::Error::{UnexpectedToken, UnsupportedToken};
 use crate::parser::Parser;
 
 impl<'a> Parser<'a> {
@@ -20,10 +20,10 @@ impl<'a> Parser<'a> {
                     Operator::Percent => Ok(BinaryOperator::Modulo),
                     Operator::DoubleEqual => Ok(BinaryOperator::Equal),
                     Operator::BangEqual => Ok(BinaryOperator::NotEqual),
-                    _ => Err(UnexpectedToken(token.clone()))
+                    _ => Err(UnsupportedToken(token.clone()))
                 }
             }
-            _ => Err(UnexpectedToken(token.clone()))
+            _ => Err(UnsupportedToken(token.clone()))
         };
     }
 }

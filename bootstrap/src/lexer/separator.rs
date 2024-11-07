@@ -1,10 +1,9 @@
 use crate::core::span::TextSpan;
 use crate::core::token::{Token, TokenKind};
-use crate::core::token::Separator::{Comma, NewLine, Semicolon, Whitespace};
+use crate::core::token::Separator::{Comma, NewLine, Semicolon};
 use crate::lexer::Lexer;
 
 impl Lexer<'_> {
-
     pub(crate) fn is_whitespace(&self, c: char) -> bool {
         match c {
             | '\u{0009}' // \t
@@ -22,12 +21,9 @@ impl Lexer<'_> {
     }
 
 
-    pub(crate) fn consume_whitespace(&self) -> crate::lexer::Result<Token> {
-        let start = self.position();
-        let text = self.consume_while(|c| self.is_whitespace(c))?;
-        let end = self.position();
-
-        Ok(Token { kind: TokenKind::Separator(Whitespace), span: TextSpan { start, end, text } })
+    pub(crate) fn consume_whitespace(&self) -> crate::lexer::Result<()> {
+        self.consume_while(|c| self.is_whitespace(c))?;
+        Ok(())
     }
 
     pub(crate) fn consume_separator(&self) -> crate::lexer::Result<Token> {
@@ -60,7 +56,7 @@ mod test {
     use Separator::Comma;
 
     use crate::core::token::{Separator, TokenKind};
-    use crate::core::token::Separator::{NewLine, Semicolon, Whitespace};
+    use crate::core::token::Separator::{NewLine, Semicolon};
     use crate::lexer::Lexer;
 
     #[test]
@@ -68,10 +64,10 @@ mod test {
         let text = "\t";
         let lexer = Lexer::new(text);
         let result = lexer.advance().unwrap();
-        assert_eq!(result.kind, TokenKind::Separator(Whitespace));
-        assert_eq!(result.span.start, (1, 1, 0));
+        assert_eq!(result.kind, TokenKind::EOF);
+        assert_eq!(result.span.start, (1, 2, 1));
         assert_eq!(result.span.end, (1, 2, 1));
-        assert_eq!(result.span.text, "\t")
+        assert_eq!(result.span.text, "")
     }
 
     #[test]
@@ -79,10 +75,10 @@ mod test {
         let text = "     ";
         let lexer = Lexer::new(text);
         let result = lexer.advance().unwrap();
-        assert_eq!(result.kind, TokenKind::Separator(Whitespace));
-        assert_eq!(result.span.start, (1, 1, 0));
+        assert_eq!(result.kind, TokenKind::EOF);
+        assert_eq!(result.span.start, (1, 6, 5));
         assert_eq!(result.span.end, (1, 6, 5));
-        assert_eq!(result.span.text, "     ")
+        assert_eq!(result.span.text, "")
     }
 
     #[test]
