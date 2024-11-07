@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 
 use crate::ast::{Block, ElodieFile};
-use crate::core::token::{Operator, Separator, Token, TokenKind};
+use crate::core::token::{Operator, Token, TokenKind};
 use crate::parser::Error::{UnexpectedEndOfFile, UnexpectedToken};
 use crate::parser::precedence::Precedence;
 
@@ -17,7 +17,7 @@ pub enum Error {
         expected: TokenKind,
         got: Token,
     },
-    UnsupportedToken(Token)
+    UnsupportedToken(Token),
 }
 
 pub type Result<T, E = Error> = core::result::Result<T, E>;
@@ -101,6 +101,17 @@ impl<'a> Parser<'a> {
         self.current_expect(expected)?;
 
         self.advance()
+    }
+
+    pub(crate) fn consume_if(&mut self, expected: TokenKind) -> Result<Option<&Token>> {
+        let current = self.current_token_kind()?;
+        if current == &TokenKind::EOF { return Err(UnexpectedEndOfFile); }
+
+        if current == &expected {
+            Ok(Some(self.advance()?))
+        } else {
+            Ok(None)
+        }
     }
 
     pub(crate) fn current_token(&self) -> Result<&Token> {
