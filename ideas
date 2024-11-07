@@ -113,3 +113,30 @@ let x : Int16 = loop {
         return 10;
     }
 }
+
+- Red? indicated optional value a function either returns the value or None - no need for Some
+
+
+- enums as syntactic sugar as a union of types - think of every enum variant is an actual type
+
+type Red(Number);
+type Green(Number);
+type Blue(Number);
+type ColorChannel = Red | Green | Blue
+
+enum ColorChannel{
+    Red(Number),
+    Green(Number),
+    Blue(Number)
+}
+
+function returns_red_channel() -> Red?{
+    return Red(123)
+}
+
+function returns_red_channel() -> ColorChannel::Red?{
+    Red(123)
+}
+
+let c = returns_red_channel()
+

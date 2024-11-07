@@ -8,7 +8,7 @@ impl Interpreter {
         let value = match expr {
             Expression::Literal(lit) => self.interpret_literal(lit)?,
             Expression::Identifier(name) => {
-                self.scope.get(name).unwrap().clone()
+                self.scope.get(name.0.as_str()).unwrap().clone()
             }
             Expression::Call(call_expr) => self.interpret_call(call_expr)?,
             Expression::Let(let_expr) => self.interpret_let_expression(let_expr)?,
@@ -35,9 +35,9 @@ impl Interpreter {
         let function = if let Expression::PropertyAccess(ref access) = *call.expression {
             if let Some(boxed_expression) = &access.lhs {
                 if let Expression::Identifier(object) = boxed_expression.as_ref() {
-                    if let Some(Value::Object(object)) = self.scope.get(object).as_ref() {
+                    if let Some(Value::Object(object)) = self.scope.get(object.0.as_str()).as_ref() {
                         if let Expression::Identifier(function) = access.rhs.as_ref() {
-                            if let Some(Value::Function(func)) = object.get_property(function) {
+                            if let Some(Value::Function(func)) = object.get_property(function.0.as_str()) {
                                 Some(func)
                             } else {
                                 None
@@ -73,12 +73,7 @@ impl Interpreter {
     }
 
     pub(crate) fn interpret_let_expression(&mut self, expr: &LetExpression) -> crate::interpreter::Result<Value> {
-        let name = expr.name.as_ref();
-        let name = if let Expression::Identifier(name) = name {
-            name
-        } else {
-            panic!("Not a name");
-        };
+        let name = expr.name.0.as_str();
 
         let value = self.interpret_expression(&expr.value)?;
 

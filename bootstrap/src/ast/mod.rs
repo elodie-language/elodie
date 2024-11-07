@@ -49,10 +49,10 @@ pub enum EntityDeclarationKind {
 pub struct FunctionDeclaration {
     pub modifiers: Vec<Modifier>,
     pub type_params: Vec<TypeParam>,
-    pub receiver: Option<Type>,
+    pub receiver: Option<TypeExpression>,
     pub name: Option<String>,
-    pub params: Vec<Param>,
-    pub return_type: Option<Type>,
+    pub params: Vec<ParameterExpression>,
+    pub return_type: Option<TypeExpression>,
     pub bounds: Vec<TypeBound>,
     pub body: Option<Block>,
 }
@@ -67,7 +67,7 @@ pub struct TypeAliasDeclaration {
     pub modifiers: Vec<Modifier>,
     pub name: String,
     pub type_params: Vec<TypeParam>,
-    pub r#type: Type,
+    pub r#type: TypeExpression,
 }
 
 #[derive(Debug, PartialEq, Clone)]
@@ -87,7 +87,7 @@ pub enum Expression {
     Call(CallExpression),
     Continue(ContinueExpression),
     For(ForExpression),
-    Identifier(String),
+    Identifier(IdentifierExpression),
     If(IfExpression),
     Lambda(LambdaBlock),
     Let(LetExpression),
@@ -100,6 +100,9 @@ pub enum Expression {
     StringTemplate(StringTemplateExpression),
     UnaryOp(UnaryOperation),
 }
+
+#[derive(Debug, PartialEq, Clone)]
+pub struct IdentifierExpression(pub String);
 
 #[derive(Debug, PartialEq, Clone)]
 pub enum Literal {
@@ -117,7 +120,7 @@ pub struct IfExpression {
 
 #[derive(Debug, PartialEq, Clone)]
 pub struct ForExpression {
-    pub vars: Tuple,
+    pub vars: TupleType,
     pub iterable: Box<Expression>,
     pub body: Box<Expression>,
 }
@@ -224,14 +227,14 @@ pub struct BreakExpression {
 pub struct CallExpression {
     pub expression: Box<Expression>,
     pub arguments: Vec<CallArg>,
-    pub type_args: Vec<Type>,
+    pub type_args: Vec<TypeExpression>,
     pub lambda: Option<Box<Expression>>,
 }
 
 #[derive(Debug, PartialEq, Clone)]
 pub struct LambdaBlock {
     pub label: Option<String>,
-    pub vars: Tuple,
+    pub type_args: TupleType,
     pub body: Option<Block>,
 }
 
@@ -255,40 +258,84 @@ pub enum StringTemplateExpression {
 
 #[derive(Debug, PartialEq, Clone)]
 pub struct LetExpression {
-    pub name: Box<Expression>,
+    pub name: IdentifierExpression,
     pub value: Box<Expression>,
-}
-
-
-#[derive(Debug, PartialEq, Clone)]
-pub enum Type {
-    Simple(Box<SimpleType>),
-    Function(Box<FunctionType>),
+    pub r#type: TypeExpression,
 }
 
 #[derive(Debug, PartialEq, Clone)]
-pub struct SimpleType {
-    pub name: Option<String>,
-    pub type_args: Vec<Type>,
+pub enum TypeExpression {
+    Fundamentals(String),                      // Basic types, e.g., "Any", "Never", "Unit", "String", "Number"
+
+    Composite(CompositeType),                  // Composite types like generics and tuples
+    Function(FunctionType),                    // Function types, e.g., (Int, String) -> Bool
+    Union(Vec<TypeExpression>),                // Union types, e.g., String | Int
+    Object(ObjectType),                        // Object types with fields, traits and implementation
+    Optional(Box<TypeExpression>),             // Optional type, e.g., String?
 }
 
+type TupleType = Vec<TypeExpression>;
+
+// Composite types like generics or tuples
+#[derive(Debug, PartialEq, Clone)]
+pub enum CompositeType {
+    Generic { name: String, params: Vec<TypeExpression> },  // e.g., List<String>
+    Tuple(TupleType),                                       // Tuple type, e.g., (Int, String)
+    Array(Box<TypeExpression>),                             // Array type, e.g., Array<String>
+}
+
+// Object types with fields and methods
+#[derive(Debug, PartialEq, Clone)]
+pub struct ObjectType {
+    pub name: String,                          // Object name or class type
+    pub fields: Vec<Field>,                    // Object fields
+}
+
+// Field definition in an object
+#[derive(Debug, PartialEq, Clone)]
+pub struct Field {
+    pub name: String,                          // Field name
+    pub field_type: TypeExpression,            // Field type
+    pub is_optional: bool,                     // Optional field
+}
+
+// Function types
 #[derive(Debug, PartialEq, Clone)]
 pub struct FunctionType {
-    pub receiver: Option<Type>,
-    pub params: Vec<AnonymousParam>,
-    pub return_type: Type,
+    pub parameters: Vec<TypeExpression>,
+    pub return_type: Box<TypeExpression>,
 }
 
-#[derive(Debug, PartialEq, Clone)]
-pub struct AnonymousParam {
-    pub name: Option<String>,
-    pub r#type: Type,
-}
 
+// #[derive(Debug, PartialEq, Clone)]
+// pub enum Type {
+//     Simple(Box<SimpleType>),
+//     Function(Box<FunctionType>),
+// }
+//
+// #[derive(Debug, PartialEq, Clone)]
+// pub struct SimpleType {
+//     pub name: Option<String>,
+//     pub type_args: Vec<Type>,
+// }
+//
+// #[derive(Debug, PartialEq, Clone)]
+// pub struct FunctionType {
+//     pub receiver: Option<Type>,
+//     pub params: Vec<AnonymousParam>,
+//     pub return_type: Type,
+// }
+
+// #[derive(Debug, PartialEq, Clone)]
+// pub struct AnonymousParam {
+//     pub name: Option<String>,
+//     pub r#type: Type,
+// }
+//
 #[derive(Debug, PartialEq, Clone)]
-pub struct Param {
+pub struct ParameterExpression {
     pub name: String,
-    pub r#type: Type,
+    pub r#type: Box<TypeExpression>,
 }
 
 #[derive(Debug, PartialEq, Clone)]
@@ -299,7 +346,7 @@ pub struct TypeParam {
 
 #[derive(Debug, PartialEq, Clone)]
 pub struct TypeBound {
-    pub r#type: Type,
+    pub r#type: Box<TypeExpression>,
     pub kind: BoundKind,
 }
 
@@ -316,17 +363,6 @@ pub struct CallArg {
     pub value: Box<Expression>,
 }
 
-#[derive(Debug, PartialEq, Clone)]
-pub struct Tuple {
-    pub is_destructured: bool,
-    pub vars: Vec<VarDefinition>,
-}
-
-#[derive(Debug, PartialEq, Clone)]
-pub struct VarDefinition {
-    pub name: String,
-    pub r#type: Option<Type>,
-}
 
 #[derive(Debug, PartialEq, Clone)]
 pub enum Modifier {

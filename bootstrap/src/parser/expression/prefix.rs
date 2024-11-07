@@ -1,7 +1,7 @@
 use std::str::FromStr;
 
 use crate::ast;
-use crate::ast::{Expression, UnaryOperation, UnaryOperator};
+use crate::ast::{Expression, IdentifierExpression, UnaryOperation, UnaryOperator};
 use crate::core::token::{Keyword, Literal, Operator, TokenKind};
 use crate::parser::Error::UnexpectedToken;
 use crate::parser::Parser;
@@ -16,7 +16,7 @@ impl<'a> Parser<'a> {
         let expression = match &token.kind {
             TokenKind::Identifier => {
                 let identifier = token.span.text.clone();
-                Expression::Identifier(identifier)
+                Expression::Identifier(IdentifierExpression(identifier))
             }
             TokenKind::Literal(literal) => {
                 match literal {

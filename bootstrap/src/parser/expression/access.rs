@@ -1,4 +1,4 @@
-use crate::ast::{Expression, PropertyAccessExpression};
+use crate::ast::{Expression, IdentifierExpression, PropertyAccessExpression};
 use crate::core::token::TokenKind;
 use crate::parser::Error::UnexpectedToken;
 use crate::parser::Parser;
@@ -12,7 +12,7 @@ impl<'a> Parser<'a> {
 
         Ok(Expression::PropertyAccess(PropertyAccessExpression {
             lhs: Some(Box::new(object)),
-            rhs: Box::new(Expression::Identifier(next.span.text.clone())),
+            rhs: Box::new(Expression::Identifier(IdentifierExpression(next.span.text.clone()))),
         }))
     }
 }

@@ -10,6 +10,7 @@ mod identifier;
 mod infix;
 mod r#let;
 mod prefix;
+mod r#type;
 
 impl<'a> Parser<'a> {
     pub(crate) fn parse_expression(&mut self, precedence: Precedence) -> crate::parser::Result<Expression> {
