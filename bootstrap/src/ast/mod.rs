@@ -82,7 +82,7 @@ pub struct EnumEntryDeclaration {
 pub enum Expression {
     Literal(Literal),
     ArrayAccess(ArrayAccessExpression),
-    BinaryOperation(BinaryOperation),
+    Binary(BinaryExpression),
     Block(BlockExpression),
     Break(BreakExpression),
     Call(CallExpression),
@@ -99,7 +99,7 @@ pub enum Expression {
     PropertyAccess(PropertyAccessExpression),
     Return(ReturnExpression),
     StringTemplate(StringTemplateExpression),
-    UnaryOp(UnaryOperation),
+    Unary(UnaryExpression),
 }
 
 #[derive(Debug, PartialEq, Clone)]
@@ -137,7 +137,7 @@ pub struct LoopExpression {
 }
 
 #[derive(Debug, PartialEq, Clone)]
-pub struct BinaryOperation {
+pub struct BinaryExpression {
     pub left: Box<Expression>,
     pub operator: BinaryOperator,
     pub right: Box<Expression>,
@@ -178,7 +178,7 @@ pub enum BinaryOperator {
 }
 
 #[derive(Debug, PartialEq, Clone)]
-pub struct UnaryOperation {
+pub struct UnaryExpression {
     pub op: UnaryOperator,
     pub expr: Box<Expression>,
 }

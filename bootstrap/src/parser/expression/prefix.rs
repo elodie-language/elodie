@@ -1,7 +1,7 @@
 use std::str::FromStr;
 
 use crate::ast;
-use crate::ast::{Expression, IdentifierExpression, UnaryOperation, UnaryOperator};
+use crate::ast::{Expression, IdentifierExpression, UnaryExpression, UnaryOperator};
 use crate::core::token::{Keyword, Literal, Operator, TokenKind};
 use crate::parser::Error::UnsupportedToken;
 use crate::parser::Parser;
@@ -39,7 +39,7 @@ impl<'a> Parser<'a> {
                     }
                     Operator::Minus => {
                         let right = self.parse_expression(Precedence::Unary)?;
-                        Expression::UnaryOp(UnaryOperation {
+                        Expression::Unary(UnaryExpression {
                             op: UnaryOperator::Minus,
                             expr: Box::new(right),
                         })

@@ -1,4 +1,4 @@
-use crate::ast::{BinaryOperation, Expression};
+use crate::ast::{BinaryExpression, Expression};
 use crate::core::token::{Operator, TokenKind};
 use crate::parser::Parser;
 
@@ -22,7 +22,7 @@ impl<'a> Parser<'a> {
         let precedence = self.current_precedence()?;
         let right = self.parse_expression(precedence)?;
 
-        Ok(Expression::BinaryOperation(BinaryOperation {
+        Ok(Expression::Binary(BinaryExpression {
             left: Box::new(left),
             operator,
             right: Box::new(right),
@@ -46,7 +46,7 @@ mod tests {
                 let result = Parser::parse(&tokens).unwrap();
                 let stmt = result.block.statements.first().unwrap();
 
-                if let Statement::Expression(Expression::BinaryOperation(got)) = stmt {
+                if let Statement::Expression(Expression::Binary(got)) = stmt {
                      assert_eq!(
                         &got.operator, &$expected,
                         "Failed on input '{}', expected {:?} but got {:?}",
