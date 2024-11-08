@@ -133,7 +133,7 @@ pub struct ForExpression {
 
 #[derive(Debug, PartialEq, Clone)]
 pub struct LoopExpression {
-    pub body: Box<Expression>,
+    pub body: BlockExpression,
 }
 
 #[derive(Debug, PartialEq, Clone)]
@@ -227,6 +227,7 @@ pub struct ContinueExpression {
 #[derive(Debug, PartialEq, Clone)]
 pub struct BreakExpression {
     pub label: Option<String>,
+    pub result: Option<Box<Expression>>,
 }
 
 #[derive(Debug, PartialEq, Clone)]

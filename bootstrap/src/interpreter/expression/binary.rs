@@ -11,8 +11,16 @@ impl Interpreter {
         let right = self.interpret_expression(expr.right.deref())?;
 
         match expr.operator {
-            BinaryOperator::Equal => { Ok(Bool(left == right)) },
-            BinaryOperator::NotEqual => { Ok(Bool( left != right))}
+            BinaryOperator::Equal => { Ok(Bool(left == right)) }
+            BinaryOperator::NotEqual => { Ok(Bool(left != right)) }
+            BinaryOperator::GreaterThan => { Ok(Bool(left > right)) }
+            BinaryOperator::Multiply => {
+                if let (Value::Number(l), Value::Number(r)) = (left, right) {
+                    return Ok(Value::Number(l * r));
+                } else {
+                    todo!()
+                }
+            }
             _ => todo!()
         }
     }

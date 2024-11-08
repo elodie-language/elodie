@@ -1,4 +1,4 @@
-use crate::ast::{ElodieFile, Statement};
+use crate::ast::{BreakExpression, ElodieFile, Expression, Statement};
 use crate::interpreter::scope::Scope;
 
 mod statement;
@@ -13,12 +13,18 @@ pub enum Error {
 
 pub type Result<T, E = Error> = core::result::Result<T, E>;
 
+enum Status {
+    Break(BreakExpression),
+    Continue,
+    Return(Box<Expression>),
+}
 
 pub struct Interpreter {
     scope: Scope,
 }
 
 impl Interpreter {
+
     pub fn new() -> Self {
         Self {
             scope: Scope::new()

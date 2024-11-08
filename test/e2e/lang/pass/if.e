@@ -5,3 +5,5 @@ if x == true {
         console.log('true story') // Expect: true story
     }
 }
+
+if 10 != 10 { } else { console.log('10 == 10') } // Expect: 10 == 10

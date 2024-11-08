@@ -1,21 +1,28 @@
 use std::{fs, vec};
 use std::collections::HashMap;
 use std::io::Write;
-use std::ops::Index;
 use std::path::Path;
 use std::rc::Rc;
 
 use crate::interpreter::value::{Function, Object, Value};
 
+#[derive(Clone)]
+pub enum LoopInterrupt {
+    Break(Value),
+    Continue,
+    Return(Value),
+}
+
 pub struct Scope {
-    values: Vec<HashMap<String, Value>>,
+    pub values: Vec<HashMap<String, Value>>,
+    pub loop_interrupt: Option<LoopInterrupt>,
 }
 
 impl Scope {
-
     pub fn new() -> Self {
         let mut result = Self {
             values: vec![],
+            loop_interrupt: None,
         };
 
         let mut root = HashMap::new();
@@ -106,11 +113,33 @@ impl Scope {
         result
     }
 
-    pub fn get(&self, name: &str) -> Option<&Value> {
-        self.values.last()?.get(name)
+    pub fn get(&self, key: &str) -> Option<&Value> {
+        for scope in self.values.iter().rev() {
+            if let Some(value) = scope.get(key){
+                return Some(value);
+            }
+        }
+        None
     }
 
-    pub fn insert(&mut self, name: impl Into<String>, value: Value){
+    pub fn insert(&mut self, name: impl Into<String>, value: Value) {
         self.values.last_mut().unwrap().insert(name.into(), value);
     }
+
+    pub fn enter(&mut self) {
+        self.values.push(HashMap::new());
+    }
+
+    pub fn leave(&mut self) {
+        self.values.pop().unwrap();
+    }
+
+    pub fn interrupt_loop(&mut self, loop_interrupt: LoopInterrupt) {
+        self.loop_interrupt = Some(loop_interrupt)
+    }
+
+    pub fn reset_loop_interrupt(&mut self) {
+        self.loop_interrupt = None
+    }
 }
+

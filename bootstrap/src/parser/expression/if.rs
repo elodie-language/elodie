@@ -6,6 +6,7 @@ use crate::parser::precedence::Precedence;
 
 impl<'a> Parser<'a> {
     pub(crate) fn parse_if_expression(&mut self) -> crate::parser::Result<Expression> {
+        self.previous_expect(TokenKind::Keyword(Keyword::If))?;
         let condition = self.parse_expression(Precedence::None)?;
         self.consume(TokenKind::Operator(Operator::OpenCurly))?;
         let then = self.parse_block_expression()?;
@@ -26,8 +27,7 @@ impl<'a> Parser<'a> {
 
 #[cfg(test)]
 mod tests {
-    use std::ops::Deref;
-    use crate::ast;
+
     use crate::ast::{BinaryExpression, BinaryOperator, BlockExpression, Expression, IdentifierExpression, IfExpression, Statement};
     use crate::ast::Expression::{Binary, Block, Identifier, Literal};
     use crate::ast::Literal::Boolean;
@@ -67,8 +67,6 @@ mod tests {
         let stmt = result.block.statements.first().unwrap();
 
         if let Statement::Expression(Expression::If(IfExpression { condition, then, otherwise })) = stmt {
-            println!("{stmt:?}");
-            println!("test");
             assert_eq!(**condition, Binary(BinaryExpression{
                 left: Box::new(Identifier(IdentifierExpression("x".to_string()))),
                 operator: BinaryOperator::Equal,
@@ -89,8 +87,6 @@ mod tests {
         let stmt = result.block.statements.first().unwrap();
 
         if let Statement::Expression(Expression::If(IfExpression { condition, then, otherwise })) = stmt {
-            println!("{stmt:?}");
-            println!("test");
             assert_eq!(**condition, Binary(BinaryExpression{
                 left: Box::new(Identifier(IdentifierExpression("x".to_string()))),
                 operator: BinaryOperator::Equal,

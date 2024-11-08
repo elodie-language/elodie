@@ -1,8 +1,9 @@
+use std::cmp::Ordering;
 use std::collections::HashMap;
 use std::fmt::{Debug, Formatter};
 use std::rc::Rc;
 
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Debug, PartialEq, PartialOrd, Clone)]
 pub enum Value {
     Bool(bool),
     Number(f64),
@@ -28,9 +29,15 @@ impl Value {
 #[derive(Clone)]
 pub struct Function(pub Rc<dyn Fn(&[Value]) -> Value>);
 
-impl PartialEq for Function{
+impl PartialEq for Function {
     fn eq(&self, other: &Self) -> bool {
         false
+    }
+}
+
+impl PartialOrd for Function {
+    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+        None
     }
 }
 
@@ -43,6 +50,12 @@ impl Debug for Function {
 #[derive(Debug, PartialEq, Clone)]
 pub struct Object {
     properties: HashMap<String, Value>,
+}
+
+impl PartialOrd for Object {
+    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+        None
+    }
 }
 
 impl Object {

@@ -52,8 +52,11 @@ impl<'a> Parser<'a> {
             }
             TokenKind::Keyword(keyword) => {
                 match keyword {
+                    Keyword::Break => self.parse_break_expression()?,
+                    Keyword::Continue => self.parse_continue_expression()?,
                     Keyword::Let => self.parse_let_expression()?,
                     Keyword::If => self.parse_if_expression()?,
+                    Keyword::Loop => self.parse_loop_expression()?,
                     _ => return Err(UnsupportedToken(token.clone()))
                 }
             }

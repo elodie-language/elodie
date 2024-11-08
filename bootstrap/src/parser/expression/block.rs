@@ -104,7 +104,7 @@ mod tests {
         let stmt = result.block.statements.first().unwrap();
         if let Statement::Expression(Expression::Block(BlockExpression { body })) = stmt {
             assert_eq!(body, &vec![
-                Expression::Block(BlockExpression { body: vec![] })
+                Block(BlockExpression { body: vec![] })
             ]);
         } else {
             panic!("Expected single statement with block expression, got {:?}", stmt)
@@ -122,11 +122,15 @@ mod tests {
         let stmt = result.block.statements.first().unwrap();
         if let Statement::Expression(Expression::Block(BlockExpression { body })) = stmt {
             assert_eq!(body, &vec![
-                Expression::Block(BlockExpression { body: vec![
-                    Expression::Block(BlockExpression { body: vec![
-                        Expression::Block(BlockExpression { body: vec![ Literal(Boolean(true)) ] })
-                    ] })
-                ] })
+                Block(BlockExpression {
+                    body: vec![
+                        Expression::Block(BlockExpression {
+                            body: vec![
+                                Expression::Block(BlockExpression { body: vec![Literal(Boolean(true))] })
+                            ]
+                        })
+                    ]
+                })
             ]);
         } else {
             panic!("Expected single statement with block expression, got {:?}", stmt)

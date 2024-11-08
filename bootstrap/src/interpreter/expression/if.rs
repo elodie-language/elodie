@@ -8,10 +8,16 @@ impl Interpreter {
         match condition {
             Value::Bool(v) => {
                 if v {
-                    self.interpret_expression(&Expression::Block(expr.then.clone()))
+                    self.scope.enter();
+                    let result = self.interpret_expression(&Expression::Block(expr.then.clone()));
+                    self.scope.leave();
+                    result
                 } else {
                     if let Some(otherwise) = &expr.otherwise {
-                        self.interpret_expression(&Expression::Block(otherwise.clone()))
+                        self.scope.enter();
+                        let result = self.interpret_expression(&Expression::Block(otherwise.clone()));
+                        self.scope.leave();
+                        result
                     } else {
                         Ok(Value::Unit)
                     }

@@ -13,6 +13,7 @@ mod prefix;
 mod r#type;
 mod r#if;
 mod block;
+mod r#loop;
 
 impl<'a> Parser<'a> {
     pub(crate) fn parse_expression(&mut self, precedence: Precedence) -> crate::parser::Result<Expression> {
