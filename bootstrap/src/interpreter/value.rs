@@ -2,7 +2,7 @@ use std::collections::HashMap;
 use std::fmt::{Debug, Formatter};
 use std::rc::Rc;
 
-#[derive(Debug, Clone)]
+#[derive(Debug, PartialEq, Clone)]
 pub enum Value {
     Bool(bool),
     Number(f64),
@@ -28,13 +28,19 @@ impl Value {
 #[derive(Clone)]
 pub struct Function(pub Rc<dyn Fn(&[Value]) -> Value>);
 
+impl PartialEq for Function{
+    fn eq(&self, other: &Self) -> bool {
+        false
+    }
+}
+
 impl Debug for Function {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         write!(f, "[Function]")
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, PartialEq, Clone)]
 pub struct Object {
     properties: HashMap<String, Value>,
 }
