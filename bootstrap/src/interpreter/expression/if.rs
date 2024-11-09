@@ -23,7 +23,7 @@ impl Interpreter {
                     }
                 }
             }
-            _ => unimplemented!()
+            v => unimplemented!("{v:?}")
         }
     }
 }

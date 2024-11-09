@@ -5,6 +5,7 @@ use crate::parser::Parser;
 use crate::parser::precedence::Precedence;
 
 impl<'a> Parser<'a> {
+
     pub(crate) fn parse_if_expression(&mut self) -> crate::parser::Result<Expression> {
         self.previous_expect(TokenKind::Keyword(Keyword::If))?;
         let condition = self.parse_expression(Precedence::None)?;

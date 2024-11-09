@@ -2,11 +2,12 @@ use crate::ast::{Expression, Literal};
 use crate::interpreter::Interpreter;
 use crate::interpreter::value::Value;
 
-mod call;
-mod r#let;
-mod r#if;
 mod binary;
 mod block;
+mod call;
+mod function;
+mod r#if;
+mod r#let;
 mod r#loop;
 
 impl Interpreter {
@@ -16,6 +17,7 @@ impl Interpreter {
             Expression::Break(break_expr) => self.interpret_break_expression(break_expr)?,
             Expression::Binary(bin_expr) => self.interpret_binary_expression(bin_expr)?,
             Expression::Block(block_expr) => self.interpret_block_expression(block_expr)?,
+            Expression::FunctionDeclaration(f_expr) => self.function_declaration(f_expr)?,
             Expression::Literal(lit) => self.interpret_literal(lit)?,
             Expression::Identifier(name) => {
                 self.scope.get(name.0.as_str()).unwrap().clone()
@@ -24,6 +26,7 @@ impl Interpreter {
             Expression::Let(let_expr) => self.interpret_let_expression(let_expr)?,
             Expression::If(if_expr) => self.interpret_if(if_expr)?,
             Expression::Loop(loop_expr) => self.interpret_loop_expression(loop_expr)?,
+            Expression::Return(return_expr) => self.r#return(return_expr)?,
             _ => unimplemented!("{expr:?}")
         };
         Ok(value)

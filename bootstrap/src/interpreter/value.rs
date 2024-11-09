@@ -3,6 +3,8 @@ use std::collections::HashMap;
 use std::fmt::{Debug, Formatter};
 use std::rc::Rc;
 
+use crate::ast::BlockExpression;
+
 #[derive(Debug, PartialEq, PartialOrd, Clone)]
 pub enum Value {
     Bool(bool),
@@ -10,6 +12,7 @@ pub enum Value {
     String(String),
     Object(Object),
     Function(Function),
+    BuiltinFunction(BuiltinFunction),
     Unit,
 }
 
@@ -21,13 +24,38 @@ impl Value {
             Value::String(v) => v.clone(),
             Value::Object(_) => "[Object]".to_string(),
             Value::Function(_) => "[Function]".to_string(),
+            Value::BuiltinFunction(_) => "[BuiltinFunction]".to_string(),
             Value::Unit => "Unit".to_string()
         }
     }
 }
 
 #[derive(Clone)]
-pub struct Function(pub Rc<dyn Fn(&[Value]) -> Value>);
+pub struct BuiltinFunction(pub Rc<dyn Fn(&[Value]) -> crate::interpreter::Result<Value>>);
+
+
+impl PartialEq for BuiltinFunction {
+    fn eq(&self, other: &Self) -> bool {
+        false
+    }
+}
+
+impl PartialOrd for BuiltinFunction {
+    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+        None
+    }
+}
+
+impl Debug for BuiltinFunction {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        write!(f, "[BuiltinFunction]")
+    }
+}
+
+#[derive(Clone)]
+pub struct Function {
+    pub body: BlockExpression,
+}
 
 impl PartialEq for Function {
     fn eq(&self, other: &Self) -> bool {
