@@ -66,7 +66,7 @@ impl<'a> Parser<'a> {
     pub(crate) fn parse_file(&mut self) -> Result<ElodieFile> {
         let mut result = ElodieFile {
             imports: vec![],
-            declarations: vec![],
+            // exports: vec![],
             block: Block {
                 statements: vec![]
             },
@@ -80,6 +80,23 @@ impl<'a> Parser<'a> {
 
             result.block.statements.push(self.parse_statement()?);
         }
+
+        // FIXME handle exports
+        // for stmt in &result.block.statements {
+        //     if let Statement::Expression(Expression::FunctionDeclaration(expression)) = stmt {
+        //         if expression.name.is_none() {
+        //             continue;
+        //         }
+        //
+        //         result.exports.push(Export::Function(
+        //             FunctionExport {
+        //                 name: expression.name.clone().unwrap(),
+        //                 parameters: expression.parameters.clone(),
+        //                 return_type: expression.return_type.clone(),
+        //             }
+        //         ))
+        //     }
+        // }
 
         Ok(result)
     }
@@ -181,7 +198,6 @@ mod test {
         let tokens = Lexer::lex("").unwrap();
         let result = Parser::parse(&tokens).unwrap();
         assert_eq!(result.imports, vec![]);
-        assert_eq!(result.declarations, vec![]);
         assert_eq!(result.block, Block { statements: vec![] })
     }
 }

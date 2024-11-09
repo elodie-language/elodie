@@ -6,6 +6,7 @@ use crate::parser::precedence::Precedence;
 
 mod access;
 mod call;
+mod function;
 mod identifier;
 mod infix;
 mod r#let;

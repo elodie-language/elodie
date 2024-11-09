@@ -54,6 +54,7 @@ impl<'a> Parser<'a> {
                 match keyword {
                     Keyword::Break => self.parse_break_expression()?,
                     Keyword::Continue => self.parse_continue_expression()?,
+                    Keyword::Function => Expression::FunctionDeclaration(self.parse_function_declaration_expression()?),
                     Keyword::Let => self.parse_let_expression()?,
                     Keyword::If => self.parse_if_expression()?,
                     Keyword::Loop => self.parse_loop_expression()?,

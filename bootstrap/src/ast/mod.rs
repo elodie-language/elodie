@@ -1,8 +1,8 @@
+
 #[derive(Debug, PartialEq, Clone)]
 pub struct ElodieFile {
     pub imports: Vec<Import>,
-    // exports
-    pub declarations: Vec<Declaration>,
+    // pub exports: Vec<Export>,
     pub block: Block,
 }
 
@@ -15,17 +15,32 @@ pub struct Import {
 
 #[derive(Debug, PartialEq, Clone)]
 pub enum Statement {
-    Declaration(Declaration),
     Expression(Expression),
 }
 
 #[derive(Debug, PartialEq, Clone)]
-pub enum Declaration {
-    Entity(EntityDeclaration),
-    EnumEntry(EnumEntryDeclaration),
-    Function(FunctionDeclaration),
-    TypeAlias(TypeAliasDeclaration),
+pub enum Export {
+    // Entity(EntityDeclaration),
+    // EnumEntry(EnumEntryDeclaration),
+    Function(FunctionExport),
+    // TypeAlias(TypeAliasDeclaration),
 }
+
+#[derive(Debug, PartialEq, Clone)]
+pub struct FunctionExport {
+    pub name: IdentifierExpression,
+    pub parameters: Vec<ParameterExpression>,
+    pub return_type: Option<TypeExpression>,
+}
+
+
+// #[derive(Debug, PartialEq, Clone)]
+// pub enum Declaration {
+//     // Entity(EntityDeclaration),
+//     // EnumEntry(EnumEntryDeclaration),
+//     Function(FunctionDeclarationExpression),
+//     // TypeAlias(TypeAliasDeclaration),
+// }
 
 #[derive(Debug, PartialEq, Clone)]
 pub struct EntityDeclaration {
@@ -34,7 +49,7 @@ pub struct EntityDeclaration {
     pub name: String,
     pub type_params: Vec<TypeParam>,
     pub bounds: Vec<TypeBound>,
-    pub inner: Vec<Declaration>,
+    // pub inner: Vec<Declaration>,
 }
 
 #[derive(Debug, PartialEq, Clone)]
@@ -46,15 +61,11 @@ pub enum EntityDeclarationKind {
 }
 
 #[derive(Debug, PartialEq, Clone)]
-pub struct FunctionDeclaration {
-    pub modifiers: Vec<Modifier>,
-    pub type_params: Vec<TypeParam>,
-    pub receiver: Option<TypeExpression>,
-    pub name: Option<String>,
-    pub params: Vec<ParameterExpression>,
+pub struct FunctionDeclarationExpression {
+    pub name: Option<IdentifierExpression>,
+    pub parameters: Vec<ParameterExpression>,
     pub return_type: Option<TypeExpression>,
-    pub bounds: Vec<TypeBound>,
-    pub body: Option<Block>,
+    pub body: BlockExpression,
 }
 
 #[derive(Debug, PartialEq, Clone)]
@@ -75,7 +86,7 @@ pub struct EnumEntryDeclaration {
     pub modifiers: Vec<Modifier>,
     pub name: String,
     pub args: Vec<CallArg>,
-    pub inner: Vec<Declaration>,
+    // pub inner: Vec<Declaration>,
 }
 
 #[derive(Debug, PartialEq, Clone)]
@@ -87,6 +98,7 @@ pub enum Expression {
     Break(BreakExpression),
     Call(CallExpression),
     Continue(ContinueExpression),
+    FunctionDeclaration(FunctionDeclarationExpression),
     For(ForExpression),
     Identifier(IdentifierExpression),
     If(IfExpression),
@@ -205,7 +217,7 @@ pub struct MatchClause {
 #[derive(Debug, PartialEq, Clone)]
 pub struct ObjectExpression {
     pub extends: Vec<EntityDeclaration>,
-    pub inner: Vec<Declaration>,
+    // pub inner: Vec<Declaration>,
 }
 
 #[derive(Debug, PartialEq, Clone)]
@@ -260,7 +272,7 @@ pub struct PropertyAccessExpression {
 #[derive(Debug, PartialEq, Clone)]
 pub enum StringTemplateExpression {
     Simple(String),
-    Block(Block),
+    Block(Block)
 }
 
 #[derive(Debug, PartialEq, Clone)]
@@ -341,8 +353,8 @@ pub struct FunctionType {
 //
 #[derive(Debug, PartialEq, Clone)]
 pub struct ParameterExpression {
-    pub name: String,
-    pub r#type: Box<TypeExpression>,
+    pub name: IdentifierExpression,
+    pub r#type: Option<TypeExpression>,
 }
 
 #[derive(Debug, PartialEq, Clone)]

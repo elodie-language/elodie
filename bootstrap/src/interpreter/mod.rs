@@ -34,7 +34,6 @@ impl Interpreter {
     pub fn interpret(&mut self, file: ElodieFile) -> Result<()> {
         for stmt in &file.block.statements {
             match stmt {
-                Statement::Declaration(_) => unimplemented!(),
                 Statement::Expression(expression) => {
                     self.interpret_expression(expression)?;
                 }
