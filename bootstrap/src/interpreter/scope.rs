@@ -6,23 +6,15 @@ use std::rc::Rc;
 
 use crate::interpreter::value::{BuiltinFunction, Object, Value};
 
-#[derive(Clone)]
-pub enum LoopInterrupt {
-    Break(Value),
-    Continue,
-    Return(Value),
-}
 
 pub struct Scope {
     pub values: Vec<HashMap<String, Value>>,
-    pub loop_interrupt: Option<LoopInterrupt>,
 }
 
 impl Scope {
     pub fn new() -> Self {
         let mut result = Self {
             values: vec![],
-            loop_interrupt: None,
         };
 
         let mut root = HashMap::new();
@@ -132,14 +124,6 @@ impl Scope {
 
     pub fn leave(&mut self) {
         self.values.pop().unwrap();
-    }
-
-    pub fn interrupt_loop(&mut self, loop_interrupt: LoopInterrupt) {
-        self.loop_interrupt = Some(loop_interrupt)
-    }
-
-    pub fn reset_loop_interrupt(&mut self) {
-        self.loop_interrupt = None
     }
 }
 

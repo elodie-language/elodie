@@ -41,7 +41,7 @@ impl Interpreter {
         }
 
 // function
-
+        self.reset_interrupt();
         let function = if let Expression::Identifier(ref identifier) = *call.expression {
             if let Some(Value::Function(func)) = self.scope.get(identifier.0.as_str()) {
                 func.clone()
@@ -55,6 +55,7 @@ impl Interpreter {
         let result =  self.interpret_block_expression(&function.body);
         self.scope.leave();
 
+        self.reset_interrupt();
         result
     }
 

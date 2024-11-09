@@ -1,12 +1,11 @@
 use crate::ast::{BreakExpression, ContinueExpression, LoopExpression};
-use crate::interpreter::Interpreter;
-use crate::interpreter::scope::LoopInterrupt;
+use crate::interpreter::{Interpreter, Interrupt};
 use crate::interpreter::value::Value;
 use crate::interpreter::value::Value::Unit;
 
 impl Interpreter {
     pub(crate) fn interpret_continue_expression(&mut self, _expr: &ContinueExpression) -> crate::interpreter::Result<Value> {
-        self.scope.interrupt_loop(LoopInterrupt::Continue);
+        self.interrupt(Interrupt::Continue);
         Ok(Unit)
     }
 
@@ -16,7 +15,7 @@ impl Interpreter {
         } else {
             Value::Unit
         };
-        self.scope.interrupt_loop(LoopInterrupt::Break(value.clone()));
+        self.interrupt(Interrupt::Break(value.clone()));
         Ok(value)
     }
 
@@ -24,23 +23,30 @@ impl Interpreter {
         'main: loop {
             self.scope.enter();
 
+            if let Some(Interrupt::Return(return_value)) = &self.interrupt {
+                return Ok(return_value.clone());
+            }
+
             for expr in &expr.body.body {
                 self.interpret_expression(expr)?;
 
-                if let Some(interrupt) = &self.scope.loop_interrupt{
+                if let Some(interrupt) = &self.interrupt {
                     let interrupt = interrupt.clone();
                     match interrupt {
-                        LoopInterrupt::Break(v) => {
-                            self.scope.reset_loop_interrupt();
+                        Interrupt::Break(v) => {
+                            self.reset_interrupt();
                             self.scope.leave();
                             return Ok(v.clone());
                         }
-                        LoopInterrupt::Continue => {
-                            self.scope.reset_loop_interrupt();
+                        Interrupt::Continue => {
+                            self.reset_interrupt();
                             self.scope.leave();
                             continue 'main;
                         }
-                        LoopInterrupt::Return(_) => {}
+                        Interrupt::Return(v) => {
+                            self.scope.leave();
+                            return Ok(v);
+                        }
                     }
                 }
             }

@@ -1,5 +1,5 @@
 use crate::ast::BlockExpression;
-use crate::interpreter::Interpreter;
+use crate::interpreter::{Interpreter, Interrupt};
 use crate::interpreter::value::Value;
 
 impl Interpreter {
@@ -8,6 +8,10 @@ impl Interpreter {
         self.scope.enter();
 
         for expr in &expr.body {
+            if let Some(Interrupt::Return(return_value)) = &self.interrupt {
+                return Ok(return_value.clone());
+            }
+
             value = self.interpret_expression(expr)?;
         }
 

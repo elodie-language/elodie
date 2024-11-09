@@ -1,11 +1,12 @@
 use std::ops::Deref;
 
 use crate::ast::{FunctionDeclarationExpression, ReturnExpression};
-use crate::interpreter::Interpreter;
+use crate::interpreter::{Interpreter, Interrupt};
 use crate::interpreter::value::{Function, Value};
 
 impl Interpreter {
     pub(crate) fn function_declaration(&mut self, expr: &FunctionDeclarationExpression) -> crate::interpreter::Result<Value> {
+
         let name = expr.name.clone().unwrap().0;
 
         let body = expr.body.clone();
@@ -18,10 +19,13 @@ impl Interpreter {
     }
 
     pub(crate) fn r#return(&mut self, expr: &ReturnExpression) -> crate::interpreter::Result<Value> {
-        if let Some(ref expr) = expr.expr {
-            return self.interpret_expression(expr.deref());
+        let result = if let Some(ref expr) = expr.expr {
+            self.interpret_expression(expr.deref())?
         } else {
-            return Ok(Value::Unit);
-        }
+            Value::Unit
+        };
+
+        self.interrupt(Interrupt::Return(result.clone()));
+        Ok(result)
     }
 }

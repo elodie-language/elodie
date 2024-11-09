@@ -1,5 +1,6 @@
 use crate::ast::{BreakExpression, ElodieFile, Expression, Statement};
 use crate::interpreter::scope::Scope;
+use crate::interpreter::value::Value;
 
 mod statement;
 mod scope;
@@ -13,21 +14,25 @@ pub enum Error {
 
 pub type Result<T, E = Error> = core::result::Result<T, E>;
 
-enum Status {
-    Break(BreakExpression),
+#[derive(Clone)]
+pub enum Interrupt {
+    Break(Value),
     Continue,
-    Return(Box<Expression>),
+    Return(Value),
 }
+
 
 pub struct Interpreter {
     scope: Scope,
+    pub interrupt: Option<Interrupt>,
 }
 
 impl Interpreter {
 
     pub fn new() -> Self {
         Self {
-            scope: Scope::new()
+            scope: Scope::new(),
+            interrupt: None
         }
     }
 
@@ -40,5 +45,13 @@ impl Interpreter {
             }
         }
         Ok(())
+    }
+
+    pub fn interrupt(&mut self, loop_interrupt: Interrupt) {
+        self.interrupt = Some(loop_interrupt)
+    }
+
+    pub fn reset_interrupt(&mut self) {
+        self.interrupt = None
     }
 }
