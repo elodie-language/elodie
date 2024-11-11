@@ -3,7 +3,7 @@ use std::ops::Deref;
 use crate::ast::{BinaryExpression, BinaryOperator};
 use crate::interpreter::Interpreter;
 use crate::interpreter::value::Value;
-use crate::interpreter::value::Value::Bool;
+use crate::interpreter::value::Value::{Bool, String};
 
 impl Interpreter {
     pub(crate) fn interpret_binary_expression(&mut self, expr: &BinaryExpression) -> crate::interpreter::Result<Value> {
@@ -12,8 +12,10 @@ impl Interpreter {
 
         match expr.operator {
             BinaryOperator::Add => {
-                if let (Value::Number(l), Value::Number(r)) = (left, right) {
+                if let (Value::Number(l), Value::Number(r)) = (&left, &right) {
                     return Ok(Value::Number(l + r));
+                } else if let (Value::String(l), Value::String(r)) = (&left,&right){
+                    return Ok(String(l.clone() + r))
                 } else {
                     todo!()
                 }

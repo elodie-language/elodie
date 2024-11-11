@@ -3,7 +3,7 @@ use std::collections::HashMap;
 use std::fmt::{Debug, Formatter};
 use std::rc::Rc;
 
-use crate::ast::BlockExpression;
+use crate::ast::{BlockExpression, ParameterExpression, TypeExpression};
 
 #[derive(Debug, PartialEq, PartialOrd, Clone)]
 pub enum Value {
@@ -54,6 +54,7 @@ impl Debug for BuiltinFunction {
 
 #[derive(Clone)]
 pub struct Function {
+    pub parameters: Vec<ParameterExpression>,
     pub body: BlockExpression,
 }
 

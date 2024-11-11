@@ -6,15 +6,15 @@ use crate::interpreter::value::{Function, Value};
 
 impl Interpreter {
     pub(crate) fn function_declaration(&mut self, expr: &FunctionDeclarationExpression) -> crate::interpreter::Result<Value> {
-
         let name = expr.name.clone().unwrap().0;
-
         let body = expr.body.clone();
 
-        let f = Value::Function(Function { body });
+        let f = Value::Function(Function {
+            body,
+            parameters: expr.parameters.clone(),
+        });
 
         self.scope.insert(name, f.clone());
-        // self.scope.insert()
         return Ok(f.clone());
     }
 

@@ -1,3 +1,5 @@
+use std::collections::HashMap;
+
 use crate::ast::{CallArg, CallExpression, Expression};
 use crate::interpreter::Interpreter;
 use crate::interpreter::value::Value;
@@ -8,7 +10,6 @@ impl Interpreter {
         for arg in &call.arguments {
             args.push(self.interpret_call_arg(arg)?); // Now we can mutably borrow `self` without conflict
         }
-
 // builtin attached to object
         let function = if let Expression::PropertyAccess(ref access) = *call.expression {
             if let Some(boxed_expression) = &access.lhs {
@@ -50,9 +51,22 @@ impl Interpreter {
             }
         } else { todo!() };
 
+        let mut args = HashMap::with_capacity(call.arguments.len());
+        let mut counter = 0;
+        for arg in &call.arguments {
+            let parameter = function.parameters.get(counter).unwrap();
+
+            let name = parameter.name.0.clone();
+            // FIXME resolve  name from definition
+            args.insert(name, self.interpret_call_arg(arg)?);
+            counter += 1;
+        }
+
         self.scope.enter();
-        // FIXME push parameters
-        let result =  self.interpret_block_expression(&function.body);
+        for arg in &args {
+            self.scope.insert(arg.0, arg.1.clone())
+        }
+        let result = self.interpret_block_expression(&function.body);
         self.scope.leave();
 
         self.reset_interrupt();
