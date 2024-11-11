@@ -20,6 +20,13 @@ impl Interpreter {
                     todo!()
                 }
             }
+            BinaryOperator::Subtract => {
+                if let (Value::Number(l), Value::Number(r)) = (&left, &right) {
+                    return Ok(Value::Number(l - r));
+                } else {
+                    todo!()
+                }
+            }
             BinaryOperator::Equal => { Ok(Bool(left == right)) }
             BinaryOperator::NotEqual => { Ok(Bool(left != right)) }
             BinaryOperator::GreaterThan => { Ok(Bool(left > right)) }

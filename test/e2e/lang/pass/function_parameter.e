@@ -17,4 +17,4 @@ function false_fn () { return false }
 function true_fn () { return true }
 
 it('true value', true_fn) // Expect: ✔ true value
-it('not so true value', true_fn) // Expect: ✔ not so true value
+it('not so true value', false_fn) // Expect: ✘ not so true value

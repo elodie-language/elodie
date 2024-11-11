@@ -45,17 +45,20 @@ impl Lexer<'_> {
         let next = String::from(self.consume_next()?);
 
         if next == "0" {
-            if let Ok(c) = self.consume_next() {
+            if let Some(c) = self.peek_next() {
                 match c {
                     'x' | 'X' => {
+                        self.consume_next()?;
                         text.push_str("0x");
                         text.push_str(&*self.consume_while(|c| c.is_digit(16))?);
                     }
                     'o' | 'O' => {
+                        self.consume_next()?;
                         text.push_str("0o");
                         text.push_str(&*self.consume_while(|c| c.is_digit(8))?);
                     }
                     'b' | 'B' => {
+                        self.consume_next()?;
                         text.push_str("0b");
                         text.push_str(&*self.consume_while(|c| c.is_digit(2))?);
                     }
