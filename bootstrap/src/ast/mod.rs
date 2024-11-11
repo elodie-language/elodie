@@ -1,4 +1,3 @@
-
 #[derive(Debug, PartialEq, Clone)]
 pub struct ElodieFile {
     pub imports: Vec<Import>,
@@ -272,7 +271,7 @@ pub struct PropertyAccessExpression {
 #[derive(Debug, PartialEq, Clone)]
 pub enum StringTemplateExpression {
     Simple(String),
-    Block(Block)
+    Block(Block),
 }
 
 #[derive(Debug, PartialEq, Clone)]
@@ -321,10 +320,15 @@ pub struct Field {
 // Function types
 #[derive(Debug, PartialEq, Clone)]
 pub struct FunctionType {
-    pub parameters: Vec<TypeExpression>,
-    pub return_type: Box<TypeExpression>,
+    pub parameters: Vec<FunctionParameterType>,
+    pub return_type: Option<Box<TypeExpression>>,
 }
 
+#[derive(Debug, PartialEq, Clone)]
+pub struct FunctionParameterType {
+    pub name: Option<String>,
+    pub r#type: Option<Box<TypeExpression>>,
+}
 
 // #[derive(Debug, PartialEq, Clone)]
 // pub enum Type {

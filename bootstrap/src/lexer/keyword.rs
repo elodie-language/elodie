@@ -6,7 +6,7 @@ use crate::lexer::Lexer;
 
 impl Lexer<'_> {
     pub(crate) fn is_keyword(&self, c: char) -> bool {
-        let look_ahead = self.peek_while(|c|c.is_ascii_alphanumeric()).unwrap();
+        let look_ahead = self.look_ahead().unwrap();
 
         match c {
             'b' => look_ahead == "break",
@@ -31,7 +31,7 @@ impl Lexer<'_> {
 
                 return Ok(Token {
                     kind: TokenKind::Keyword(keyword_enum),
-                    span: TextSpan { start, end: self.position(), text },
+                    span: TextSpan { start, end: self.position(), value: text },
                 });
             }
         }
@@ -77,7 +77,7 @@ mod test {
         assert_eq!(result.kind, TokenKind::Keyword(Keyword::Break));
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 6, 5));
-        assert_eq!(result.span.text, "break");
+        assert_eq!(result.span.value, "break");
     }
 
     #[test]
@@ -88,7 +88,7 @@ mod test {
         assert_eq!(result.kind, TokenKind::Identifier);
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 8, 7));
-        assert_eq!(result.span.text, "breaker");
+        assert_eq!(result.span.value, "breaker");
     }
 
     #[test]
@@ -99,7 +99,7 @@ mod test {
         assert_eq!(result.kind, TokenKind::Keyword(Keyword::Const));
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 6, 5));
-        assert_eq!(result.span.text, "const");
+        assert_eq!(result.span.value, "const");
     }
 
     #[test]
@@ -110,7 +110,7 @@ mod test {
         assert_eq!(result.kind, TokenKind::Identifier);
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 9, 8));
-        assert_eq!(result.span.text, "constant");
+        assert_eq!(result.span.value, "constant");
     }
 
     #[test]
@@ -121,7 +121,7 @@ mod test {
         assert_eq!(result.kind, TokenKind::Keyword(Keyword::Continue));
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 9, 8));
-        assert_eq!(result.span.text, "continue");
+        assert_eq!(result.span.value, "continue");
     }
 
     #[test]
@@ -132,7 +132,7 @@ mod test {
         assert_eq!(result.kind, TokenKind::Identifier);
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 13, 12));
-        assert_eq!(result.span.text, "continuation");
+        assert_eq!(result.span.value, "continuation");
     }
 
     #[test]
@@ -143,7 +143,7 @@ mod test {
         assert_eq!(result.kind, TokenKind::Keyword(Keyword::Else));
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 5, 4));
-        assert_eq!(result.span.text, "else");
+        assert_eq!(result.span.value, "else");
     }
 
     #[test]
@@ -154,7 +154,7 @@ mod test {
         assert_eq!(result.kind, TokenKind::Identifier);
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 10, 9));
-        assert_eq!(result.span.text, "elsewhere");
+        assert_eq!(result.span.value, "elsewhere");
     }
 
     #[test]
@@ -165,7 +165,7 @@ mod test {
         assert_eq!(result.kind, TokenKind::Keyword(Keyword::Export));
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 7, 6));
-        assert_eq!(result.span.text, "export");
+        assert_eq!(result.span.value, "export");
     }
 
     #[test]
@@ -176,7 +176,7 @@ mod test {
         assert_eq!(result.kind, TokenKind::Identifier);
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 10, 9));
-        assert_eq!(result.span.text, "exporting");
+        assert_eq!(result.span.value, "exporting");
     }
 
     #[test]
@@ -187,7 +187,7 @@ mod test {
         assert_eq!(result.kind, TokenKind::Keyword(Keyword::From));
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 5, 4));
-        assert_eq!(result.span.text, "from");
+        assert_eq!(result.span.value, "from");
     }
 
     #[test]
@@ -198,7 +198,7 @@ mod test {
         assert_eq!(result.kind, TokenKind::Identifier);
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 8, 7));
-        assert_eq!(result.span.text, "fromage");
+        assert_eq!(result.span.value, "fromage");
     }
 
     #[test]
@@ -209,7 +209,7 @@ mod test {
         assert_eq!(result.kind, TokenKind::Keyword(Keyword::For));
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 4, 3));
-        assert_eq!(result.span.text, "for");
+        assert_eq!(result.span.value, "for");
     }
 
     #[test]
@@ -220,7 +220,7 @@ mod test {
         assert_eq!(result.kind, TokenKind::Identifier);
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 7, 6));
-        assert_eq!(result.span.text, "formal");
+        assert_eq!(result.span.value, "formal");
     }
 
     #[test]
@@ -231,7 +231,7 @@ mod test {
         assert_eq!(result.kind, TokenKind::Keyword(Keyword::Function));
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 9, 8));
-        assert_eq!(result.span.text, "function");
+        assert_eq!(result.span.value, "function");
     }
 
     #[test]
@@ -242,7 +242,7 @@ mod test {
         assert_eq!(result.kind, TokenKind::Identifier);
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 11, 10));
-        assert_eq!(result.span.text, "functional");
+        assert_eq!(result.span.value, "functional");
     }
 
     #[test]
@@ -253,7 +253,7 @@ mod test {
         assert_eq!(result.kind, TokenKind::Keyword(Keyword::If));
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 3, 2));
-        assert_eq!(result.span.text, "if");
+        assert_eq!(result.span.value, "if");
     }
 
     #[test]
@@ -264,7 +264,7 @@ mod test {
         assert_eq!(result.kind, TokenKind::Identifier);
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 5, 4));
-        assert_eq!(result.span.text, "iffy");
+        assert_eq!(result.span.value, "iffy");
     }
 
     #[test]
@@ -275,7 +275,7 @@ mod test {
         assert_eq!(result.kind, TokenKind::Keyword(Keyword::Implement));
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 10, 9));
-        assert_eq!(result.span.text, "implement");
+        assert_eq!(result.span.value, "implement");
     }
 
     #[test]
@@ -286,7 +286,7 @@ mod test {
         assert_eq!(result.kind, TokenKind::Identifier);
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 15, 14));
-        assert_eq!(result.span.text, "implementation");
+        assert_eq!(result.span.value, "implementation");
     }
 
     #[test]
@@ -297,7 +297,7 @@ mod test {
         assert_eq!(result.kind, TokenKind::Keyword(Keyword::Import));
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 7, 6));
-        assert_eq!(result.span.text, "import");
+        assert_eq!(result.span.value, "import");
     }
 
     #[test]
@@ -308,7 +308,7 @@ mod test {
         assert_eq!(result.kind, TokenKind::Identifier);
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 11, 10));
-        assert_eq!(result.span.text, "importance");
+        assert_eq!(result.span.value, "importance");
     }
 
     #[test]
@@ -319,7 +319,7 @@ mod test {
         assert_eq!(result.kind, TokenKind::Keyword(Keyword::In));
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 3, 2));
-        assert_eq!(result.span.text, "in");
+        assert_eq!(result.span.value, "in");
     }
 
     #[test]
@@ -330,7 +330,7 @@ mod test {
         assert_eq!(result.kind, TokenKind::Identifier);
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 6, 5));
-        assert_eq!(result.span.text, "inner");
+        assert_eq!(result.span.value, "inner");
     }
 
     #[test]
@@ -341,7 +341,7 @@ mod test {
         assert_eq!(result.kind, TokenKind::Keyword(Keyword::Let));
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 4, 3));
-        assert_eq!(result.span.text, "let");
+        assert_eq!(result.span.value, "let");
     }
 
     #[test]
@@ -352,7 +352,7 @@ mod test {
         assert_eq!(result.kind, TokenKind::Identifier);
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 7, 6));
-        assert_eq!(result.span.text, "letter");
+        assert_eq!(result.span.value, "letter");
     }
 
     #[test]
@@ -363,7 +363,7 @@ mod test {
         assert_eq!(result.kind, TokenKind::Keyword(Keyword::Loop));
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 5, 4));
-        assert_eq!(result.span.text, "loop");
+        assert_eq!(result.span.value, "loop");
     }
 
     #[test]
@@ -374,7 +374,7 @@ mod test {
         assert_eq!(result.kind, TokenKind::Identifier);
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 9, 8));
-        assert_eq!(result.span.text, "loophole");
+        assert_eq!(result.span.value, "loophole");
     }
 
 
@@ -386,7 +386,7 @@ mod test {
         assert_eq!(result.kind, TokenKind::Keyword(Keyword::Readonly));
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 9, 8));
-        assert_eq!(result.span.text, "readonly");
+        assert_eq!(result.span.value, "readonly");
     }
 
     #[test]
@@ -397,7 +397,7 @@ mod test {
         assert_eq!(result.kind, TokenKind::Identifier);
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 13, 12));
-        assert_eq!(result.span.text, "readonlyness");
+        assert_eq!(result.span.value, "readonlyness");
     }
 
     #[test]
@@ -408,7 +408,7 @@ mod test {
         assert_eq!(result.kind, TokenKind::Keyword(Keyword::Return));
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 7, 6));
-        assert_eq!(result.span.text, "return");
+        assert_eq!(result.span.value, "return");
     }
 
 
@@ -420,7 +420,7 @@ mod test {
         assert_eq!(result.kind, TokenKind::Identifier);
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 8, 7));
-        assert_eq!(result.span.text, "returns");
+        assert_eq!(result.span.value, "returns");
     }
 
     #[test]
@@ -431,7 +431,7 @@ mod test {
         assert_eq!(result.kind, TokenKind::Keyword(Keyword::Trait));
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 6, 5));
-        assert_eq!(result.span.text, "trait");
+        assert_eq!(result.span.value, "trait");
     }
 
     #[test]
@@ -442,7 +442,7 @@ mod test {
         assert_eq!(result.kind, TokenKind::Identifier);
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 8, 7));
-        assert_eq!(result.span.text, "traitor");
+        assert_eq!(result.span.value, "traitor");
     }
 
     #[test]
@@ -453,7 +453,7 @@ mod test {
         assert_eq!(result.kind, TokenKind::Keyword(Keyword::Type));
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 5, 4));
-        assert_eq!(result.span.text, "type");
+        assert_eq!(result.span.value, "type");
     }
 
     #[test]
@@ -464,6 +464,6 @@ mod test {
         assert_eq!(result.kind, TokenKind::Identifier);
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 8, 7));
-        assert_eq!(result.span.text, "typeset");
+        assert_eq!(result.span.value, "typeset");
     }
 }

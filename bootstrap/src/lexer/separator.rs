@@ -45,7 +45,7 @@ impl Lexer<'_> {
 
         Ok(Token {
             kind,
-            span: TextSpan { start, end: self.position(), text },
+            span: TextSpan { start, end: self.position(), value: text },
         })
     }
 }
@@ -67,7 +67,7 @@ mod test {
         assert_eq!(result.kind, TokenKind::EOF);
         assert_eq!(result.span.start, (1, 2, 1));
         assert_eq!(result.span.end, (1, 2, 1));
-        assert_eq!(result.span.text, "")
+        assert_eq!(result.span.value, "")
     }
 
     #[test]
@@ -78,7 +78,7 @@ mod test {
         assert_eq!(result.kind, TokenKind::EOF);
         assert_eq!(result.span.start, (1, 6, 5));
         assert_eq!(result.span.end, (1, 6, 5));
-        assert_eq!(result.span.text, "")
+        assert_eq!(result.span.value, "")
     }
 
     #[test]
@@ -89,7 +89,7 @@ mod test {
         assert_eq!(result.kind, TokenKind::Separator(Comma));
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 2, 1));
-        assert_eq!(result.span.text, ",");
+        assert_eq!(result.span.value, ",");
     }
 
     #[test]
@@ -100,7 +100,7 @@ mod test {
         assert_eq!(result.kind, TokenKind::Separator(Semicolon));
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 2, 1));
-        assert_eq!(result.span.text, ";");
+        assert_eq!(result.span.value, ";");
     }
 
     #[test]
@@ -111,6 +111,6 @@ mod test {
         assert_eq!(result.kind, TokenKind::Separator(NewLine));
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (3, 1, 3));
-        assert_eq!(result.span.text, "\n\n\n");
+        assert_eq!(result.span.value, "\n\n\n");
     }
 }

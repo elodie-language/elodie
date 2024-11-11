@@ -19,7 +19,7 @@ impl<'a> Parser<'a> {
         Ok(Expression::Let(LetExpression {
             name,
             value: Box::new(expression),
-            r#type: r#type,
+            r#type,
         }))
     }
 }

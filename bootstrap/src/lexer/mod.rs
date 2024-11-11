@@ -1,6 +1,6 @@
 use std::cell::RefCell;
 
-use crate::core::position::{LineColumn, LineNumber, Position, SourceIndex};
+use crate::core::position::{Column, Row, Position, SourceIndex};
 use crate::core::span::TextSpan;
 use crate::core::token::{Token, TokenKind};
 use crate::core::token::TokenKind::EOF;
@@ -148,8 +148,8 @@ impl<'a> Reader<'a> {
 
 pub struct Lexer<'a> {
     reader: Reader<'a>,
-    current_line: RefCell<LineNumber>,
-    current_column: RefCell<LineColumn>,
+    current_line: RefCell<Row>,
+    current_column: RefCell<Column>,
 }
 
 impl<'a> Lexer<'a> {
@@ -161,8 +161,8 @@ impl<'a> Lexer<'a> {
     pub(crate) fn new(str: &'a str) -> Self {
         Self {
             reader: Reader::new(str),
-            current_line: RefCell::new(LineNumber(1)),
-            current_column: RefCell::new(LineColumn(1)),
+            current_line: RefCell::new(Row(1)),
+            current_column: RefCell::new(Column(1)),
         }
     }
 
@@ -188,7 +188,7 @@ impl<'a> Lexer<'a> {
                 span: TextSpan {
                     start: self.position(),
                     end: self.position(),
-                    text: "".to_string(),
+                    value: "".to_string(),
                 },
             });
         }
@@ -208,7 +208,7 @@ impl<'a> Lexer<'a> {
                     span: TextSpan {
                         start: self.position(),
                         end: self.position(),
-                        text: "".to_string(),
+                        value: "".to_string(),
                     },
                 });
             }
@@ -231,7 +231,7 @@ impl<'a> Lexer<'a> {
 
     pub(crate) fn position(&self) -> Position {
         Position {
-            line: self.current_line.borrow().clone(),
+            row: self.current_line.borrow().clone(),
             column: self.current_column.borrow().clone(),
             index: SourceIndex(*self.reader.pos.borrow()),
         }
@@ -272,5 +272,9 @@ impl<'a> Lexer<'a> {
             return Some(result);
         }
         None
+    }
+
+    pub(crate) fn look_ahead(&self) -> Result<String>{
+        self.peek_while(|c|c.is_ascii_alphanumeric() || c == '_')
     }
 }

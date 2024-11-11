@@ -5,15 +5,15 @@ use crate::core::position::Position;
 pub struct TextSpan {
     pub start: Position,
     pub end: Position,
-    pub text: String,
+    pub value: String,
 }
 
 impl TextSpan {
-    pub fn new(start: Position, end: Position, text: String) -> Self {
+    pub fn new(start: Position, end: Position, value: String) -> Self {
         Self {
             start,
             end,
-            text,
+            value,
         }
     }
 }

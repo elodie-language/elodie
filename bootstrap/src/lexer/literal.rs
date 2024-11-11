@@ -31,7 +31,7 @@ impl Lexer<'_> {
 
         Ok(Token {
             kind: TokenKind::Literal(Literal::String),
-            span: TextSpan { start, end: self.position(), text },
+            span: TextSpan { start, end: self.position(), value: text },
         })
     }
 
@@ -82,13 +82,16 @@ impl Lexer<'_> {
 
         Ok(Token {
             kind: TokenKind::Literal(Number),
-            span: TextSpan { start, end: self.position(), text },
+            span: TextSpan { start, end: self.position(), value: text },
         })
     }
 
     pub(crate) fn is_bool(&self, c: char) -> bool {
-        if c == 't' { return self.peek_if("true").is_some(); };
-        return c == 'f' && self.peek_if("false").is_some();
+        if c != 't' && c != 'f' {
+            return false
+        }
+        let look_ahead = self.look_ahead().unwrap();
+        return matches!(look_ahead.as_str(), "true" | "false");
     }
 
     pub(crate) fn consume_bool(&self) -> crate::lexer::Result<Token> {
@@ -98,7 +101,7 @@ impl Lexer<'_> {
             self.consume_if("rue").unwrap();
             return Ok(Token {
                 kind: TokenKind::Literal(True),
-                span: TextSpan { start, end: self.position(), text: String::from("true") },
+                span: TextSpan { start, end: self.position(), value: String::from("true") },
             });
         }
 
@@ -106,7 +109,7 @@ impl Lexer<'_> {
         self.consume_if("alse").unwrap();
         Ok(Token {
             kind: TokenKind::Literal(False),
-            span: TextSpan { start, end: self.position(), text: String::from("false") },
+            span: TextSpan { start, end: self.position(), value: String::from("false") },
         })
     }
 }
@@ -127,7 +130,7 @@ mod test {
         assert_eq!(result.kind, TokenKind::Literal(String));
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 3, 2));
-        assert_eq!(result.span.text, "");
+        assert_eq!(result.span.value, "");
     }
 
     #[test]
@@ -138,7 +141,7 @@ mod test {
         assert_eq!(result.kind, TokenKind::Literal(String));
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 15, 14));
-        assert_eq!(result.span.text, "Hello Elodie");
+        assert_eq!(result.span.value, "Hello Elodie");
     }
 
     #[test]
@@ -149,7 +152,7 @@ mod test {
         assert_eq!(result.kind, TokenKind::Literal(String));
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 24, 23));
-        assert_eq!(result.span.text, "{'hello':'world'}");
+        assert_eq!(result.span.value, "{'hello':'world'}");
     }
 
     #[test]
@@ -160,7 +163,7 @@ mod test {
         assert_eq!(result.kind, TokenKind::Literal(Number));
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 3, 2));
-        assert_eq!(result.span.text, "42");
+        assert_eq!(result.span.value, "42");
     }
 
 
@@ -172,7 +175,7 @@ mod test {
         assert_eq!(result.kind, TokenKind::Literal(Number));
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 6, 5));
-        assert_eq!(result.span.text, "42.24");
+        assert_eq!(result.span.value, "42.24");
     }
 
     #[test]
@@ -183,7 +186,7 @@ mod test {
         assert_eq!(result.kind, TokenKind::Literal(Number));
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 11, 10));
-        assert_eq!(result.span.text, "0xDEADBEEF");
+        assert_eq!(result.span.value, "0xDEADBEEF");
     }
 
     #[test]
@@ -194,7 +197,7 @@ mod test {
         assert_eq!(result.kind, TokenKind::Literal(Number));
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 5, 4));
-        assert_eq!(result.span.text, "0o10");
+        assert_eq!(result.span.value, "0o10");
     }
 
     #[test]
@@ -205,7 +208,7 @@ mod test {
         assert_eq!(result.kind, TokenKind::Literal(Number));
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 8, 7));
-        assert_eq!(result.span.text, "0b10101");
+        assert_eq!(result.span.value, "0b10101");
     }
 
     #[test]
@@ -216,7 +219,18 @@ mod test {
         assert_eq!(result.kind, TokenKind::Literal(True));
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 5, 4));
-        assert_eq!(result.span.text, "true");
+        assert_eq!(result.span.value, "true");
+    }
+
+    #[test]
+    fn not_true() {
+        let text = "true_";
+        let lexer = Lexer::new(text);
+        let result = lexer.advance().unwrap();
+        assert_eq!(result.kind, TokenKind::Identifier);
+        assert_eq!(result.span.start, (1, 1, 0));
+        assert_eq!(result.span.end, (1, 6, 5));
+        assert_eq!(result.span.value, "true_");
     }
 
     #[test]
@@ -227,6 +241,18 @@ mod test {
         assert_eq!(result.kind, TokenKind::Literal(False));
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 6, 5));
-        assert_eq!(result.span.text, "false");
+        assert_eq!(result.span.value, "false");
     }
+
+    #[test]
+    fn not_false() {
+        let text = "false_";
+        let lexer = Lexer::new(text);
+        let result = lexer.advance().unwrap();
+        assert_eq!(result.kind, TokenKind::Identifier);
+        assert_eq!(result.span.start, (1, 1, 0));
+        assert_eq!(result.span.end, (1, 7, 6));
+        assert_eq!(result.span.value, "false_");
+    }
+
 }

@@ -13,17 +13,17 @@ impl<'a> Parser<'a> {
 
         let expression = match &token.kind {
             TokenKind::Identifier => {
-                let identifier = token.span.text.clone();
+                let identifier = token.span.value.clone();
                 Expression::Identifier(IdentifierExpression(identifier))
             }
             TokenKind::Literal(literal) => {
                 match literal {
                     Literal::Number => {
-                        let value = f64::from_str(&token.span.text).unwrap();
+                        let value = f64::from_str(&token.span.value).unwrap();
                         Expression::Literal(ast::Literal::Number(value))
                     }
                     Literal::String => {
-                        let value = token.span.text.clone();
+                        let value = token.span.value.clone();
                         Expression::Literal(ast::Literal::String(value))
                     }
                     Literal::True => Expression::Literal(ast::Literal::Boolean(true)),

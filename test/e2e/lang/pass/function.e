@@ -23,3 +23,4 @@ function nested() : Number {
 }
 
 console.log(nested()) // Expect: 3
+

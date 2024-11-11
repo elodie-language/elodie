@@ -12,7 +12,7 @@ impl Lexer<'_> {
 
         Ok(Token {
             kind: TokenKind::Identifier,
-            span: TextSpan { start, end: self.position(), text },
+            span: TextSpan { start, end: self.position(), value: text },
         })
     }
 }
@@ -30,7 +30,7 @@ mod test {
         assert_eq!(result.kind, TokenKind::Identifier);
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 9, 8));
-        assert_eq!(result.span.text, "some_var");
+        assert_eq!(result.span.value, "some_var");
     }
 
     #[test]
@@ -41,7 +41,7 @@ mod test {
         assert_eq!(result.kind, TokenKind::Identifier);
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 4, 3));
-        assert_eq!(result.span.text, "var");
+        assert_eq!(result.span.value, "var");
     }
 
     #[test]
@@ -53,42 +53,42 @@ mod test {
         assert_eq!(result.kind, TokenKind::Identifier);
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 8, 7));
-        assert_eq!(result.span.text, "console");
+        assert_eq!(result.span.value, "console");
 
         let result = lexer.advance().unwrap();
         assert_eq!(result.kind, TokenKind::Operator(Operator::Dot));
         assert_eq!(result.span.start, (1, 8, 7));
         assert_eq!(result.span.end, (1, 9, 8));
-        assert_eq!(result.span.text, ".");
+        assert_eq!(result.span.value, ".");
 
         let result = lexer.advance().unwrap();
         assert_eq!(result.kind, TokenKind::Identifier);
         assert_eq!(result.span.start, (1, 9, 8));
         assert_eq!(result.span.end, (1, 12, 11));
-        assert_eq!(result.span.text, "log");
+        assert_eq!(result.span.value, "log");
 
         let result = lexer.advance().unwrap();
         assert_eq!(result.kind, TokenKind::Operator(Operator::OpenParen));
         assert_eq!(result.span.start, (1, 12, 11));
         assert_eq!(result.span.end, (1, 13, 12));
-        assert_eq!(result.span.text, "(");
+        assert_eq!(result.span.value, "(");
 
         let result = lexer.advance().unwrap();
         assert_eq!(result.kind, TokenKind::Literal(Literal::String));
         assert_eq!(result.span.start, (1, 13, 12));
         assert_eq!(result.span.end, (1, 19, 18));
-        assert_eq!(result.span.text, "test");
+        assert_eq!(result.span.value, "test");
 
         let result = lexer.advance().unwrap();
         assert_eq!(result.kind, TokenKind::Operator(Operator::CloseParen));
         assert_eq!(result.span.start, (1, 19, 18));
         assert_eq!(result.span.end, (1, 20, 19));
-        assert_eq!(result.span.text, ")");
+        assert_eq!(result.span.value, ")");
 
         let result = lexer.advance().unwrap();
         assert_eq!(result.kind, TokenKind::EOF);
         assert_eq!(result.span.start, (1, 20, 19));
         assert_eq!(result.span.end, (1, 20, 19));
-        assert_eq!(result.span.text, "");
+        assert_eq!(result.span.value, "");
     }
 }

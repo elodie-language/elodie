@@ -15,7 +15,7 @@ impl<'a> Parser<'a> {
 
         Ok(Expression::PropertyAccess(PropertyAccessExpression {
             lhs: Some(Box::new(object)),
-            rhs: Box::new(Expression::Identifier(IdentifierExpression(next.span.text.clone()))),
+            rhs: Box::new(Expression::Identifier(IdentifierExpression(next.span.value.clone()))),
         }))
     }
 }

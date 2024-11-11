@@ -1,18 +1,18 @@
 use std::cmp::PartialEq;
 
 #[derive(Debug, Clone, Copy, PartialEq)]
-pub struct LineNumber(pub usize);
+pub struct Row(pub usize);
 
-impl PartialEq<usize> for LineNumber {
+impl PartialEq<usize> for Row {
     fn eq(&self, other: &usize) -> bool {
         self.0 == *other
     }
 }
 
 #[derive(Debug, Clone, Copy, PartialEq)]
-pub struct LineColumn(pub usize);
+pub struct Column(pub usize);
 
-impl PartialEq<usize> for LineColumn {
+impl PartialEq<usize> for Column {
     fn eq(&self, other: &usize) -> bool {
         self.0 == *other
     }
@@ -29,15 +29,15 @@ impl PartialEq<usize> for SourceIndex {
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct Position {
-    pub line: LineNumber,
-    pub column: LineColumn,
+    pub row: Row,
+    pub column: Column,
     pub index: SourceIndex,
 }
 
 impl Position {
-    pub fn new(line: LineNumber, column: LineColumn, index: SourceIndex) -> Self {
+    pub fn new(line: Row, column: Column, index: SourceIndex) -> Self {
         Self {
-            line,
+            row: line,
             column,
             index,
         }
@@ -47,7 +47,7 @@ impl Position {
 
 impl PartialEq<(usize, usize, usize)> for Position {
     fn eq(&self, other: &(usize, usize, usize)) -> bool {
-        self.line == other.0 &&
+        self.row == other.0 &&
             self.column == other.1 &&
             self.index == other.2
     }
