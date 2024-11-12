@@ -1,18 +1,33 @@
-use crate::ast::{BinaryExpression, Expression};
+use crate::ast::{BinaryExpression, Expression, IdentifierExpression, ParameterExpression};
+use crate::ast::Expression::{Identifier, Parameter};
 use crate::core::token::{Operator, TokenKind};
 use crate::parser::Parser;
 
 impl<'a> Parser<'a> {
-
     pub(crate) fn parse_infix_expression(&mut self, left: Expression) -> crate::parser::Result<Expression> {
         let current = self.current_token()?;
         if current.kind == TokenKind::Operator(Operator::OpenParen) {
             return self.parse_call_expression(left);
         }
 
-        // if current.kind == TokenKind::Operator(Operator::Arrow){
-        //     return Ok(Expression::LambdaDeclaration(self.lambda_declaration(left)?));
-        // }
+        if current.kind == TokenKind::Operator(Operator::Arrow) {
+            return Ok(Expression::LambdaDeclaration(self.lambda_declaration(left)?));
+        }
+
+        if current.kind == TokenKind::Operator(Operator::Colon) {
+            self.consume(TokenKind::Operator(Operator::Colon))?;
+
+            let name = if let Identifier(IdentifierExpression(name)) = left {
+                IdentifierExpression(name)
+            } else {
+                todo!()
+            };
+
+            return Ok(Parameter(ParameterExpression {
+                name,
+                r#type: Some(self.parse_type_expression()?),
+            }));
+        }
 
         if current.kind == TokenKind::Operator(Operator::Dot) {
             let previous = self.previous()?;
@@ -32,7 +47,6 @@ impl<'a> Parser<'a> {
             right: Box::new(right),
         }))
     }
-    
 }
 
 #[cfg(test)]

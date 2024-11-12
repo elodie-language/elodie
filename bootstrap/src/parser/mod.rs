@@ -56,6 +56,7 @@ impl<'a> Parser<'a> {
 
         precedence_map.insert(TokenKind::Operator(Operator::OpenParen), Precedence::Call);
         precedence_map.insert(TokenKind::Operator(Operator::Dot), Precedence::Primary);
+        precedence_map.insert(TokenKind::Operator(Operator::DoubleColon), Precedence::Primary);
 
         Self {
             tokens,

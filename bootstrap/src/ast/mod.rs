@@ -106,6 +106,7 @@ pub enum Expression {
     Loop(LoopExpression),
     Match(MatchExpression),
     Object(ObjectExpression),
+    Parameter(ParameterExpression),
     Parenthesized(ParenthesizedExpression),
     PropertyAccess(PropertyAccessExpression),
     Return(ReturnExpression),
@@ -221,7 +222,7 @@ pub struct ObjectExpression {
 
 #[derive(Debug, PartialEq, Clone)]
 pub struct ParenthesizedExpression {
-    pub expr: Box<Expression>,
+    pub expr: Option<Box<Expression>>,
 }
 
 #[derive(Debug, PartialEq, Clone)]
@@ -277,7 +278,7 @@ pub enum StringTemplateExpression {
 pub struct LetExpression {
     pub name: IdentifierExpression,
     pub value: Box<Expression>,
-    pub r#type: TypeExpression,
+    pub r#type: Option<TypeExpression>,
 }
 
 #[derive(Debug, PartialEq, Clone)]

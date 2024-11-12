@@ -1,4 +1,4 @@
-use crate::ast::{Expression, LetExpression, TypeExpression};
+use crate::ast::{Expression, LetExpression};
 use crate::core::token::{Operator, TokenKind};
 use crate::parser::Parser;
 use crate::parser::precedence::Precedence;
@@ -9,9 +9,9 @@ impl<'a> Parser<'a> {
         let r#type = if self.current_token_kind()? == &TokenKind::Operator(Operator::Colon) {
             // parse type
             self.consume(TokenKind::Operator(Operator::Colon))?;
-            self.parse_type_expression()?
+            Some(self.parse_type_expression()?)
         } else {
-            TypeExpression::Fundamentals("Any".to_string())
+            None
         };
 
         self.consume(TokenKind::Operator(Operator::Equal))?;
@@ -27,6 +27,7 @@ impl<'a> Parser<'a> {
 #[cfg(test)]
 mod tests {
     use std::ops::Deref;
+
     use crate::ast::{Expression, IdentifierExpression, LetExpression, Literal, Statement};
     use crate::ast::TypeExpression::Fundamentals;
     use crate::lexer::Lexer;
@@ -40,7 +41,7 @@ mod tests {
 
         if let Statement::Expression(Expression::Let(LetExpression { name, value, r#type })) = stmt {
             assert_eq!(name, &IdentifierExpression("value".to_string()));
-            assert_eq!(r#type, &Fundamentals("Any".to_string()));
+            assert_eq!(*r#type, None);
             assert_eq!(value.deref(), &Expression::Literal(Literal::String("Elodie".to_string())));
         } else {
             panic!("Expected single statement with let expression, got {:?}", stmt)
@@ -55,7 +56,7 @@ mod tests {
 
         if let Statement::Expression(Expression::Let(LetExpression { name, value, r#type })) = stmt {
             assert_eq!(name, &IdentifierExpression("value".to_string()));
-            assert_eq!(r#type, &Fundamentals("String".to_string()));
+            assert_eq!(*r#type, Some(Fundamentals("String".to_string())));
             assert_eq!(value.deref(), &Expression::Literal(Literal::String("Elodie".to_string())));
         } else {
             panic!("Expected single statement with let expression, got {:?}", stmt)
@@ -70,7 +71,7 @@ mod tests {
 
         if let Statement::Expression(Expression::Let(LetExpression { name, value, r#type })) = stmt {
             assert_eq!(name, &IdentifierExpression("value".to_string()));
-            assert_eq!(r#type, &Fundamentals("Any".to_string()));
+            assert_eq!(*r#type, Some(Fundamentals("Any".to_string())));
             assert_eq!(value.deref(), &Expression::Literal(Literal::String("Elodie".to_string())));
         } else {
             panic!("Expected single statement with let expression, got {:?}", stmt)
@@ -85,7 +86,7 @@ mod tests {
 
         if let Statement::Expression(Expression::Let(LetExpression { name, value, r#type })) = stmt {
             assert_eq!(name, &IdentifierExpression("value".to_string()));
-            assert_eq!(r#type, &Fundamentals("Number".to_string()));
+            assert_eq!(*r#type, Some(Fundamentals("Number".to_string())));
             assert_eq!(value.deref(), &Expression::Literal(Literal::Number(99.0)));
         } else {
             panic!("Expected single statement with let expression, got {:?}", stmt)
@@ -100,7 +101,7 @@ mod tests {
 
         if let Statement::Expression(Expression::Let(LetExpression { name, value, r#type })) = stmt {
             assert_eq!(name, &IdentifierExpression("value".to_string()));
-            assert_eq!(r#type, &Fundamentals("Bool".to_string()));
+            assert_eq!(*r#type, Some(Fundamentals("Bool".to_string())));
             assert_eq!(value.deref(), &Expression::Literal(Literal::Boolean(true)));
         } else {
             panic!("Expected single statement with let expression, got {:?}", stmt)
@@ -115,7 +116,7 @@ mod tests {
 
         if let Statement::Expression(Expression::Let(LetExpression { name, value, r#type })) = stmt {
             assert_eq!(name, &IdentifierExpression("value".to_string()));
-            assert_eq!(r#type, &Fundamentals("Bool".to_string()));
+            assert_eq!(*r#type, Some(Fundamentals("Bool".to_string())));
             assert_eq!(value.deref(), &Expression::Literal(Literal::Boolean(false)));
         } else {
             panic!("Expected single statement with let expression, got {:?}", stmt)

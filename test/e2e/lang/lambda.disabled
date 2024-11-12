@@ -14,6 +14,16 @@ receiver(function(){
     console.log('3') // Expect: 3
 })
 
-receiver(() => {
+receiver({
     console.log('4') // Expect: 4
 })
+
+receiver(){
+    console.log('5') // Expect: 5
+}
+
+receiver {
+    console.log('6') // Expect: 6
+}
+
+

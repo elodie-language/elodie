@@ -25,8 +25,8 @@ impl<'a> Parser<'a> {
 
         self.consume(TokenKind::Operator(Operator::CloseParen))?;
 
-        let return_type = if self.current_token_kind()? == &TokenKind::Operator(Operator::Colon) {
-            self.consume(TokenKind::Operator(Operator::Colon))?;
+        let return_type = if self.current_token_kind()? == &TokenKind::Operator(Operator::Arrow) {
+            self.consume(TokenKind::Operator(Operator::Arrow))?;
             Some(self.parse_type_expression()?)
         } else {
             None
@@ -81,8 +81,10 @@ impl<'a> Parser<'a> {
 mod tests {
     use std::ops::Deref;
 
-    use crate::ast::{BlockExpression, Expression, FunctionDeclarationExpression, IdentifierExpression, ParameterExpression, ReturnExpression, Statement, TypeExpression};
+    use crate::ast::{BlockExpression, Expression, FunctionDeclarationExpression, FunctionType, IdentifierExpression, ParameterExpression, ReturnExpression, Statement, TypeExpression};
+    use crate::ast::Expression::Literal;
     use crate::ast::Literal::Boolean;
+    use crate::ast::TypeExpression::{Function, Fundamentals};
     use crate::lexer::Lexer;
     use crate::parser::Parser;
 
@@ -165,7 +167,7 @@ mod tests {
 
     #[test]
     fn parse_function_with_result_type() {
-        let tokens = Lexer::lex("function test() : Bool {}").unwrap();
+        let tokens = Lexer::lex("function test() -> Bool {}").unwrap();
         let mut result = Parser::parse(&tokens).unwrap();
         assert_eq!(result.block.statements.len(), 1);
 
@@ -244,7 +246,7 @@ mod tests {
 
     #[test]
     fn parse_function_with_multiple_args() {
-        let tokens = Lexer::lex("function test(arg_1: String, arg_2: Bool) : String {}").unwrap();
+        let tokens = Lexer::lex("function test(arg_1: String, arg_2: Bool) -> String {}").unwrap();
         let mut result = Parser::parse(&tokens).unwrap();
         assert_eq!(result.block.statements.len(), 1);
 
@@ -273,4 +275,36 @@ mod tests {
             panic!("Expected single statement with function declaration, got {:?}", stmt)
         }
     }
+
+    #[test]
+    fn parse_function_with_function() {
+        let tokens = Lexer::lex("function it(test_case: function() -> Bool) {}").unwrap();
+        let mut result = Parser::parse(&tokens).unwrap();
+        assert_eq!(result.block.statements.len(), 1);
+
+        let stmt = result.block.statements.pop().unwrap();
+
+        if let Statement::Expression(Expression::FunctionDeclaration(FunctionDeclarationExpression {
+                                                                         name,
+                                                                         parameters,
+                                                                         return_type,
+                                                                         body
+                                                                     })) = stmt {
+            assert_eq!(name.unwrap(), IdentifierExpression("it".to_string()));
+            assert_eq!(parameters, vec![
+                ParameterExpression {
+                    name: IdentifierExpression("test_case".to_string()),
+                    r#type: Some(Function(FunctionType{
+                        parameters: vec![],
+                        return_type: Some(Box::new(Fundamentals("Bool".to_string()))),
+                    })),
+                }
+            ]);
+            assert_eq!(return_type, None);
+            assert_eq!(body, BlockExpression { body: vec![] })
+        } else {
+            panic!("Expected single statement with function declaration, got {:?}", stmt)
+        }
+    }
+
 }

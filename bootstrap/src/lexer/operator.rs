@@ -70,7 +70,16 @@ impl Lexer<'_> {
                     _ => TokenKind::Operator(Colon)
                 }
             }
-            "-" =>  TokenKind::Operator(Minus),
+            "-" => {
+                match self.peek_next() {
+                    Some('>') => {
+                        let _ = self.consume_next()?;
+                        text.push('>');
+                        TokenKind::Operator(Arrow)
+                    }
+                    _ => TokenKind::Operator(Minus)
+                }
+            }
             "+" => TokenKind::Operator(Plus),
             "*" => TokenKind::Operator(Asterisk),
             "/" => TokenKind::Operator(Slash),
@@ -102,11 +111,6 @@ impl Lexer<'_> {
                         let _ = self.consume_next()?;
                         text.push('=');
                         TokenKind::Operator(DoubleEqual)
-                    }
-                    Some('>') => {
-                        let _ = self.consume_next()?;
-                        text.push('>');
-                        TokenKind::Operator(Arrow)
                     }
                     _ => TokenKind::Operator(Equal)
                 }
@@ -327,13 +331,13 @@ mod test {
 
     #[test]
     fn arrow() {
-        let text = "=>";
+        let text = "->";
         let lexer = Lexer::new(text);
         let result = lexer.advance().unwrap();
         assert_eq!(result.kind, TokenKind::Operator(Arrow));
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 3, 2));
-        assert_eq!(result.span.value, "=>");
+        assert_eq!(result.span.value, "->");
     }
 
     #[test]

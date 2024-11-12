@@ -1,7 +1,7 @@
 use crate::ast::{FunctionParameterType, FunctionType, TypeExpression};
 use crate::core::token::{Operator, Separator, TokenKind};
 use crate::core::token::Keyword::Function;
-use crate::core::token::Operator::Colon;
+use crate::core::token::Operator::{Arrow, Colon};
 use crate::parser::Parser;
 
 impl<'a> Parser<'a> {
@@ -21,8 +21,8 @@ impl<'a> Parser<'a> {
 
             self.consume(TokenKind::Operator(Operator::CloseParen))?;
 
-            let return_type = if self.current_token_kind()? == &TokenKind::Operator(Operator::Colon) {
-                self.consume(TokenKind::Operator(Colon))?;
+            let return_type = if self.current_token_kind()? == &TokenKind::Operator(Operator::Arrow) {
+                self.consume(TokenKind::Operator(Arrow))?;
                 Some(Box::new(self.parse_type_expression()?))
             } else {
                 None
@@ -120,7 +120,7 @@ mod tests {
 
     #[test]
     fn function_without_parameter_returning_bool() {
-        let tokens = Lexer::lex("function():Bool").unwrap();
+        let tokens = Lexer::lex("function()->Bool").unwrap();
         let mut parser = Parser::new(&tokens);
 
         let result = parser.parse_type_expression().unwrap();
@@ -129,7 +129,7 @@ mod tests {
 
     #[test]
     fn function_with_function_parameter() {
-        let tokens = Lexer::lex("function(f: function() : Bool)").unwrap();
+        let tokens = Lexer::lex("function(f: function() -> Bool)").unwrap();
         let mut parser = Parser::new(&tokens);
 
         let result = parser.parse_type_expression().unwrap();
@@ -149,7 +149,7 @@ mod tests {
 
     #[test]
     fn function_with_function_parameter_returning_function() {
-        let tokens = Lexer::lex("function(f: function() : Bool) : function( function(): Number) : String").unwrap();
+        let tokens = Lexer::lex("function(f: function() -> Bool) -> function( function() -> Number) -> String").unwrap();
         let mut parser = Parser::new(&tokens);
 
         let result = parser.parse_type_expression().unwrap();
