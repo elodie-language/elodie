@@ -25,6 +25,6 @@ mod test {
         assert_eq!(result.kind, TokenKind::EOF);
         assert_eq!(result.span.start, (1, 16, 15));
         assert_eq!(result.span.end, (1, 16, 15));
-        assert_eq!(result.span.value, "")
+        assert_eq!(result.value(), "")
     }
 }

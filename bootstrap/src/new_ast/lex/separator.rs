@@ -1,6 +1,6 @@
 use crate::new_ast::lex::Lexer;
 use crate::new_ast::token::{TextSpan, Token, TokenKind};
-use crate::new_ast::token::Separator::{Comma, NewLine, Semicolon};
+use crate::new_ast::token::SeparatorToken::{Comma, NewLine, Semicolon};
 
 impl Lexer<'_> {
     pub(crate) fn is_whitespace(&self, c: char) -> bool {
@@ -53,7 +53,7 @@ impl Lexer<'_> {
 #[cfg(test)]
 mod test {
     use crate::new_ast::lex::Lexer;
-    use crate::new_ast::token::Separator::{Comma, NewLine, Semicolon};
+    use crate::new_ast::token::SeparatorToken::{Comma, NewLine, Semicolon};
     use crate::new_ast::token::TokenKind;
 
     #[test]
@@ -64,7 +64,7 @@ mod test {
         assert_eq!(result.kind, TokenKind::EOF);
         assert_eq!(result.span.start, (1, 2, 1));
         assert_eq!(result.span.end, (1, 2, 1));
-        assert_eq!(result.span.value, "")
+        assert_eq!(result.value(), "")
     }
 
     #[test]
@@ -75,7 +75,7 @@ mod test {
         assert_eq!(result.kind, TokenKind::EOF);
         assert_eq!(result.span.start, (1, 6, 5));
         assert_eq!(result.span.end, (1, 6, 5));
-        assert_eq!(result.span.value, "")
+        assert_eq!(result.value(), "")
     }
 
     #[test]
@@ -86,7 +86,7 @@ mod test {
         assert_eq!(result.kind, TokenKind::Separator(Comma));
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 2, 1));
-        assert_eq!(result.span.value, ",");
+        assert_eq!(result.value(), ",");
     }
 
     #[test]
@@ -97,7 +97,7 @@ mod test {
         assert_eq!(result.kind, TokenKind::Separator(Semicolon));
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 2, 1));
-        assert_eq!(result.span.value, ";");
+        assert_eq!(result.value(), ";");
     }
 
     #[test]
@@ -108,6 +108,6 @@ mod test {
         assert_eq!(result.kind, TokenKind::Separator(NewLine));
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (3, 1, 3));
-        assert_eq!(result.span.value, "\n\n\n");
+        assert_eq!(result.value(), "\n\n\n");
     }
 }

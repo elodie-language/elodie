@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 
 use crate::new_ast::lex::Lexer;
-use crate::new_ast::token::{Keyword, TextSpan, Token, TokenKind};
+use crate::new_ast::token::{KeywordToken, TextSpan, Token, TokenKind};
 
 impl Lexer<'_> {
     pub(crate) fn is_keyword(&self, c: char) -> bool {
@@ -38,26 +38,26 @@ impl Lexer<'_> {
     }
 
 
-    fn keyword_map() -> HashMap<&'static str, Keyword> {
+    fn keyword_map() -> HashMap<&'static str, KeywordToken> {
         let mut keywords = HashMap::new();
-        keywords.insert("break", Keyword::Break);
-        keywords.insert("const", Keyword::Const);
-        keywords.insert("continue", Keyword::Continue);
-        keywords.insert("else", Keyword::Else);
-        keywords.insert("export", Keyword::Export);
-        keywords.insert("from", Keyword::From);
-        keywords.insert("for", Keyword::For);
-        keywords.insert("function", Keyword::Function);
-        keywords.insert("if", Keyword::If);
-        keywords.insert("implement", Keyword::Implement);
-        keywords.insert("import", Keyword::Import);
-        keywords.insert("in", Keyword::In);
-        keywords.insert("let", Keyword::Let);
-        keywords.insert("loop", Keyword::Loop);
-        keywords.insert("readonly", Keyword::Readonly);
-        keywords.insert("return", Keyword::Return);
-        keywords.insert("trait", Keyword::Trait);
-        keywords.insert("type", Keyword::Type);
+        keywords.insert("break", KeywordToken::Break);
+        keywords.insert("const", KeywordToken::Const);
+        keywords.insert("continue", KeywordToken::Continue);
+        keywords.insert("else", KeywordToken::Else);
+        keywords.insert("export", KeywordToken::Export);
+        keywords.insert("from", KeywordToken::From);
+        keywords.insert("for", KeywordToken::For);
+        keywords.insert("function", KeywordToken::Function);
+        keywords.insert("if", KeywordToken::If);
+        keywords.insert("implement", KeywordToken::Implement);
+        keywords.insert("import", KeywordToken::Import);
+        keywords.insert("in", KeywordToken::In);
+        keywords.insert("let", KeywordToken::Let);
+        keywords.insert("loop", KeywordToken::Loop);
+        keywords.insert("readonly", KeywordToken::Readonly);
+        keywords.insert("return", KeywordToken::Return);
+        keywords.insert("trait", KeywordToken::Trait);
+        keywords.insert("type", KeywordToken::Type);
         keywords
     }
 }
@@ -65,17 +65,18 @@ impl Lexer<'_> {
 #[cfg(test)]
 mod test {
     use crate::new_ast::lex::Lexer;
-    use crate::new_ast::token::{Keyword, TokenKind};
+    use crate::new_ast::token::{identifier, keyword, KeywordToken, TokenKind};
+    use crate::new_ast::token::KeywordToken::If;
 
     #[test]
     fn r#break() {
         let text = "break";
         let lexer = Lexer::new(text);
         let result = lexer.advance().unwrap();
-        assert_eq!(result.kind, TokenKind::Keyword(Keyword::Break));
+        assert_eq!(result.kind, TokenKind::Keyword(KeywordToken::Break));
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 6, 5));
-        assert_eq!(result.span.value, "break");
+        assert_eq!(result.value(), "break");
     }
 
     #[test]
@@ -83,10 +84,10 @@ mod test {
         let text = "breaker";
         let lexer = Lexer::new(text);
         let result = lexer.advance().unwrap();
-        assert_eq!(result.kind, TokenKind::Identifier);
+        assert_eq!(result.kind, identifier());
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 8, 7));
-        assert_eq!(result.span.value, "breaker");
+        assert_eq!(result.value(), "breaker");
     }
 
     #[test]
@@ -94,10 +95,10 @@ mod test {
         let text = "const";
         let lexer = Lexer::new(text);
         let result = lexer.advance().unwrap();
-        assert_eq!(result.kind, TokenKind::Keyword(Keyword::Const));
+        assert_eq!(result.kind, TokenKind::Keyword(KeywordToken::Const));
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 6, 5));
-        assert_eq!(result.span.value, "const");
+        assert_eq!(result.value(), "const");
     }
 
     #[test]
@@ -105,10 +106,10 @@ mod test {
         let text = "constant";
         let lexer = Lexer::new(text);
         let result = lexer.advance().unwrap();
-        assert_eq!(result.kind, TokenKind::Identifier);
+        assert_eq!(result.kind, identifier());
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 9, 8));
-        assert_eq!(result.span.value, "constant");
+        assert_eq!(result.value(), "constant");
     }
 
     #[test]
@@ -116,10 +117,10 @@ mod test {
         let text = "continue";
         let lexer = Lexer::new(text);
         let result = lexer.advance().unwrap();
-        assert_eq!(result.kind, TokenKind::Keyword(Keyword::Continue));
+        assert_eq!(result.kind, TokenKind::Keyword(KeywordToken::Continue));
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 9, 8));
-        assert_eq!(result.span.value, "continue");
+        assert_eq!(result.value(), "continue");
     }
 
     #[test]
@@ -127,10 +128,10 @@ mod test {
         let text = "continuation";
         let lexer = Lexer::new(text);
         let result = lexer.advance().unwrap();
-        assert_eq!(result.kind, TokenKind::Identifier);
+        assert_eq!(result.kind, identifier());
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 13, 12));
-        assert_eq!(result.span.value, "continuation");
+        assert_eq!(result.value(), "continuation");
     }
 
     #[test]
@@ -138,10 +139,10 @@ mod test {
         let text = "else";
         let lexer = Lexer::new(text);
         let result = lexer.advance().unwrap();
-        assert_eq!(result.kind, TokenKind::Keyword(Keyword::Else));
+        assert_eq!(result.kind, TokenKind::Keyword(KeywordToken::Else));
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 5, 4));
-        assert_eq!(result.span.value, "else");
+        assert_eq!(result.value(), "else");
     }
 
     #[test]
@@ -149,10 +150,10 @@ mod test {
         let text = "elsewhere";
         let lexer = Lexer::new(text);
         let result = lexer.advance().unwrap();
-        assert_eq!(result.kind, TokenKind::Identifier);
+        assert_eq!(result.kind, identifier());
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 10, 9));
-        assert_eq!(result.span.value, "elsewhere");
+        assert_eq!(result.value(), "elsewhere");
     }
 
     #[test]
@@ -160,10 +161,10 @@ mod test {
         let text = "export";
         let lexer = Lexer::new(text);
         let result = lexer.advance().unwrap();
-        assert_eq!(result.kind, TokenKind::Keyword(Keyword::Export));
+        assert_eq!(result.kind, TokenKind::Keyword(KeywordToken::Export));
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 7, 6));
-        assert_eq!(result.span.value, "export");
+        assert_eq!(result.value(), "export");
     }
 
     #[test]
@@ -171,10 +172,10 @@ mod test {
         let text = "exporting";
         let lexer = Lexer::new(text);
         let result = lexer.advance().unwrap();
-        assert_eq!(result.kind, TokenKind::Identifier);
+        assert_eq!(result.kind, identifier());
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 10, 9));
-        assert_eq!(result.span.value, "exporting");
+        assert_eq!(result.value(), "exporting");
     }
 
     #[test]
@@ -182,10 +183,10 @@ mod test {
         let text = "from";
         let lexer = Lexer::new(text);
         let result = lexer.advance().unwrap();
-        assert_eq!(result.kind, TokenKind::Keyword(Keyword::From));
+        assert_eq!(result.kind, TokenKind::Keyword(KeywordToken::From));
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 5, 4));
-        assert_eq!(result.span.value, "from");
+        assert_eq!(result.value(), "from");
     }
 
     #[test]
@@ -193,10 +194,10 @@ mod test {
         let text = "fromage";
         let lexer = Lexer::new(text);
         let result = lexer.advance().unwrap();
-        assert_eq!(result.kind, TokenKind::Identifier);
+        assert_eq!(result.kind, identifier());
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 8, 7));
-        assert_eq!(result.span.value, "fromage");
+        assert_eq!(result.value(), "fromage");
     }
 
     #[test]
@@ -204,10 +205,10 @@ mod test {
         let text = "for";
         let lexer = Lexer::new(text);
         let result = lexer.advance().unwrap();
-        assert_eq!(result.kind, TokenKind::Keyword(Keyword::For));
+        assert_eq!(result.kind, TokenKind::Keyword(KeywordToken::For));
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 4, 3));
-        assert_eq!(result.span.value, "for");
+        assert_eq!(result.value(), "for");
     }
 
     #[test]
@@ -215,10 +216,10 @@ mod test {
         let text = "formal";
         let lexer = Lexer::new(text);
         let result = lexer.advance().unwrap();
-        assert_eq!(result.kind, TokenKind::Identifier);
+        assert_eq!(result.kind, identifier());
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 7, 6));
-        assert_eq!(result.span.value, "formal");
+        assert_eq!(result.value(), "formal");
     }
 
     #[test]
@@ -226,10 +227,10 @@ mod test {
         let text = "function";
         let lexer = Lexer::new(text);
         let result = lexer.advance().unwrap();
-        assert_eq!(result.kind, TokenKind::Keyword(Keyword::Function));
+        assert_eq!(result.kind, TokenKind::Keyword(KeywordToken::Function));
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 9, 8));
-        assert_eq!(result.span.value, "function");
+        assert_eq!(result.value(), "function");
     }
 
     #[test]
@@ -237,10 +238,10 @@ mod test {
         let text = "functional";
         let lexer = Lexer::new(text);
         let result = lexer.advance().unwrap();
-        assert_eq!(result.kind, TokenKind::Identifier);
+        assert_eq!(result.kind, identifier());
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 11, 10));
-        assert_eq!(result.span.value, "functional");
+        assert_eq!(result.value(), "functional");
     }
 
     #[test]
@@ -248,10 +249,10 @@ mod test {
         let text = "if";
         let lexer = Lexer::new(text);
         let result = lexer.advance().unwrap();
-        assert_eq!(result.kind, TokenKind::Keyword(Keyword::If));
+        assert_eq!(result.kind, keyword(If));
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 3, 2));
-        assert_eq!(result.span.value, "if");
+        assert_eq!(result.value(), "if");
     }
 
     #[test]
@@ -259,10 +260,10 @@ mod test {
         let text = "iffy";
         let lexer = Lexer::new(text);
         let result = lexer.advance().unwrap();
-        assert_eq!(result.kind, TokenKind::Identifier);
+        assert_eq!(result.kind, identifier());
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 5, 4));
-        assert_eq!(result.span.value, "iffy");
+        assert_eq!(result.value(), "iffy");
     }
 
     #[test]
@@ -270,10 +271,10 @@ mod test {
         let text = "implement";
         let lexer = Lexer::new(text);
         let result = lexer.advance().unwrap();
-        assert_eq!(result.kind, TokenKind::Keyword(Keyword::Implement));
+        assert_eq!(result.kind, TokenKind::Keyword(KeywordToken::Implement));
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 10, 9));
-        assert_eq!(result.span.value, "implement");
+        assert_eq!(result.value(), "implement");
     }
 
     #[test]
@@ -281,10 +282,10 @@ mod test {
         let text = "implementation";
         let lexer = Lexer::new(text);
         let result = lexer.advance().unwrap();
-        assert_eq!(result.kind, TokenKind::Identifier);
+        assert_eq!(result.kind, identifier());
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 15, 14));
-        assert_eq!(result.span.value, "implementation");
+        assert_eq!(result.value(), "implementation");
     }
 
     #[test]
@@ -292,10 +293,10 @@ mod test {
         let text = "import";
         let lexer = Lexer::new(text);
         let result = lexer.advance().unwrap();
-        assert_eq!(result.kind, TokenKind::Keyword(Keyword::Import));
+        assert_eq!(result.kind, TokenKind::Keyword(KeywordToken::Import));
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 7, 6));
-        assert_eq!(result.span.value, "import");
+        assert_eq!(result.value(), "import");
     }
 
     #[test]
@@ -303,10 +304,10 @@ mod test {
         let text = "importance";
         let lexer = Lexer::new(text);
         let result = lexer.advance().unwrap();
-        assert_eq!(result.kind, TokenKind::Identifier);
+        assert_eq!(result.kind, identifier());
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 11, 10));
-        assert_eq!(result.span.value, "importance");
+        assert_eq!(result.value(), "importance");
     }
 
     #[test]
@@ -314,10 +315,10 @@ mod test {
         let text = "in";
         let lexer = Lexer::new(text);
         let result = lexer.advance().unwrap();
-        assert_eq!(result.kind, TokenKind::Keyword(Keyword::In));
+        assert_eq!(result.kind, TokenKind::Keyword(KeywordToken::In));
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 3, 2));
-        assert_eq!(result.span.value, "in");
+        assert_eq!(result.value(), "in");
     }
 
     #[test]
@@ -325,10 +326,10 @@ mod test {
         let text = "inner";
         let lexer = Lexer::new(text);
         let result = lexer.advance().unwrap();
-        assert_eq!(result.kind, TokenKind::Identifier);
+        assert_eq!(result.kind, identifier());
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 6, 5));
-        assert_eq!(result.span.value, "inner");
+        assert_eq!(result.value(), "inner");
     }
 
     #[test]
@@ -336,10 +337,10 @@ mod test {
         let text = "let";
         let lexer = Lexer::new(text);
         let result = lexer.advance().unwrap();
-        assert_eq!(result.kind, TokenKind::Keyword(Keyword::Let));
+        assert_eq!(result.kind, TokenKind::Keyword(KeywordToken::Let));
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 4, 3));
-        assert_eq!(result.span.value, "let");
+        assert_eq!(result.value(), "let");
     }
 
     #[test]
@@ -347,10 +348,10 @@ mod test {
         let text = "letter";
         let lexer = Lexer::new(text);
         let result = lexer.advance().unwrap();
-        assert_eq!(result.kind, TokenKind::Identifier);
+        assert_eq!(result.kind, identifier());
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 7, 6));
-        assert_eq!(result.span.value, "letter");
+        assert_eq!(result.value(), "letter");
     }
 
     #[test]
@@ -358,10 +359,10 @@ mod test {
         let text = "loop";
         let lexer = Lexer::new(text);
         let result = lexer.advance().unwrap();
-        assert_eq!(result.kind, TokenKind::Keyword(Keyword::Loop));
+        assert_eq!(result.kind, TokenKind::Keyword(KeywordToken::Loop));
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 5, 4));
-        assert_eq!(result.span.value, "loop");
+        assert_eq!(result.value(), "loop");
     }
 
     #[test]
@@ -369,10 +370,10 @@ mod test {
         let text = "loophole";
         let lexer = Lexer::new(text);
         let result = lexer.advance().unwrap();
-        assert_eq!(result.kind, TokenKind::Identifier);
+        assert_eq!(result.kind, identifier());
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 9, 8));
-        assert_eq!(result.span.value, "loophole");
+        assert_eq!(result.value(), "loophole");
     }
 
 
@@ -381,10 +382,10 @@ mod test {
         let text = "readonly";
         let lexer = Lexer::new(text);
         let result = lexer.advance().unwrap();
-        assert_eq!(result.kind, TokenKind::Keyword(Keyword::Readonly));
+        assert_eq!(result.kind, TokenKind::Keyword(KeywordToken::Readonly));
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 9, 8));
-        assert_eq!(result.span.value, "readonly");
+        assert_eq!(result.value(), "readonly");
     }
 
     #[test]
@@ -392,10 +393,10 @@ mod test {
         let text = "readonlyness";
         let lexer = Lexer::new(text);
         let result = lexer.advance().unwrap();
-        assert_eq!(result.kind, TokenKind::Identifier);
+        assert_eq!(result.kind, identifier());
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 13, 12));
-        assert_eq!(result.span.value, "readonlyness");
+        assert_eq!(result.value(), "readonlyness");
     }
 
     #[test]
@@ -403,10 +404,10 @@ mod test {
         let text = "return";
         let lexer = Lexer::new(text);
         let result = lexer.advance().unwrap();
-        assert_eq!(result.kind, TokenKind::Keyword(Keyword::Return));
+        assert_eq!(result.kind, TokenKind::Keyword(KeywordToken::Return));
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 7, 6));
-        assert_eq!(result.span.value, "return");
+        assert_eq!(result.value(), "return");
     }
 
 
@@ -415,10 +416,10 @@ mod test {
         let text = "returns";
         let lexer = Lexer::new(text);
         let result = lexer.advance().unwrap();
-        assert_eq!(result.kind, TokenKind::Identifier);
+        assert_eq!(result.kind, identifier());
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 8, 7));
-        assert_eq!(result.span.value, "returns");
+        assert_eq!(result.value(), "returns");
     }
 
     #[test]
@@ -426,10 +427,10 @@ mod test {
         let text = "trait";
         let lexer = Lexer::new(text);
         let result = lexer.advance().unwrap();
-        assert_eq!(result.kind, TokenKind::Keyword(Keyword::Trait));
+        assert_eq!(result.kind, TokenKind::Keyword(KeywordToken::Trait));
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 6, 5));
-        assert_eq!(result.span.value, "trait");
+        assert_eq!(result.value(), "trait");
     }
 
     #[test]
@@ -437,10 +438,10 @@ mod test {
         let text = "traitor";
         let lexer = Lexer::new(text);
         let result = lexer.advance().unwrap();
-        assert_eq!(result.kind, TokenKind::Identifier);
+        assert_eq!(result.kind, identifier());
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 8, 7));
-        assert_eq!(result.span.value, "traitor");
+        assert_eq!(result.value(), "traitor");
     }
 
     #[test]
@@ -448,10 +449,10 @@ mod test {
         let text = "type";
         let lexer = Lexer::new(text);
         let result = lexer.advance().unwrap();
-        assert_eq!(result.kind, TokenKind::Keyword(Keyword::Type));
+        assert_eq!(result.kind, TokenKind::Keyword(KeywordToken::Type));
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 5, 4));
-        assert_eq!(result.span.value, "type");
+        assert_eq!(result.value(), "type");
     }
 
     #[test]
@@ -459,9 +460,9 @@ mod test {
         let text = "typeset";
         let lexer = Lexer::new(text);
         let result = lexer.advance().unwrap();
-        assert_eq!(result.kind, TokenKind::Identifier);
+        assert_eq!(result.kind, identifier());
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 8, 7));
-        assert_eq!(result.span.value, "typeset");
+        assert_eq!(result.value(), "typeset");
     }
 }

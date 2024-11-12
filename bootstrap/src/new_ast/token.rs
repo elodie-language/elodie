@@ -1,21 +1,45 @@
+use crate::new_ast::token::TokenKind::{EOF, Identifier};
+
 #[derive(Debug, Clone, PartialEq)]
 pub struct Token {
     pub kind: TokenKind,
     pub span: TextSpan,
 }
 
+impl Token {
+    pub fn is_eof(&self) -> bool { self.kind == EOF }
+    pub fn is_literal(&self, literal: LiteralToken) -> bool { self.kind == TokenKind::Literal(literal) }
+    pub fn is_operator(&self, operator: OperatorToken) -> bool { self.kind == TokenKind::Operator(operator) }
+
+    pub fn value(&self) -> &str { return self.span.value.as_str(); }
+}
+
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum TokenKind {
-    Keyword(Keyword),
-    Literal(Literal),
-    Operator(Operator),
-    Separator(Separator),
+    Keyword(KeywordToken),
+    Literal(LiteralToken),
+    Operator(OperatorToken),
+    Separator(SeparatorToken),
     Identifier,
     EOF,
 }
 
+
+pub fn eof() -> TokenKind { EOF }
+
+pub fn identifier() -> TokenKind { Identifier }
+
+pub fn keyword(keyword: KeywordToken) -> TokenKind { TokenKind::Keyword(keyword) }
+
+pub fn literal(literal: LiteralToken) -> TokenKind { TokenKind::Literal(literal) }
+
+pub fn operator(operator: OperatorToken) -> TokenKind { TokenKind::Operator(operator) }
+
+pub fn separator(separator: SeparatorToken) -> TokenKind { TokenKind::Separator(separator) }
+
+
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
-pub enum Keyword {
+pub enum KeywordToken {
     Break,
     Const,
     Continue,
@@ -37,7 +61,7 @@ pub enum Keyword {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
-pub enum Literal {
+pub enum LiteralToken {
     Number,
     String,
     True,
@@ -45,7 +69,7 @@ pub enum Literal {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
-pub enum Operator {
+pub enum OperatorToken {
     OpenParen,         // (
     CloseParen,        // )
     OpenCurly,         // {
@@ -81,7 +105,7 @@ pub enum Operator {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
-pub enum Separator {
+pub enum SeparatorToken {
     Semicolon,         // ;
     Comma,             // ,
     NewLine,
