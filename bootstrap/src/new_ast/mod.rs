@@ -1,11 +1,13 @@
 use crate::new_ast::ast::SourceFile;
-use crate::new_ast::lex::Lexer;
-use crate::new_ast::rewrite::Rewriter;
+use crate::new_ast::lex::lex;
+use crate::new_ast::parse::parse;
+use crate::new_ast::rewrite::rewrite;
 
 mod lex;
 mod parse;
 mod rewrite;
 mod ast;
+mod token;
 
 #[derive(Debug)]
 pub enum Error {
@@ -35,12 +37,8 @@ impl From<rewrite::Error> for Error {
 pub(crate) type Result<T, E = Error> = core::result::Result<T, E>;
 
 
-pub struct Parser {}
-
-impl Parser {
-    pub fn parse(str: &str) -> Result<SourceFile> {
-        let tokens = Lexer::lex(str)?;
-        let root = parse::Parser::parse(tokens)?;
-        Ok(Rewriter::rewrite(root)?)
-    }
+pub fn parse_str(str: &str) -> Result<SourceFile> {
+    let tokens = lex(str)?;
+    let root = parse(tokens)?;
+    Ok(rewrite(root)?)
 }

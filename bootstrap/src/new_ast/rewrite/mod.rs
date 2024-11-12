@@ -6,10 +6,6 @@ pub enum Error {}
 
 pub(crate) type Result<T, E = Error> = core::result::Result<T, E>;
 
-pub(crate) struct Rewriter {}
-
-impl Rewriter {
-    pub(crate) fn rewrite(node: RootNode) -> Result<SourceFile> {
-        todo!()
-    }
+pub(crate) fn rewrite(node: RootNode) -> Result<SourceFile> {
+    todo!()
 }

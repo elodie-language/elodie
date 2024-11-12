@@ -1,8 +1,7 @@
 use std::collections::HashMap;
 
-use crate::core::span::TextSpan;
-use crate::core::token::{Keyword, Token, TokenKind};
 use crate::new_ast::lex::Lexer;
+use crate::new_ast::token::{Keyword, TextSpan, Token, TokenKind};
 
 impl Lexer<'_> {
     pub(crate) fn is_keyword(&self, c: char) -> bool {
@@ -25,7 +24,6 @@ impl Lexer<'_> {
         let start = self.position();
 
         for (keyword_str, keyword_enum) in Self::keyword_map() {
-
             if let Some(value) = self.consume_if(keyword_str) {
                 let text = value.to_string();
 
@@ -66,8 +64,8 @@ impl Lexer<'_> {
 
 #[cfg(test)]
 mod test {
-    use crate::core::token::{Keyword, TokenKind};
     use crate::new_ast::lex::Lexer;
+    use crate::new_ast::token::{Keyword, TokenKind};
 
     #[test]
     fn r#break() {

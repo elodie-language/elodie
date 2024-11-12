@@ -8,4 +8,15 @@ impl Parser {
 }
 
 #[cfg(test)]
-mod tests {}
+mod tests {
+    use crate::new_ast::lex::lex;
+    use crate::new_ast::parse::parse;
+
+    #[test]
+    fn number_42() {
+        let tokens = lex("42").unwrap();
+        let result = parse(tokens).unwrap();
+        assert_eq!(result.len(), 1);
+        todo!()
+    }
+}

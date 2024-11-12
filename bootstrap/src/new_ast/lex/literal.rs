@@ -1,7 +1,6 @@
-use crate::core::span::TextSpan;
-use crate::core::token::{Literal, Token, TokenKind};
-use crate::core::token::Literal::{False, Number, True};
 use crate::new_ast::lex::Lexer;
+use crate::new_ast::token::{Literal, TextSpan, Token, TokenKind};
+use crate::new_ast::token::Literal::{False, Number, True};
 
 impl Lexer<'_> {
     pub(crate) fn is_string(&self, c: char) -> bool {
@@ -91,7 +90,7 @@ impl Lexer<'_> {
 
     pub(crate) fn is_bool(&self, c: char) -> bool {
         if c != 't' && c != 'f' {
-            return false
+            return false;
         }
         let look_ahead = self.look_ahead().unwrap();
         return matches!(look_ahead.as_str(), "true" | "false");
@@ -120,10 +119,9 @@ impl Lexer<'_> {
 
 #[cfg(test)]
 mod test {
-    use crate::core::token::Literal::{False, Number, String, True};
-    use crate::core::token::Operator::*;
-    use crate::core::token::TokenKind;
     use crate::new_ast::lex::Lexer;
+    use crate::new_ast::token::Literal::{False, Number, String, True};
+    use crate::new_ast::token::TokenKind;
 
     #[test]
     fn empty_string() {
@@ -257,5 +255,4 @@ mod test {
         assert_eq!(result.span.end, (1, 7, 6));
         assert_eq!(result.span.value, "false_");
     }
-
 }

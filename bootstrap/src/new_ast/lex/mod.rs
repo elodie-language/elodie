@@ -1,10 +1,8 @@
 use std::cell::RefCell;
 
-use crate::core::position::{Column, Position, Row, SourceIndex};
-use crate::core::span::TextSpan;
-use crate::core::token::{Token, TokenKind};
-use crate::core::token::TokenKind::EOF;
 use crate::new_ast::lex::Error::UnexpectedEndOfFile;
+use crate::new_ast::token::{Column, Index, Position, Row, TextSpan, Token, TokenKind};
+use crate::new_ast::token::TokenKind::EOF;
 
 mod comment;
 mod separator;
@@ -146,18 +144,18 @@ impl<'a> Reader<'a> {
     }
 }
 
-pub struct Lexer<'a> {
+pub fn lex(str: &str) -> Result<Vec<Token>> {
+    let lexer = Lexer::new(str);
+    lexer.all()
+}
+
+pub(crate) struct Lexer<'a> {
     reader: Reader<'a>,
     current_line: RefCell<Row>,
     current_column: RefCell<Column>,
 }
 
 impl<'a> Lexer<'a> {
-    pub fn lex(str: &'a str) -> Result<Vec<Token>> {
-        let lexer = Lexer::new(str);
-        lexer.all()
-    }
-
     pub(crate) fn new(str: &'a str) -> Self {
         Self {
             reader: Reader::new(str),
@@ -233,7 +231,7 @@ impl<'a> Lexer<'a> {
         Position {
             row: self.current_line.borrow().clone(),
             column: self.current_column.borrow().clone(),
-            index: SourceIndex(*self.reader.pos.borrow()),
+            index: Index(*self.reader.pos.borrow()),
         }
     }
 
