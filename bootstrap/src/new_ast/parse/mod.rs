@@ -6,6 +6,7 @@ use crate::new_ast::parse::precedence::Precedence;
 
 pub(crate) mod precedence;
 pub(crate) mod node;
+mod literal;
 
 #[derive(Debug)]
 pub enum Error {

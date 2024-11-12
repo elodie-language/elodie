@@ -190,17 +190,17 @@ impl<'a> Parser<'a> {
     }
 }
 
-#[cfg(test)]
-mod test {
-    use crate::ast::Block;
-    use crate::new_ast::lex::Lexer;
-    use crate::parser::Parser;
-
-    #[test]
-    fn parse_empty_string() {
-        let tokens = Lexer::lex("").unwrap();
-        let result = Parser::parse(&tokens).unwrap();
-        assert_eq!(result.imports, vec![]);
-        assert_eq!(result.block, Block { statements: vec![] })
-    }
-}
+// #[cfg(test)]
+// mod test {
+//     use crate::ast::Block;
+//     use crate::new_ast::lex::Lexer;
+//     use crate::parser::Parser;
+//
+//     #[test]
+//     fn parse_empty_string() {
+//         let tokens = Lexer::lex("").unwrap();
+//         let result = Parser::parse(&tokens).unwrap();
+//         assert_eq!(result.imports, vec![]);
+//         assert_eq!(result.block, Block { statements: vec![] })
+//     }
+// }

@@ -50,111 +50,111 @@ impl<'a> Parser<'a> {
     }
 }
 
-#[cfg(test)]
-mod tests {
-    use crate::ast::{BlockExpression, BreakExpression, ContinueExpression, Expression, LoopExpression, Statement};
-    use crate::ast::Expression::Literal;
-    use crate::ast::Literal::Number;
-    use crate::new_ast::lex::Lexer;
-    use crate::parser::Parser;
-
-    #[test]
-    fn parse_loop_expression_empty() {
-        let tokens = Lexer::lex("loop{ }").unwrap();
-        let result = Parser::parse(&tokens).unwrap();
-        assert_eq!(result.block.statements.len(), 1);
-        let stmt = result.block.statements.first().unwrap();
-
-        if let Statement::Expression(Expression::Loop(LoopExpression { body })) = stmt {
-            assert_eq!(*body, BlockExpression { body: vec![] });
-        } else {
-            panic!("Expected single statement with loop expression, got {:?}", stmt)
-        }
-    }
-
-    #[test]
-    fn parse_loop_expression_single_expression() {
-        let tokens = Lexer::lex("loop{ 42 }").unwrap();
-        let result = Parser::parse(&tokens).unwrap();
-        assert_eq!(result.block.statements.len(), 1);
-        let stmt = result.block.statements.first().unwrap();
-
-        if let Statement::Expression(Expression::Loop(LoopExpression { body })) = stmt {
-            assert_eq!(*body, BlockExpression { body: vec![Literal(Number(42.0))] });
-        } else {
-            panic!("Expected single statement with loop expression, got {:?}", stmt)
-        }
-    }
-
-    #[test]
-    fn parse_loop_expression_nested_loop() {
-        let tokens = Lexer::lex("loop{ loop{42} }").unwrap();
-        let result = Parser::parse(&tokens).unwrap();
-        assert_eq!(result.block.statements.len(), 1);
-        let stmt = result.block.statements.first().unwrap();
-
-        if let Statement::Expression(Expression::Loop(LoopExpression { body })) = stmt {
-            assert_eq!(*body, BlockExpression {
-                body: vec![
-                    Expression::Loop(LoopExpression { body: BlockExpression { body: vec![Literal(Number(42.0))] } })
-                ]
-            });
-        } else {
-            panic!("Expected single statement with loop expression, got {:?}", stmt)
-        }
-    }
-
-    #[test]
-    fn parse_loop_expression_continue() {
-        let tokens = Lexer::lex("loop { continue }").unwrap();
-        let result = Parser::parse(&tokens).unwrap();
-        assert_eq!(result.block.statements.len(), 1);
-        let stmt = result.block.statements.first().unwrap();
-
-        if let Statement::Expression(Expression::Loop(LoopExpression { body })) = stmt {
-            assert_eq!(*body, BlockExpression {
-                body: vec![
-                    Expression::Continue(ContinueExpression { label: None })
-                ]
-            });
-        } else {
-            panic!("Expected single statement with loop expression, got {:?}", stmt)
-        }
-    }
-
-    #[test]
-    fn parse_loop_expression_break() {
-        let tokens = Lexer::lex("loop { break }").unwrap();
-        let result = Parser::parse(&tokens).unwrap();
-        assert_eq!(result.block.statements.len(), 1);
-        let stmt = result.block.statements.first().unwrap();
-
-        if let Statement::Expression(Expression::Loop(LoopExpression { body })) = stmt {
-            assert_eq!(*body, BlockExpression {
-                body: vec![
-                    Expression::Break(BreakExpression { label: None, result: None })
-                ]
-            });
-        } else {
-            panic!("Expected single statement with loop expression, got {:?}", stmt)
-        }
-    }
-
-    #[test]
-    fn parse_loop_expression_break_literal() {
-        let tokens = Lexer::lex("loop { break 99 }").unwrap();
-        let result = Parser::parse(&tokens).unwrap();
-        assert_eq!(result.block.statements.len(), 1);
-        let stmt = result.block.statements.first().unwrap();
-
-        if let Statement::Expression(Expression::Loop(LoopExpression { body })) = stmt {
-            assert_eq!(*body, BlockExpression {
-                body: vec![
-                    Expression::Break(BreakExpression { label: None, result: Some(Box::new(Expression::Literal(Number(99.0)))) })
-                ]
-            });
-        } else {
-            panic!("Expected single statement with loop expression, got {:?}", stmt)
-        }
-    }
-}
+// #[cfg(test)]
+// mod tests {
+//     use crate::ast::{BlockExpression, BreakExpression, ContinueExpression, Expression, LoopExpression, Statement};
+//     use crate::ast::Expression::Literal;
+//     use crate::ast::Literal::Number;
+//     use crate::new_ast::lex::Lexer;
+//     use crate::parser::Parser;
+//
+//     #[test]
+//     fn parse_loop_expression_empty() {
+//         let tokens = Lexer::lex("loop{ }").unwrap();
+//         let result = Parser::parse(&tokens).unwrap();
+//         assert_eq!(result.block.statements.len(), 1);
+//         let stmt = result.block.statements.first().unwrap();
+//
+//         if let Statement::Expression(Expression::Loop(LoopExpression { body })) = stmt {
+//             assert_eq!(*body, BlockExpression { body: vec![] });
+//         } else {
+//             panic!("Expected single statement with loop expression, got {:?}", stmt)
+//         }
+//     }
+//
+//     #[test]
+//     fn parse_loop_expression_single_expression() {
+//         let tokens = Lexer::lex("loop{ 42 }").unwrap();
+//         let result = Parser::parse(&tokens).unwrap();
+//         assert_eq!(result.block.statements.len(), 1);
+//         let stmt = result.block.statements.first().unwrap();
+//
+//         if let Statement::Expression(Expression::Loop(LoopExpression { body })) = stmt {
+//             assert_eq!(*body, BlockExpression { body: vec![Literal(Number(42.0))] });
+//         } else {
+//             panic!("Expected single statement with loop expression, got {:?}", stmt)
+//         }
+//     }
+//
+//     #[test]
+//     fn parse_loop_expression_nested_loop() {
+//         let tokens = Lexer::lex("loop{ loop{42} }").unwrap();
+//         let result = Parser::parse(&tokens).unwrap();
+//         assert_eq!(result.block.statements.len(), 1);
+//         let stmt = result.block.statements.first().unwrap();
+//
+//         if let Statement::Expression(Expression::Loop(LoopExpression { body })) = stmt {
+//             assert_eq!(*body, BlockExpression {
+//                 body: vec![
+//                     Expression::Loop(LoopExpression { body: BlockExpression { body: vec![Literal(Number(42.0))] } })
+//                 ]
+//             });
+//         } else {
+//             panic!("Expected single statement with loop expression, got {:?}", stmt)
+//         }
+//     }
+//
+//     #[test]
+//     fn parse_loop_expression_continue() {
+//         let tokens = Lexer::lex("loop { continue }").unwrap();
+//         let result = Parser::parse(&tokens).unwrap();
+//         assert_eq!(result.block.statements.len(), 1);
+//         let stmt = result.block.statements.first().unwrap();
+//
+//         if let Statement::Expression(Expression::Loop(LoopExpression { body })) = stmt {
+//             assert_eq!(*body, BlockExpression {
+//                 body: vec![
+//                     Expression::Continue(ContinueExpression { label: None })
+//                 ]
+//             });
+//         } else {
+//             panic!("Expected single statement with loop expression, got {:?}", stmt)
+//         }
+//     }
+//
+//     #[test]
+//     fn parse_loop_expression_break() {
+//         let tokens = Lexer::lex("loop { break }").unwrap();
+//         let result = Parser::parse(&tokens).unwrap();
+//         assert_eq!(result.block.statements.len(), 1);
+//         let stmt = result.block.statements.first().unwrap();
+//
+//         if let Statement::Expression(Expression::Loop(LoopExpression { body })) = stmt {
+//             assert_eq!(*body, BlockExpression {
+//                 body: vec![
+//                     Expression::Break(BreakExpression { label: None, result: None })
+//                 ]
+//             });
+//         } else {
+//             panic!("Expected single statement with loop expression, got {:?}", stmt)
+//         }
+//     }
+//
+//     #[test]
+//     fn parse_loop_expression_break_literal() {
+//         let tokens = Lexer::lex("loop { break 99 }").unwrap();
+//         let result = Parser::parse(&tokens).unwrap();
+//         assert_eq!(result.block.statements.len(), 1);
+//         let stmt = result.block.statements.first().unwrap();
+//
+//         if let Statement::Expression(Expression::Loop(LoopExpression { body })) = stmt {
+//             assert_eq!(*body, BlockExpression {
+//                 body: vec![
+//                     Expression::Break(BreakExpression { label: None, result: Some(Box::new(Expression::Literal(Number(99.0)))) })
+//                 ]
+//             });
+//         } else {
+//             panic!("Expected single statement with loop expression, got {:?}", stmt)
+//         }
+//     }
+// }

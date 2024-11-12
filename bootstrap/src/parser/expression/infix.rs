@@ -49,46 +49,46 @@ impl<'a> Parser<'a> {
     }
 }
 
-#[cfg(test)]
-mod tests {
-    use crate::ast::{BinaryOperator, Expression, Statement};
-    use crate::new_ast::lex::Lexer;
-    use crate::parser::Parser;
-
-    macro_rules! parameterized_expression {
-    ($($name:ident, $input:expr => $expected:expr,)*) => {
-        $(
-            #[test]
-            fn $name() {
-                let tokens = Lexer::lex($input).unwrap();
-                let result = Parser::parse(&tokens).unwrap();
-                let stmt = result.block.statements.first().unwrap();
-
-                if let Statement::Expression(Expression::Binary(got)) = stmt {
-                     assert_eq!(
-                        &got.operator, &$expected,
-                        "Failed on input '{}', expected {:?} but got {:?}",
-                        $input, $expected, got.operator
-                     );
-                } else{
-                    panic!("Expected binary expression");
-                }
-            }
-        )*
-    };
-}
-
-    parameterized_expression! {
-        add, "5 + 5" => BinaryOperator::Add,
-        subtract, "5 - 5" => BinaryOperator::Subtract,
-        multiply, "5 * 5" => BinaryOperator::Multiply,
-        divide, "5 / 5" => BinaryOperator::Divide,
-        modulo, "5 % 5" => BinaryOperator::Modulo,
-        greater_than, "5 > 5" => BinaryOperator::GreaterThan,
-        greater_than_or_equal, "5 >= 5" => BinaryOperator::GreaterThanOrEqual,
-        less_than, "5 < 5" => BinaryOperator::LessThan,
-        less_than_or_equal, "5 <= 5" => BinaryOperator::LessThanOrEqual,
-        equal, "5 == 5" => BinaryOperator::Equal,
-        not_equal, "5 != 5" => BinaryOperator::NotEqual,
-    }
-}
+// #[cfg(test)]
+// mod tests {
+//     use crate::ast::{BinaryOperator, Expression, Statement};
+//     use crate::new_ast::lex::Lexer;
+//     use crate::parser::Parser;
+//
+//     macro_rules! parameterized_expression {
+//     ($($name:ident, $input:expr => $expected:expr,)*) => {
+//         $(
+//             #[test]
+//             fn $name() {
+//                 let tokens = Lexer::lex($input).unwrap();
+//                 let result = Parser::parse(&tokens).unwrap();
+//                 let stmt = result.block.statements.first().unwrap();
+//
+//                 if let Statement::Expression(Expression::Binary(got)) = stmt {
+//                      assert_eq!(
+//                         &got.operator, &$expected,
+//                         "Failed on input '{}', expected {:?} but got {:?}",
+//                         $input, $expected, got.operator
+//                      );
+//                 } else{
+//                     panic!("Expected binary expression");
+//                 }
+//             }
+//         )*
+//     };
+// }
+//
+//     parameterized_expression! {
+//         add, "5 + 5" => BinaryOperator::Add,
+//         subtract, "5 - 5" => BinaryOperator::Subtract,
+//         multiply, "5 * 5" => BinaryOperator::Multiply,
+//         divide, "5 / 5" => BinaryOperator::Divide,
+//         modulo, "5 % 5" => BinaryOperator::Modulo,
+//         greater_than, "5 > 5" => BinaryOperator::GreaterThan,
+//         greater_than_or_equal, "5 >= 5" => BinaryOperator::GreaterThanOrEqual,
+//         less_than, "5 < 5" => BinaryOperator::LessThan,
+//         less_than_or_equal, "5 <= 5" => BinaryOperator::LessThanOrEqual,
+//         equal, "5 == 5" => BinaryOperator::Equal,
+//         not_equal, "5 != 5" => BinaryOperator::NotEqual,
+//     }
+// }

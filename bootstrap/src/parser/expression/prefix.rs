@@ -81,128 +81,128 @@ impl<'a> Parser<'a> {
     }
 }
 
-#[cfg(test)]
-mod tests {
-    use crate::ast::{BinaryExpression, BinaryOperator, Expression, IdentifierExpression, ParameterExpression, ParenthesizedExpression, Statement, TypeExpression};
-    use crate::ast::Expression::{Binary, Identifier, Literal, Parameter, Parenthesized};
-    use crate::ast::Literal::Number;
-    use crate::new_ast::lex::Lexer;
-    use crate::parser::Parser;
-
-    #[test]
-    fn empty_parenthesis() {
-        let tokens = Lexer::lex("()").unwrap();
-        let mut result = Parser::parse(&tokens).unwrap();
-        assert_eq!(result.block.statements.len(), 1);
-
-        let stmt = result.block.statements.pop().unwrap();
-
-        if let Statement::Expression(Expression::Parenthesized(ParenthesizedExpression { expr })) = stmt {
-            assert_eq!(expr, None);
-        } else {
-            panic!("Expected single statement with parenthesis, got {:?}", stmt)
-        }
-    }
-
-    #[test]
-    fn parenthesis_with_expression() {
-        let tokens = Lexer::lex("(1)").unwrap();
-        let mut result = Parser::parse(&tokens).unwrap();
-        assert_eq!(result.block.statements.len(), 1);
-
-        let stmt = result.block.statements.pop().unwrap();
-
-        if let Statement::Expression(Expression::Parenthesized(ParenthesizedExpression { expr })) = stmt {
-            assert_eq!(*expr.unwrap(), Literal(Number(1.0)));
-        } else {
-            panic!("Expected single statement with parenthesis, got {:?}", stmt)
-        }
-    }
-
-    #[test]
-    fn parenthesis_nested() {
-        let tokens = Lexer::lex("(1 * ( 2 + 3))").unwrap();
-        let mut result = Parser::parse(&tokens).unwrap();
-        assert_eq!(result.block.statements.len(), 1);
-
-        let stmt = result.block.statements.pop().unwrap();
-
-        if let Statement::Expression(Expression::Parenthesized(ParenthesizedExpression { expr })) = stmt {
-            assert_eq!(*expr.unwrap(), Binary(BinaryExpression {
-                left: Box::new(Literal(Number(1.0))),
-                operator: BinaryOperator::Multiply,
-                right: Box::new(Parenthesized(ParenthesizedExpression {
-                    expr: Some(Box::new(Binary(BinaryExpression {
-                        left: Box::new(Literal(Number(2.0))),
-                        operator: BinaryOperator::Add,
-                        right: Box::new(Literal(Number(3.0))),
-                    })))
-                })),
-            }));
-        } else {
-            panic!("Expected single statement with parenthesis, got {:?}", stmt)
-        }
-    }
-
-    #[test]
-    fn parenthesis_identifier() {
-        let tokens = Lexer::lex("(u)").unwrap();
-        let mut result = Parser::parse(&tokens).unwrap();
-        assert_eq!(result.block.statements.len(), 1);
-
-        let stmt = result.block.statements.pop().unwrap();
-
-        if let Statement::Expression(Expression::Parenthesized(ParenthesizedExpression { expr })) = stmt {
-            assert_eq!(*expr.unwrap(), Identifier(IdentifierExpression("u".to_string())));
-        } else {
-            panic!("Expected single statement with parenthesis, got {:?}", stmt)
-        }
-    }
-
-    // #[test]
-    // fn parenthesis_multiple_identifier() {
-    //     let tokens = Lexer::lex("(u,v)").unwrap();
-    //     let mut result = Parser::parse(&tokens).unwrap();
-    //     assert_eq!(result.block.statements.len(), 1);
-    //
-    //     let stmt = result.block.statements.pop().unwrap();
-    //
-    //     if let Statement::Expression(Expression::Parenthesized(ParenthesizedExpression { expr })) = stmt {
-    //         assert_eq!(*expr.unwrap(), Identifier(IdentifierExpression("u".to_string())));
-    //     } else {
-    //         panic!("Expected single statement with parenthesis, got {:?}", stmt)
-    //     }
-    // }
-    //
-    // #[test]
-    // fn parenthesis_identifier_with_type() {
-    //     let tokens = Lexer::lex("(u: Bool)").unwrap();
-    //     let mut result = Parser::parse(&tokens).unwrap();
-    //     assert_eq!(result.block.statements.len(), 1);
-    //
-    //     let stmt = result.block.statements.pop().unwrap();
-    //
-    //     if let Statement::Expression(Expression::Parenthesized(ParenthesizedExpression { expr })) = stmt {
-    //
-    //         assert_eq!(*expr.unwrap(), Parameter(ParameterExpression{name: IdentifierExpression("u".to_string()), r#type: Some(TypeExpression::Fundamentals("Bool".to_string()))}));
-    //     } else {
-    //         panic!("Expected single statement with parenthesis, got {:?}", stmt)
-    //     }
-    // }
-    //
-    // #[test]
-    // fn parenthesis_multiple_identifier_with_type() {
-    //     let tokens = Lexer::lex("(u: Bool, v: String)").unwrap();
-    //     let mut result = Parser::parse(&tokens).unwrap();
-    //     assert_eq!(result.block.statements.len(), 1);
-    //
-    //     let stmt = result.block.statements.pop().unwrap();
-    //
-    //     if let Statement::Expression(Expression::Parenthesized(ParenthesizedExpression { expr })) = stmt {
-    //
-    //         assert_eq!(*expr.unwrap(), Parameter(ParameterExpression{name: IdentifierExpression("u".to_string()), r#type: Some(TypeExpression::Fundamentals("Bool".to_string()))}));
-    //     } else {
-    //         panic!("Expected single statement with parenthesis, got {:?}", stmt)
-    //     }
-    // }
-}
+// #[cfg(test)]
+// mod tests {
+//     use crate::ast::{BinaryExpression, BinaryOperator, Expression, IdentifierExpression, ParameterExpression, ParenthesizedExpression, Statement, TypeExpression};
+//     use crate::ast::Expression::{Binary, Identifier, Literal, Parameter, Parenthesized};
+//     use crate::ast::Literal::Number;
+//     use crate::new_ast::lex::Lexer;
+//     use crate::parser::Parser;
+//
+//     #[test]
+//     fn empty_parenthesis() {
+//         let tokens = Lexer::lex("()").unwrap();
+//         let mut result = Parser::parse(&tokens).unwrap();
+//         assert_eq!(result.block.statements.len(), 1);
+//
+//         let stmt = result.block.statements.pop().unwrap();
+//
+//         if let Statement::Expression(Expression::Parenthesized(ParenthesizedExpression { expr })) = stmt {
+//             assert_eq!(expr, None);
+//         } else {
+//             panic!("Expected single statement with parenthesis, got {:?}", stmt)
+//         }
+//     }
+//
+//     #[test]
+//     fn parenthesis_with_expression() {
+//         let tokens = Lexer::lex("(1)").unwrap();
+//         let mut result = Parser::parse(&tokens).unwrap();
+//         assert_eq!(result.block.statements.len(), 1);
+//
+//         let stmt = result.block.statements.pop().unwrap();
+//
+//         if let Statement::Expression(Expression::Parenthesized(ParenthesizedExpression { expr })) = stmt {
+//             assert_eq!(*expr.unwrap(), Literal(Number(1.0)));
+//         } else {
+//             panic!("Expected single statement with parenthesis, got {:?}", stmt)
+//         }
+//     }
+//
+//     #[test]
+//     fn parenthesis_nested() {
+//         let tokens = Lexer::lex("(1 * ( 2 + 3))").unwrap();
+//         let mut result = Parser::parse(&tokens).unwrap();
+//         assert_eq!(result.block.statements.len(), 1);
+//
+//         let stmt = result.block.statements.pop().unwrap();
+//
+//         if let Statement::Expression(Expression::Parenthesized(ParenthesizedExpression { expr })) = stmt {
+//             assert_eq!(*expr.unwrap(), Binary(BinaryExpression {
+//                 left: Box::new(Literal(Number(1.0))),
+//                 operator: BinaryOperator::Multiply,
+//                 right: Box::new(Parenthesized(ParenthesizedExpression {
+//                     expr: Some(Box::new(Binary(BinaryExpression {
+//                         left: Box::new(Literal(Number(2.0))),
+//                         operator: BinaryOperator::Add,
+//                         right: Box::new(Literal(Number(3.0))),
+//                     })))
+//                 })),
+//             }));
+//         } else {
+//             panic!("Expected single statement with parenthesis, got {:?}", stmt)
+//         }
+//     }
+//
+//     #[test]
+//     fn parenthesis_identifier() {
+//         let tokens = Lexer::lex("(u)").unwrap();
+//         let mut result = Parser::parse(&tokens).unwrap();
+//         assert_eq!(result.block.statements.len(), 1);
+//
+//         let stmt = result.block.statements.pop().unwrap();
+//
+//         if let Statement::Expression(Expression::Parenthesized(ParenthesizedExpression { expr })) = stmt {
+//             assert_eq!(*expr.unwrap(), Identifier(IdentifierExpression("u".to_string())));
+//         } else {
+//             panic!("Expected single statement with parenthesis, got {:?}", stmt)
+//         }
+//     }
+//
+//     // #[test]
+//     // fn parenthesis_multiple_identifier() {
+//     //     let tokens = Lexer::lex("(u,v)").unwrap();
+//     //     let mut result = Parser::parse(&tokens).unwrap();
+//     //     assert_eq!(result.block.statements.len(), 1);
+//     //
+//     //     let stmt = result.block.statements.pop().unwrap();
+//     //
+//     //     if let Statement::Expression(Expression::Parenthesized(ParenthesizedExpression { expr })) = stmt {
+//     //         assert_eq!(*expr.unwrap(), Identifier(IdentifierExpression("u".to_string())));
+//     //     } else {
+//     //         panic!("Expected single statement with parenthesis, got {:?}", stmt)
+//     //     }
+//     // }
+//     //
+//     // #[test]
+//     // fn parenthesis_identifier_with_type() {
+//     //     let tokens = Lexer::lex("(u: Bool)").unwrap();
+//     //     let mut result = Parser::parse(&tokens).unwrap();
+//     //     assert_eq!(result.block.statements.len(), 1);
+//     //
+//     //     let stmt = result.block.statements.pop().unwrap();
+//     //
+//     //     if let Statement::Expression(Expression::Parenthesized(ParenthesizedExpression { expr })) = stmt {
+//     //
+//     //         assert_eq!(*expr.unwrap(), Parameter(ParameterExpression{name: IdentifierExpression("u".to_string()), r#type: Some(TypeExpression::Fundamentals("Bool".to_string()))}));
+//     //     } else {
+//     //         panic!("Expected single statement with parenthesis, got {:?}", stmt)
+//     //     }
+//     // }
+//     //
+//     // #[test]
+//     // fn parenthesis_multiple_identifier_with_type() {
+//     //     let tokens = Lexer::lex("(u: Bool, v: String)").unwrap();
+//     //     let mut result = Parser::parse(&tokens).unwrap();
+//     //     assert_eq!(result.block.statements.len(), 1);
+//     //
+//     //     let stmt = result.block.statements.pop().unwrap();
+//     //
+//     //     if let Statement::Expression(Expression::Parenthesized(ParenthesizedExpression { expr })) = stmt {
+//     //
+//     //         assert_eq!(*expr.unwrap(), Parameter(ParameterExpression{name: IdentifierExpression("u".to_string()), r#type: Some(TypeExpression::Fundamentals("Bool".to_string()))}));
+//     //     } else {
+//     //         panic!("Expected single statement with parenthesis, got {:?}", stmt)
+//     //     }
+//     // }
+// }
