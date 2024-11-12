@@ -3,11 +3,6 @@ use std::fs::File;
 use std::io::Read;
 use std::path::PathBuf;
 
-use crate::interpreter::Interpreter;
-use crate::lexer::Lexer;
-use crate::parser::Parser;
-
-mod lexer;
 mod parser;
 mod core;
 mod interpreter;
@@ -21,12 +16,14 @@ fn main() {
     let mut path = PathBuf::from(args.get(1).unwrap());
     let content = load_text_from_file(path.to_str().unwrap()).unwrap();
 
-    let tokens = Lexer::lex(content.as_str()).unwrap();
-    let result = Parser::parse(&tokens).unwrap();
-    // println!("{result:?}");
+    let ast = new_ast::Parser::parse(content.as_str()).unwrap();
 
-    let mut interpreter = Interpreter::new();
-    interpreter.interpret(result).unwrap();
+//     let tokens = Lexer::lex(content.as_str()).unwrap();
+//     let result = Parser::parse(&tokens).unwrap();
+//     // println!("{result:?}");
+//
+//     let mut interpreter = Interpreter::new();
+//     interpreter.interpret(result).unwrap();
 }
 
 fn load_text_from_file(path: &str) -> io::Result<String> {

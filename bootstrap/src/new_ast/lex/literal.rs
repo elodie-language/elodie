@@ -1,13 +1,13 @@
 use crate::core::span::TextSpan;
 use crate::core::token::{Literal, Token, TokenKind};
 use crate::core::token::Literal::{False, Number, True};
-use crate::lexer::Lexer;
+use crate::new_ast::lex::Lexer;
 
 impl Lexer<'_> {
     pub(crate) fn is_string(&self, c: char) -> bool {
         c == '\''
     }
-    pub(crate) fn consume_string(&self) -> crate::lexer::Result<Token> {
+    pub(crate) fn consume_string(&self) -> crate::new_ast::lex::Result<Token> {
         let start = self.position();
         let mut text = String::from("");
         let next = String::from(self.consume_next()?);
@@ -39,7 +39,7 @@ impl Lexer<'_> {
         c.is_digit(10)
     }
 
-    pub(crate) fn consume_number(&self) -> crate::lexer::Result<Token> {
+    pub(crate) fn consume_number(&self) -> crate::new_ast::lex::Result<Token> {
         let start = self.position();
         let mut text = String::from("");
         let next = String::from(self.consume_next()?);
@@ -97,7 +97,7 @@ impl Lexer<'_> {
         return matches!(look_ahead.as_str(), "true" | "false");
     }
 
-    pub(crate) fn consume_bool(&self) -> crate::lexer::Result<Token> {
+    pub(crate) fn consume_bool(&self) -> crate::new_ast::lex::Result<Token> {
         let start = self.position();
         let next = self.consume_next()?;
         if next == 't' {
@@ -123,7 +123,7 @@ mod test {
     use crate::core::token::Literal::{False, Number, String, True};
     use crate::core::token::Operator::*;
     use crate::core::token::TokenKind;
-    use crate::lexer::Lexer;
+    use crate::new_ast::lex::Lexer;
 
     #[test]
     fn empty_string() {

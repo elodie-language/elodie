@@ -32,7 +32,7 @@ mod tests {
     use crate::ast::{BinaryExpression, BinaryOperator, BlockExpression, Expression, IdentifierExpression, IfExpression, Statement};
     use crate::ast::Expression::{Binary, Block, Identifier, Literal};
     use crate::ast::Literal::Boolean;
-    use crate::lexer::Lexer;
+    use crate::new_ast::lex::Lexer;
     use crate::parser::Parser;
 
     #[test]

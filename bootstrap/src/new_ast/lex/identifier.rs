@@ -1,9 +1,9 @@
 use crate::core::span::TextSpan;
 use crate::core::token::{Token, TokenKind};
-use crate::lexer::Lexer;
+use crate::new_ast::lex::Lexer;
 
 impl Lexer<'_> {
-    pub(crate) fn consume_identifier(&self) -> crate::lexer::Result<Token> {
+    pub(crate) fn consume_identifier(&self) -> crate::new_ast::lex::Result<Token> {
         let start = self.position();
 
         let mut text = self.consume_while(|c| {
@@ -20,7 +20,7 @@ impl Lexer<'_> {
 #[cfg(test)]
 mod test {
     use crate::core::token::{Literal, Operator, TokenKind};
-    use crate::lexer::Lexer;
+    use crate::new_ast::lex::Lexer;
 
     #[test]
     fn some_var() {

@@ -85,7 +85,7 @@ mod tests {
     use crate::ast::Expression::Literal;
     use crate::ast::Literal::Boolean;
     use crate::ast::TypeExpression::{Function, Fundamentals};
-    use crate::lexer::Lexer;
+    use crate::new_ast::lex::Lexer;
     use crate::parser::Parser;
 
     #[test]

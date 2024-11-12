@@ -1,11 +1,11 @@
-use crate::lexer::Lexer;
+use crate::new_ast::lex::Lexer;
 
 impl Lexer<'_> {
     pub(crate) fn is_comment(&self, c: char) -> bool {
         c == '/' && self.peek_if("//").is_some()
     }
 
-    pub(crate) fn consume_comment(&self) -> crate::lexer::Result<()> {
+    pub(crate) fn consume_comment(&self) -> crate::new_ast::lex::Result<()> {
         self.consume_while(|c| c != '\n')?;
         Ok(())
     }
@@ -15,7 +15,7 @@ impl Lexer<'_> {
 #[cfg(test)]
 mod test {
     use crate::core::token::TokenKind;
-    use crate::lexer::Lexer;
+    use crate::new_ast::lex::Lexer;
 
     #[test]
     fn comment() {

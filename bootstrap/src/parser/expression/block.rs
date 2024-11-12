@@ -30,7 +30,7 @@ mod tests {
     use crate::ast::{BlockExpression, Expression, Statement};
     use crate::ast::Expression::{Block, Literal};
     use crate::ast::Literal::Boolean;
-    use crate::lexer::Lexer;
+    use crate::new_ast::lex::Lexer;
     use crate::parser::Parser;
 
     #[test]

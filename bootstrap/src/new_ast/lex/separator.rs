@@ -1,7 +1,7 @@
 use crate::core::span::TextSpan;
 use crate::core::token::{Token, TokenKind};
 use crate::core::token::Separator::{Comma, NewLine, Semicolon};
-use crate::lexer::Lexer;
+use crate::new_ast::lex::Lexer;
 
 impl Lexer<'_> {
     pub(crate) fn is_whitespace(&self, c: char) -> bool {
@@ -21,12 +21,12 @@ impl Lexer<'_> {
     }
 
 
-    pub(crate) fn consume_whitespace(&self) -> crate::lexer::Result<()> {
+    pub(crate) fn consume_whitespace(&self) -> crate::new_ast::lex::Result<()> {
         self.consume_while(|c| self.is_whitespace(c))?;
         Ok(())
     }
 
-    pub(crate) fn consume_separator(&self) -> crate::lexer::Result<Token> {
+    pub(crate) fn consume_separator(&self) -> crate::new_ast::lex::Result<Token> {
         let start = self.position();
         let mut text = String::from(self.consume_next()?);
 
@@ -40,7 +40,7 @@ impl Lexer<'_> {
                 self.current_column.borrow_mut().0 = 1;
                 TokenKind::Separator(NewLine)
             }
-            _ => return Err(crate::lexer::Error::UnknownSeparator(text)),
+            _ => return Err(crate::new_ast::lex::Error::UnknownSeparator(text)),
         };
 
         Ok(Token {
@@ -57,7 +57,7 @@ mod test {
 
     use crate::core::token::{Separator, TokenKind};
     use crate::core::token::Separator::{NewLine, Semicolon};
-    use crate::lexer::Lexer;
+    use crate::new_ast::lex::Lexer;
 
     #[test]
     fn tab() {

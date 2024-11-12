@@ -1,7 +1,7 @@
 use crate::core::span::TextSpan;
 use crate::core::token::{Token, TokenKind};
 use crate::core::token::Operator::*;
-use crate::lexer::Lexer;
+use crate::new_ast::lex::Lexer;
 
 impl Lexer<'_> {
     pub(crate) fn is_operator(&self, c: char) -> bool {
@@ -9,7 +9,7 @@ impl Lexer<'_> {
                  '+' | '-' | '*' | '/' | '&' | '|' | '^' | '%' | '~' | '=' | '!' | '?')
     }
 
-    pub(crate) fn consume_operator(&self) -> crate::lexer::Result<Token> {
+    pub(crate) fn consume_operator(&self) -> crate::new_ast::lex::Result<Token> {
         let start = self.position();
         let mut text = String::from(self.consume_next()?);
 
@@ -125,7 +125,7 @@ impl Lexer<'_> {
                     _ => TokenKind::Operator(Bang)
                 }
             }
-            _ => return Err(crate::lexer::Error::UnknownOperator(text)),
+            _ => return Err(crate::new_ast::lex::Error::UnknownOperator(text)),
         };
 
         Ok(Token {
@@ -139,7 +139,7 @@ impl Lexer<'_> {
 mod test {
     use crate::core::token::Operator::*;
     use crate::core::token::TokenKind;
-    use crate::lexer::Lexer;
+    use crate::new_ast::lex::Lexer;
 
     #[test]
     fn open_paren() {

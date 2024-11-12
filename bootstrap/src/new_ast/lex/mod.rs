@@ -1,10 +1,10 @@
 use std::cell::RefCell;
 
-use crate::core::position::{Column, Row, Position, SourceIndex};
+use crate::core::position::{Column, Position, Row, SourceIndex};
 use crate::core::span::TextSpan;
 use crate::core::token::{Token, TokenKind};
 use crate::core::token::TokenKind::EOF;
-use crate::lexer::Error::UnexpectedEndOfFile;
+use crate::new_ast::lex::Error::UnexpectedEndOfFile;
 
 mod comment;
 mod separator;
@@ -274,7 +274,7 @@ impl<'a> Lexer<'a> {
         None
     }
 
-    pub(crate) fn look_ahead(&self) -> Result<String>{
-        self.peek_while(|c|c.is_ascii_alphanumeric() || c == '_')
+    pub(crate) fn look_ahead(&self) -> Result<String> {
+        self.peek_while(|c| c.is_ascii_alphanumeric() || c == '_')
     }
 }

@@ -1,25 +1,36 @@
 use std::collections::HashMap;
 
 use crate::core::token::{Operator, Token, TokenKind};
-use crate::new_ast::parser::node::RootNode;
-use crate::new_ast::parser::precedence::Precedence;
+use crate::new_ast::parse::node::RootNode;
+use crate::new_ast::parse::precedence::Precedence;
 
 pub(crate) mod precedence;
 pub(crate) mod node;
 
-pub(crate) struct Parser<'a> {
-    tokens: &'a [Token],
+#[derive(Debug)]
+pub enum Error {
+    UnexpectedEndOfFile,
+    UnexpectedToken {
+        expected: TokenKind,
+        got: Token,
+    },
+    UnsupportedToken(Token),
+}
+
+pub(crate) type Result<T, E = Error> = core::result::Result<T, E>;
+
+pub(crate) struct Parser {
+    tokens: Vec<Token>,
     current: usize,
     precedence_map: HashMap<TokenKind, Precedence>,
 }
 
-impl<'a> Parser<'a> {
-
-    pub(crate) fn parse(tokens: &'a [Token]) -> crate::new_ast::Result<RootNode> {
+impl Parser {
+    pub(crate) fn parse(tokens: Vec<Token>) -> Result<RootNode> {
         todo!()
     }
 
-    fn new(tokens: &'a [Token]) -> Self {
+    fn new(tokens: Vec<Token>) -> Self {
         let mut precedence_map = HashMap::new();
 
         precedence_map.insert(TokenKind::Operator(Operator::Arrow), Precedence::Assignment);

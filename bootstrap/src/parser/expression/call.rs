@@ -54,7 +54,7 @@ mod tests {
     use crate::ast::{BlockExpression, CallExpression, Expression, FunctionDeclarationExpression, IdentifierExpression, LambdaDeclarationExpression, ReturnExpression, Statement};
     use crate::ast::Expression::{Literal, Return};
     use crate::ast::Literal::Boolean;
-    use crate::lexer::Lexer;
+    use crate::new_ast::lex::Lexer;
     use crate::parser::Parser;
 
     #[test]

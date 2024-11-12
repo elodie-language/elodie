@@ -193,7 +193,7 @@ impl<'a> Parser<'a> {
 #[cfg(test)]
 mod test {
     use crate::ast::Block;
-    use crate::lexer::Lexer;
+    use crate::new_ast::lex::Lexer;
     use crate::parser::Parser;
 
     #[test]
