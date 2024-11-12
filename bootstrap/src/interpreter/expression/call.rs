@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 
-use crate::ast::{CallArg, CallExpression, Expression};
+use crate::ast::{CallParameter, CallExpression, Expression};
 use crate::interpreter::Interpreter;
 use crate::interpreter::value::Value;
 
@@ -73,7 +73,7 @@ impl Interpreter {
         result
     }
 
-    fn interpret_call_arg(&mut self, arg: &CallArg) -> crate::interpreter::Result<Value> {
+    fn interpret_call_arg(&mut self, arg: &CallParameter) -> crate::interpreter::Result<Value> {
         self.interpret_expression(arg.value.as_ref())
     }
 }

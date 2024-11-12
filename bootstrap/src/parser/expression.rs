@@ -5,16 +5,17 @@ use crate::parser::Parser;
 use crate::parser::precedence::Precedence;
 
 mod access;
+mod block;
 mod call;
 mod function;
 mod identifier;
+mod r#if;
 mod infix;
+mod lambda;
 mod r#let;
+mod r#loop;
 mod prefix;
 mod r#type;
-mod r#if;
-mod block;
-mod r#loop;
 
 impl<'a> Parser<'a> {
     pub(crate) fn parse_expression(&mut self, precedence: Precedence) -> crate::parser::Result<Expression> {

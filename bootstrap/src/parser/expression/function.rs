@@ -6,7 +6,12 @@ use crate::parser::precedence::Precedence;
 impl<'a> Parser<'a> {
     pub(crate) fn function_declaration(&mut self) -> crate::parser::Result<FunctionDeclarationExpression> {
         self.previous_expect(TokenKind::Keyword(Keyword::Function))?;
-        let name = self.parse_identifier()?;
+        let name = if self.current_token_kind()? == &TokenKind::Identifier {
+            Some(self.parse_identifier()?)
+        } else {
+            None
+        };
+
         self.consume(TokenKind::Operator(Operator::OpenParen))?;
 
         let mut parameters = vec![];
@@ -32,7 +37,7 @@ impl<'a> Parser<'a> {
 
         Ok(
             FunctionDeclarationExpression {
-                name: Some(name),
+                name,
                 parameters,
                 return_type,
                 body,
@@ -40,7 +45,7 @@ impl<'a> Parser<'a> {
         )
     }
 
-    fn parameter_expression(&mut self) -> crate::parser::Result<ParameterExpression> {
+    pub(crate) fn parameter_expression(&mut self) -> crate::parser::Result<ParameterExpression> {
         let name = self.parse_identifier()?;
         let r#type = if self.current_token_kind()? == &TokenKind::Operator(Operator::Colon) {
             self.consume(TokenKind::Operator(Operator::Colon))?;
@@ -75,8 +80,8 @@ impl<'a> Parser<'a> {
 #[cfg(test)]
 mod tests {
     use std::ops::Deref;
+
     use crate::ast::{BlockExpression, Expression, FunctionDeclarationExpression, IdentifierExpression, ParameterExpression, ReturnExpression, Statement, TypeExpression};
-    use crate::ast::Expression::Literal;
     use crate::ast::Literal::Boolean;
     use crate::lexer::Lexer;
     use crate::parser::Parser;
@@ -127,6 +132,29 @@ mod tests {
                                                                          body
                                                                      })) = stmt {
             assert_eq!(name.unwrap(), IdentifierExpression("test".to_string()));
+            assert_eq!(parameters, vec![]);
+            assert_eq!(return_type, None);
+            assert_eq!(body, BlockExpression { body: vec![] })
+        } else {
+            panic!("Expected single statement with function declaration, got {:?}", stmt)
+        }
+    }
+
+    #[test]
+    fn anonymous_function() {
+        let tokens = Lexer::lex("function(){}").unwrap();
+        let mut result = Parser::parse(&tokens).unwrap();
+        assert_eq!(result.block.statements.len(), 1);
+
+        let stmt = result.block.statements.pop().unwrap();
+
+        if let Statement::Expression(Expression::FunctionDeclaration(FunctionDeclarationExpression {
+                                                                         name,
+                                                                         parameters,
+                                                                         return_type,
+                                                                         body
+                                                                     })) = stmt {
+            assert!(name.is_none());
             assert_eq!(parameters, vec![]);
             assert_eq!(return_type, None);
             assert_eq!(body, BlockExpression { body: vec![] })

@@ -37,6 +37,8 @@ impl<'a> Parser<'a> {
     pub(crate) fn new(tokens: &'a [Token]) -> Self {
         let mut precedence_map = HashMap::new();
 
+        precedence_map.insert(TokenKind::Operator(Operator::Arrow), Precedence::Assignment);
+
         precedence_map.insert(TokenKind::Operator(Operator::DoubleEqual), Precedence::Equality);
         precedence_map.insert(TokenKind::Operator(Operator::BangEqual), Precedence::Equality);
 

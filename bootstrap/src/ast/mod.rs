@@ -84,7 +84,7 @@ pub struct TypeAliasDeclaration {
 pub struct EnumEntryDeclaration {
     pub modifiers: Vec<Modifier>,
     pub name: String,
-    pub args: Vec<CallArg>,
+    pub args: Vec<CallParameter>,
     // pub inner: Vec<Declaration>,
 }
 
@@ -101,7 +101,7 @@ pub enum Expression {
     For(ForExpression),
     Identifier(IdentifierExpression),
     If(IfExpression),
-    Lambda(LambdaBlock),
+    LambdaDeclaration(LambdaDeclarationExpression),
     Let(LetExpression),
     Loop(LoopExpression),
     Match(MatchExpression),
@@ -244,16 +244,15 @@ pub struct BreakExpression {
 #[derive(Debug, PartialEq, Clone)]
 pub struct CallExpression {
     pub expression: Box<Expression>,
-    pub arguments: Vec<CallArg>,
+    pub arguments: Vec<CallParameter>,
     pub type_args: Vec<TypeExpression>,
-    pub lambda: Option<Box<Expression>>,
 }
 
 #[derive(Debug, PartialEq, Clone)]
-pub struct LambdaBlock {
-    pub label: Option<String>,
-    pub type_args: TupleType,
-    pub body: Option<Block>,
+pub struct LambdaDeclarationExpression {
+    pub parameters: Vec<ParameterExpression>,
+    pub return_type: Option<TypeExpression>,
+    pub body: BlockExpression,
 }
 
 #[derive(Debug, PartialEq, Clone)]
@@ -381,7 +380,7 @@ pub enum BoundKind {
 }
 
 #[derive(Debug, PartialEq, Clone)]
-pub struct CallArg {
+pub struct CallParameter {
     pub name: Option<String>,
     pub value: Box<Expression>,
 }

@@ -1,0 +1,19 @@
+function receiver(fn: function()){
+    fn()
+}
+
+receiver(function x (){
+    console.log('1') // Expect: 1
+})
+
+receiver(function _ (){
+    console.log('2') // Expect: 2
+})
+
+receiver(function(){
+    console.log('3') // Expect: 3
+})
+
+receiver(() => {
+    console.log('4') // Expect: 4
+})

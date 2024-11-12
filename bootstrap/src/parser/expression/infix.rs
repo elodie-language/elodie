@@ -10,6 +10,10 @@ impl<'a> Parser<'a> {
             return self.parse_call_expression(left);
         }
 
+        // if current.kind == TokenKind::Operator(Operator::Arrow){
+        //     return Ok(Expression::LambdaDeclaration(self.lambda_declaration(left)?));
+        // }
+
         if current.kind == TokenKind::Operator(Operator::Dot) {
             let previous = self.previous()?;
             assert_eq!(previous.kind, TokenKind::Identifier);
