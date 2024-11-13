@@ -86,7 +86,7 @@ impl<'a> Parser<'a> {
 //     use crate::ast::{BinaryExpression, BinaryOperator, Expression, IdentifierExpression, ParameterExpression, ParenthesizedExpression, Statement, TypeExpression};
 //     use crate::ast::Expression::{Binary, Identifier, Literal, Parameter, Parenthesized};
 //     use crate::ast::Literal::Number;
-//     use crate::new_ast::lex::Lexer;
+//     use crate::ast::lex::Lexer;
 //     use crate::parser::Parser;
 //
 //     #[test]

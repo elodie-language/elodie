@@ -55,7 +55,7 @@ impl<'a> Parser<'a> {
 //     use crate::ast::{BlockExpression, BreakExpression, ContinueExpression, Expression, LoopExpression, Statement};
 //     use crate::ast::Expression::Literal;
 //     use crate::ast::Literal::Number;
-//     use crate::new_ast::lex::Lexer;
+//     use crate::ast::lex::Lexer;
 //     use crate::parser::Parser;
 //
 //     #[test]

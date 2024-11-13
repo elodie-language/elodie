@@ -66,7 +66,7 @@ impl<'a> Parser<'a> {
 // #[cfg(test)]
 // mod tests {
 //     use crate::ast::{FunctionParameterType, FunctionType, TypeExpression};
-//     use crate::new_ast::lex::Lexer;
+//     use crate::ast::lex::Lexer;
 //     use crate::parser::Parser;
 //
 //     #[test]

@@ -1,8 +1,8 @@
 use std::cell::RefCell;
 
-use crate::new_ast::lex::Error::UnexpectedEndOfFile;
-use crate::new_ast::token::{Column, Index, Position, Row, TextSpan, Token, TokenKind};
-use crate::new_ast::token::TokenKind::EOF;
+use crate::ast::lex::Error::UnexpectedEndOfFile;
+use crate::ast::token::{Column, Index, Position, Row, TextSpan, Token, TokenKind};
+use crate::ast::token::TokenKind::EOF;
 
 mod comment;
 mod separator;

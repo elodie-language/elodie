@@ -8,7 +8,6 @@ mod core;
 mod interpreter;
 mod cli;
 mod ast;
-mod new_ast;
 
 fn main() {
     let args: Vec<String> = env::args().collect();
@@ -16,7 +15,7 @@ fn main() {
     let mut path = PathBuf::from(args.get(1).unwrap());
     let content = load_text_from_file(path.to_str().unwrap()).unwrap();
 
-    let ast = new_ast::parse_str(content.as_str()).unwrap();
+    let ast = ast::parse_str(content.as_str()).unwrap();
 
 //     let tokens = Lexer::lex(content.as_str()).unwrap();
 //     let result = Parser::parse(&tokens).unwrap();

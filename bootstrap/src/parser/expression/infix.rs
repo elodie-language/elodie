@@ -52,7 +52,7 @@ impl<'a> Parser<'a> {
 // #[cfg(test)]
 // mod tests {
 //     use crate::ast::{BinaryOperator, Expression, Statement};
-//     use crate::new_ast::lex::Lexer;
+//     use crate::ast::lex::Lexer;
 //     use crate::parser::Parser;
 //
 //     macro_rules! parameterized_expression {

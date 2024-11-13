@@ -30,7 +30,7 @@ impl<'a> Parser<'a> {
 //
 //     use crate::ast::{Expression, IdentifierExpression, LetExpression, Literal, Statement};
 //     use crate::ast::TypeExpression::Fundamentals;
-//     use crate::new_ast::lex::Lexer;
+//     use crate::ast::lex::Lexer;
 //     use crate::parser::Parser;
 //
 //     #[test]

@@ -1,5 +1,5 @@
-use crate::new_ast::ast::SourceFile;
-use crate::new_ast::parse::node::RootNode;
+use crate::ast::ast::SourceFile;
+use crate::ast::parse::node::RootNode;
 
 #[derive(Debug)]
 pub enum Error {}

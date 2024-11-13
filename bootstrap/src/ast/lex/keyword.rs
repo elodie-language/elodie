@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 
-use crate::new_ast::lex::Lexer;
-use crate::new_ast::token::{KeywordToken, TextSpan, Token, TokenKind};
+use crate::ast::lex::Lexer;
+use crate::ast::token::{KeywordToken, TextSpan, Token, TokenKind};
 
 impl Lexer<'_> {
     pub(crate) fn is_keyword(&self, c: char) -> bool {
@@ -20,7 +20,7 @@ impl Lexer<'_> {
         }
     }
 
-    pub(crate) fn consume_keyword(&self) -> crate::new_ast::lex::Result<Token> {
+    pub(crate) fn consume_keyword(&self) -> crate::ast::lex::Result<Token> {
         let start = self.position();
 
         for (keyword_str, keyword_enum) in Self::keyword_map() {
@@ -34,7 +34,7 @@ impl Lexer<'_> {
             }
         }
 
-        Err(crate::new_ast::lex::Error::UnknownSeparator("".to_string()))
+        Err(crate::ast::lex::Error::UnknownSeparator("".to_string()))
     }
 
 
@@ -66,9 +66,9 @@ impl Lexer<'_> {
 mod test {
     use KeywordToken::*;
 
-    use crate::new_ast::lex::Lexer;
-    use crate::new_ast::token::{identifier, keyword, KeywordToken};
-    use crate::new_ast::token::KeywordToken::If;
+    use crate::ast::lex::Lexer;
+    use crate::ast::token::{identifier, keyword, KeywordToken};
+    use crate::ast::token::KeywordToken::If;
 
     #[test]
     fn r#break() {

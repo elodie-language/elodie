@@ -1,4 +1,4 @@
-use crate::new_ast::token::TokenKind::{EOF, Identifier};
+use crate::ast::token::TokenKind::{EOF, Identifier};
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct Token {

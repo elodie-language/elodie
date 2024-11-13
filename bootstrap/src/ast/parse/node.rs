@@ -1,5 +1,7 @@
 use std::ops::Index;
 
+use crate::ast::token::Token;
+
 pub struct RootNode {
     nodes: Vec<Node>,
 }
@@ -36,7 +38,16 @@ pub struct BlockNode {
 
 #[derive(Debug, PartialEq)]
 pub enum LiteralNode {
-    Number(f64),
-    String(String),
-    Boolean(bool),
+    Number {
+        token: Token,
+        value: f64,
+    },
+    String {
+        token: Token,
+        value: String,
+    },
+    Boolean {
+        token: Token,
+        value: bool,
+    },
 }
