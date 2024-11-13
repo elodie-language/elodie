@@ -50,7 +50,7 @@ mod tests {
     use crate::ast::parse::Parser;
     use crate::ast::token::{operator, OperatorToken::*, test_token, test_token_with_offset};
 
-    macro_rules! parameterized_expression {
+    macro_rules! parse_infix {
     ($($name:ident, $input:expr => $expected:expr,)*) => {
         $(
             #[test]
@@ -75,7 +75,7 @@ mod tests {
     };
 }
 
-    parameterized_expression! {
+    parse_infix! {
         add, "1 + 2" => InfixOperator::Add(test_token_with_offset(operator(Plus), "+", 2)),
         subtract, "1 - 2" => InfixOperator::Subtract(test_token_with_offset(operator(Minus), "-", 2)),
         multiply, "1 * 2" => InfixOperator::Multiply(test_token_with_offset(operator(Asterisk), "*", 2)),

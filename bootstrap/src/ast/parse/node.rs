@@ -30,6 +30,7 @@ pub enum Node {
     Block(BlockNode),
     Infix(InfixNode),
     Literal(LiteralNode),
+    Prefix(PrefixNode),
 }
 
 #[derive(Debug, PartialEq)]
@@ -73,4 +74,17 @@ pub enum InfixOperator {
     LessThanOrEqual(Token),
     GreaterThan(Token),
     GreaterThanOrEqual(Token),
+}
+
+#[derive(Debug, PartialEq)]
+pub struct PrefixNode {
+    pub operator: PrefixOperator,
+    pub node: Box<Node>,
+}
+
+#[derive(Debug, PartialEq)]
+pub enum PrefixOperator {
+    Plus(Token),
+    Negate(Token),
+    Not(Token),
 }
