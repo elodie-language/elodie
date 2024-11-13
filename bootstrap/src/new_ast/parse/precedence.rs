@@ -1,3 +1,4 @@
+#[derive(Clone, Debug, PartialEq, PartialOrd)]
 pub(crate) enum Precedence {
     None,
     Assignment,
