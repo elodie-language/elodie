@@ -37,6 +37,16 @@ pub fn operator(operator: OperatorToken) -> TokenKind { TokenKind::Operator(oper
 
 pub fn separator(separator: SeparatorToken) -> TokenKind { TokenKind::Separator(separator) }
 
+pub fn test_token(kind: TokenKind, value: &str) -> Token {
+    Token {
+        kind,
+        span: TextSpan {
+            start: Position::new(Row(1), Column(1), Index(0)),
+            end: Position::new(Row(1), Column(1 + value.len()), Index(value.len())),
+            value: value.to_string(),
+        },
+    }
+}
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum KeywordToken {
@@ -163,9 +173,9 @@ pub struct Position {
 }
 
 impl Position {
-    pub fn new(line: Row, column: Column, index: Index) -> Self {
+    pub fn new(row: Row, column: Column, index: Index) -> Self {
         Self {
-            row: line,
+            row,
             column,
             index,
         }

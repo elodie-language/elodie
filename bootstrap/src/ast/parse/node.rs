@@ -28,6 +28,7 @@ impl RootNode {
 #[derive(Debug, PartialEq)]
 pub enum Node {
     Block(BlockNode),
+    Infix(InfixNode),
     Literal(LiteralNode),
 }
 
@@ -50,4 +51,26 @@ pub enum LiteralNode {
         token: Token,
         value: bool,
     },
+}
+
+#[derive(Debug, PartialEq)]
+pub struct InfixNode {
+    pub left: Box<Node>,
+    pub operator: InfixOperator,
+    pub right: Box<Node>,
+}
+
+#[derive(Debug, PartialEq)]
+pub enum InfixOperator {
+    Add(Token),
+    Subtract(Token),
+    Multiply(Token),
+    Divide(Token),
+    Modulo(Token),
+    Equal(Token),
+    NotEqual(Token),
+    LessThan(Token),
+    LessThanOrEqual(Token),
+    GreaterThan(Token),
+    GreaterThanOrEqual(Token),
 }
