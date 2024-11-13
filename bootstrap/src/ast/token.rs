@@ -48,6 +48,17 @@ pub fn test_token(kind: TokenKind, value: &str) -> Token {
     }
 }
 
+pub fn test_token_with_offset(kind: TokenKind, value: &str, offset: usize) -> Token {
+    Token {
+        kind,
+        span: TextSpan {
+            start: Position::new(Row(1), Column(offset + 1), Index(offset)),
+            end: Position::new(Row(1), Column(offset + 1 + value.len()), Index(offset + value.len())),
+            value: value.to_string(),
+        },
+    }
+}
+
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum KeywordToken {
     Break,

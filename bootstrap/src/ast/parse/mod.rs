@@ -90,7 +90,7 @@ impl Parser {
         let mut left = self.parse_prefix()?;
 
         while precedence < self.current_precedence()? {
-            left = self.parse_infix(left)?;
+            left = Node::Infix(self.parse_infix(left)?);
         }
         Ok(left)
     }
