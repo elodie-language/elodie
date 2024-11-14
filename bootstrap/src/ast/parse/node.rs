@@ -35,9 +35,11 @@ pub enum Node {
     Identifier(IdentifierNode),
     If(IfNode),
     Infix(InfixNode),
+    Let(LetNode),
     Literal(LiteralNode),
     Loop(LoopNode),
     Prefix(PrefixNode),
+    Type(TypeNode),
 }
 
 #[derive(Debug, PartialEq)]
@@ -102,6 +104,14 @@ pub enum InfixOperator {
 }
 
 #[derive(Debug, PartialEq)]
+pub struct LetNode {
+    pub token: Token,
+    pub identifier: IdentifierNode,
+    pub value: Box<Node>,
+    pub r#type: Option<TypeNode>,
+}
+
+#[derive(Debug, PartialEq)]
 pub enum LiteralNode {
     Number(LiteralNumberNode),
     String(LiteralStringNode),
@@ -155,3 +165,6 @@ pub enum PrefixOperator {
     Negate(Token),
     Not(Token),
 }
+
+#[derive(Debug, PartialEq)]
+pub enum TypeNode {}

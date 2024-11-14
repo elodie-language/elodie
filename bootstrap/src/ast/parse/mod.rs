@@ -16,6 +16,7 @@ mod identifier;
 mod block;
 mod r#loop;
 mod r#if;
+mod r#let;
 
 #[derive(Debug, PartialEq)]
 pub enum Error {
