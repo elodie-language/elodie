@@ -33,6 +33,7 @@ pub enum Node {
     Break(BreakNode),
     Continue(ContinueNode),
     Identifier(IdentifierNode),
+    If(IfNode),
     Infix(InfixNode),
     Literal(LiteralNode),
     Loop(LoopNode),
@@ -62,6 +63,20 @@ impl IdentifierNode {
     pub fn identifier(&self) -> &str {
         self.0.span.value.as_str()
     }
+}
+
+#[derive(Debug, PartialEq)]
+pub struct IfNode {
+    pub token: Token,
+    pub condition: Box<Node>,
+    pub then: BlockNode,
+    pub otherwise: Option<ElseNode>,
+}
+
+#[derive(Debug, PartialEq)]
+pub struct ElseNode {
+    pub token: Token,
+    pub block: BlockNode,
 }
 
 #[derive(Debug, PartialEq)]

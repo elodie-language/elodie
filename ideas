@@ -84,6 +84,7 @@ if some_var {
     false =>
 }
 
+
 describe('Array'){
     describe('index_of'){
             it('should return -1 when the value is not present') {
