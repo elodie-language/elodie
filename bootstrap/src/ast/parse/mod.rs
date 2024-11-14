@@ -4,8 +4,8 @@ use std::collections::HashMap;
 use crate::ast::parse::Error::UnexpectedEndOfFile;
 use crate::ast::parse::node::{Node, RootNode};
 use crate::ast::parse::precedence::Precedence;
-use crate::ast::token::{LiteralToken, OperatorToken, Token, TokenKind};
-use crate::ast::token::TokenKind::Literal;
+use crate::ast::token::{KeywordToken, LiteralToken, OperatorToken, Token, TokenKind};
+use crate::ast::token::TokenKind::{Keyword, Literal, Operator};
 
 pub(crate) mod precedence;
 pub(crate) mod node;
@@ -13,6 +13,7 @@ mod infix;
 mod literal;
 mod prefix;
 mod identifier;
+mod block;
 
 #[derive(Debug, PartialEq)]
 pub enum Error {
@@ -105,8 +106,26 @@ impl Parser {
         self.advance()
     }
 
+    pub(crate) fn consume_if(&mut self, expected: TokenKind) -> Result<Option<Token>> {
+        if self.current()?.kind != expected {
+            return Ok(None);
+        }
+
+        Ok(Some(self.consume(expected)?))
+    }
+
     pub(crate) fn consume_literal(&mut self, expected: LiteralToken) -> Result<Token> {
         self.current_expect_literal(expected)?;
+        self.advance()
+    }
+
+    pub(crate) fn consume_operator(&mut self, expected: OperatorToken) -> Result<Token> {
+        self.current_expect_operator(expected)?;
+        self.advance()
+    }
+
+    pub(crate) fn consume_keyword(&mut self, expected: KeywordToken) -> Result<Token> {
+        self.current_expect_keyword(expected)?;
         self.advance()
     }
 
@@ -125,6 +144,14 @@ impl Parser {
 
     pub(crate) fn current_expect_literal(&self, literal: LiteralToken) -> Result<()> {
         self.current_expect(Literal(literal))
+    }
+
+    pub(crate) fn current_expect_operator(&self, operator: OperatorToken) -> Result<()> {
+        self.current_expect(Operator(operator))
+    }
+
+    pub(crate) fn current_expect_keyword(&self, keyword: KeywordToken) -> Result<()> {
+        self.current_expect(Keyword(keyword))
     }
 
     pub(crate) fn current_precedence(&self) -> Result<Precedence> {
@@ -226,6 +253,32 @@ mod tests {
         assert!(result.is_literal(Number));
     }
 
+    #[test]
+    fn consume_if_but_eof() {
+        let tokens = lex("").unwrap();
+        let mut parser = Parser::new(tokens);
+        let result = parser.consume_if(literal(True));
+        assert_eq!(result, Err(Error::UnexpectedEndOfFile))
+    }
+
+    #[test]
+    fn consume_if_but_unexpected_token() {
+        let tokens = lex("false").unwrap();
+        let mut parser = Parser::new(tokens);
+        let result = parser.consume_if(literal(True));
+        assert_eq!(result, Ok(None));
+    }
+
+    #[test]
+    fn consume_if() {
+        let tokens = lex("true 99").unwrap();
+        let mut parser = Parser::new(tokens);
+        let result = parser.consume_if(literal(True)).unwrap().unwrap();
+        assert!(result.is_literal(True));
+
+        let result = parser.consume_if(literal(Number)).unwrap().unwrap();
+        assert!(result.is_literal(Number));
+    }
 
     #[test]
     fn current_but_eof() {

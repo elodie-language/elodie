@@ -38,7 +38,7 @@ pub enum Node {
 
 #[derive(Debug, PartialEq)]
 pub struct BlockNode {
-    nodes: Vec<Node>,
+    pub nodes: Vec<Node>,
 }
 
 #[derive(Debug, PartialEq)]

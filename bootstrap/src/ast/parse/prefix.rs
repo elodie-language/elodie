@@ -19,6 +19,7 @@ impl Parser {
                             node: Box::new(self.parse_node(Precedence::None)?),
                         }))
                     }
+                    OperatorToken::OpenCurly => Ok(Node::Block(self.parse_block()?)),
                     _ => Err(Error::unsupported(self.advance()?))
                 }
             }
