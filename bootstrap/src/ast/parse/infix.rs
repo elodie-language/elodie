@@ -63,13 +63,13 @@ mod tests {
 
                 let Infix(InfixNode{ ref left, ref operator, ref right }) = result[0] else { panic!() };
 
-                let Literal(LiteralNode::Number { ref value, ..}) = left.deref() else {panic!()};
-                assert_eq!(*value, 1.0);
+                let Literal(LiteralNode::Number(node)) = left.deref() else {panic!()};
+                assert_eq!(node.value().unwrap(), 1.0);
 
                 assert_eq!(*operator, $ expected);
 
-                let Literal(LiteralNode::Number { ref value, ..}) = right.deref() else {panic!()};
-                assert_eq!(*value, 2.0);
+                let Literal(LiteralNode::Number(node)) = right.deref() else {panic!()};
+                assert_eq!(node.value().unwrap(), 2.0);
             }
         )*
     };

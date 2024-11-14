@@ -1,32 +1,28 @@
 use std::str::FromStr;
 
-use crate::ast::parse::{Error, Parser};
-use crate::ast::parse::node::LiteralNode;
+use crate::ast::parse::node::{LiteralBooleanNode, LiteralNode, LiteralNumberNode, LiteralStringNode};
+use crate::ast::parse::Parser;
 use crate::ast::token::LiteralToken;
 
 impl Parser {
     pub(crate) fn parse_literal_string(&mut self) -> crate::ast::parse::Result<LiteralNode> {
         let token = self.consume_literal(LiteralToken::String)?;
-        let value = token.value().to_string();
-        return Ok(LiteralNode::String { token, value });
+        return Ok(LiteralNode::String(LiteralStringNode(token)));
     }
 
     pub(crate) fn parse_literal_number(&mut self) -> crate::ast::parse::Result<LiteralNode> {
         let token = self.consume_literal(LiteralToken::Number)?;
-        let value = f64::from_str(token.value())
-            .map_err(|_| Error::UnsupportedNumber(token.value().to_string()))?;
-
-        return Ok(LiteralNode::Number { token, value });
+        return Ok(LiteralNode::Number(LiteralNumberNode(token)));
     }
 
     pub(crate) fn parse_literal_true(&mut self) -> crate::ast::parse::Result<LiteralNode> {
         let token = self.consume_literal(LiteralToken::True)?;
-        return Ok(LiteralNode::Boolean { token, value: true });
+        return Ok(LiteralNode::Boolean(LiteralBooleanNode(token)));
     }
 
     pub(crate) fn parse_literal_false(&mut self) -> crate::ast::parse::Result<LiteralNode> {
         let token = self.consume_literal(LiteralToken::False)?;
-        return Ok(LiteralNode::Boolean { token, value: false });
+        return Ok(LiteralNode::Boolean(LiteralBooleanNode(token)));
     }
 }
 
@@ -37,7 +33,7 @@ mod tests {
     use crate::ast::parse::node::Node::Literal;
     use crate::ast::parse::parse;
     use crate::ast::token::LiteralToken;
-    use crate::ast::token::LiteralToken::{False, String, True};
+    use crate::ast::token::LiteralToken::{False, True};
 
     #[test]
     fn string() {
@@ -45,9 +41,8 @@ mod tests {
         let result = parse(tokens).unwrap();
         assert_eq!(result.len(), 1);
 
-        let Literal(LiteralNode::String { value, token }) = &result[0] else { panic!() };
-        assert_eq!(value.as_str(), "Elodie");
-        assert!(token.is_literal(String));
+        let Literal(LiteralNode::String(node)) = &result[0] else { panic!() };
+        assert_eq!(node.value(), "Elodie");
     }
 
     macro_rules! parse_number_test {
@@ -60,9 +55,8 @@ mod tests {
                 let result = parse(tokens).unwrap();
                 assert_eq!(result.len(), 1);
 
-                let Literal(LiteralNode::Number { value, token }) = &result[0] else { panic!() };
-                assert_eq!(*value, $expected);
-                assert!(token.is_literal(LiteralToken::Number));
+                let Literal(LiteralNode::Number(node)) = &result[0] else { panic!() };
+                assert_eq!(node.value().unwrap(), $expected);
             }
         )*
     };
@@ -78,17 +72,18 @@ mod tests {
         let tokens = lex("true").unwrap();
         let result = parse(tokens).unwrap();
         assert_eq!(result.len(), 1);
-        let Literal(LiteralNode::Boolean { value, token }) = &result[0] else { panic!() };
-        assert_eq!(*value, true);
-        assert!(token.is_literal(True));
+
+        let Literal(LiteralNode::Boolean(node)) = &result[0] else { panic!() };
+        assert_eq!(node.value(), true);
     }
 
     #[test]
     fn r#false() {
         let tokens = lex("false").unwrap();
         let result = parse(tokens).unwrap();
-        let Literal(LiteralNode::Boolean { value, token }) = &result[0] else { panic!() };
-        assert_eq!(*value, false);
-        assert!(token.is_literal(False));
+        assert_eq!(result.len(), 1);
+
+        let Literal(LiteralNode::Boolean(node)) = &result[0] else { panic!() };
+        assert_eq!(node.value(), false);
     }
 }

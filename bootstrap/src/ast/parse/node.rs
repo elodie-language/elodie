@@ -1,6 +1,8 @@
 use std::ops::Index;
+use std::str::FromStr;
 
-use crate::ast::token::Token;
+use crate::ast::parse::Error;
+use crate::ast::token::{LiteralToken, Token, TokenKind};
 
 pub struct RootNode {
     nodes: Vec<Node>,
@@ -28,6 +30,7 @@ impl RootNode {
 #[derive(Debug, PartialEq)]
 pub enum Node {
     Block(BlockNode),
+    Identifier(IdentifierNode),
     Infix(InfixNode),
     Literal(LiteralNode),
     Prefix(PrefixNode),
@@ -39,19 +42,12 @@ pub struct BlockNode {
 }
 
 #[derive(Debug, PartialEq)]
-pub enum LiteralNode {
-    Number {
-        token: Token,
-        value: f64,
-    },
-    String {
-        token: Token,
-        value: String,
-    },
-    Boolean {
-        token: Token,
-        value: bool,
-    },
+pub struct IdentifierNode(pub Token);
+
+impl IdentifierNode {
+    pub fn identifier(&self) -> &str {
+        self.0.span.value.as_str()
+    }
 }
 
 #[derive(Debug, PartialEq)]
@@ -75,6 +71,42 @@ pub enum InfixOperator {
     GreaterThan(Token),
     GreaterThanOrEqual(Token),
 }
+
+#[derive(Debug, PartialEq)]
+pub enum LiteralNode {
+    Number(LiteralNumberNode),
+    String(LiteralStringNode),
+    Boolean(LiteralBooleanNode),
+}
+
+#[derive(Debug, PartialEq)]
+pub struct LiteralNumberNode(pub Token);
+
+impl LiteralNumberNode {
+    pub fn value(&self) -> crate::ast::parse::Result<f64> {
+        f64::from_str(self.0.value())
+            .map_err(|_| Error::UnsupportedNumber(self.0.value().to_string()))
+    }
+}
+
+#[derive(Debug, PartialEq)]
+pub struct LiteralStringNode(pub Token);
+
+impl LiteralStringNode {
+    pub fn value(&self) -> &str {
+        self.0.value()
+    }
+}
+
+#[derive(Debug, PartialEq)]
+pub struct LiteralBooleanNode(pub Token);
+
+impl LiteralBooleanNode {
+    pub fn value(&self) -> bool {
+        self.0.kind == TokenKind::Literal(LiteralToken::True)
+    }
+}
+
 
 #[derive(Debug, PartialEq)]
 pub struct PrefixNode {

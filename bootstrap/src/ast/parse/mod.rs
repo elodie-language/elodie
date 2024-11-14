@@ -12,6 +12,7 @@ pub(crate) mod node;
 mod infix;
 mod literal;
 mod prefix;
+mod identifier;
 
 #[derive(Debug, PartialEq)]
 pub enum Error {
