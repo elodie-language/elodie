@@ -30,15 +30,29 @@ impl RootNode {
 #[derive(Debug, PartialEq)]
 pub enum Node {
     Block(BlockNode),
+    Break(BreakNode),
+    Continue(ContinueNode),
     Identifier(IdentifierNode),
     Infix(InfixNode),
     Literal(LiteralNode),
+    Loop(LoopNode),
     Prefix(PrefixNode),
 }
 
 #[derive(Debug, PartialEq)]
 pub struct BlockNode {
     pub nodes: Vec<Node>,
+}
+
+#[derive(Debug, PartialEq)]
+pub struct BreakNode {
+    pub token: Token,
+    pub result: Option<Box<Node>>,
+}
+
+#[derive(Debug, PartialEq)]
+pub struct ContinueNode {
+    pub token: Token,
 }
 
 #[derive(Debug, PartialEq)]
@@ -105,6 +119,12 @@ impl LiteralBooleanNode {
     pub fn value(&self) -> bool {
         self.0.kind == TokenKind::Literal(LiteralToken::True)
     }
+}
+
+#[derive(Debug, PartialEq)]
+pub struct LoopNode {
+    pub token: Token,
+    pub block: BlockNode,
 }
 
 

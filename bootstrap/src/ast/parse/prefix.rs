@@ -1,10 +1,11 @@
 use crate::ast::parse::{Error, Parser};
 use crate::ast::parse::Error::UnsupportedToken;
 use crate::ast::parse::node::{Node, PrefixNode, PrefixOperator};
+use crate::ast::parse::node::Node::{Break, Continue, Loop};
 use crate::ast::parse::precedence::Precedence;
+use crate::ast::token::{KeywordToken, OperatorToken};
 use crate::ast::token::LiteralToken::{False, Number, String, True};
-use crate::ast::token::OperatorToken;
-use crate::ast::token::TokenKind::Operator;
+use crate::ast::token::TokenKind::{Keyword, Operator};
 
 impl Parser {
     pub(crate) fn parse_prefix(&mut self) -> crate::ast::parse::Result<Node> {
@@ -20,6 +21,14 @@ impl Parser {
                         }))
                     }
                     OperatorToken::OpenCurly => Ok(Node::Block(self.parse_block()?)),
+                    _ => Err(Error::unsupported(self.advance()?))
+                }
+            }
+            Keyword(keyword) => {
+                match keyword {
+                    KeywordToken::Break => Ok(Break(self.parse_break()?)),
+                    KeywordToken::Continue => Ok(Continue(self.parse_continue()?)),
+                    KeywordToken::Loop => Ok(Loop(self.parse_loop()?)),
                     _ => Err(Error::unsupported(self.advance()?))
                 }
             }

@@ -10,6 +10,7 @@ impl Token {
     pub fn is_eof(&self) -> bool { self.kind == EOF }
     pub fn is_identifier(&self) -> bool { self.kind == TokenKind::Identifier }
     pub fn is_literal(&self, literal: LiteralToken) -> bool { self.kind == TokenKind::Literal(literal) }
+    pub fn is_separator(&self, separator: SeparatorToken) -> bool { self.kind == TokenKind::Separator(separator) }
     pub fn is_keyword(&self, keyword: KeywordToken) -> bool { self.kind == TokenKind::Keyword(keyword) }
     pub fn is_operator(&self, operator: OperatorToken) -> bool { self.kind == TokenKind::Operator(operator) }
     pub fn value(&self) -> &str { return self.span.value.as_str(); }
