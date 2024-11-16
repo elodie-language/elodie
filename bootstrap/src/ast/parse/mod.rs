@@ -17,6 +17,7 @@ mod block;
 mod r#loop;
 mod r#if;
 mod r#let;
+mod r#type;
 
 #[derive(Debug, PartialEq)]
 pub enum Error {
@@ -27,6 +28,7 @@ pub enum Error {
     },
     UnsupportedNumber(String),
     UnsupportedToken(Token),
+    UnknownType(Token)
 }
 
 impl Error {

@@ -167,4 +167,13 @@ pub enum PrefixOperator {
 }
 
 #[derive(Debug, PartialEq)]
-pub enum TypeNode {}
+pub enum TypeNode {
+    Fundamental(TypeFundamentalNode)
+}
+
+#[derive(Debug, PartialEq)]
+pub enum TypeFundamentalNode {
+    Boolean(Token),
+    Number(Token),
+    String(Token),
+}

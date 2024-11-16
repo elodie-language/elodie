@@ -32,8 +32,6 @@ mod tests {
     use crate::ast::parse::node::LiteralNode;
     use crate::ast::parse::node::Node::Literal;
     use crate::ast::parse::parse;
-    use crate::ast::token::LiteralToken;
-    use crate::ast::token::LiteralToken::{False, True};
 
     #[test]
     fn string() {
