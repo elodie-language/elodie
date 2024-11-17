@@ -1,8 +1,8 @@
 use std::collections::HashMap;
 use std::rc::Rc;
-use Value::HostFunction;
+use crate::runner::value::{HostFunctionValue, ObjectValue, Value};
+use crate::runner::value::Value::HostFunction;
 
-use crate::core::{HostFunctionValue, ObjectValue, Value};
 
 pub struct Scope {
     pub values: Vec<HashMap<String, Value>>,
@@ -16,9 +16,9 @@ impl Scope {
 
         let mut root = HashMap::new();
 
-        let mut console = ObjectValue::new();
-        console.set_property(
-            "log",
+        let mut logger = ObjectValue::new();
+        logger.set_property(
+            "info",
             HostFunction(HostFunctionValue(Rc::new(|args: &[&Value]| {
                 for arg in args {
                     print!("{} ", arg.to_string());
@@ -28,7 +28,7 @@ impl Scope {
             }))),
         );
 
-        root.insert("console".to_string(), Value::Object(console));
+        root.insert("log".to_string(), Value::Object(logger));
 
         result.values.push(root);
 

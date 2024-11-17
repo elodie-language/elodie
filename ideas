@@ -96,7 +96,7 @@ describe('Array'){
 
 
 fn main(args: Array<String>) -> Int32 {
-    console.log("Elodie says hi")
+    log.info("Elodie says hi")
 }
 
 

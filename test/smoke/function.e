@@ -3,7 +3,7 @@ fun some_function() -> Bool {
 }
 
 if some_function() {
-    console.log('true') // Expect: true
+    log.info('true') // Expect: true
 }
 
 fun early_exit() -> Number {
@@ -12,7 +12,7 @@ fun early_exit() -> Number {
     return 8
 }
 
-console.log(early_exit())  // Expect: 2
+log.info(early_exit())  // Expect: 2
 
 fun nested() -> Number {
     fun inner() -> Number {
@@ -22,4 +22,4 @@ fun nested() -> Number {
     return inner() + inner () + inner()
 }
 
-console.log(nested()) // Expect: 3
+log.info(nested()) // Expect: 3

@@ -11,13 +11,13 @@ describe('some string'){
 
 
 fun log_summary(total: Number, passed: Number) {
-    console.log('Total tests run: ', total)
-    console.log('Tests passed: ', passed)
-    console.log('Tests failed: ', (total - passed))
+    log.info('Total tests run: ', total)
+    log.info('Tests passed: ', passed)
+    log.info('Tests failed: ', (total - passed))
     if passed == total {
-        console.log('All tests passed! 🎉')
+        log.info('All tests passed! 🎉')
     } else {
-        console.log('Some tests failed.')
+        log.info('Some tests failed.')
     }
 }
 

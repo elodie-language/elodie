@@ -1,1 +1,1 @@
-console.log('Elodie says hi') // Expect: Elodie says hi
+log.info('Elodie says hi') // Expect: Elodie says hi

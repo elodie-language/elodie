@@ -1,10 +1,10 @@
 use std::ops::Deref;
+use ast::Ast;
 
 use crate::ast;
-use crate::ast::{CallFunctionOfObjectNode, SourceFile};
 use crate::ast::compiler::symbol::SymbolTable;
 use crate::ast::parse::node::{InfixNode, LiteralNode, Node, RootNode};
-use crate::core::Value;
+use crate::ast::SourceFile;
 
 mod symbol;
 
@@ -44,13 +44,11 @@ impl Compiler {
                     let Node::Literal(LiteralNode::String(value)) = tuple.nodes.first().unwrap() else { todo!() };
 
                     result.push(
-                        ast::Node::CallFunctionOfObject(CallFunctionOfObjectNode {
+                        Ast::CallFunctionOfObject {
                             object: object_identifier.identifier().to_string(),
                             function: function_identifier.identifier().to_string(),
-                            arguments: vec![ast::Node::Value(
-                                Value::String(value.value().to_string())
-                            )],
-                        })
+                            arguments: vec![Ast::StringValue(value.value().to_string())],
+                        }
                     )
                 }
                 _ => todo!()

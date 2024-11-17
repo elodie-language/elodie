@@ -1,1 +1,1 @@
-console.log('Elodie cli')
+log.info('Elodie cli')

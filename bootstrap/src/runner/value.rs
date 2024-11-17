@@ -3,6 +3,18 @@ use std::fmt::{Debug, Formatter};
 use std::rc::Rc;
 
 #[derive(Debug)]
+pub enum ValueType {
+    Bool,
+    HostFunction,
+    Number,
+    Object,
+    String,
+    Tuple,
+    Unit,
+}
+
+
+#[derive(Debug)]
 pub enum Value {
     Bool(bool),
     HostFunction(HostFunctionValue),
@@ -30,7 +42,7 @@ impl Value {
 
 pub struct HostFunctionValue(pub Rc<dyn Fn(&[&Value]) -> crate::runner::Result<Value>>);
 
-impl Debug for HostFunctionValue{
+impl Debug for HostFunctionValue {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         write!(f, "[HostFunction]")
     }
@@ -40,6 +52,7 @@ impl Debug for HostFunctionValue{
 pub struct ObjectValue {
     properties: HashMap<String, Value>,
 }
+
 impl ObjectValue {
     pub fn new() -> Self {
         Self {

@@ -5,4 +5,4 @@ let result = loop {
     }
 }
 
-console.log(result) // Expect: 20
+log.info(result) // Expect: 20

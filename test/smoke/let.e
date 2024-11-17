@@ -1,11 +1,11 @@
 let value = 'Elodie'
-console.log(value) // Expect: Elodie
+log.info(value) // Expect: Elodie
 
 let value : Number = 42
-console.log(value) // Expect: 42
+log.info(value) // Expect: 42
 
 let value : Bool = true
-console.log(value) // Expect: true
+log.info(value) // Expect: true
 
 let value : Bool = false
-console.log(value) // Expect: false
+log.info(value) // Expect: false

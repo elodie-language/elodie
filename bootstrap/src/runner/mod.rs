@@ -1,8 +1,9 @@
-use crate::ast::{CallFunctionOfObjectNode, Node, SourceFile};
-use crate::core::Value;
+use crate::ast::{Ast, SourceFile};
 use crate::runner::scope::Scope;
+use crate::runner::value::Value;
 
 mod scope;
+mod value;
 
 #[derive(Debug)]
 pub enum Error {}
@@ -23,13 +24,13 @@ impl Runner {
     pub fn run(&mut self, source_file: SourceFile) -> Result<()> {
         for node in source_file.body {
             match node {
-                Node::CallFunctionOfObject(CallFunctionOfObjectNode { object, function, arguments }) => {
+                Ast::CallFunctionOfObject { object, function, arguments } => {
                     let Value::Object(object) = self.scope.get(object.as_str()).unwrap() else { panic!() };
                     let Value::HostFunction(func) = object.get_property(function.as_str()).unwrap() else { panic!() };
 
-                    let Node::Value(arg_1) = arguments.first().unwrap() else { panic!() };
+                    let Ast::StringValue(arg_1) = arguments.first().unwrap() else { panic!() };
 
-                    func.0(&[arg_1]).unwrap();
+                    func.0(&[&Value::String(arg_1.to_string())]).unwrap();
                 }
                 _ => todo!()
             }

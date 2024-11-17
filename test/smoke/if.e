@@ -2,8 +2,8 @@ let x = true
 
 if x == true {
     if x != false {
-        console.log('true story') // Expect: true story
+        log.info('true story') // Expect: true story
     }
 }
 
-if 10 != 10 { } else { console.log('10 == 10') } // Expect: 10 == 10
+if 10 != 10 { } else { log.info('10 == 10') } // Expect: 10 == 10
