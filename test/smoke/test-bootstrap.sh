@@ -3,7 +3,7 @@
 set -eu
 
 DIFF_TOOL="${DIFF_TOOL:-diff --ignore-blank-lines --ignore-all-space}"
-TEST_DIR="${1:-./test/smoke}"
+TEST_DIR="${1:-./test/e2e}"
 BIN="${2:-../bootstrap/target/debug/bootstrap}"
 
 EXIT_CODE=0
@@ -35,7 +35,7 @@ done
 
 # Summary
 echo "----------------------"
-echo -e "bootstrap::smoke - Passed:\e[32m $OK_COUNT" "\e[0mFailed:\e[31m $ERR_COUNT\e[0m"
+echo -e "bootstrap::e2e - Passed:\e[32m $OK_COUNT" "\e[0mFailed:\e[31m $ERR_COUNT\e[0m"
 echo "----------------------"
 
 exit $EXIT_CODE

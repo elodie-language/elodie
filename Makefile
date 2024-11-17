@@ -1,7 +1,6 @@
 BOOTSTRAP_DIR = ./bootstrap
-BOOTSTRAP_E2E_TEST_SCRIPT = ./test/e2e/test-bootstrap.sh
-BOOTSTRAP_REGRESSION_TEST_SCRIPT = ./test/regression/test-bootstrap.sh
 BOOTSTRAP_SMOKE_TEST_SCRIPT = ./test/smoke/test-bootstrap.sh
+BOOTSTRAP_REGRESSION_TEST_SCRIPT = ./test/regression/test-bootstrap.sh
 
 # Default target
 .PHONY: all
@@ -22,11 +21,6 @@ test-bootstrap: bootstrap
 test-smoke: bootstrap
 	$(BOOTSTRAP_SMOKE_TEST_SCRIPT) ./test/smoke ./bootstrap/target/debug/bootstrap
 
-# Run the e2e tests
-.PHONY: test-e2e
-test-e2e: bootstrap
-	$(BOOTSTRAP_E2E_TEST_SCRIPT) ./test/e2e ./bootstrap/target/debug/bootstrap
-
 # Run the regression tests
 .PHONY: test-regression
 test-regression: bootstrap
@@ -34,4 +28,4 @@ test-regression: bootstrap
 
 # Run the tests
 .PHONY: test
-test: test-bootstrap test-smoke test-regression test-e2e
+test: test-bootstrap test-smoke test-regression

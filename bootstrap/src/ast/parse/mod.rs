@@ -94,7 +94,10 @@ impl Parser {
         let mut nodes = vec![];
         loop {
             if self.is_eof() { break; }
-            nodes.push(self.parse_node(Precedence::None)?)
+            nodes.push(self.parse_node(Precedence::None)?);
+            if !self.is_eof() {
+                self.consume_separator(SeparatorToken::NewLine)?;
+            }
         }
         Ok(nodes.into())
     }

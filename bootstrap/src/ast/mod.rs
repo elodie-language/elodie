@@ -1,4 +1,4 @@
-pub use crate::ast::ast::SourceFile;
+pub use crate::ast::ast::*;
 use crate::ast::lex::lex;
 use crate::ast::parse::parse;
 

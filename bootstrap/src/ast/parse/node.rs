@@ -2,8 +2,10 @@ use std::ops::Index;
 use std::str::FromStr;
 
 use crate::ast::parse::Error;
+use crate::ast::parse::node::Node::{Block, Break, Call, Continue, FunctionDeclaration, Identifier, If, Infix, Let, Literal, Loop, Prefix, Return, Tuple, Type};
 use crate::ast::token::{LiteralToken, Token, TokenKind};
 
+#[derive(Debug)]
 pub struct RootNode {
     pub nodes: Vec<Node>,
 }
@@ -44,6 +46,24 @@ pub enum Node {
     Return(ReturnNode),
     Tuple(TupleNode),
     Type(TypeNode),
+}
+
+impl Node {
+    pub fn is_block(&self) -> bool { if let Block(_) = self { true } else { false } }
+    pub fn is_break(&self) -> bool { if let Break(_) = self { true } else { false } }
+    pub fn is_call(&self) -> bool { if let Call(_) = self { true } else { false } }
+    pub fn is_continue(&self) -> bool { if let Continue(_) = self { true } else { false } }
+    pub fn is_function_declaration(&self) -> bool { if let FunctionDeclaration(_) = self { true } else { false } }
+    pub fn is_identifier(&self) -> bool { if let Identifier(_) = self { true } else { false } }
+    pub fn is_if(&self) -> bool { if let If(_) = self { true } else { false } }
+    pub fn is_infix(&self) -> bool { if let Infix(_) = self { true } else { false } }
+    pub fn is_let(&self) -> bool { if let Let(_) = self { true } else { false } }
+    pub fn is_literal(&self) -> bool { if let Literal(_) = self { true } else { false } }
+    pub fn is_loop(&self) -> bool { if let Loop(_) = self { true } else { false } }
+    pub fn is_prefix(&self) -> bool { if let Prefix(_) = self { true } else { false } }
+    pub fn is_return(&self) -> bool { if let Return(_) = self { true } else { false } }
+    pub fn is_tuple(&self) -> bool { if let Tuple(_) = self { true } else { false } }
+    pub fn is_type(&self) -> bool { if let Type(_) = self { true } else { false } }
 }
 
 #[derive(Debug, PartialEq)]
