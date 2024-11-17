@@ -35,14 +35,6 @@ impl<'a> Reader<'a> {
         }
     }
 
-    pub(crate) fn length(&self) -> usize {
-        self.content.len()
-    }
-
-    pub(crate) fn pos(&self) -> usize {
-        *self.pos.borrow()
-    }
-
     pub(crate) fn consume_next(&self) -> Result<char> {
         let mut pos = self.pos.borrow_mut();
         if *pos >= self.content.len() {

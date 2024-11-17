@@ -11,7 +11,7 @@ impl Lexer<'_> {
             'b' => look_ahead == "break",
             'c' => matches!(look_ahead.as_str(), "console_log" | "const" | "continue"),
             'e' => matches!(look_ahead.as_str(), "else" | "export"),
-            'f' => matches!(look_ahead.as_str(), "from" | "for" | "function"),
+            'f' => matches!(look_ahead.as_str(), "from" | "for" | "fun"),
             'i' => matches!(look_ahead.as_str(), "if" | "implement" | "import" | "in"),
             'l' => matches!(look_ahead.as_str(), "let" | "loop"),
             'r' => matches!(look_ahead.as_str(), "readonly" | "return"),
@@ -47,7 +47,7 @@ impl Lexer<'_> {
         keywords.insert("export", KeywordToken::Export);
         keywords.insert("from", KeywordToken::From);
         keywords.insert("for", KeywordToken::For);
-        keywords.insert("function", KeywordToken::Function);
+        keywords.insert("fun", KeywordToken::Function);
         keywords.insert("if", KeywordToken::If);
         keywords.insert("implement", KeywordToken::Implement);
         keywords.insert("import", KeywordToken::Import);
@@ -226,24 +226,24 @@ mod test {
 
     #[test]
     fn r#function() {
-        let text = "function";
+        let text = "fun";
         let lexer = Lexer::new(text);
         let result = lexer.advance().unwrap();
         assert!(result.is_keyword(Function));
         assert_eq!(result.span.start, (1, 1, 0));
-        assert_eq!(result.span.end, (1, 9, 8));
-        assert_eq!(result.value(), "function");
+        assert_eq!(result.span.end, (1, 4, 3));
+        assert_eq!(result.value(), "fun");
     }
 
     #[test]
     fn not_function() {
-        let text = "functional";
+        let text = "func";
         let lexer = Lexer::new(text);
         let result = lexer.advance().unwrap();
         assert_eq!(result.kind, identifier());
         assert_eq!(result.span.start, (1, 1, 0));
-        assert_eq!(result.span.end, (1, 11, 10));
-        assert_eq!(result.value(), "functional");
+        assert_eq!(result.span.end, (1, 5, 4));
+        assert_eq!(result.value(), "func");
     }
 
     #[test]

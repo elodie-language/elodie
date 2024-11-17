@@ -1,8 +1,8 @@
-function describe(message: String, fn: function()){
+fun describe(message: String, fn: fun()){
     fn()
 }
 
-function it(message: String, fn: function(): Bool){
+fun it(message: String, fn: fun(): Bool){
 }
 
 describe('some string'){
@@ -10,7 +10,7 @@ describe('some string'){
 }
 
 
-function log_summary(total: Number, passed: Number) {
+fun log_summary(total: Number, passed: Number) {
     console.log('Total tests run: ', total)
     console.log('Tests passed: ', passed)
     console.log('Tests failed: ', (total - passed))

@@ -141,3 +141,4 @@ function returns_red_channel() -> ColorChannel::Red?{
 
 let c = returns_red_channel()
 
+-- if function accepts more than 2 arguments -- no positional arguments only named

@@ -9,7 +9,7 @@ type Position {
 }
 
 implement Position {
-    function new(line: Line, row: Row, index: Source_Index) : Self {
+    fun new(line: Line, row: Row, index: Source_Index) : Self {
         Self {
             line,
             row,
@@ -25,7 +25,7 @@ type Text_Span {
 }
 
 implement Text_Span {
-    function new(start: Position, end: Position, value: String) : Self {
+    fun new(start: Position, end: Position, value: String) : Self {
         Self {
             start,
             end,

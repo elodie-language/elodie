@@ -1,4 +1,4 @@
-function some_function() -> Bool {
+fun some_function() -> Bool {
     return true
 }
 
@@ -6,7 +6,7 @@ if some_function() {
     console.log('true') // Expect: true
 }
 
-function early_exit() -> Number {
+fun early_exit() -> Number {
     return 2
     return 4
     return 8
@@ -14,8 +14,8 @@ function early_exit() -> Number {
 
 console.log(early_exit())  // Expect: 2
 
-function nested() -> Number {
-    function inner() -> Number {
+fun nested() -> Number {
+    fun inner() -> Number {
         return 1
     }
 

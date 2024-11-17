@@ -5,7 +5,7 @@ use crate::ast::parse::Error;
 use crate::ast::token::{LiteralToken, Token, TokenKind};
 
 pub struct RootNode {
-    nodes: Vec<Node>,
+    pub nodes: Vec<Node>,
 }
 
 impl Index<usize> for RootNode {
@@ -32,6 +32,7 @@ pub enum Node {
     Block(BlockNode),
     Break(BreakNode),
     Continue(ContinueNode),
+    FunctionDeclaration(FunctionDeclarationNode),
     Identifier(IdentifierNode),
     If(IfNode),
     Infix(InfixNode),
@@ -39,6 +40,7 @@ pub enum Node {
     Literal(LiteralNode),
     Loop(LoopNode),
     Prefix(PrefixNode),
+    Return(ReturnNode),
     Type(TypeNode),
 }
 
@@ -56,6 +58,21 @@ pub struct BreakNode {
 #[derive(Debug, PartialEq)]
 pub struct ContinueNode {
     pub token: Token,
+}
+
+#[derive(Debug, PartialEq)]
+pub struct FunctionDeclarationNode {
+    pub token: Token,
+    pub identifier: IdentifierNode,
+    pub arguments: Vec<FunctionDeclarationArgumentNode>,
+    pub return_type: Option<Box<TypeNode>>,
+    pub block: BlockNode,
+}
+
+#[derive(Debug, PartialEq)]
+pub struct FunctionDeclarationArgumentNode {
+    pub identifier: IdentifierNode,
+    pub r#type: Option<Box<TypeNode>>,
 }
 
 #[derive(Debug, PartialEq)]
@@ -160,6 +177,12 @@ pub struct PrefixNode {
 }
 
 #[derive(Debug, PartialEq)]
+pub struct ReturnNode {
+    pub token: Token,
+    pub result: Option<Box<Node>>,
+}
+
+#[derive(Debug, PartialEq)]
 pub enum PrefixOperator {
     Plus(Token),
     Negate(Token),
@@ -168,7 +191,8 @@ pub enum PrefixOperator {
 
 #[derive(Debug, PartialEq)]
 pub enum TypeNode {
-    Fundamental(TypeFundamentalNode)
+    Fundamental(TypeFundamentalNode),
+    Function(TypeFunctionNode),
 }
 
 #[derive(Debug, PartialEq)]
@@ -176,4 +200,16 @@ pub enum TypeFundamentalNode {
     Boolean(Token),
     Number(Token),
     String(Token),
+}
+
+#[derive(Debug, PartialEq)]
+pub struct TypeFunctionNode {
+    pub arguments: Vec<TypeFunctionArgumentNode>,
+    pub return_type: Option<Box<TypeNode>>,
+}
+
+#[derive(Debug, PartialEq)]
+pub struct TypeFunctionArgumentNode {
+    pub identifier: Option<IdentifierNode>,
+    pub r#type: Box<TypeNode>,
 }

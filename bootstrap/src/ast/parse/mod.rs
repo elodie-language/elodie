@@ -18,6 +18,7 @@ mod r#loop;
 mod r#if;
 mod r#let;
 mod r#type;
+mod function;
 
 #[derive(Debug, PartialEq)]
 pub enum Error {

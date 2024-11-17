@@ -1,7 +1,7 @@
 use crate::ast::parse::{Error, Parser};
 use crate::ast::parse::Error::UnsupportedToken;
 use crate::ast::parse::node::{Node, PrefixNode, PrefixOperator};
-use crate::ast::parse::node::Node::{Break, Continue, If, Let, Loop};
+use crate::ast::parse::node::Node::{Break, Continue, FunctionDeclaration, If, Let, Loop, Return};
 use crate::ast::parse::precedence::Precedence;
 use crate::ast::token::{KeywordToken, OperatorToken};
 use crate::ast::token::LiteralToken::{False, Number, String, True};
@@ -28,9 +28,11 @@ impl Parser {
                 match keyword {
                     KeywordToken::Break => Ok(Break(self.parse_break()?)),
                     KeywordToken::Continue => Ok(Continue(self.parse_continue()?)),
+                    KeywordToken::Function => Ok(FunctionDeclaration(self.parse_function_declaration()?)),
                     KeywordToken::If => Ok(If(self.parse_if()?)),
                     KeywordToken::Let => Ok(Let(self.parse_let()?)),
                     KeywordToken::Loop => Ok(Loop(self.parse_loop()?)),
+                    KeywordToken::Return => Ok(Return(self.parse_return()?)),
                     _ => Err(Error::unsupported(self.advance()?))
                 }
             }
