@@ -9,7 +9,12 @@ impl Parser {
         let operator = self.parse_infix_operator()?;
 
         let precedence = self.current_precedence()?;
-        let right = self.parse_node(precedence)?;
+
+        let right = if let InfixOperator::Call(token) = &operator {
+            Node::Tuple(self.parse_tuple_call(token.clone())?)
+        } else {
+            self.parse_node(precedence)?
+        };
 
         Ok(InfixNode {
             left: Box::new(left),
@@ -22,6 +27,7 @@ impl Parser {
         let token = self.advance()?;
         match &token.kind {
             Operator(operator) => match operator {
+                OperatorToken::OpenParen => Ok(InfixOperator::Call(token)),
                 OperatorToken::Plus => Ok(InfixOperator::Add(token)),
                 OperatorToken::Minus => Ok(InfixOperator::Subtract(token)),
                 OperatorToken::Asterisk => Ok(InfixOperator::Multiply(token)),
@@ -47,8 +53,8 @@ mod tests {
 
     use crate::ast::lex;
     use crate::ast::parse::{parse, Parser};
-    use crate::ast::parse::node::{InfixNode, InfixOperator, LiteralNode, TypeFundamentalNode, TypeNode};
-    use crate::ast::parse::node::Node::{Identifier, Infix, Literal, Type};
+    use crate::ast::parse::node::{InfixNode, InfixOperator, LiteralNode, TupleNode, TypeFundamentalNode, TypeNode};
+    use crate::ast::parse::node::Node::{Identifier, Infix, Literal, Tuple, Type};
     use crate::ast::token::{operator, OperatorToken::*, test_token, test_token_with_offset};
 
     #[test]
@@ -133,5 +139,40 @@ mod tests {
         operator_less_than_or_equal, "<=" => InfixOperator::LessThanOrEqual(test_token(operator(LeftAngleEqual), "<=")),
         operator_greater_than, ">" => InfixOperator::GreaterThan(test_token(operator(RightAngle), ">")),
         operator_greater_than_or_equal, ">=" => InfixOperator::GreaterThanOrEqual(test_token(operator(RightAngleEqual), ">=")),
+    }
+
+    #[test]
+    fn call_without_arguments() {
+        let tokens = lex("test()").unwrap();
+        let result = parse(tokens).unwrap();
+        assert_eq!(result.len(), 1);
+
+        let Infix(InfixNode { left, operator, right }) = &result[0] else { panic!() };
+        let Identifier(node) = left.deref() else { panic!() };
+        assert_eq!(node.identifier(), "test");
+
+        let InfixOperator::Call(_) = operator else { panic!() };
+
+        let Tuple(TupleNode { nodes, .. }) = right.deref() else { panic!() };
+        assert_eq!(*nodes, vec![]);
+    }
+
+    #[test]
+    fn call_with_argument() {
+        let tokens = lex("test('elodie')").unwrap();
+        let result = parse(tokens).unwrap();
+        assert_eq!(result.len(), 1);
+
+        let Infix(InfixNode { left, operator, right }) = &result[0] else { panic!() };
+        let Identifier(node) = left.deref() else { panic!() };
+        assert_eq!(node.identifier(), "test");
+
+        let InfixOperator::Call(_) = operator else { panic!() };
+
+        let Tuple(TupleNode { nodes, .. }) = right.deref() else { panic!() };
+        assert_eq!(nodes.len(), 1);
+
+        let Some(Literal(LiteralNode::String(arg_1))) = &nodes.first() else { panic!() };
+        assert_eq!(arg_1.value(), "elodie");
     }
 }

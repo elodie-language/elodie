@@ -22,7 +22,7 @@ impl Parser {
                         }))
                     }
                     OperatorToken::OpenCurly => Ok(Node::Block(self.parse_block()?)),
-                    OperatorToken::OpenParen => Ok(Node::Tuple(self.parse_parenthesized()?)),
+                    OperatorToken::OpenParen => Ok(Node::Tuple(self.parse_tuple()?)),
                     _ => Err(Error::unsupported(self.advance()?))
                 }
             }

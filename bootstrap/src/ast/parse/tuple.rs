@@ -3,16 +3,18 @@ use SeparatorToken::Comma;
 use crate::ast::parse::node::TupleNode;
 use crate::ast::parse::Parser;
 use crate::ast::parse::precedence::Precedence;
-use crate::ast::token::{OperatorToken, SeparatorToken};
+use crate::ast::token::{OperatorToken, SeparatorToken, Token};
 use crate::ast::token::OperatorToken::CloseParen;
 use crate::ast::token::TokenKind::Separator;
 
 impl Parser {
-    pub(crate) fn parse_parenthesized(&mut self) -> crate::ast::parse::Result<TupleNode> {
+    pub(crate) fn parse_tuple(&mut self) -> crate::ast::parse::Result<TupleNode> {
         let token = self.consume_operator(OperatorToken::OpenParen)?;
+        self.parse_tuple_call(token)
+    }
 
+    pub(crate) fn parse_tuple_call(&mut self, operator: Token) -> crate::ast::parse::Result<TupleNode> {
         let mut nodes = Vec::new();
-
         loop {
             if self.current()?.is_operator(CloseParen) {
                 break;
@@ -22,7 +24,7 @@ impl Parser {
         }
 
         self.consume_operator(CloseParen)?;
-        Ok(TupleNode { token, nodes })
+        Ok(TupleNode { token: operator, nodes })
     }
 }
 
@@ -122,7 +124,7 @@ mod tests {
         let Some(Identifier(v_node)) = &node.nodes.last() else { panic!() };
         assert_eq!(v_node.identifier(), "v");
     }
-    
+
     #[test]
     fn tuple_with_identifiers_and_types() {
         let tokens = lex("(u: Bool, v: String)").unwrap();

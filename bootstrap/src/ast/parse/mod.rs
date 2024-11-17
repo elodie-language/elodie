@@ -4,8 +4,8 @@ use std::collections::HashMap;
 use crate::ast::parse::Error::UnexpectedEndOfFile;
 use crate::ast::parse::node::{Node, RootNode};
 use crate::ast::parse::precedence::Precedence;
-use crate::ast::token::{KeywordToken, LiteralToken, OperatorToken, Token, TokenKind};
-use crate::ast::token::TokenKind::{Keyword, Literal, Operator};
+use crate::ast::token::{KeywordToken, LiteralToken, OperatorToken, SeparatorToken, Token, TokenKind};
+use crate::ast::token::TokenKind::{Keyword, Literal, Operator, Separator};
 
 pub(crate) mod precedence;
 pub(crate) mod node;
@@ -140,6 +140,12 @@ impl Parser {
         self.advance()
     }
 
+    pub(crate) fn consume_separator(&mut self, expected: SeparatorToken) -> Result<Token> {
+        self.current_expect_separator(expected)?;
+        self.advance()
+    }
+
+
     pub(crate) fn current(&self) -> Result<&Token> {
         self.tokens.last().ok_or(UnexpectedEndOfFile)
     }
@@ -163,6 +169,10 @@ impl Parser {
 
     pub(crate) fn current_expect_keyword(&self, keyword: KeywordToken) -> Result<()> {
         self.current_expect(Keyword(keyword))
+    }
+
+    pub(crate) fn current_expect_separator(&self, separator: SeparatorToken) -> Result<()> {
+        self.current_expect(Separator(separator))
     }
 
     pub(crate) fn current_precedence(&self) -> Result<Precedence> {

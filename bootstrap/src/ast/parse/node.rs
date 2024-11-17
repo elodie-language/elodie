@@ -31,6 +31,7 @@ impl RootNode {
 pub enum Node {
     Block(BlockNode),
     Break(BreakNode),
+    Call(CallNode),
     Continue(ContinueNode),
     FunctionDeclaration(FunctionDeclarationNode),
     Identifier(IdentifierNode),
@@ -54,6 +55,18 @@ pub struct BlockNode {
 pub struct BreakNode {
     pub token: Token,
     pub result: Option<Box<Node>>,
+}
+
+#[derive(Debug, PartialEq)]
+pub struct CallNode {
+    pub callee: Box<Node>,
+    pub arguments: Vec<CallArgument>,
+}
+
+#[derive(Debug, PartialEq)]
+pub struct CallArgument {
+    pub identifier: Option<IdentifierNode>,
+    pub node: Box<Node>,
 }
 
 #[derive(Debug, PartialEq)]
@@ -109,6 +122,7 @@ pub struct InfixNode {
 #[derive(Debug, PartialEq)]
 pub enum InfixOperator {
     Add(Token),
+    Call(Token),
     Subtract(Token),
     Multiply(Token),
     Divide(Token),
@@ -120,6 +134,26 @@ pub enum InfixOperator {
     GreaterThan(Token),
     GreaterThanOrEqual(Token),
     TypeAscription(Token),
+}
+
+impl InfixOperator {
+    pub fn token(&self) -> Token {
+        match self {
+            InfixOperator::Add(t) => t.clone(),
+            InfixOperator::Call(t) => t.clone(),
+            InfixOperator::Subtract(t) => t.clone(),
+            InfixOperator::Multiply(t) => t.clone(),
+            InfixOperator::Divide(t) => t.clone(),
+            InfixOperator::Modulo(t) => t.clone(),
+            InfixOperator::Equal(t) => t.clone(),
+            InfixOperator::NotEqual(t) => t.clone(),
+            InfixOperator::LessThan(t) => t.clone(),
+            InfixOperator::LessThanOrEqual(t) => t.clone(),
+            InfixOperator::GreaterThan(t) => t.clone(),
+            InfixOperator::GreaterThanOrEqual(t) => t.clone(),
+            InfixOperator::TypeAscription(t) => t.clone()
+        }
+    }
 }
 
 #[derive(Debug, PartialEq)]
