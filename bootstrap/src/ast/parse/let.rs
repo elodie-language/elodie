@@ -23,7 +23,7 @@ impl Parser {
         Ok(LetNode {
             token,
             identifier,
-            value,
+            node: value,
             r#type,
         })
     }
@@ -50,7 +50,7 @@ mod tests {
 
         assert_eq!(node.r#type, None);
 
-        let Literal(LiteralNode::String(result)) = &node.value.deref() else { panic!() };
+        let Literal(LiteralNode::String(result)) = &node.node.deref() else { panic!() };
         assert_eq!(result.value(), "Elodie");
     }
 
@@ -65,7 +65,7 @@ mod tests {
 
         let Some(TypeNode::Fundamental(TypeFundamentalNode::String(_))) = node.r#type else { panic!() };
 
-        let Literal(LiteralNode::String(result)) = &node.value.deref() else { panic!() };
+        let Literal(LiteralNode::String(result)) = &node.node.deref() else { panic!() };
         assert_eq!(result.value(), "Elodie");
     }
 
@@ -80,7 +80,7 @@ mod tests {
 
         assert_eq!(node.r#type, None);
 
-        let Literal(LiteralNode::Number(result)) = &node.value.deref() else { panic!() };
+        let Literal(LiteralNode::Number(result)) = &node.node.deref() else { panic!() };
         assert_eq!(result.value().unwrap(), 9924.0);
     }
 
@@ -95,7 +95,7 @@ mod tests {
 
         assert_eq!(node.r#type, None);
 
-        let Literal(LiteralNode::Boolean(result)) = &node.value.deref() else { panic!() };
+        let Literal(LiteralNode::Boolean(result)) = &node.node.deref() else { panic!() };
         assert_eq!(result.value(), false);
     }
 }

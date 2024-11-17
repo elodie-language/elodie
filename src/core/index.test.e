@@ -1,4 +1,4 @@
-test("Position") {
+describe("Position") {
     describe('A new position created with Position::new(1,2,3)') {
         let pos = Position::new(1, 2, 3)
         it("should have a line of 1") { pos.line == 1 }

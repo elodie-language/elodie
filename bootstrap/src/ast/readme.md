@@ -1,1 +1,0 @@
-lex -> parse -> rewrite -> type annotation

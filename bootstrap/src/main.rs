@@ -3,11 +3,12 @@ use std::fs::File;
 use std::io::Read;
 use std::path::PathBuf;
 
-mod parser;
+use crate::runner::Runner;
+
 mod core;
-mod interpreter;
 mod cli;
 mod ast;
+mod runner;
 
 fn main() {
     let args: Vec<String> = env::args().collect();
@@ -15,14 +16,10 @@ fn main() {
     let mut path = PathBuf::from(args.get(1).unwrap());
     let content = load_text_from_file(path.to_str().unwrap()).unwrap();
 
-    let ast = ast::parse_str(content.as_str()).unwrap();
+    let source_file = ast::parse_str(content.as_str()).unwrap();
 
-//     let tokens = Lexer::lex(content.as_str()).unwrap();
-//     let result = Parser::parse(&tokens).unwrap();
-//     // println!("{result:?}");
-//
-//     let mut interpreter = Interpreter::new();
-//     interpreter.interpret(result).unwrap();
+    let mut runner = Runner::new();
+    runner.run(source_file).unwrap()
 }
 
 fn load_text_from_file(path: &str) -> io::Result<String> {

@@ -162,7 +162,7 @@ impl InfixOperator {
 pub struct LetNode {
     pub token: Token,
     pub identifier: IdentifierNode,
-    pub value: Box<Node>,
+    pub node: Box<Node>,
     pub r#type: Option<TypeNode>,
 }
 
