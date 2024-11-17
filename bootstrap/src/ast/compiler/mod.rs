@@ -1,3 +1,5 @@
+mod symbol;
+
 use crate::ast::ast::SourceFile;
 use crate::ast::parse::node::RootNode;
 

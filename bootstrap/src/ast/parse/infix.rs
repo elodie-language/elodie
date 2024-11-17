@@ -43,6 +43,7 @@ impl Parser {
                 OperatorToken::RightAngleEqual => Ok(InfixOperator::GreaterThanOrEqual(token)),
                 OperatorToken::Colon => Ok(InfixOperator::TypeAscription(token)),
                 OperatorToken::Arrow => Ok(InfixOperator::Arrow(token)),
+                OperatorToken::Dot => Ok(InfixOperator::AccessProperty(token)),
                 _ => Err(UnsupportedToken(token))
             }
             _ => Err(UnsupportedToken(token))
@@ -143,6 +144,29 @@ mod tests {
         operator_greater_than, ">" => InfixOperator::GreaterThan(test_token(operator(RightAngle), ">")),
         operator_greater_than_or_equal, ">=" => InfixOperator::GreaterThanOrEqual(test_token(operator(RightAngleEqual), ">=")),
     }
+
+    #[test]
+    fn call_function_of_object() {
+        let tokens = lex("console.log()").unwrap();
+        let result = parse(tokens).unwrap();
+        assert_eq!(result.len(), 1);
+
+        let Infix(InfixNode { left, operator, right }) = &result[0] else { panic!() };
+        let Identifier(node) = left.deref() else { panic!() };
+        assert_eq!(node.identifier(), "console");
+
+        let InfixOperator::AccessProperty(_) = operator else { panic!() };
+
+        let Infix(InfixNode { left, operator, right }) = right.deref() else { panic!() };
+        let Identifier(node) = left.deref() else { panic!() };
+        assert_eq!(node.identifier(), "log");
+
+        let InfixOperator::Call(_) = operator else { panic!() };
+
+        let Tuple(TupleNode { nodes, .. }) = right.deref() else { panic!() };
+        assert_eq!(*nodes, vec![]);
+    }
+
 
     #[test]
     fn call_without_arguments() {

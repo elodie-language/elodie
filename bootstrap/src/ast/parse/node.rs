@@ -123,6 +123,7 @@ pub struct InfixNode {
 pub enum InfixOperator {
     Add(Token),
     Arrow(Token),
+    AccessProperty(Token),
     Call(Token),
     Subtract(Token),
     Multiply(Token),
@@ -142,6 +143,7 @@ impl InfixOperator {
         match self {
             InfixOperator::Add(t) => t.clone(),
             InfixOperator::Arrow(t) => t.clone(),
+            InfixOperator::AccessProperty(t) => t.clone(),
             InfixOperator::Call(t) => t.clone(),
             InfixOperator::Subtract(t) => t.clone(),
             InfixOperator::Multiply(t) => t.clone(),
