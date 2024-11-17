@@ -39,6 +39,7 @@ pub enum Node {
     Let(LetNode),
     Literal(LiteralNode),
     Loop(LoopNode),
+    Parenthesized(ParenthesizedNode),
     Prefix(PrefixNode),
     Return(ReturnNode),
     Type(TypeNode),
@@ -118,6 +119,7 @@ pub enum InfixOperator {
     LessThanOrEqual(Token),
     GreaterThan(Token),
     GreaterThanOrEqual(Token),
+    TypeAscription(Token)
 }
 
 #[derive(Debug, PartialEq)]
@@ -180,6 +182,12 @@ pub struct PrefixNode {
 pub struct ReturnNode {
     pub token: Token,
     pub result: Option<Box<Node>>,
+}
+
+#[derive(Debug, PartialEq)]
+pub struct ParenthesizedNode {
+    pub token: Token,
+    pub node: Option<Box<Node>>,
 }
 
 #[derive(Debug, PartialEq)]

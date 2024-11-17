@@ -19,6 +19,7 @@ mod r#if;
 mod r#let;
 mod r#type;
 mod function;
+mod parenthesized;
 
 #[derive(Debug, PartialEq)]
 pub enum Error {
@@ -29,7 +30,7 @@ pub enum Error {
     },
     UnsupportedNumber(String),
     UnsupportedToken(Token),
-    UnknownType(Token)
+    UnknownType(Token),
 }
 
 impl Error {
@@ -54,26 +55,28 @@ impl Parser {
     fn new(tokens: Vec<Token>) -> Self {
         let mut precedence_map = HashMap::new();
 
-        precedence_map.insert(TokenKind::Operator(OperatorToken::Arrow), Precedence::Assignment);
+        precedence_map.insert(Operator(OperatorToken::DoubleEqual), Precedence::Equality);
+        precedence_map.insert(Operator(OperatorToken::BangEqual), Precedence::Equality);
 
-        precedence_map.insert(TokenKind::Operator(OperatorToken::DoubleEqual), Precedence::Equality);
-        precedence_map.insert(TokenKind::Operator(OperatorToken::BangEqual), Precedence::Equality);
+        precedence_map.insert(Operator(OperatorToken::LeftAngle), Precedence::Comparison);
+        precedence_map.insert(Operator(OperatorToken::LeftAngleEqual), Precedence::Comparison);
+        precedence_map.insert(Operator(OperatorToken::RightAngle), Precedence::Comparison);
+        precedence_map.insert(Operator(OperatorToken::RightAngleEqual), Precedence::Comparison);
 
-        precedence_map.insert(TokenKind::Operator(OperatorToken::LeftAngle), Precedence::Comparison);
-        precedence_map.insert(TokenKind::Operator(OperatorToken::LeftAngleEqual), Precedence::Comparison);
-        precedence_map.insert(TokenKind::Operator(OperatorToken::RightAngle), Precedence::Comparison);
-        precedence_map.insert(TokenKind::Operator(OperatorToken::RightAngleEqual), Precedence::Comparison);
+        precedence_map.insert(Operator(OperatorToken::Plus), Precedence::Term);
+        precedence_map.insert(Operator(OperatorToken::Minus), Precedence::Term);
 
-        precedence_map.insert(TokenKind::Operator(OperatorToken::Plus), Precedence::Term);
-        precedence_map.insert(TokenKind::Operator(OperatorToken::Minus), Precedence::Term);
+        precedence_map.insert(Operator(OperatorToken::Asterisk), Precedence::Factor);
+        precedence_map.insert(Operator(OperatorToken::Slash), Precedence::Factor);
+        precedence_map.insert(Operator(OperatorToken::Percent), Precedence::Factor);
 
-        precedence_map.insert(TokenKind::Operator(OperatorToken::Asterisk), Precedence::Factor);
-        precedence_map.insert(TokenKind::Operator(OperatorToken::Slash), Precedence::Factor);
-        precedence_map.insert(TokenKind::Operator(OperatorToken::Percent), Precedence::Factor);
+        precedence_map.insert(Operator(OperatorToken::OpenParen), Precedence::Call);
+        precedence_map.insert(Operator(OperatorToken::Dot), Precedence::Primary);
+        precedence_map.insert(Operator(OperatorToken::DoubleColon), Precedence::Primary);
 
-        precedence_map.insert(TokenKind::Operator(OperatorToken::OpenParen), Precedence::Call);
-        precedence_map.insert(TokenKind::Operator(OperatorToken::Dot), Precedence::Primary);
-        precedence_map.insert(TokenKind::Operator(OperatorToken::DoubleColon), Precedence::Primary);
+        precedence_map.insert(Operator(OperatorToken::Arrow), Precedence::Primary);
+        precedence_map.insert(Operator(OperatorToken::Colon), Precedence::Primary);
+
 
         let mut tokens = tokens;
         tokens.pop();

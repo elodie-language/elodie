@@ -21,6 +21,7 @@ impl Parser {
                         }))
                     }
                     OperatorToken::OpenCurly => Ok(Node::Block(self.parse_block()?)),
+                    OperatorToken::OpenParen => Ok(Node::Parenthesized(self.parse_parenthesized()?)),
                     _ => Err(Error::unsupported(self.advance()?))
                 }
             }

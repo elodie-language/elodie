@@ -33,6 +33,7 @@ impl Parser {
                 OperatorToken::LeftAngleEqual => Ok(InfixOperator::LessThanOrEqual(token)),
                 OperatorToken::RightAngle => Ok(InfixOperator::GreaterThan(token)),
                 OperatorToken::RightAngleEqual => Ok(InfixOperator::GreaterThanOrEqual(token)),
+                OperatorToken::Colon => Ok(InfixOperator::TypeAscription(token)),
                 _ => Err(UnsupportedToken(token))
             }
             _ => Err(UnsupportedToken(token))
@@ -45,10 +46,26 @@ mod tests {
     use std::ops::Deref;
 
     use crate::ast::lex;
-    use crate::ast::parse::node::{InfixNode, InfixOperator, LiteralNode};
-    use crate::ast::parse::node::Node::{Infix, Literal};
-    use crate::ast::parse::Parser;
+    use crate::ast::parse::{parse, Parser};
+    use crate::ast::parse::node::{InfixNode, InfixOperator, LiteralNode, TypeFundamentalNode, TypeNode};
+    use crate::ast::parse::node::Node::{Identifier, Infix, Literal, Type};
     use crate::ast::token::{operator, OperatorToken::*, test_token, test_token_with_offset};
+
+    #[test]
+    fn identifier_with_type() {
+        let tokens = lex("u: Bool").unwrap();
+        let result = parse(tokens).unwrap();
+        assert_eq!(result.len(), 1);
+
+        let Infix(InfixNode { left, operator, right }) = &result[0] else { panic!() };
+        let InfixOperator::TypeAscription(_) = operator else { panic!() };
+
+        let Identifier(identifier) = left.as_ref() else { panic!() };
+        assert_eq!(identifier.identifier(), "u");
+
+        let Type(type_node) = right.as_ref() else { panic!() };
+        let TypeNode::Fundamental(TypeFundamentalNode::Number(_)) = type_node else { panic!() };
+    }
 
     macro_rules! parse_infix {
     ($($name:ident, $input:expr => $expected:expr,)*) => {
