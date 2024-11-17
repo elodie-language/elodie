@@ -12,6 +12,8 @@ impl Parser {
 
         let right = if let InfixOperator::Call(token) = &operator {
             Node::Tuple(self.parse_tuple_call(token.clone())?)
+        } else if let InfixOperator::Arrow(token) = &operator {
+            Node::Block(self.parse_block_inner()?)
         } else {
             self.parse_node(precedence)?
         };
@@ -40,6 +42,7 @@ impl Parser {
                 OperatorToken::RightAngle => Ok(InfixOperator::GreaterThan(token)),
                 OperatorToken::RightAngleEqual => Ok(InfixOperator::GreaterThanOrEqual(token)),
                 OperatorToken::Colon => Ok(InfixOperator::TypeAscription(token)),
+                OperatorToken::Arrow => Ok(InfixOperator::Arrow(token)),
                 _ => Err(UnsupportedToken(token))
             }
             _ => Err(UnsupportedToken(token))

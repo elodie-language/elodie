@@ -122,6 +122,7 @@ pub struct InfixNode {
 #[derive(Debug, PartialEq)]
 pub enum InfixOperator {
     Add(Token),
+    Arrow(Token),
     Call(Token),
     Subtract(Token),
     Multiply(Token),
@@ -140,6 +141,7 @@ impl InfixOperator {
     pub fn token(&self) -> Token {
         match self {
             InfixOperator::Add(t) => t.clone(),
+            InfixOperator::Arrow(t) => t.clone(),
             InfixOperator::Call(t) => t.clone(),
             InfixOperator::Subtract(t) => t.clone(),
             InfixOperator::Multiply(t) => t.clone(),

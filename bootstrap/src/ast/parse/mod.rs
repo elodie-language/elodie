@@ -118,7 +118,7 @@ impl Parser {
     }
 
     pub(crate) fn consume_if(&mut self, expected: TokenKind) -> Result<Option<Token>> {
-        if self.current()?.kind != expected {
+        if self.is_eof() || self.current()?.kind != expected {
             return Ok(None);
         }
 
@@ -279,7 +279,7 @@ mod tests {
         let tokens = lex("").unwrap();
         let mut parser = Parser::new(tokens);
         let result = parser.consume_if(literal(True));
-        assert_eq!(result, Err(Error::UnexpectedEndOfFile))
+        assert_eq!(result, Ok(None))
     }
 
     #[test]
