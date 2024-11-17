@@ -1,13 +1,17 @@
-use crate::ast::parse::Error::UnknownType;
+use crate::ast::parse::Error::{InvalidType, UnknownType};
 use crate::ast::parse::node::{TypeFunctionArgumentNode, TypeFunctionNode, TypeFundamentalNode, TypeNode};
 use crate::ast::parse::Parser;
 use crate::ast::token::OperatorToken::{Arrow, CloseParen, Colon, OpenParen};
 use crate::ast::token::SeparatorToken::Comma;
 use crate::ast::token::TokenKind::{Operator, Separator};
+use crate::core::is_pascal_snake_case;
 
 impl Parser {
     pub(crate) fn parse_type(&mut self) -> crate::ast::parse::Result<TypeNode> {
         let token = self.advance()?;
+        if !(is_pascal_snake_case(token.value()) || token.value() == "fun") {
+            return Err(InvalidType(token));
+        }
         match token.value() {
             "Bool" => Ok(TypeNode::Fundamental(TypeFundamentalNode::Boolean(token))),
             "Number" => Ok(TypeNode::Fundamental(TypeFundamentalNode::Number(token))),
@@ -62,7 +66,7 @@ impl Parser {
 #[cfg(test)]
 mod tests {
     use crate::ast::lex::lex;
-    use crate::ast::parse::Error::UnknownType;
+    use crate::ast::parse::Error::{InvalidType, UnknownType};
     use crate::ast::parse::node::{TypeFunctionArgumentNode, TypeFundamentalNode, TypeNode};
     use crate::ast::parse::Parser;
 
@@ -71,7 +75,7 @@ mod tests {
         let tokens = lex("something_different").unwrap();
         let mut parser = Parser::new(tokens);
         let result = parser.parse_type();
-        let Err(UnknownType(_)) = result else { panic!() };
+        let Err(InvalidType(_)) = result else { panic!() };
     }
 
     #[test]

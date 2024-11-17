@@ -1,11 +1,17 @@
+use crate::ast::parse::Error::InvalidIdentifier;
 use crate::ast::parse::node::IdentifierNode;
 use crate::ast::parse::Parser;
 use crate::ast::token::TokenKind;
+use crate::core::is_snake_case;
 
 impl Parser {
     pub(crate) fn parse_identifier(&mut self) -> crate::ast::parse::Result<IdentifierNode> {
         let token = self.consume(TokenKind::Identifier)?;
-        Ok(IdentifierNode(token))
+        if !is_snake_case(token.value()) {
+            Err(InvalidIdentifier(token))
+        } else {
+            Ok(IdentifierNode(token))
+        }
     }
 }
 

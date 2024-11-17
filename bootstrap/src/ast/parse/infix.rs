@@ -64,7 +64,7 @@ mod tests {
         assert_eq!(identifier.identifier(), "u");
 
         let Type(type_node) = right.as_ref() else { panic!() };
-        let TypeNode::Fundamental(TypeFundamentalNode::Number(_)) = type_node else { panic!() };
+        let TypeNode::Fundamental(TypeFundamentalNode::Boolean(_)) = type_node else { panic!() };
     }
 
     macro_rules! parse_infix {

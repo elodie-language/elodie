@@ -29,4 +29,7 @@ receiver {
     console.log('6') // Expect: 6
 }
 
+receiver { () =>
+    console.log('7') // Expect: 7
+}
 

@@ -6,6 +6,7 @@ use crate::ast::parse::precedence::Precedence;
 use crate::ast::token::{KeywordToken, OperatorToken};
 use crate::ast::token::LiteralToken::{False, Number, String, True};
 use crate::ast::token::TokenKind::{Keyword, Operator};
+use crate::core::{is_pascal_snake_case, is_snake_case};
 
 impl Parser {
     pub(crate) fn parse_prefix(&mut self) -> crate::ast::parse::Result<Node> {
@@ -42,7 +43,15 @@ impl Parser {
                 _ if current.is_literal(True) => Ok(Node::Literal(self.parse_literal_true()?)),
                 _ if current.is_literal(False) => Ok(Node::Literal(self.parse_literal_false()?)),
                 _ if current.is_literal(String) => Ok(Node::Literal(self.parse_literal_string()?)),
-                _ if current.is_identifier() => Ok(Node::Identifier(self.parse_identifier()?)),
+                _ if current.is_identifier() => {
+                    if is_snake_case(current.value()) {
+                        Ok(Node::Identifier(self.parse_identifier()?))
+                    } else if is_pascal_snake_case(current.value()) {
+                        Ok(Node::Type(self.parse_type()?))
+                    } else {
+                        unreachable!()
+                    }
+                }
                 _ => Err(Error::unsupported(self.advance()?))
             }
         }

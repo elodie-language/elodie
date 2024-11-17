@@ -23,6 +23,8 @@ mod parenthesized;
 
 #[derive(Debug, PartialEq)]
 pub enum Error {
+    InvalidIdentifier(Token),
+    InvalidType(Token),
     UnexpectedEndOfFile,
     UnexpectedToken {
         expected: TokenKind,

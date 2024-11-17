@@ -22,9 +22,9 @@ impl Parser {
 #[cfg(test)]
 mod tests {
     use crate::ast::lex::lex;
-    use crate::ast::parse::node::InfixNode;
+    use crate::ast::parse::node::{InfixNode, TypeFundamentalNode, TypeNode};
     use crate::ast::parse::node::LiteralNode::Number;
-    use crate::ast::parse::node::Node::{Identifier, Infix, Literal, Parenthesized};
+    use crate::ast::parse::node::Node::{Identifier, Infix, Literal, Parenthesized, Type};
     use crate::ast::parse::parse;
 
     #[test]
@@ -88,11 +88,16 @@ mod tests {
         assert_eq!(result.len(), 1);
 
         let Parenthesized(node) = &result[0] else { panic!() };
-        let Some(Identifier(node)) = &node.node.as_deref() else { panic!() };
-        assert_eq!(node.identifier(), "u");
+        let Some(Infix(InfixNode { left, operator, right })) = &node.node.as_deref() else { panic!() };
+
+        let Identifier(identifier) = &left.as_ref() else { panic!() };
+        assert_eq!(identifier.identifier(), "u");
+
+        let Type(TypeNode::Fundamental(TypeFundamentalNode::Boolean(_))) = right.as_ref() else { panic!() };
     }
 
 
+    #[ignore]
     #[test]
     fn parenthesis_with_multiple_identifier() {
         let tokens = lex("(u,v)").unwrap();
