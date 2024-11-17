@@ -39,9 +39,9 @@ pub enum Node {
     Let(LetNode),
     Literal(LiteralNode),
     Loop(LoopNode),
-    Parenthesized(ParenthesizedNode),
     Prefix(PrefixNode),
     Return(ReturnNode),
+    Tuple(TupleNode),
     Type(TypeNode),
 }
 
@@ -119,7 +119,7 @@ pub enum InfixOperator {
     LessThanOrEqual(Token),
     GreaterThan(Token),
     GreaterThanOrEqual(Token),
-    TypeAscription(Token)
+    TypeAscription(Token),
 }
 
 #[derive(Debug, PartialEq)]
@@ -171,7 +171,6 @@ pub struct LoopNode {
     pub block: BlockNode,
 }
 
-
 #[derive(Debug, PartialEq)]
 pub struct PrefixNode {
     pub operator: PrefixOperator,
@@ -184,17 +183,18 @@ pub struct ReturnNode {
     pub result: Option<Box<Node>>,
 }
 
-#[derive(Debug, PartialEq)]
-pub struct ParenthesizedNode {
-    pub token: Token,
-    pub node: Option<Box<Node>>,
-}
 
 #[derive(Debug, PartialEq)]
 pub enum PrefixOperator {
     Plus(Token),
     Negate(Token),
     Not(Token),
+}
+
+#[derive(Debug, PartialEq)]
+pub struct TupleNode {
+    pub token: Token,
+    pub nodes: Vec<Node>,
 }
 
 #[derive(Debug, PartialEq)]

@@ -19,7 +19,7 @@ mod r#if;
 mod r#let;
 mod r#type;
 mod function;
-mod parenthesized;
+mod tuple;
 
 #[derive(Debug, PartialEq)]
 pub enum Error {
