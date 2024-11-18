@@ -1,18 +1,9 @@
 use std::collections::HashMap;
 use std::fmt::{Debug, Formatter};
+use std::ops::Deref;
 use std::rc::Rc;
 
-#[derive(Debug)]
-pub enum ValueType {
-    Bool,
-    HostFunction,
-    Number,
-    Object,
-    String,
-    Tuple,
-    Unit,
-}
-
+use crate::ast::FunctionIdentifier;
 
 #[derive(Debug)]
 pub enum Value {
@@ -66,6 +57,15 @@ impl ObjectValue {
 
     pub fn get_property(&self, key: &str) -> Option<&Value> {
         self.properties.get(key)
+    }
+
+    pub fn get_property_host_function(&self, identifier: impl AsRef<FunctionIdentifier>) -> Option<&HostFunctionValue> {
+        let identifier = identifier.as_ref();
+        if let Some(Value::HostFunction(result)) = &self.properties.get(identifier.deref()) {
+            Some(result)
+        } else {
+            None
+        }
     }
 }
 

@@ -35,7 +35,7 @@ mod tests {
 
     use crate::ast::lex::lex;
     use crate::ast::parse::node::LiteralNode;
-    use crate::ast::parse::node::Node::{Break, Continue, Literal, Loop};
+    use crate::ast::parse::node::Node::{Continue, Literal};
     use crate::ast::parse::parse;
 
     #[test]
@@ -44,7 +44,7 @@ mod tests {
         let result = parse(tokens).unwrap();
         assert_eq!(result.len(), 1);
 
-        let Loop(node) = &result[0] else { panic!() };
+        let node = result[0].as_loop();
         assert_eq!(node.block.nodes, vec![]);
     }
 
@@ -54,7 +54,7 @@ mod tests {
         let result = parse(tokens).unwrap();
         assert_eq!(result.len(), 1);
 
-        let Loop(node) = &result[0] else { panic!() };
+        let node = result[0].as_loop();
         assert_eq!(node.block.nodes.len(), 1);
 
         let Literal(LiteralNode::Number(number)) = &node.block.nodes[0] else { panic!() };
@@ -67,10 +67,10 @@ mod tests {
         let result = parse(tokens).unwrap();
         assert_eq!(result.len(), 1);
 
-        let Loop(outer_loop) = &result[0] else { panic!() };
+        let outer_loop = result[0].as_loop();
         assert_eq!(outer_loop.block.nodes.len(), 1);
 
-        let Loop(inner_loop) = &outer_loop.block.nodes[0] else { panic!() };
+        let inner_loop = &outer_loop.block.nodes[0].as_loop();
         assert_eq!(inner_loop.block.nodes.len(), 1);
 
         let Literal(LiteralNode::Number(number)) = &inner_loop.block.nodes[0] else { panic!() };
@@ -83,10 +83,10 @@ mod tests {
         let result = parse(tokens).unwrap();
         assert_eq!(result.len(), 1);
 
-        let Loop(node) = &result[0] else { panic!() };
+        let node = result[0].as_loop();
         assert_eq!(node.block.nodes.len(), 1);
 
-        let Continue(node) = &node.block.nodes[0] else { panic!("not continue") };
+        let Continue(_) = &node.block.nodes[0] else { panic!("not continue") };
     }
 
     #[test]
@@ -95,10 +95,10 @@ mod tests {
         let result = parse(tokens).unwrap();
         assert_eq!(result.len(), 1);
 
-        let Loop(node) = &result[0] else { panic!() };
+        let node = result[0].as_loop();
         assert_eq!(node.block.nodes.len(), 1);
 
-        let Break(node) = &node.block.nodes[0] else { panic!("not break") };
+        let node = node.block.nodes[0].as_break();
         assert_eq!(node.result, None);
     }
 
@@ -108,10 +108,10 @@ mod tests {
         let result = parse(tokens).unwrap();
         assert_eq!(result.len(), 1);
 
-        let Loop(node) = &result[0] else { panic!() };
+        let node = result[0].as_loop();
         assert_eq!(node.block.nodes.len(), 1);
 
-        let Break(node) = &node.block.nodes[0] else { panic!("not break") };
+        let node = node.block.nodes[0].as_break();
         let Some(ref node) = node.result else { panic!() };
 
         let Literal(LiteralNode::Number(node)) = &node.deref() else { panic!() };

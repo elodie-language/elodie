@@ -42,7 +42,7 @@ mod tests {
         let result = parse(tokens).unwrap();
         assert_eq!(result.len(), 1);
 
-        let Tuple(node) = &result[0] else { panic!() };
+        let node = result[0].as_tuple();
         assert_eq!(node.nodes, vec![]);
     }
 
@@ -52,7 +52,7 @@ mod tests {
         let result = parse(tokens).unwrap();
         assert_eq!(result.len(), 1);
 
-        let Tuple(node) = &result[0] else { panic!() };
+        let node = result[0].as_tuple();
         let Some(node) = node.nodes.first() else { panic!() };
         let Literal(Number(number)) = &node else { panic!() };
         assert_eq!(number.value().unwrap(), 9924.);
@@ -64,16 +64,16 @@ mod tests {
         let result = parse(tokens).unwrap();
         assert_eq!(result.len(), 1);
 
-        let Tuple(node) = &result[0] else { panic!() };
+        let node = result[0].as_tuple();
         let Some(node) = node.nodes.first() else { panic!() };
         let Infix(InfixNode { left, operator, right }) = &node else { panic!() };
 
         let Literal(Number(left)) = &left.as_ref() else { panic!() };
         assert_eq!(left.value().unwrap(), 1.);
 
-        let Tuple(node) = &right.as_ref() else { panic!() };
-        let Some(node) = &node.nodes.first() else { panic!() };
-        let Infix(InfixNode { left, operator, right }) = &node else { panic!() };
+        let node = right.as_tuple();
+        let Some(node) = node.nodes.first() else { panic!() };
+        let InfixNode { left, operator, right } = &node.as_infix();
 
         let Literal(Number(left)) = &left.as_ref() else { panic!() };
         assert_eq!(left.value().unwrap(), 2.);
@@ -88,10 +88,10 @@ mod tests {
         let result = parse(tokens).unwrap();
         assert_eq!(result.len(), 1);
 
-        let Tuple(node) = &result[0] else { panic!() };
+        let node = &result[0].as_tuple();
         let Some(node) = node.nodes.first() else { panic!() };
         let Identifier(node) = node else { panic!() };
-        assert_eq!(node.identifier(), "u");
+        assert_eq!(node.value(), "u");
     }
 
     #[test]
@@ -100,12 +100,12 @@ mod tests {
         let result = parse(tokens).unwrap();
         assert_eq!(result.len(), 1);
 
-        let Tuple(node) = &result[0] else { panic!() };
+        let node = result[0].as_tuple();
         let Some(node) = node.nodes.first() else { panic!() };
         let Infix(InfixNode { left, operator, right }) = &node else { panic!() };
 
-        let Identifier(identifier) = &left.as_ref() else { panic!() };
-        assert_eq!(identifier.identifier(), "u");
+        let identifier = &left.as_identifier();
+        assert_eq!(identifier.value(), "u");
 
         let Type(TypeNode::Fundamental(TypeFundamentalNode::Boolean(_))) = right.as_ref() else { panic!() };
     }
@@ -116,13 +116,13 @@ mod tests {
         let result = parse(tokens).unwrap();
         assert_eq!(result.len(), 1);
 
-        let Tuple(node) = &result[0] else { panic!() };
+        let node = result[0].as_tuple();
 
         let Some(Identifier(u_node)) = &node.nodes.first() else { panic!() };
-        assert_eq!(u_node.identifier(), "u");
+        assert_eq!(u_node.value(), "u");
 
         let Some(Identifier(v_node)) = &node.nodes.last() else { panic!() };
-        assert_eq!(v_node.identifier(), "v");
+        assert_eq!(v_node.value(), "v");
     }
 
     #[test]
@@ -131,18 +131,18 @@ mod tests {
         let result = parse(tokens).unwrap();
         assert_eq!(result.len(), 1);
 
-        let Tuple(node) = &result[0] else { panic!() };
+        let node = result[0].as_tuple();
 
         let Some(u_node) = node.nodes.first() else { panic!() };
         let Infix(InfixNode { left, operator, right }) = &u_node else { panic!() };
         let Identifier(identifier) = &left.as_ref() else { panic!() };
-        assert_eq!(identifier.identifier(), "u");
+        assert_eq!(identifier.value(), "u");
         let Type(TypeNode::Fundamental(TypeFundamentalNode::Boolean(_))) = right.as_ref() else { panic!() };
 
         let Some(v_node) = node.nodes.last() else { panic!() };
         let Infix(InfixNode { left, operator, right }) = &v_node else { panic!() };
         let Identifier(identifier) = &left.as_ref() else { panic!() };
-        assert_eq!(identifier.identifier(), "v");
+        assert_eq!(identifier.value(), "v");
         let Type(TypeNode::Fundamental(TypeFundamentalNode::String(_))) = right.as_ref() else { panic!() };
     }
 }

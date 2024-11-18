@@ -63,7 +63,7 @@ impl<'a> Parser<'a> {
 //         let tokens = Lexer::lex("loop{ }").unwrap();
 //         let result = Parser::parse(&tokens).unwrap();
 //         assert_eq!(result.block.statements.len(), 1);
-//         let stmt = result.block.statements.first().unwrap();
+//         let stmt = result.block.statements[0];
 //
 //         if let Statement::Expression(Expression::Loop(LoopExpression { body })) = stmt {
 //             assert_eq!(*body, BlockExpression { body: vec![] });
@@ -77,7 +77,7 @@ impl<'a> Parser<'a> {
 //         let tokens = Lexer::lex("loop{ 42 }").unwrap();
 //         let result = Parser::parse(&tokens).unwrap();
 //         assert_eq!(result.block.statements.len(), 1);
-//         let stmt = result.block.statements.first().unwrap();
+//         let stmt = result.block.statements[0];
 //
 //         if let Statement::Expression(Expression::Loop(LoopExpression { body })) = stmt {
 //             assert_eq!(*body, BlockExpression { body: vec![Literal(Number(42.0))] });
@@ -91,7 +91,7 @@ impl<'a> Parser<'a> {
 //         let tokens = Lexer::lex("loop{ loop{42} }").unwrap();
 //         let result = Parser::parse(&tokens).unwrap();
 //         assert_eq!(result.block.statements.len(), 1);
-//         let stmt = result.block.statements.first().unwrap();
+//         let stmt = result.block.statements[0];
 //
 //         if let Statement::Expression(Expression::Loop(LoopExpression { body })) = stmt {
 //             assert_eq!(*body, BlockExpression {
@@ -109,7 +109,7 @@ impl<'a> Parser<'a> {
 //         let tokens = Lexer::lex("loop { continue }").unwrap();
 //         let result = Parser::parse(&tokens).unwrap();
 //         assert_eq!(result.block.statements.len(), 1);
-//         let stmt = result.block.statements.first().unwrap();
+//         let stmt = result.block.statements[0];
 //
 //         if let Statement::Expression(Expression::Loop(LoopExpression { body })) = stmt {
 //             assert_eq!(*body, BlockExpression {
@@ -127,7 +127,7 @@ impl<'a> Parser<'a> {
 //         let tokens = Lexer::lex("loop { break }").unwrap();
 //         let result = Parser::parse(&tokens).unwrap();
 //         assert_eq!(result.block.statements.len(), 1);
-//         let stmt = result.block.statements.first().unwrap();
+//         let stmt = result.block.statements[0];
 //
 //         if let Statement::Expression(Expression::Loop(LoopExpression { body })) = stmt {
 //             assert_eq!(*body, BlockExpression {
@@ -145,7 +145,7 @@ impl<'a> Parser<'a> {
 //         let tokens = Lexer::lex("loop { break 99 }").unwrap();
 //         let result = Parser::parse(&tokens).unwrap();
 //         assert_eq!(result.block.statements.len(), 1);
-//         let stmt = result.block.statements.first().unwrap();
+//         let stmt = result.block.statements[0];
 //
 //         if let Statement::Expression(Expression::Loop(LoopExpression { body })) = stmt {
 //             assert_eq!(*body, BlockExpression {

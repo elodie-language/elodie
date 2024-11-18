@@ -1,4 +1,5 @@
 use std::ops::Deref;
+
 use ast::Ast;
 
 use crate::ast;
@@ -36,17 +37,17 @@ impl Compiler {
 
         for node in node.nodes {
             match node {
-                Node::Infix(InfixNode { left, operator, right }) => {
+                Node::Infix(InfixNode { left, right, .. }) => {
                     let Node::Identifier(object_identifier) = left.deref() else { todo!() };
                     let Node::Infix(InfixNode { left, operator, right }) = right.deref() else { todo!() };
                     let Node::Identifier(function_identifier) = left.deref() else { todo!() };
                     let Node::Tuple(tuple) = right.deref() else { todo!() };
-                    let Node::Literal(LiteralNode::String(value)) = tuple.nodes.first().unwrap() else { todo!() };
+                    let Node::Literal(LiteralNode::String(value)) = &tuple.nodes[0] else { todo!() };
 
                     result.push(
                         Ast::CallFunctionOfObject {
-                            object: object_identifier.identifier().to_string(),
-                            function: function_identifier.identifier().to_string(),
+                            object: ast::ObjectIdentifier(object_identifier.value().to_string()),
+                            function: ast::FunctionIdentifier(function_identifier.value().to_string()),
                             arguments: vec![Ast::StringValue(value.value().to_string())],
                         }
                     )

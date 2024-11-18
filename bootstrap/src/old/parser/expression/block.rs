@@ -38,7 +38,7 @@ impl<'a> Parser<'a> {
 //         let tokens = Lexer::lex("{}").unwrap();
 //         let result = Parser::parse(&tokens).unwrap();
 //         assert_eq!(result.block.statements.len(), 1);
-//         let stmt = result.block.statements.first().unwrap();
+//         let stmt = result.block.statements[0];
 //
 //         if let Statement::Expression(Expression::Block(BlockExpression { body })) = stmt {
 //             assert_eq!(body, &vec![]);
@@ -53,7 +53,7 @@ impl<'a> Parser<'a> {
 //         let result = Parser::parse(&tokens).unwrap();
 //         assert_eq!(result.block.statements.len(), 1);
 //
-//         let stmt = result.block.statements.first().unwrap();
+//         let stmt = result.block.statements[0];
 //         if let Statement::Expression(Expression::Block(BlockExpression { body })) = stmt {
 //             assert_eq!(body, &vec![]);
 //         } else {
@@ -67,7 +67,7 @@ impl<'a> Parser<'a> {
 //         let result = Parser::parse(&tokens).unwrap();
 //         assert_eq!(result.block.statements.len(), 1);
 //
-//         let stmt = result.block.statements.first().unwrap();
+//         let stmt = result.block.statements[0];
 //         if let Statement::Expression(Expression::Block(BlockExpression { body })) = stmt {
 //             assert_eq!(body, &vec![Literal(Boolean(true))]);
 //         } else {
@@ -84,7 +84,7 @@ impl<'a> Parser<'a> {
 //         let result = Parser::parse(&tokens).unwrap();
 //         assert_eq!(result.block.statements.len(), 1);
 //
-//         let stmt = result.block.statements.first().unwrap();
+//         let stmt = result.block.statements[0];
 //         if let Statement::Expression(Expression::Block(BlockExpression { body })) = stmt {
 //             assert_eq!(body, &vec![
 //                 Literal(Boolean(true)),
@@ -101,7 +101,7 @@ impl<'a> Parser<'a> {
 //         let result = Parser::parse(&tokens).unwrap();
 //         assert_eq!(result.block.statements.len(), 1);
 //
-//         let stmt = result.block.statements.first().unwrap();
+//         let stmt = result.block.statements[0];
 //         if let Statement::Expression(Expression::Block(BlockExpression { body })) = stmt {
 //             assert_eq!(body, &vec![
 //                 Block(BlockExpression { body: vec![] })
@@ -119,7 +119,7 @@ impl<'a> Parser<'a> {
 //         let result = Parser::parse(&tokens).unwrap();
 //         assert_eq!(result.block.statements.len(), 1);
 //
-//         let stmt = result.block.statements.first().unwrap();
+//         let stmt = result.block.statements[0];
 //         if let Statement::Expression(Expression::Block(BlockExpression { body })) = stmt {
 //             assert_eq!(body, &vec![
 //                 Block(BlockExpression {

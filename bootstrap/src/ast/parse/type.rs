@@ -137,7 +137,7 @@ mod tests {
 
         let Some(TypeFunctionArgumentNode { identifier, r#type }) = &node.arguments.first() else { panic!() };
         let Some(identifier) = identifier else { panic!() };
-        assert_eq!(identifier.identifier(), "arg_1");
+        assert_eq!(identifier.value(), "arg_1");
 
         let arg_type = r#type.as_ref();
         let TypeNode::Fundamental(TypeFundamentalNode::Boolean(_)) = arg_type else { panic!() };

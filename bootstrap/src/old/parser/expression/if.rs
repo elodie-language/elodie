@@ -40,7 +40,7 @@ impl<'a> Parser<'a> {
 //         let tokens = Lexer::lex("if x == true { false }").unwrap();
 //         let result = Parser::parse(&tokens).unwrap();
 //         assert_eq!(result.block.statements.len(), 1);
-//         let stmt = result.block.statements.first().unwrap();
+//         let stmt = result.block.statements[0];
 //
 //         if let Statement::Expression(Expression::If(IfExpression { condition, then, otherwise })) = stmt {
 //             println!("{stmt:?}");
@@ -65,7 +65,7 @@ impl<'a> Parser<'a> {
 //         }"#).unwrap();
 //         let result = Parser::parse(&tokens).unwrap();
 //         assert_eq!(result.block.statements.len(), 1);
-//         let stmt = result.block.statements.first().unwrap();
+//         let stmt = result.block.statements[0];
 //
 //         if let Statement::Expression(Expression::If(IfExpression { condition, then, otherwise })) = stmt {
 //             assert_eq!(**condition, Binary(BinaryExpression{
@@ -85,7 +85,7 @@ impl<'a> Parser<'a> {
 //         let tokens = Lexer::lex("if x == true { true } else { false }").unwrap();
 //         let result = Parser::parse(&tokens).unwrap();
 //         assert_eq!(result.block.statements.len(), 1);
-//         let stmt = result.block.statements.first().unwrap();
+//         let stmt = result.block.statements[0];
 //
 //         if let Statement::Expression(Expression::If(IfExpression { condition, then, otherwise })) = stmt {
 //             assert_eq!(**condition, Binary(BinaryExpression{

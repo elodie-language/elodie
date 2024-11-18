@@ -30,11 +30,9 @@ impl Parser {
 
 #[cfg(test)]
 mod tests {
-    use std::ops::Deref;
-
     use crate::ast::lex::lex;
     use crate::ast::parse::node::{BlockNode, InfixNode, InfixOperator, LiteralBooleanNode, LiteralNode, TupleNode};
-    use crate::ast::parse::node::Node::{Block, Identifier, Infix, Literal, Tuple};
+    use crate::ast::parse::node::Node::{Block, Literal};
     use crate::ast::parse::parse;
     use crate::ast::token::{LiteralToken, test_token_with_offset, TokenKind};
 
@@ -44,8 +42,8 @@ mod tests {
         let result = parse(tokens).unwrap();
         assert_eq!(result.len(), 1);
 
-        let Block(node) = &result[0] else { panic!() };
-        assert_eq!(node.nodes, vec![]);
+        let block = result[0].as_block();
+        assert_eq!(block.nodes, vec![]);
     }
 
 
@@ -55,15 +53,15 @@ mod tests {
         let result = parse(tokens).unwrap();
         assert_eq!(result.len(), 1);
 
-        let Some(Block(block)) = result.nodes.first() else { panic!() };
-        let Infix(InfixNode { left, operator, right }) = &block.nodes[0] else { panic!() };
-        let Tuple(TupleNode { nodes, .. }) = left.deref() else { panic!() };
+        let block = result.nodes[0].as_block();
+        let InfixNode { left, operator, right } = &block.nodes[0].as_infix();
+        let TupleNode { nodes, .. } = left.as_tuple();
         assert_eq!(*nodes, vec![]);
 
         let InfixOperator::Arrow(_) = operator else { panic!() };
 
-        let Block(block) = right.deref() else { panic!() };
-        assert_eq!(*block.nodes, vec![]);
+        let block = right.as_block();
+        assert_eq!(block.nodes, vec![]);
     }
 
     #[test]
@@ -72,19 +70,20 @@ mod tests {
         let result = parse(tokens).unwrap();
         assert_eq!(result.len(), 1);
 
-        let Some(Block(block)) = result.nodes.first() else { panic!() };
-        let Infix(InfixNode { left, operator, right }) = &block.nodes[0] else { panic!() };
-        let Tuple(TupleNode { nodes, .. }) = left.deref() else { panic!() };
+        let block = result.nodes[0].as_block();
+        let InfixNode { left, operator, right } = &block.nodes[0].as_infix();
+        let TupleNode { nodes, .. } = left.as_tuple();
         assert_eq!(nodes.len(), 1);
-        let Identifier(arg_1_node) = nodes.first().unwrap() else { panic!() };
-        assert_eq!(arg_1_node.identifier(), "arg_1");
+
+        let arg_1 = nodes[0].as_identifier();
+        assert_eq!(arg_1.value(), "arg_1");
 
         let InfixOperator::Arrow(_) = operator else { panic!() };
 
-        let Block(block) = right.deref() else { panic!() };
+        let block = right.as_block();
         assert_eq!(block.nodes.len(), 1);
 
-        let Literal(LiteralNode::Boolean(boolean_node)) = block.nodes.first().unwrap() else { panic!() };
+        let Literal(LiteralNode::Boolean(boolean_node)) = &block.nodes[0] else { panic!() };
         assert!(boolean_node.value())
     }
 
@@ -95,8 +94,8 @@ mod tests {
         let result = parse(tokens).unwrap();
         assert_eq!(result.len(), 1);
 
-        let Block(node) = &result[0] else { panic!() };
-        assert_eq!(node.nodes, vec![]);
+        let block = &result[0].as_block();
+        assert_eq!(block.nodes, vec![]);
     }
 
     #[test]
@@ -108,8 +107,8 @@ mod tests {
         let result = parse(tokens).unwrap();
         assert_eq!(result.len(), 1);
 
-        let Block(node) = &result[0] else { panic!() };
-        assert_eq!(node.nodes, vec![]);
+        let block = &result[0].as_block();
+        assert_eq!(block.nodes, vec![]);
     }
 
     #[test]
@@ -120,8 +119,8 @@ mod tests {
         let result = parse(tokens).unwrap();
         assert_eq!(result.len(), 1);
 
-        let Block(node) = &result[0] else { panic!() };
-        assert_eq!(node.nodes, vec![Block(BlockNode { nodes: vec![] })]);
+        let block = &result[0].as_block();
+        assert_eq!(block.nodes, vec![Block(BlockNode { nodes: vec![] })]);
     }
 
     #[test]
@@ -130,8 +129,8 @@ mod tests {
         let result = parse(tokens).unwrap();
         assert_eq!(result.len(), 1);
 
-        let Block(node) = &result[0] else { panic!() };
-        assert_eq!(node.nodes, vec![
+        let block = result[0].as_block();
+        assert_eq!(block.nodes, vec![
             Block(BlockNode {
                 nodes: vec![
                     Block(BlockNode {

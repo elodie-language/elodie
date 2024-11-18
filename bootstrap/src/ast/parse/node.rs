@@ -2,7 +2,6 @@ use std::ops::Index;
 use std::str::FromStr;
 
 use crate::ast::parse::Error;
-use crate::ast::parse::node::Node::{Block, Break, Call, Continue, FunctionDeclaration, Identifier, If, Infix, Let, Literal, Loop, Prefix, Return, Tuple, Type};
 use crate::ast::token::{LiteralToken, Token, TokenKind};
 
 #[derive(Debug)]
@@ -49,21 +48,72 @@ pub enum Node {
 }
 
 impl Node {
-    pub fn is_block(&self) -> bool { if let Block(_) = self { true } else { false } }
-    pub fn is_break(&self) -> bool { if let Break(_) = self { true } else { false } }
-    pub fn is_call(&self) -> bool { if let Call(_) = self { true } else { false } }
-    pub fn is_continue(&self) -> bool { if let Continue(_) = self { true } else { false } }
-    pub fn is_function_declaration(&self) -> bool { if let FunctionDeclaration(_) = self { true } else { false } }
-    pub fn is_identifier(&self) -> bool { if let Identifier(_) = self { true } else { false } }
-    pub fn is_if(&self) -> bool { if let If(_) = self { true } else { false } }
-    pub fn is_infix(&self) -> bool { if let Infix(_) = self { true } else { false } }
-    pub fn is_let(&self) -> bool { if let Let(_) = self { true } else { false } }
-    pub fn is_literal(&self) -> bool { if let Literal(_) = self { true } else { false } }
-    pub fn is_loop(&self) -> bool { if let Loop(_) = self { true } else { false } }
-    pub fn is_prefix(&self) -> bool { if let Prefix(_) = self { true } else { false } }
-    pub fn is_return(&self) -> bool { if let Return(_) = self { true } else { false } }
-    pub fn is_tuple(&self) -> bool { if let Tuple(_) = self { true } else { false } }
-    pub fn is_type(&self) -> bool { if let Type(_) = self { true } else { false } }
+    pub fn is_block(&self) -> bool { matches!(self, Node::Block(_)) }
+    pub fn as_block(&self) -> &BlockNode { if let Node::Block(result) = self { result } else { panic!("not block") } }
+
+    pub fn is_break(&self) -> bool { matches!(self, Node::Break(_)) }
+    pub fn as_break(&self) -> &BreakNode { if let Node::Break(result) = self { result } else { panic!("not break") } }
+
+    pub fn is_call(&self) -> bool { matches!(self, Node::Call(_)) }
+    pub fn as_call(&self) -> &CallNode { if let Node::Call(result) = self { result } else { panic!("not call") } }
+
+    pub fn is_continue(&self) -> bool { matches!(self, Node::Continue(_)) }
+    pub fn as_continue(&self) -> &ContinueNode { if let Node::Continue(result) = self { result } else { panic!("not continue") } }
+
+    pub fn is_function_declaration(&self) -> bool { matches!(self, Node::FunctionDeclaration(_)) }
+    pub fn as_function_declaration(&self) -> &FunctionDeclarationNode {
+        if let Node::FunctionDeclaration(result) = self { result } else { panic!("not function declaration") }
+    }
+
+    pub fn is_identifier(&self) -> bool { matches!(self, Node::Identifier(_)) }
+    pub fn as_identifier(&self) -> &IdentifierNode {
+        if let Node::Identifier(result) = self { result } else { panic!("not identifier") }
+    }
+
+    pub fn is_if(&self) -> bool { matches!(self, Node::If(_)) }
+    pub fn as_if(&self) -> &IfNode {
+        if let Node::If(result) = self { result } else { panic!("not if") }
+    }
+
+    pub fn is_infix(&self) -> bool { matches!(self, Node::Infix(_)) }
+    pub fn as_infix(&self) -> &InfixNode {
+        if let Node::Infix(result) = self { result } else { panic!("not infix") }
+    }
+
+    pub fn is_let(&self) -> bool { matches!(self, Node::Let(_)) }
+    pub fn as_let(&self) -> &LetNode {
+        if let Node::Let(result) = self { result } else { panic!("not let") }
+    }
+
+    pub fn is_literal(&self) -> bool { matches!(self, Node::Literal(_)) }
+    pub fn as_literal(&self) -> &LiteralNode {
+        if let Node::Literal(result) = self { result } else { panic!("not literal") }
+    }
+
+    pub fn is_loop(&self) -> bool { matches!(self, Node::Loop(_)) }
+    pub fn as_loop(&self) -> &LoopNode {
+        if let Node::Loop(result) = self { result } else { panic!("not loop") }
+    }
+
+    pub fn is_prefix(&self) -> bool { matches!(self, Node::Prefix(_)) }
+    pub fn as_prefix(&self) -> &PrefixNode {
+        if let Node::Prefix(result) = self { result } else { panic!("not prefix") }
+    }
+
+    pub fn is_return(&self) -> bool { matches!(self, Node::Return(_)) }
+    pub fn as_return(&self) -> &ReturnNode {
+        if let Node::Return(result) = self { result } else { panic!("not return") }
+    }
+
+    pub fn is_tuple(&self) -> bool { matches!(self, Node::Tuple(_)) }
+    pub fn as_tuple(&self) -> &TupleNode {
+        if let Node::Tuple(result) = self { result } else { panic!("not tuple") }
+    }
+
+    pub fn is_type(&self) -> bool { matches!(self, Node::Type(_)) }
+    pub fn as_type(&self) -> &TypeNode {
+        if let Node::Type(result) = self { result } else { panic!("not type") }
+    }
 }
 
 #[derive(Debug, PartialEq)]
@@ -76,6 +126,11 @@ pub struct BreakNode {
     pub token: Token,
     pub result: Option<Box<Node>>,
 }
+
+impl BreakNode {
+    pub fn as_result(&self) -> &Node { if let Some(ref node) = self.result { node } else { panic!() } }
+}
+
 
 #[derive(Debug, PartialEq)]
 pub struct CallNode {
@@ -103,17 +158,26 @@ pub struct FunctionDeclarationNode {
     pub block: BlockNode,
 }
 
+impl FunctionDeclarationNode {
+    pub fn as_return_type(&self) -> &TypeNode { if let Some(ref node) = self.return_type { node } else { panic!() } }
+}
+
+
 #[derive(Debug, PartialEq)]
 pub struct FunctionDeclarationArgumentNode {
     pub identifier: IdentifierNode,
     pub r#type: Option<Box<TypeNode>>,
 }
 
+impl FunctionDeclarationArgumentNode {
+    pub fn as_type(&self) -> &TypeNode { if let Some(ref node) = self.r#type { node } else { panic!() } }
+}
+
 #[derive(Debug, PartialEq)]
 pub struct IdentifierNode(pub Token);
 
 impl IdentifierNode {
-    pub fn identifier(&self) -> &str {
+    pub fn value(&self) -> &str {
         self.0.span.value.as_str()
     }
 }
@@ -241,6 +305,9 @@ pub struct ReturnNode {
     pub result: Option<Box<Node>>,
 }
 
+impl ReturnNode {
+    pub fn as_result(&self) -> &Node { if let Some(ref node) = self.result { node } else { panic!() } }
+}
 
 #[derive(Debug, PartialEq)]
 pub enum PrefixOperator {
@@ -272,6 +339,10 @@ pub enum TypeFundamentalNode {
 pub struct TypeFunctionNode {
     pub arguments: Vec<TypeFunctionArgumentNode>,
     pub return_type: Option<Box<TypeNode>>,
+}
+
+impl TypeFunctionNode {
+    pub fn as_return_type(&self) -> &TypeNode { if let Some(ref node) = self.return_type { node } else { panic!() } }
 }
 
 #[derive(Debug, PartialEq)]

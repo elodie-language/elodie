@@ -37,7 +37,7 @@ impl<'a> Parser<'a> {
 //     fn parse_let() {
 //         let tokens = Lexer::lex("let value = 'Elodie'").unwrap();
 //         let result = Parser::parse(&tokens).unwrap();
-//         let stmt = result.block.statements.first().unwrap();
+//         let stmt = result.block.statements[0];
 //
 //         if let Statement::Expression(Expression::Let(LetExpression { name, value, r#type })) = stmt {
 //             assert_eq!(name, &IdentifierExpression("value".to_string()));
@@ -52,7 +52,7 @@ impl<'a> Parser<'a> {
 //     fn parse_let_with_type_string() {
 //         let tokens = Lexer::lex("let value : String = 'Elodie'").unwrap();
 //         let result = Parser::parse(&tokens).unwrap();
-//         let stmt = result.block.statements.first().unwrap();
+//         let stmt = result.block.statements[0];
 //
 //         if let Statement::Expression(Expression::Let(LetExpression { name, value, r#type })) = stmt {
 //             assert_eq!(name, &IdentifierExpression("value".to_string()));
@@ -67,7 +67,7 @@ impl<'a> Parser<'a> {
 //     fn parse_let_with_type_any() {
 //         let tokens = Lexer::lex("let value : Any = 'Elodie'").unwrap();
 //         let result = Parser::parse(&tokens).unwrap();
-//         let stmt = result.block.statements.first().unwrap();
+//         let stmt = result.block.statements[0];
 //
 //         if let Statement::Expression(Expression::Let(LetExpression { name, value, r#type })) = stmt {
 //             assert_eq!(name, &IdentifierExpression("value".to_string()));
@@ -82,7 +82,7 @@ impl<'a> Parser<'a> {
 //     fn parse_let_with_type_number() {
 //         let tokens = Lexer::lex("let value : Number = 99").unwrap();
 //         let result = Parser::parse(&tokens).unwrap();
-//         let stmt = result.block.statements.first().unwrap();
+//         let stmt = result.block.statements[0];
 //
 //         if let Statement::Expression(Expression::Let(LetExpression { name, value, r#type })) = stmt {
 //             assert_eq!(name, &IdentifierExpression("value".to_string()));
@@ -97,7 +97,7 @@ impl<'a> Parser<'a> {
 //     fn parse_let_with_type_boolean_true() {
 //         let tokens = Lexer::lex("let value : Bool = true").unwrap();
 //         let result = Parser::parse(&tokens).unwrap();
-//         let stmt = result.block.statements.first().unwrap();
+//         let stmt = result.block.statements[0];
 //
 //         if let Statement::Expression(Expression::Let(LetExpression { name, value, r#type })) = stmt {
 //             assert_eq!(name, &IdentifierExpression("value".to_string()));
@@ -112,7 +112,7 @@ impl<'a> Parser<'a> {
 //     fn parse_let_with_type_boolean_false() {
 //         let tokens = Lexer::lex("let value : Bool = false").unwrap();
 //         let result = Parser::parse(&tokens).unwrap();
-//         let stmt = result.block.statements.first().unwrap();
+//         let stmt = result.block.statements[0];
 //
 //         if let Statement::Expression(Expression::Let(LetExpression { name, value, r#type })) = stmt {
 //             assert_eq!(name, &IdentifierExpression("value".to_string()));

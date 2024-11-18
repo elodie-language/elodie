@@ -58,7 +58,7 @@ mod tests {
     use crate::ast::lex;
     use crate::ast::parse::{parse, Parser};
     use crate::ast::parse::node::{InfixNode, InfixOperator, LiteralNode, TupleNode, TypeFundamentalNode, TypeNode};
-    use crate::ast::parse::node::Node::{Identifier, Infix, Literal, Tuple, Type};
+    use crate::ast::parse::node::Node::{Identifier, Infix, Literal, Type};
     use crate::ast::token::{operator, OperatorToken::*, test_token, test_token_with_offset};
 
     #[test]
@@ -71,7 +71,7 @@ mod tests {
         let InfixOperator::TypeAscription(_) = operator else { panic!() };
 
         let Identifier(identifier) = left.as_ref() else { panic!() };
-        assert_eq!(identifier.identifier(), "u");
+        assert_eq!(identifier.value(), "u");
 
         let Type(type_node) = right.as_ref() else { panic!() };
         let TypeNode::Fundamental(TypeFundamentalNode::Boolean(_)) = type_node else { panic!() };
@@ -151,19 +151,19 @@ mod tests {
         let result = parse(tokens).unwrap();
         assert_eq!(result.len(), 1);
 
-        let Infix(InfixNode { left, operator, right }) = &result[0] else { panic!() };
+        let InfixNode { left, operator, right } = result[0].as_infix();
         let Identifier(node) = left.deref() else { panic!() };
-        assert_eq!(node.identifier(), "console");
+        assert_eq!(node.value(), "console");
 
         let InfixOperator::AccessProperty(_) = operator else { panic!() };
 
-        let Infix(InfixNode { left, operator, right }) = right.deref() else { panic!() };
+        let InfixNode { left, operator, right } = right.as_infix();
         let Identifier(node) = left.deref() else { panic!() };
-        assert_eq!(node.identifier(), "log");
+        assert_eq!(node.value(), "log");
 
         let InfixOperator::Call(_) = operator else { panic!() };
 
-        let Tuple(TupleNode { nodes, .. }) = right.deref() else { panic!() };
+        let TupleNode { nodes, .. } = right.as_tuple();
         assert_eq!(*nodes, vec![]);
     }
 
@@ -174,13 +174,13 @@ mod tests {
         let result = parse(tokens).unwrap();
         assert_eq!(result.len(), 1);
 
-        let Infix(InfixNode { left, operator, right }) = &result[0] else { panic!() };
-        let Identifier(node) = left.deref() else { panic!() };
-        assert_eq!(node.identifier(), "test");
+        let InfixNode { left, operator, right } = &result[0].as_infix();
+        let identifier = left.as_identifier();
+        assert_eq!(identifier.value(), "test");
 
         let InfixOperator::Call(_) = operator else { panic!() };
 
-        let Tuple(TupleNode { nodes, .. }) = right.deref() else { panic!() };
+        let TupleNode { nodes, .. } = right.as_tuple();
         assert_eq!(*nodes, vec![]);
     }
 
@@ -190,13 +190,13 @@ mod tests {
         let result = parse(tokens).unwrap();
         assert_eq!(result.len(), 1);
 
-        let Infix(InfixNode { left, operator, right }) = &result[0] else { panic!() };
-        let Identifier(node) = left.deref() else { panic!() };
-        assert_eq!(node.identifier(), "test");
+        let InfixNode { left, operator, right } = &result[0].as_infix();
+        let identifier = left.as_identifier();
+        assert_eq!(identifier.value(), "test");
 
         let InfixOperator::Call(_) = operator else { panic!() };
 
-        let Tuple(TupleNode { nodes, .. }) = right.deref() else { panic!() };
+        let TupleNode { nodes, .. } = right.as_tuple();
         assert_eq!(nodes.len(), 1);
 
         let Some(Literal(LiteralNode::String(arg_1))) = &nodes.first() else { panic!() };

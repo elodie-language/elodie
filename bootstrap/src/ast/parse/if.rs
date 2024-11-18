@@ -42,7 +42,7 @@ mod tests {
         let result = parse(tokens).unwrap();
         assert_eq!(result.len(), 1);
 
-        let If(IfNode { condition, then, otherwise, .. }) = &result[0] else { panic!() };
+        let IfNode { condition, then, otherwise, .. } = result[0].as_if();
 
         let Literal(LiteralNode::Boolean(condition)) = condition.deref() else { panic!("not boolean node") };
         assert_eq!(condition.value(), true);
@@ -59,7 +59,7 @@ mod tests {
         let result = parse(tokens).unwrap();
         assert_eq!(result.len(), 1);
 
-        let If(IfNode { condition, then, otherwise, .. }) = &result[0] else { panic!() };
+        let IfNode { condition, then, otherwise, .. } = result[0].as_if();
 
         let Literal(LiteralNode::Boolean(condition)) = condition.deref() else { panic!("not boolean node") };
         assert_eq!(condition.value(), true);
@@ -80,7 +80,7 @@ mod tests {
         let result = parse(tokens).unwrap();
         assert_eq!(result.len(), 1);
 
-        let If(IfNode { condition, then, otherwise, .. }) = &result[0] else { panic!() };
+        let IfNode { condition, then, otherwise, .. } = result[0].as_if();
 
         let Literal(LiteralNode::Boolean(condition)) = condition.deref() else { panic!("not boolean node") };
         assert_eq!(condition.value(), true);
@@ -102,7 +102,7 @@ mod tests {
         let result = parse(tokens).unwrap();
         assert_eq!(result.len(), 1);
 
-        let If(IfNode { condition, then, otherwise, .. }) = &result[0] else { panic!() };
+        let IfNode { condition, then, otherwise, .. } = result[0].as_if();
 
         let Literal(LiteralNode::Boolean(condition)) = condition.deref() else { panic!("not boolean node") };
         assert_eq!(condition.value(), true);

@@ -62,7 +62,7 @@ impl<'a> Parser<'a> {
 //             fn $name() {
 //                 let tokens = Lexer::lex($input).unwrap();
 //                 let result = Parser::parse(&tokens).unwrap();
-//                 let stmt = result.block.statements.first().unwrap();
+//                 let stmt = result.block.statements[0];
 //
 //                 if let Statement::Expression(Expression::Binary(got)) = stmt {
 //                      assert_eq!(

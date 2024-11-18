@@ -36,7 +36,7 @@ mod tests {
 
     use crate::ast::lex::lex;
     use crate::ast::parse::node::{LiteralNode, TypeFundamentalNode, TypeNode};
-    use crate::ast::parse::node::Node::{Let, Literal};
+    use crate::ast::parse::node::Node::Literal;
     use crate::ast::parse::parse;
 
     #[test]
@@ -45,8 +45,8 @@ mod tests {
         let result = parse(tokens).unwrap();
         assert_eq!(result.len(), 1);
 
-        let Let(node) = &result[0] else { panic!() };
-        assert_eq!(node.identifier.identifier(), "value");
+        let node = result[0].as_let();
+        assert_eq!(node.identifier.value(), "value");
 
         assert_eq!(node.r#type, None);
 
@@ -60,8 +60,8 @@ mod tests {
         let result = parse(tokens).unwrap();
         assert_eq!(result.len(), 1);
 
-        let Let(node) = &result[0] else { panic!() };
-        assert_eq!(node.identifier.identifier(), "value");
+        let node = result[0].as_let();
+        assert_eq!(node.identifier.value(), "value");
 
         let Some(TypeNode::Fundamental(TypeFundamentalNode::String(_))) = node.r#type else { panic!() };
 
@@ -75,8 +75,8 @@ mod tests {
         let result = parse(tokens).unwrap();
         assert_eq!(result.len(), 1);
 
-        let Let(node) = &result[0] else { panic!() };
-        assert_eq!(node.identifier.identifier(), "value");
+        let node = result[0].as_let();
+        assert_eq!(node.identifier.value(), "value");
 
         assert_eq!(node.r#type, None);
 
@@ -90,9 +90,8 @@ mod tests {
         let result = parse(tokens).unwrap();
         assert_eq!(result.len(), 1);
 
-        let Let(node) = &result[0] else { panic!() };
-        assert_eq!(node.identifier.identifier(), "value");
-
+        let node = &result[0].as_let();
+        assert_eq!(node.identifier.value(), "value");
         assert_eq!(node.r#type, None);
 
         let Literal(LiteralNode::Boolean(result)) = &node.node.deref() else { panic!() };

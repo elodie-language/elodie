@@ -18,7 +18,6 @@ impl Parser {
 #[cfg(test)]
 mod tests {
     use crate::ast::lex::lex;
-    use crate::ast::parse::node::Node::Identifier;
     use crate::ast::parse::parse;
 
     #[test]
@@ -27,8 +26,8 @@ mod tests {
         let result = parse(tokens).unwrap();
         assert_eq!(result.len(), 1);
 
-        let Identifier(node) = &result[0] else { panic!() };
-        assert_eq!(node.identifier(), "x")
+        let node = result[0].as_identifier();
+        assert_eq!(node.value(), "x")
     }
 
     #[test]
@@ -37,7 +36,7 @@ mod tests {
         let result = parse(tokens).unwrap();
         assert_eq!(result.len(), 1);
 
-        let Identifier(node) = &result[0] else { panic!() };
-        assert_eq!(node.identifier(), "some_identifier")
+        let node = result[0].as_identifier();
+        assert_eq!(node.value(), "some_identifier")
     }
 }

@@ -85,7 +85,7 @@ impl<'a> Parser<'a> {
 //         if let Statement::Expression(Expression::Call(CallExpression { expression, arguments: parameters, type_args })) = stmt {
 //             assert_eq!(expression.deref(), &Expression::Identifier(IdentifierExpression("test".to_string())));
 //             assert_eq!(parameters.len(), 1);
-//             let parameter = parameters.first().unwrap();
+//             let parameter = parameters[0];
 //             assert!(parameter.name.is_none());
 //
 //             let expr = *parameter.value.clone();
@@ -115,7 +115,7 @@ impl<'a> Parser<'a> {
 //         if let Statement::Expression(Expression::Call(CallExpression { expression, arguments: parameters, type_args })) = stmt {
 //             assert_eq!(expression.deref(), &Expression::Identifier(IdentifierExpression("test".to_string())));
 //             assert_eq!(parameters.len(), 1);
-//             let parameter = parameters.first().unwrap();
+//             let parameter = parameters[0];
 //             assert!(parameter.name.is_none());
 //
 //             let expr = *parameter.value.clone();
@@ -146,7 +146,7 @@ impl<'a> Parser<'a> {
 //     //
 //     //         assert_eq!(expression.deref(), &Expression::Identifier(IdentifierExpression("test".to_string())));
 //     //         assert_eq!(parameters.len(), 1);
-//     //         let parameter = parameters.first().unwrap();
+//     //         let parameter = parameters[0];
 //     //         assert!(parameter.name.is_none());
 //     //
 //     //         let expr = *parameter.value.clone();
