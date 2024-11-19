@@ -319,6 +319,7 @@ pub struct PackageDeclarationNode {
     pub token: Token,
     pub identifier: IdentifierNode,
     pub block: BlockNode,
+    pub modifiers: Modifiers
 }
 
 

@@ -13,7 +13,20 @@ pub struct SourceFile {
 
 #[derive(Debug)]
 pub struct Package {
+    pub exports: Vec<Exports>,
     pub body: Vec<Node>,
+}
+
+#[derive(Debug)]
+pub enum Exports {
+    Function(ExportedFunctionSignature)
+}
+
+#[derive(Debug)]
+pub struct ExportedFunctionSignature {
+    pub identifier: Identifier,
+    pub arguments: Vec<Rc<FunctionArgumentNode>>,
+    pub return_type: TypeId,
 }
 
 #[derive(Debug)]

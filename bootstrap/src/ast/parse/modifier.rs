@@ -2,7 +2,7 @@ use KeywordToken::Export;
 
 use crate::ast::parse::{Modifier, Modifiers, Node, Parser};
 use crate::ast::token::KeywordToken;
-use crate::ast::token::KeywordToken::Function;
+use crate::ast::token::KeywordToken::{Function, Package};
 
 impl Parser {
     pub(crate) fn parse_modifier_export(&mut self) -> crate::ast::parse::Result<Node> {
@@ -14,6 +14,11 @@ impl Parser {
         if current.is_keyword(Function) {
             return Ok(Node::FunctionDeclaration(self.parse_function_declaration_with_modifiers(Modifiers(vec![modifier]))?));
         }
+
+        if current.is_keyword(Package) {
+            return Ok(Node::PackageDeclaration(self.parse_package_declaration_with_modifiers(Modifiers(vec![modifier]))?));
+        }
+
         unimplemented!()
     }
 }
