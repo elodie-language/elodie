@@ -161,6 +161,7 @@ pub struct FunctionDeclarationNode {
     pub arguments: Vec<FunctionDeclarationArgumentNode>,
     pub return_type: Option<Box<TypeNode>>,
     pub block: BlockNode,
+    pub modifiers: Modifiers,
 }
 
 impl FunctionDeclarationNode {
@@ -297,6 +298,21 @@ pub struct LoopNode {
     pub token: Token,
     pub block: BlockNode,
 }
+
+#[derive(Debug, PartialEq)]
+pub struct Modifiers(pub(crate) Vec<Modifier>);
+
+impl Modifiers{
+    pub fn is_exported(&self) -> bool {
+        self.0.iter().any(|m| matches!(m, Modifier::Export(_)))
+    }
+}
+
+#[derive(Debug, PartialEq)]
+pub enum Modifier {
+    Export(Token)
+}
+
 
 #[derive(Debug, PartialEq)]
 pub struct PackageDeclarationNode {

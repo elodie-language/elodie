@@ -3,14 +3,18 @@ use OperatorToken::OpenParen;
 use SeparatorToken::Comma;
 use TokenKind::{Operator, Separator};
 
+use crate::ast::parse::{Modifier, Modifiers, Parser};
 use crate::ast::parse::node::{FunctionDeclarationArgumentNode, FunctionDeclarationNode, ReturnNode};
-use crate::ast::parse::Parser;
 use crate::ast::parse::precedence::Precedence;
 use crate::ast::token::{KeywordToken, OperatorToken, SeparatorToken, TokenKind};
 use crate::ast::token::OperatorToken::{Arrow, CloseParen};
 
 impl Parser {
     pub(crate) fn parse_function_declaration(&mut self) -> crate::ast::parse::Result<FunctionDeclarationNode> {
+        self.parse_function_declaration_with_modifiers(Modifiers(vec![]))
+    }
+
+    pub(crate) fn parse_function_declaration_with_modifiers(&mut self, modifiers: Modifiers) -> crate::ast::parse::Result<FunctionDeclarationNode> {
         let fun_token = self.consume_keyword(KeywordToken::Function)?;
         let identifier = self.parse_identifier()?;
         self.consume_operator(OpenParen)?;
@@ -40,6 +44,7 @@ impl Parser {
             arguments,
             return_type,
             block,
+            modifiers,
         })
     }
 
@@ -70,12 +75,10 @@ impl Parser {
 
 #[cfg(test)]
 mod tests {
-    use std::ops::Deref;
-
     use crate::ast::lex::lex;
+    use crate::ast::parse::{Modifier, parse};
     use crate::ast::parse::node::{LiteralNode, TypeFundamentalNode, TypeNode};
-    use crate::ast::parse::node::Node::{FunctionDeclaration, Literal};
-    use crate::ast::parse::parse;
+    use crate::ast::parse::node::Node::Literal;
 
     #[test]
     fn return_without_result() {
@@ -99,6 +102,20 @@ mod tests {
     }
 
     #[test]
+    fn export_function_without_args_and_without_return() {
+        let tokens = lex("export fun magic(){ }").unwrap();
+        let result = parse(tokens).unwrap();
+        assert_eq!(result.len(), 1);
+
+        let node = result.nodes[0].as_function_declaration();
+        assert_eq!(node.identifier.value(), "magic");
+        assert!(node.modifiers.is_exported());
+        assert_eq!(node.block.nodes, vec![]);
+        assert_eq!(node.arguments, vec![]);
+        assert_eq!(node.return_type, None);
+    }
+
+    #[test]
     fn function_without_args_and_without_return() {
         let tokens = lex("fun magic(){ }").unwrap();
         let result = parse(tokens).unwrap();
@@ -109,6 +126,7 @@ mod tests {
         assert_eq!(node.block.nodes, vec![]);
         assert_eq!(node.arguments, vec![]);
         assert_eq!(node.return_type, None);
+        assert!(!node.modifiers.is_exported());
     }
 
     #[test]
@@ -121,6 +139,7 @@ mod tests {
         assert_eq!(node.identifier.value(), "magic");
         assert_eq!(node.block.nodes, vec![]);
         assert_eq!(node.arguments, vec![]);
+        assert!(!node.modifiers.is_exported());
 
         let type_node = node.as_return_type();
         let TypeNode::Fundamental(TypeFundamentalNode::Boolean(_)) = type_node else { panic!("not bool") };
@@ -136,6 +155,7 @@ mod tests {
         let node = result.nodes[0].as_function_declaration();
         assert_eq!(node.identifier.value(), "magic");
         assert_eq!(node.block.nodes, vec![]);
+        assert!(!node.modifiers.is_exported());
         assert_eq!(node.arguments.len(), 1);
 
         let arg = &node.arguments[0];
@@ -154,6 +174,7 @@ mod tests {
         let node = result.nodes[0].as_function_declaration();
         assert_eq!(node.identifier.value(), "magic");
         assert_eq!(node.block.nodes, vec![]);
+        assert!(!node.modifiers.is_exported());
         assert_eq!(node.arguments.len(), 2);
 
         let arg_1 = &node.arguments[0];
@@ -178,6 +199,7 @@ mod tests {
         let node = result.nodes[0].as_function_declaration();
         assert_eq!(node.identifier.value(), "magic");
         assert_eq!(node.block.nodes, vec![]);
+        assert!(!node.modifiers.is_exported());
         assert_eq!(node.arguments.len(), 1);
         assert_eq!(node.return_type, None);
 

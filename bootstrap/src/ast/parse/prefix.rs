@@ -7,7 +7,7 @@ use crate::ast::parse::precedence::Precedence;
 use crate::ast::token::{KeywordToken, OperatorToken};
 use crate::ast::token::LiteralToken::{False, Number, String, True};
 use crate::ast::token::TokenKind::{Keyword, Operator};
-use crate::core::{is_pascal_snake_case, is_snake_case};
+use crate::common::{is_pascal_snake_case, is_snake_case};
 
 impl Parser {
     pub(crate) fn parse_prefix(&mut self) -> crate::ast::parse::Result<Node> {
@@ -31,6 +31,7 @@ impl Parser {
                 match keyword {
                     KeywordToken::Break => Ok(Break(self.parse_break()?)),
                     KeywordToken::Continue => Ok(Continue(self.parse_continue()?)),
+                    KeywordToken::Export => Ok(self.parse_modifier_export()?),
                     KeywordToken::Function => Ok(FunctionDeclaration(self.parse_function_declaration()?)),
                     KeywordToken::If => Ok(If(self.parse_if()?)),
                     KeywordToken::Let => Ok(Let(self.parse_let()?)),

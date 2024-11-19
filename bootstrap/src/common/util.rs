@@ -59,7 +59,7 @@ pub fn is_pascal_snake_case(s: &str) -> bool {
 #[cfg(test)]
 mod tests {
     mod is_snake_case {
-        use crate::core::util::is_snake_case;
+        use crate::common::util::is_snake_case;
 
         #[test]
         fn ok() {
@@ -99,7 +99,7 @@ mod tests {
     }
 
     mod is_pascal_snake_case {
-        use crate::core::util::is_pascal_snake_case;
+        use crate::common::util::is_pascal_snake_case;
 
         #[test]
         fn ok() {

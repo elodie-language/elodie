@@ -21,6 +21,7 @@ mod r#type;
 mod function;
 mod tuple;
 mod package;
+mod modifier;
 
 #[derive(Debug, PartialEq)]
 pub enum Error {

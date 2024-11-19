@@ -4,7 +4,7 @@ use crate::ast::parse::Parser;
 use crate::ast::token::OperatorToken::{Arrow, CloseParen, Colon, OpenParen};
 use crate::ast::token::SeparatorToken::Comma;
 use crate::ast::token::TokenKind::{Operator, Separator};
-use crate::core::is_pascal_snake_case;
+use crate::common::is_pascal_snake_case;
 
 impl Parser {
     pub(crate) fn parse_type(&mut self) -> crate::ast::parse::Result<TypeNode> {

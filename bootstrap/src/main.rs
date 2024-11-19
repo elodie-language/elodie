@@ -5,7 +5,7 @@ use std::path::PathBuf;
 
 use crate::runner::Runner;
 
-mod core;
+mod common;
 mod cli;
 mod ast;
 mod runner;
