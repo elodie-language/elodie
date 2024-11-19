@@ -14,6 +14,7 @@ impl Lexer<'_> {
             'f' => matches!(look_ahead.as_str(), "from" | "for" | "fun"),
             'i' => matches!(look_ahead.as_str(), "if" | "implement" | "import" | "in"),
             'l' => matches!(look_ahead.as_str(), "let" | "loop"),
+            'p' => look_ahead == "package",
             'r' => matches!(look_ahead.as_str(), "readonly" | "return"),
             't' => matches!(look_ahead.as_str(), "trait" | "type"),
             _ => false,
@@ -54,6 +55,7 @@ impl Lexer<'_> {
         keywords.insert("in", KeywordToken::In);
         keywords.insert("let", KeywordToken::Let);
         keywords.insert("loop", KeywordToken::Loop);
+        keywords.insert("package", KeywordToken::Package);
         keywords.insert("readonly", KeywordToken::Readonly);
         keywords.insert("return", KeywordToken::Return);
         keywords.insert("trait", KeywordToken::Trait);
@@ -378,9 +380,30 @@ mod test {
         assert_eq!(result.value(), "loophole");
     }
 
+    #[test]
+    fn package() {
+        let text = "package";
+        let lexer = Lexer::new(text);
+        let result = lexer.advance().unwrap();
+        assert!(result.is_keyword(Package));
+        assert_eq!(result.span.start, (1, 1, 0));
+        assert_eq!(result.span.end, (1, 8, 7));
+        assert_eq!(result.value(), "package");
+    }
 
     #[test]
-    fn r#readonly() {
+    fn not_package() {
+        let text = "packaged";
+        let lexer = Lexer::new(text);
+        let result = lexer.advance().unwrap();
+        assert_eq!(result.kind, identifier());
+        assert_eq!(result.span.start, (1, 1, 0));
+        assert_eq!(result.span.end, (1, 9, 8));
+        assert_eq!(result.value(), "packaged");
+    }
+
+    #[test]
+    fn readonly() {
         let text = "readonly";
         let lexer = Lexer::new(text);
         let result = lexer.advance().unwrap();

@@ -13,6 +13,8 @@ mod runner;
 fn main() {
     let args: Vec<String> = env::args().collect();
 
+    // load modules
+
     let mut path = PathBuf::from(args.get(1).unwrap());
     let content = load_text_from_file(path.to_str().unwrap()).unwrap();
 

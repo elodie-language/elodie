@@ -77,6 +77,7 @@ pub enum KeywordToken {
     In,
     Let,
     Loop,
+    Package,
     Readonly,
     Return,
     Trait,

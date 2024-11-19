@@ -3,7 +3,7 @@ use crate::ast::lex::lex;
 use crate::ast::parse::parse;
 
 mod ast;
-mod compiler;
+mod compile;
 mod lex;
 mod parse;
 mod token;
@@ -13,7 +13,7 @@ mod r#type;
 pub enum Error {
     Lexer(lex::Error),
     Parser(parse::Error),
-    Compiler(compiler::Error),
+    Compiler(compile::Error),
 }
 
 impl From<lex::Error> for Error {
@@ -28,8 +28,8 @@ impl From<parse::Error> for Error {
     }
 }
 
-impl From<compiler::Error> for Error {
-    fn from(value: compiler::Error) -> Self {
+impl From<compile::Error> for Error {
+    fn from(value: compile::Error) -> Self {
         Self::Compiler(value)
     }
 }
@@ -37,8 +37,8 @@ impl From<compiler::Error> for Error {
 pub(crate) type Result<T, E = Error> = core::result::Result<T, E>;
 
 
-pub fn parse_str(str: &str) -> Result<SourceFile> {
+pub fn parse_str(str: &str) -> Result<Package> {
     let tokens = lex(str)?;
     let root = parse(tokens)?;
-    Ok(compiler::from(root)?)
+    Ok(compile::from(root)?)
 }

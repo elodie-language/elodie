@@ -1,10 +1,10 @@
 use crate::ast;
 use crate::ast::{BreakLoopNode, ContinueLoopNode, LoopNode, Node, parse};
-use crate::ast::compiler::Compiler;
+use crate::ast::compile::Compiler;
 use crate::ast::r#type::DefaultTypeIds;
 
 impl Compiler {
-    pub(crate) fn compile_break(&mut self, node: &parse::BreakNode) -> crate::ast::compiler::Result<ast::Node> {
+    pub(crate) fn compile_break(&mut self, node: &parse::BreakNode) -> crate::ast::compile::Result<ast::Node> {
         if node.result.is_none() {
             Ok(Node::BreakLoop(BreakLoopNode { body: None, return_type: DefaultTypeIds::unit() }))
         } else {
@@ -16,11 +16,11 @@ impl Compiler {
         }
     }
 
-    pub(crate) fn compile_continue(&mut self, _node: &parse::ContinueNode) -> crate::ast::compiler::Result<ast::Node> {
+    pub(crate) fn compile_continue(&mut self, _node: &parse::ContinueNode) -> crate::ast::compile::Result<ast::Node> {
         Ok(Node::ContinueLoop(ContinueLoopNode {}))
     }
 
-    pub(crate) fn compile_loop(&mut self, node: &parse::LoopNode) -> ast::compiler::Result<ast::Node> {
+    pub(crate) fn compile_loop(&mut self, node: &parse::LoopNode) -> ast::compile::Result<ast::Node> {
         let mut body = Vec::with_capacity(node.block.nodes.len());
 
         for node in &node.block.nodes {

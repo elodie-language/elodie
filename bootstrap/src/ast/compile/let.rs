@@ -1,12 +1,12 @@
 use std::ops::Deref;
 
 use crate::ast::{ast, DeclareVariableNode, Identifier, Node};
-use crate::ast::compiler::Compiler;
+use crate::ast::compile::Compiler;
 use crate::ast::parse::LetNode;
 use crate::ast::r#type::DefaultTypeIds;
 
 impl Compiler {
-    pub(crate) fn compile_let(&mut self, node: &LetNode) -> crate::ast::compiler::Result<ast::Node> {
+    pub(crate) fn compile_let(&mut self, node: &LetNode) -> crate::ast::compile::Result<ast::Node> {
         let identifier = Identifier(node.identifier.0.value().to_string());
 
         Ok(Node::DeclareVariable(DeclareVariableNode {

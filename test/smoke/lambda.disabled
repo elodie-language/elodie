@@ -2,9 +2,6 @@ fun receiver(fn: fun()){
     fn()
 }
 
-let receiver = fun () {
-}
-
 receiver(fun x (){
     log.info('1') // Expect: 1
 })

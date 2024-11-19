@@ -2,12 +2,12 @@ use std::ops::Deref;
 
 use crate::ast;
 use crate::ast::{CalculateNode, CalculationOperator, CallFunctionNode, CallFunctionOfObjectNode, CompareNode, CompareOperator, parse};
-use crate::ast::compiler::Compiler;
+use crate::ast::compile::Compiler;
 use crate::ast::parse::{InfixNode, InfixOperator, LiteralNode, Node};
 use crate::ast::r#type::DefaultTypeIds;
 
 impl Compiler {
-    pub(crate) fn compile_infix(&mut self, node: &parse::InfixNode) -> crate::ast::compiler::Result<ast::Node> {
+    pub(crate) fn compile_infix(&mut self, node: &parse::InfixNode) -> crate::ast::compile::Result<ast::Node> {
         let InfixNode { left, right, operator } = node;
 
         if let InfixOperator::AccessProperty(_) = operator {

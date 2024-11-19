@@ -4,7 +4,7 @@ use std::rc::Rc;
 use crate::ast::r#type::TypeId;
 
 #[derive(Debug)]
-pub struct SourceFile {
+pub struct Package {
     // imports
     // exports
     pub body: Vec<Node>,

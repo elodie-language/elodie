@@ -1,6 +1,6 @@
 use std::ops::Deref;
 
-use crate::ast::{CalculationOperator, CallFunctionOfObjectNode, CompareOperator, Node, SourceFile};
+use crate::ast::{CalculationOperator, CallFunctionOfObjectNode, CompareOperator, Node, Package};
 use crate::runner::scope::Scope;
 use crate::runner::value::Value;
 
@@ -37,7 +37,7 @@ impl Runner {
         }
     }
 
-    pub fn run(&mut self, source_file: SourceFile) -> Result<Value> {
+    pub fn run(&mut self, source_file: Package) -> Result<Value> {
         for node in &source_file.body {
             self.run_node(node)?;
         }
