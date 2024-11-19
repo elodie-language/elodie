@@ -1,9 +1,7 @@
 use std::collections::HashMap;
-use std::hash::Hash;
+use crate::ast::compiler::symbol::Symbol;
 
-pub(crate) enum Symbol {}
-
-pub(crate) struct SymbolTable {
+pub struct SymbolTable {
     scopes: Vec<HashMap<String, Symbol>>,
 }
 
@@ -14,4 +12,3 @@ impl Default for SymbolTable {
         }
     }
 }
-

@@ -3,9 +3,9 @@ use std::fmt::{Debug, Formatter};
 use std::ops::Deref;
 use std::rc::Rc;
 
-use crate::ast::FunctionIdentifier;
+use crate::ast::Identifier;
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum Value {
     Bool(bool),
     HostFunction(HostFunctionValue),
@@ -30,7 +30,7 @@ impl Value {
     }
 }
 
-
+#[derive(Clone)]
 pub struct HostFunctionValue(pub Rc<dyn Fn(&[&Value]) -> crate::runner::Result<Value>>);
 
 impl Debug for HostFunctionValue {
@@ -39,7 +39,7 @@ impl Debug for HostFunctionValue {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct ObjectValue {
     properties: HashMap<String, Value>,
 }
@@ -59,7 +59,7 @@ impl ObjectValue {
         self.properties.get(key)
     }
 
-    pub fn get_property_host_function(&self, identifier: impl AsRef<FunctionIdentifier>) -> Option<&HostFunctionValue> {
+    pub fn get_property_host_function(&self, identifier: impl AsRef<Identifier>) -> Option<&HostFunctionValue> {
         let identifier = identifier.as_ref();
         if let Some(Value::HostFunction(result)) = &self.properties.get(identifier.deref()) {
             Some(result)
@@ -69,7 +69,7 @@ impl ObjectValue {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct TupleValue {
     values: Vec<Value>,
 }

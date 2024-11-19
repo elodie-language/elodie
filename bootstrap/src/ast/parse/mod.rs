@@ -2,13 +2,13 @@ use std::cmp::PartialOrd;
 use std::collections::HashMap;
 
 use crate::ast::parse::Error::UnexpectedEndOfFile;
-use crate::ast::parse::node::{Node, RootNode};
+pub use crate::ast::parse::node::*;
 use crate::ast::parse::precedence::Precedence;
 use crate::ast::token::{KeywordToken, LiteralToken, OperatorToken, SeparatorToken, Token, TokenKind};
 use crate::ast::token::TokenKind::{Keyword, Literal, Operator, Separator};
 
 pub(crate) mod precedence;
-pub(crate) mod node;
+mod node;
 mod infix;
 mod literal;
 mod prefix;

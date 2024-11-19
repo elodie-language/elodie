@@ -7,6 +7,7 @@ mod compiler;
 mod lex;
 mod parse;
 mod token;
+mod r#type;
 
 #[derive(Debug)]
 pub enum Error {

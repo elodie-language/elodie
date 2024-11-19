@@ -19,7 +19,7 @@ fn main() {
     let source_file = ast::parse_str(content.as_str()).unwrap();
 
     let mut runner = Runner::new();
-    runner.run(source_file).unwrap()
+    runner.run(source_file).unwrap();
 }
 
 fn load_text_from_file(path: &str) -> io::Result<String> {

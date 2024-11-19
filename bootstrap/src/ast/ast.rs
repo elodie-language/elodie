@@ -1,27 +1,107 @@
 use std::ops::Deref;
 
+use crate::ast::r#type::TypeId;
+
 #[derive(Debug)]
 pub struct SourceFile {
     // imports
     // exports
-    pub body: Vec<Ast>,
+    pub body: Vec<Node>,
 }
 
 #[derive(Debug)]
-pub enum Ast {
-    CallFunctionOfObject {
-        object: ObjectIdentifier,
-        function: FunctionIdentifier,
-        arguments: Vec<Ast>,
-    },
-    NumberValue(f64),
-    StringValue(String),
+pub struct BlockNode {
+    pub body: Vec<Node>,
+    pub return_type: TypeId,
 }
 
 #[derive(Debug)]
-pub struct ObjectIdentifier(pub String);
+pub struct BreakNode {
+    pub body: Option<Box<Node>>,
+    pub return_type: TypeId,
+}
 
-impl Deref for ObjectIdentifier {
+#[derive(Debug)]
+pub struct CompareNode {
+    pub left: Box<Node>,
+    pub operator: CompareOperator,
+    pub right: Box<Node>,
+}
+
+#[derive(Debug)]
+pub enum CompareOperator {
+    GreaterThan
+}
+
+#[derive(Debug)]
+pub struct CalculateNode {
+    pub left: Box<Node>,
+    pub operator: CalculationOperator,
+    pub right: Box<Node>,
+}
+
+#[derive(Debug)]
+pub enum CalculationOperator {
+    Multiply
+}
+
+#[derive(Debug)]
+pub struct ContinueNode {}
+
+#[derive(Debug)]
+pub struct CallFunctionOfObjectNode {
+    pub object: Identifier,
+    pub function: Identifier,
+    pub arguments: Vec<Node>,
+}
+
+#[derive(Debug)]
+pub struct IfNode {
+    pub condition: Box<Node>,
+    pub then: BlockNode,
+    pub otherwise: BlockNode,
+    pub return_type: TypeId,
+}
+
+#[derive(Debug)]
+pub struct LoopNode {
+    pub body: Vec<Node>,
+    pub return_type: TypeId,
+}
+
+
+#[derive(Debug)]
+pub enum Node {
+    Break(BreakNode),
+    Calculate(CalculateNode),
+    CallFunctionOfObject(CallFunctionOfObjectNode),
+    Continue(ContinueNode),
+    Compare(CompareNode),
+
+    If(IfNode),
+
+    LoadVariable(LoadVariableNode),
+    Loop(LoopNode),
+
+    ValueNumber(f64),
+    ValueString(String),
+    ValueBoolean(bool),
+
+    DeclareVariable(DeclareVariableNode),
+}
+
+
+#[derive(Debug)]
+pub struct LoadVariableNode {
+    pub identifier: Identifier,
+    pub type_id: TypeId,
+}
+
+
+#[derive(Debug)]
+pub struct Identifier(pub String);
+
+impl Deref for Identifier {
     type Target = str;
 
     fn deref(&self) -> &Self::Target {
@@ -29,24 +109,16 @@ impl Deref for ObjectIdentifier {
     }
 }
 
-#[derive(Debug)]
-pub struct FunctionIdentifier(pub String);
-
-impl Deref for FunctionIdentifier {
-    type Target = str;
-
-    fn deref(&self) -> &Self::Target {
-        self.0.as_str()
-    }
-}
-
-impl AsRef<FunctionIdentifier> for FunctionIdentifier{
-    fn as_ref(&self) -> &FunctionIdentifier {
+impl AsRef<Identifier> for Identifier {
+    fn as_ref(&self) -> &Identifier {
         &self
     }
 }
 
-pub enum Identifier {
-    Function(FunctionIdentifier),
-    Object(ObjectIdentifier),
+
+#[derive(Debug)]
+pub struct DeclareVariableNode {
+    pub identifier: Identifier,
+    pub value: Box<Node>,
+    pub value_type: TypeId,
 }
