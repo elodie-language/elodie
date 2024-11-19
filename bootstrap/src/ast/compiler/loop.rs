@@ -1,15 +1,15 @@
 use crate::ast;
-use crate::ast::{BreakNode, ContinueNode, LoopNode, Node, parse};
+use crate::ast::{BreakLoopNode, ContinueLoopNode, LoopNode, Node, parse};
 use crate::ast::compiler::Compiler;
 use crate::ast::r#type::DefaultTypeIds;
 
 impl Compiler {
     pub(crate) fn compile_break(&mut self, node: &parse::BreakNode) -> crate::ast::compiler::Result<ast::Node> {
         if node.result.is_none() {
-            Ok(Node::Break(BreakNode { body: None, return_type: DefaultTypeIds::unit() }))
+            Ok(Node::BreakLoop(BreakLoopNode { body: None, return_type: DefaultTypeIds::unit() }))
         } else {
             let body = Some(Box::new(self.compile_node(node.result.as_ref().unwrap())?));
-            Ok(Node::Break(BreakNode {
+            Ok(Node::BreakLoop(BreakLoopNode {
                 body,
                 return_type: DefaultTypeIds::never(),
             }))
@@ -17,7 +17,7 @@ impl Compiler {
     }
 
     pub(crate) fn compile_continue(&mut self, _node: &parse::ContinueNode) -> crate::ast::compiler::Result<ast::Node> {
-        Ok(Node::Continue(ContinueNode {}))
+        Ok(Node::ContinueLoop(ContinueLoopNode {}))
     }
 
     pub(crate) fn compile_loop(&mut self, node: &parse::LoopNode) -> ast::compiler::Result<ast::Node> {

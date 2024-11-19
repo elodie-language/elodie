@@ -19,7 +19,7 @@ impl Scope {
         let mut logger = ObjectValue::new();
         logger.set_property(
             "info",
-            HostFunction(HostFunctionValue(Rc::new(|args: &[&Value]| {
+            HostFunction(HostFunctionValue(Rc::new(|args: &[Value]| {
                 for arg in args {
                     print!("{} ", arg.to_string());
                 }

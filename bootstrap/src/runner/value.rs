@@ -3,11 +3,12 @@ use std::fmt::{Debug, Formatter};
 use std::ops::Deref;
 use std::rc::Rc;
 
-use crate::ast::Identifier;
+use crate::ast::{BlockNode, FunctionArgumentNode, Identifier};
 
 #[derive(Debug, Clone)]
 pub enum Value {
     Bool(bool),
+    Function(Function),
     HostFunction(HostFunctionValue),
     Number(f64),
     Object(ObjectValue),
@@ -21,23 +22,32 @@ impl Value {
         match self {
             Value::Bool(v) => v.to_string(),
             Value::HostFunction(_) => "[HostFunction]".to_string(),
+            Value::Function(_) => "[Function]".to_string(),
             Value::Number(v) => v.to_string(),
             Value::Object(_) => "[Object]".to_string(),
             Value::String(v) => v.clone(),
             Value::Tuple(_) => "[Tuple]".to_string(),
-            Value::Unit => "Unit".to_string()
+            Value::Unit => "Unit".to_string(),
         }
     }
 }
 
 #[derive(Clone)]
-pub struct HostFunctionValue(pub Rc<dyn Fn(&[&Value]) -> crate::runner::Result<Value>>);
+pub struct HostFunctionValue(pub Rc<dyn Fn(&[Value]) -> crate::runner::Result<Value>>);
 
 impl Debug for HostFunctionValue {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         write!(f, "[HostFunction]")
     }
 }
+
+#[derive(Debug, Clone)]
+pub struct Function {
+    pub arguments: Vec<Rc<FunctionArgumentNode>>,
+    pub body: Rc<BlockNode>,
+}
+
+
 
 #[derive(Debug, Clone)]
 pub struct ObjectValue {

@@ -14,6 +14,8 @@ mod literal;
 mod r#loop;
 mod r#if;
 mod identifier;
+mod block;
+mod function;
 
 #[derive(Debug)]
 pub enum Error {}
@@ -72,14 +74,17 @@ impl Compiler {
 
     pub(crate) fn compile_node(&mut self, node: &parse::Node) -> Result<ast::Node> {
         match node {
+            parse::Node::Block(block_node) => Ok(self.compile_block(block_node)?),
             parse::Node::Break(break_node) => Ok(self.compile_break(break_node)?),
             parse::Node::Continue(continue_node) => Ok(self.compile_continue(continue_node)?),
+            parse::Node::FunctionDeclaration(declaration_node) => Ok(self.compile_declare_function(declaration_node)?),
             parse::Node::Identifier(identifier_node) => Ok(self.compile_identifier(identifier_node)?),
             parse::Node::Let(let_node) => Ok(self.compile_let(let_node)?),
             parse::Node::If(if_node) => Ok(self.compile_if(if_node)?),
             parse::Node::Infix(infix_node) => Ok(self.compile_infix(infix_node)?),
             parse::Node::Literal(literal_node) => Ok(self.compile_literal(literal_node)?),
             parse::Node::Loop(loop_node) => Ok(self.compile_loop(loop_node)?),
+            parse::Node::Return(return_node) => Ok(self.compile_function_return(return_node)?),
             _ => unimplemented!("{:?}", node)
         }
     }

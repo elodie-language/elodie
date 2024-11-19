@@ -1,15 +1,15 @@
-use crate::ast::{BreakNode, ContinueNode, LoopNode};
+use crate::ast::{BreakLoopNode, ContinueLoopNode, LoopNode};
 use crate::runner::{Interrupt, Runner};
 use crate::runner::value::Value;
 
 impl Runner {
 
-    pub(crate) fn run_continue(&mut self, _node: &ContinueNode) -> crate::runner::Result<Value> {
+    pub(crate) fn run_continue(&mut self, _node: &ContinueLoopNode) -> crate::runner::Result<Value> {
         self.interrupt(Interrupt::Continue);
         Ok(Value::Unit)
     }
 
-    pub(crate) fn run_break(&mut self, node: &BreakNode) -> crate::runner::Result<Value> {
+    pub(crate) fn run_break(&mut self, node: &BreakLoopNode) -> crate::runner::Result<Value> {
         let value = if let Some(result) = node.body.as_ref() {
             self.run_node(result)?
         } else {

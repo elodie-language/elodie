@@ -1,4 +1,5 @@
 use std::ops::Deref;
+use std::rc::Rc;
 
 use crate::ast::r#type::TypeId;
 
@@ -16,7 +17,7 @@ pub struct BlockNode {
 }
 
 #[derive(Debug)]
-pub struct BreakNode {
+pub struct BreakLoopNode {
     pub body: Option<Box<Node>>,
     pub return_type: TypeId,
 }
@@ -30,7 +31,9 @@ pub struct CompareNode {
 
 #[derive(Debug)]
 pub enum CompareOperator {
-    GreaterThan
+    Equal,
+    NotEqual,
+    GreaterThan,
 }
 
 #[derive(Debug)]
@@ -42,15 +45,22 @@ pub struct CalculateNode {
 
 #[derive(Debug)]
 pub enum CalculationOperator {
+    Add,
     Multiply
 }
 
 #[derive(Debug)]
-pub struct ContinueNode {}
+pub struct ContinueLoopNode {}
 
 #[derive(Debug)]
 pub struct CallFunctionOfObjectNode {
     pub object: Identifier,
+    pub function: Identifier,
+    pub arguments: Vec<Node>,
+}
+
+#[derive(Debug)]
+pub struct CallFunctionNode {
     pub function: Identifier,
     pub arguments: Vec<Node>,
 }
@@ -72,27 +82,41 @@ pub struct LoopNode {
 
 #[derive(Debug)]
 pub enum Node {
-    Break(BreakNode),
+    Block(BlockNode),
+    BreakLoop(BreakLoopNode),
+
     Calculate(CalculateNode),
     CallFunctionOfObject(CallFunctionOfObjectNode),
-    Continue(ContinueNode),
+    CallFunction(CallFunctionNode),
+
+    ReturnFromFunction(ReturnFromFunctionNode),
+
+    ContinueLoop(ContinueLoopNode),
     Compare(CompareNode),
 
     If(IfNode),
 
-    LoadVariable(LoadVariableNode),
+    UseIdentifier(UseIdentifierNode),
     Loop(LoopNode),
 
     ValueNumber(f64),
     ValueString(String),
     ValueBoolean(bool),
+    ValueUnit,
 
     DeclareVariable(DeclareVariableNode),
+    DeclareFunction(DeclareFunctionNode),
+}
+
+#[derive(Debug)]
+pub struct ReturnFromFunctionNode {
+    pub node: Box<Node>,
+    pub return_type_id: TypeId,
 }
 
 
 #[derive(Debug)]
-pub struct LoadVariableNode {
+pub struct UseIdentifierNode {
     pub identifier: Identifier,
     pub type_id: TypeId,
 }
@@ -121,4 +145,23 @@ pub struct DeclareVariableNode {
     pub identifier: Identifier,
     pub value: Box<Node>,
     pub value_type: TypeId,
+}
+
+#[derive(Debug)]
+pub struct DeclareFunctionNode {
+    pub identifier: Identifier,
+    pub arguments: Vec<Rc<FunctionArgumentNode>>,
+    pub return_type: TypeId,
+    pub body: Rc<BlockNode>,
+}
+
+#[derive(Debug)]
+pub struct FunctionArgumentNode {
+    pub identifier: Identifier,
+    pub type_id: TypeId,
+}
+
+pub struct TypedNode {
+    pub type_id: TypeId,
+    pub node: Node,
 }
