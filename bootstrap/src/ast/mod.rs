@@ -37,7 +37,7 @@ impl From<compile::Error> for Error {
 pub(crate) type Result<T, E = Error> = core::result::Result<T, E>;
 
 
-pub fn parse_str(str: &str) -> Result<Package> {
+pub fn parse_str(str: &str) -> Result<SourceFile> {
     let tokens = lex(str)?;
     let root = parse(tokens)?;
     Ok(compile::from(root)?)

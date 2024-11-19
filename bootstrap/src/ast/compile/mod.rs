@@ -1,6 +1,6 @@
 use std::ops::Deref;
 
-use crate::ast::{ast, parse, Package};
+use crate::ast::{ast, parse, SourceFile};
 use crate::ast::compile::symbol::SymbolTable;
 use crate::ast::parse::RootNode;
 
@@ -22,7 +22,7 @@ pub enum Error {}
 
 pub(crate) type Result<T, E = Error> = core::result::Result<T, E>;
 
-pub(crate) fn from(node: RootNode) -> Result<Package> {
+pub(crate) fn from(node: RootNode) -> Result<SourceFile> {
     let mut compiler = Compiler::default();
     compiler.compile(node)
 }
@@ -40,7 +40,7 @@ impl Default for Compiler {
 }
 
 impl Compiler {
-    pub(crate) fn compile(&mut self, node: RootNode) -> Result<Package> {
+    pub(crate) fn compile(&mut self, node: RootNode) -> Result<SourceFile> {
         // 2 pass
         // populate symbol table
         // create ast
@@ -69,7 +69,7 @@ impl Compiler {
             result.push(self.compile_node(node)?);
         }
 
-        Ok(Package { body: result })
+        Ok(SourceFile { body: result })
     }
 
     pub(crate) fn compile_node(&mut self, node: &parse::Node) -> Result<ast::Node> {

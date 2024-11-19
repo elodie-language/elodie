@@ -4,9 +4,15 @@ use std::rc::Rc;
 use crate::ast::r#type::TypeId;
 
 #[derive(Debug)]
-pub struct Package {
+pub struct SourceFile {
     // imports
     // exports
+
+    pub body: Vec<Node>,
+}
+
+#[derive(Debug)]
+pub struct Package {
     pub body: Vec<Node>,
 }
 
@@ -46,7 +52,7 @@ pub struct CalculateNode {
 #[derive(Debug)]
 pub enum CalculationOperator {
     Add,
-    Multiply
+    Multiply,
 }
 
 #[derive(Debug)]

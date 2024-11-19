@@ -20,6 +20,7 @@ mod r#let;
 mod r#type;
 mod function;
 mod tuple;
+mod package;
 
 #[derive(Debug, PartialEq)]
 pub enum Error {

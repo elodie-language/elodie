@@ -41,6 +41,7 @@ pub enum Node {
     Let(LetNode),
     Literal(LiteralNode),
     Loop(LoopNode),
+    PackageDeclaration(PackageDeclarationNode),
     Prefix(PrefixNode),
     Return(ReturnNode),
     Tuple(TupleNode),
@@ -93,6 +94,10 @@ impl Node {
     pub fn is_loop(&self) -> bool { matches!(self, Node::Loop(_)) }
     pub fn as_loop(&self) -> &LoopNode {
         if let Node::Loop(result) = self { result } else { panic!("not loop") }
+    }
+
+    pub fn as_package_declaration(&self) -> &PackageDeclarationNode {
+        if let Node::PackageDeclaration(result) = self { result } else { panic!("not package declaration") }
     }
 
     pub fn is_prefix(&self) -> bool { matches!(self, Node::Prefix(_)) }
@@ -292,6 +297,14 @@ pub struct LoopNode {
     pub token: Token,
     pub block: BlockNode,
 }
+
+#[derive(Debug, PartialEq)]
+pub struct PackageDeclarationNode {
+    pub token: Token,
+    pub identifier: IdentifierNode,
+    pub block: BlockNode,
+}
+
 
 #[derive(Debug, PartialEq)]
 pub struct PrefixNode {
