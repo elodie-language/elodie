@@ -1,6 +1,7 @@
+use std::collections::HashMap;
 use std::ops::Deref;
 
-use crate::ast::{CalculationOperator, CallFunctionOfObjectNode, CompareOperator, Node, SourceFile};
+use crate::ast::{CalculationOperator, CallFunctionOfObjectNode, CallFunctionOfPackageNode, CompareOperator, Node, SourceFile};
 use crate::runner::scope::Scope;
 use crate::runner::value::Value;
 
@@ -21,6 +22,7 @@ pub struct Runner {
     scope: Scope,
     pub interrupt: Option<Interrupt>,
 }
+
 
 #[derive(Debug, Clone)]
 pub enum Interrupt {
@@ -50,6 +52,7 @@ impl Runner {
 
             Node::DeclareVariable(declaration) => self.run_variable_declaration(declaration),
             Node::DeclareFunction(declaration) => self.run_function_declaration(declaration),
+            Node::DeclarePackage(declaration) => self.run_package_declaration(declaration),
 
             Node::CallFunctionOfObject(CallFunctionOfObjectNode { object, function, arguments }) => {
                 // let some_arg_value = if let Node::CallFunction(arg_1) = &arguments[0] {
@@ -77,12 +80,20 @@ impl Runner {
                 }
 
                 return func.0(args.as_slice());
-
-
-                unimplemented!("{:?}", arguments);
             }
 
-            Node::CallFunction(function_node) => self.run_call_function(function_node),
+            Node::CallFunctionOfPackage(CallFunctionOfPackageNode { package, function, arguments }) => {
+                let mut args = Vec::with_capacity(arguments.len());
+                for arg in arguments {
+                    args.push(self.run_node(arg)?);
+                }
+
+                let Value::Package(package) = self.scope.get(package.deref()).unwrap() else { panic!() };
+                let func = package.get_function(function).unwrap();
+                self.run_node_call(func.clone(), HashMap::new())
+            }
+
+            Node::CallFunction(function_node) => self.run_node_call_function(function_node),
             Node::ReturnFromFunction(node) => {
                 let value = self.run_node(node.node.deref())?;
                 self.interrupt(Interrupt::Return(value.clone()));

@@ -16,6 +16,7 @@ mod r#if;
 mod identifier;
 mod block;
 mod function;
+mod package;
 
 #[derive(Debug)]
 pub enum Error {}
@@ -78,6 +79,7 @@ impl Compiler {
             parse::Node::Break(break_node) => Ok(self.compile_break(break_node)?),
             parse::Node::Continue(continue_node) => Ok(self.compile_continue(continue_node)?),
             parse::Node::FunctionDeclaration(declaration_node) => Ok(self.compile_declare_function(declaration_node)?),
+            parse::Node::PackageDeclaration(declaration_node) => Ok(self.compile_declare_package(declaration_node)?),
             parse::Node::Identifier(identifier_node) => Ok(self.compile_identifier(identifier_node)?),
             parse::Node::Let(let_node) => Ok(self.compile_let(let_node)?),
             parse::Node::If(if_node) => Ok(self.compile_if(if_node)?),

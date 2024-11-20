@@ -1,7 +1,7 @@
 use std::ops::Deref;
 
 use crate::ast;
-use crate::ast::{CalculateNode, CalculationOperator, CallFunctionNode, CallFunctionOfObjectNode, CompareNode, CompareOperator, parse};
+use crate::ast::{CalculateNode, CalculationOperator, CallFunctionNode, CallFunctionOfObjectNode, CallFunctionOfPackageNode, CompareNode, CompareOperator, parse};
 use crate::ast::compile::Compiler;
 use crate::ast::parse::{InfixNode, InfixOperator, LiteralNode, Node};
 use crate::ast::r#type::DefaultTypeIds;
@@ -9,6 +9,30 @@ use crate::ast::r#type::DefaultTypeIds;
 impl Compiler {
     pub(crate) fn compile_infix(&mut self, node: &parse::InfixNode) -> crate::ast::compile::Result<ast::Node> {
         let InfixNode { left, right, operator } = node;
+
+        if let InfixOperator::AccessPackage(_) = operator {
+            let Node::Identifier(package_identifier) = left.deref() else { todo!() };
+
+            let Node::Infix(InfixNode { left, operator, right }) = right.deref() else { todo!() };
+            if let InfixOperator::Call(_) = operator {
+                let ast::Node::UseIdentifier(function_identifier) = self.compile_node(left.deref())? else { panic!() };
+
+                let parse::Node::Tuple(tuple_node) = right.deref() else { panic!() };
+                let mut arguments = Vec::with_capacity(tuple_node.nodes.len());
+                for node in &tuple_node.nodes {
+                    arguments.push(self.compile_node(node)?)
+                }
+
+
+                return Ok(ast::Node::CallFunctionOfPackage(CallFunctionOfPackageNode {
+                    package: ast::Identifier(package_identifier.value().to_string()),
+                    function: ast::Identifier(function_identifier.identifier.0.to_string()),
+                    arguments,
+                }));
+            }
+
+            unimplemented!();
+        }
 
         if let InfixOperator::AccessProperty(_) = operator {
             let Node::Identifier(object_identifier) = left.deref() else { todo!() };
@@ -42,9 +66,9 @@ impl Compiler {
             if let InfixOperator::Call(_) = operator {
                 let ast::Node::UseIdentifier(identifier) = self.compile_node(left.deref())? else { panic!() };
 
-                let parse::Node::Tuple(tuple_node) = right.deref() else {panic!()};
+                let parse::Node::Tuple(tuple_node) = right.deref() else { panic!() };
                 let mut arguments = Vec::with_capacity(tuple_node.nodes.len());
-                for node in &tuple_node.nodes{
+                for node in &tuple_node.nodes {
                     arguments.push(self.compile_node(node)?)
                 }
 
@@ -80,9 +104,9 @@ impl Compiler {
 
             // println!("{:?}", right);
 
-            let parse::Node::Tuple(tuple_node) = right.deref() else {panic!()};
+            let parse::Node::Tuple(tuple_node) = right.deref() else { panic!() };
             let mut arguments = Vec::with_capacity(tuple_node.nodes.len());
-            for node in &tuple_node.nodes{
+            for node in &tuple_node.nodes {
                 arguments.push(self.compile_node(node)?)
             }
 

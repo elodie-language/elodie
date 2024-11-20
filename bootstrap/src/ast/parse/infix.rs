@@ -44,6 +44,7 @@ impl Parser {
                 OperatorToken::Colon => Ok(InfixOperator::TypeAscription(token)),
                 OperatorToken::Arrow => Ok(InfixOperator::Arrow(token)),
                 OperatorToken::Dot => Ok(InfixOperator::AccessProperty(token)),
+                OperatorToken::DoubleColon => Ok(InfixOperator::AccessPackage(token)),
                 _ => Err(UnsupportedToken(token))
             }
             _ => Err(UnsupportedToken(token))
@@ -201,5 +202,27 @@ mod tests {
 
         let Some(Literal(LiteralNode::String(arg_1))) = &nodes.first() else { panic!() };
         assert_eq!(arg_1.value(), "elodie");
+    }
+
+    #[test]
+    fn call_package_function() {
+        let tokens = lex("some_package::some_function()").unwrap();
+        let result = parse(tokens).unwrap();
+        assert_eq!(result.len(), 1);
+
+        let InfixNode { left, operator, right } = &result[0].as_infix();
+        let identifier = left.as_identifier();
+        assert_eq!(identifier.value(), "some_package");
+
+        let InfixOperator::AccessPackage(_) = operator else { panic!() };
+
+        let InfixNode { left, operator, right } = right.as_infix();
+        let identifier = left.as_identifier();
+        assert_eq!(identifier.value(), "some_function");
+
+        let InfixOperator::Call(_) = operator else { panic!() };
+
+        let TupleNode { nodes, .. } = right.as_tuple();
+        assert_eq!(*nodes, vec![]);
     }
 }

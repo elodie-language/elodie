@@ -8,10 +8,11 @@ use crate::ast::{BlockNode, FunctionArgumentNode, Identifier};
 #[derive(Debug, Clone)]
 pub enum Value {
     Bool(bool),
-    Function(Function),
+    Function(FunctionValue),
     HostFunction(HostFunctionValue),
     Number(f64),
     Object(ObjectValue),
+    Package(PackageValue),
     String(String),
     Tuple(TupleValue),
     Unit,
@@ -25,6 +26,7 @@ impl Value {
             Value::Function(_) => "[Function]".to_string(),
             Value::Number(v) => v.to_string(),
             Value::Object(_) => "[Object]".to_string(),
+            Value::Package(_) => "[Package]".to_string(),
             Value::String(v) => v.clone(),
             Value::Tuple(_) => "[Tuple]".to_string(),
             Value::Unit => "Unit".to_string(),
@@ -42,12 +44,23 @@ impl Debug for HostFunctionValue {
 }
 
 #[derive(Debug, Clone)]
-pub struct Function {
+pub struct FunctionValue {
     pub arguments: Vec<Rc<FunctionArgumentNode>>,
     pub body: Rc<BlockNode>,
 }
 
+#[derive(Debug, Clone)]
+pub struct PackageValue {
+    pub identifier: String,
+    pub functions: HashMap<String, FunctionValue>,
+}
 
+impl PackageValue {
+    pub fn get_function(&self, identifier: impl AsRef<Identifier>) -> Option<&FunctionValue> {
+        let identifier = identifier.as_ref();
+        self.functions.get(identifier.to_string().as_str())
+    }
+}
 
 #[derive(Debug, Clone)]
 pub struct ObjectValue {

@@ -1,5 +1,6 @@
 use std::ops::Index;
 use std::str::FromStr;
+use crate::ast::modifier::Modifiers;
 
 use crate::ast::parse::Error;
 use crate::ast::token::{LiteralToken, Token, TokenKind};
@@ -213,6 +214,7 @@ pub struct InfixNode {
 pub enum InfixOperator {
     Add(Token),
     Arrow(Token),
+    AccessPackage(Token),
     AccessProperty(Token),
     Call(Token),
     Subtract(Token),
@@ -233,6 +235,7 @@ impl InfixOperator {
         match self {
             InfixOperator::Add(t) => t.clone(),
             InfixOperator::Arrow(t) => t.clone(),
+            InfixOperator::AccessPackage(t) => t.clone(),
             InfixOperator::AccessProperty(t) => t.clone(),
             InfixOperator::Call(t) => t.clone(),
             InfixOperator::Subtract(t) => t.clone(),
@@ -299,27 +302,13 @@ pub struct LoopNode {
     pub block: BlockNode,
 }
 
-#[derive(Debug, PartialEq)]
-pub struct Modifiers(pub(crate) Vec<Modifier>);
-
-impl Modifiers{
-    pub fn is_exported(&self) -> bool {
-        self.0.iter().any(|m| matches!(m, Modifier::Export(_)))
-    }
-}
-
-#[derive(Debug, PartialEq)]
-pub enum Modifier {
-    Export(Token)
-}
-
 
 #[derive(Debug, PartialEq)]
 pub struct PackageDeclarationNode {
     pub token: Token,
     pub identifier: IdentifierNode,
     pub block: BlockNode,
-    pub modifiers: Modifiers
+    pub modifiers: Modifiers,
 }
 
 

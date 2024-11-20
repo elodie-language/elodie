@@ -1,6 +1,7 @@
 use std::ops::Deref;
 use std::rc::Rc;
 
+use crate::ast::modifier::Modifiers;
 use crate::ast::r#type::TypeId;
 
 #[derive(Debug)]
@@ -79,6 +80,13 @@ pub struct CallFunctionOfObjectNode {
 }
 
 #[derive(Debug)]
+pub struct CallFunctionOfPackageNode {
+    pub package: Identifier,
+    pub function: Identifier,
+    pub arguments: Vec<Node>,
+}
+
+#[derive(Debug)]
 pub struct CallFunctionNode {
     pub function: Identifier,
     pub arguments: Vec<Node>,
@@ -106,6 +114,7 @@ pub enum Node {
 
     Calculate(CalculateNode),
     CallFunctionOfObject(CallFunctionOfObjectNode),
+    CallFunctionOfPackage(CallFunctionOfPackageNode),
     CallFunction(CallFunctionNode),
 
     ReturnFromFunction(ReturnFromFunctionNode),
@@ -125,6 +134,7 @@ pub enum Node {
 
     DeclareVariable(DeclareVariableNode),
     DeclareFunction(DeclareFunctionNode),
+    DeclarePackage(DeclarePackageNode),
 }
 
 #[derive(Debug)]
@@ -183,4 +193,11 @@ pub struct FunctionArgumentNode {
 pub struct TypedNode {
     pub type_id: TypeId,
     pub node: Node,
+}
+
+#[derive(Debug)]
+pub struct DeclarePackageNode {
+    pub identifier: Identifier,
+    pub modifiers: Modifiers,
+    pub functions: Vec<DeclareFunctionNode>,
 }
