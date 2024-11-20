@@ -1,0 +1,1 @@
+io::print('This is nice') // Expect: This is nice

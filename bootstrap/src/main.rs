@@ -13,14 +13,17 @@ mod runner;
 fn main() {
     let args: Vec<String> = env::args().collect();
 
-    // load modules
+    let mut runner = Runner::new();
+
+    let std_content = load_library_file("std/io/index.e").unwrap();
+    let std_file = ast::parse_str(std_content.as_str()).unwrap();
+    // println!("{std_file:?}");
+    runner.run(std_file).unwrap();
 
     let mut path = PathBuf::from(args.get(1).unwrap());
     let content = load_text_from_file(path.to_str().unwrap()).unwrap();
-
     let source_file = ast::parse_str(content.as_str()).unwrap();
 
-    let mut runner = Runner::new();
     runner.run(source_file).unwrap();
 }
 
@@ -28,5 +31,21 @@ fn load_text_from_file(path: &str) -> io::Result<String> {
     let mut file = File::open(path)?;
     let mut contents = String::new();
     file.read_to_string(&mut contents)?;
+    Ok(contents)
+}
+
+fn load_library_file(filename: &str) -> io::Result<String> {
+    // Get the path to the project root directory
+    let manifest_dir = "/home/ddymke/repo/elodie/src/lib/";
+
+    // Construct the full path to the file
+    let file_path = PathBuf::from(manifest_dir).join(filename);
+    // println!("{file_path:?}");
+
+    // Read the file's contents
+    let mut file = File::open(file_path)?;
+    let mut contents = String::new();
+    file.read_to_string(&mut contents)?;
+    // println!("{contents}");
     Ok(contents)
 }

@@ -83,14 +83,34 @@ impl Runner {
             }
 
             Node::CallFunctionOfPackage(CallFunctionOfPackageNode { package, function, arguments }) => {
-                let mut args = Vec::with_capacity(arguments.len());
+                let mut args = HashMap::with_capacity(arguments.len());
+
+                let Value::Package(package) = self.scope.get(package.deref()).unwrap().clone() else { panic!() };
+                let func = package.get_function(function).unwrap();
+
+
+                let mut counter = 0;
                 for arg in arguments {
-                    args.push(self.run_node(arg)?);
+                    // args.push(self.run_node(arg)?);
+                    let arg_node = func.arguments.get(counter).unwrap();
+
+                    let name = arg_node.identifier.0.clone();
+                    // FIXME resolve  name from definition
+                    args.insert(name, self.run_node(arg)?);
+                    counter += 1;
                 }
 
-                let Value::Package(package) = self.scope.get(package.deref()).unwrap() else { panic!() };
-                let func = package.get_function(function).unwrap();
-                self.run_node_call(func.clone(), HashMap::new())
+
+                // if arguments.len() > 0 {
+                //     if let Node::UseIdentifier(load_varialbe_node) = &arguments[0] {
+                //         let value = self.scope.get(load_varialbe_node.identifier.0.as_str()).unwrap().clone();
+                //         let mut args = HashMap::new();
+                //         args.insert("message".to_string(), Value::String("you are on he right track".to_string()));
+                //         return self.run_node_call(func.clone(), args);
+                //     }
+                // }
+
+                self.run_node_call(func.clone(), args)
             }
 
             Node::CallFunction(function_node) => self.run_node_call_function(function_node),

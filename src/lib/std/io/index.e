@@ -1,3 +1,5 @@
-export fun print(message: String) {
-    __intrinsics::print(message)
+export package io {
+    export fun print(message: String) {
+         log.info(message)
+    }
 }
