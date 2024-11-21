@@ -1,1 +1,1 @@
-log.info('Elodie says hi') // Expect: Elodie says hi
+std::io::print_line('Elodie says hi') // Expect: Elodie says hi

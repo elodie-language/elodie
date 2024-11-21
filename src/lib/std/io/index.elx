@@ -1,5 +1,10 @@
 export package io {
     export fun print(message: String) {
-         log.info(message)
+        intrinsics.print(message)
+    }
+
+    export fun print_line(message: String) {
+        intrinsics.print(message)
+        intrinsics.print('\n')
     }
 }

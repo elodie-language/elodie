@@ -117,7 +117,7 @@ impl Runner {
                     if let Node::UseIdentifier(load_varialbe_node) = &arguments[0] {
                         let value = self.scope.get(load_varialbe_node.identifier.0.as_str()).unwrap().clone();
                         let mut args = HashMap::new();
-                        args.insert("message".to_string(), Value::String("you are on he right track".to_string()));
+                        args.insert("message".to_string(),value);
                         return self.run_node_call(func.clone(), args);
                     }
                 }

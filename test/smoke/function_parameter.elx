@@ -2,14 +2,14 @@ fun add_one (value: Number) -> Number {
     return value + 1
 }
 
-log.info(add_one(41)) // Expect: 42
+std::io::print_line(add_one(41)) // Expect: 42
 
 fun it(description: String, test_case: fun() -> Bool) {
     let result = test_case()
     if result {
-        log.info('✔ ' + description)
+        std::io::print_line('✔ ' + description)
     } else {
-        log.info('✘ ' + description)
+        std::io::print_line('✘ ' + description)
     }
 }
 

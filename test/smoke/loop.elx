@@ -5,4 +5,4 @@ let result = loop {
     }
 }
 
-log.info(result) // Expect: 20
+std::io::print_line(result) // Expect: 20

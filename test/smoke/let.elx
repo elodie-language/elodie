@@ -1,11 +1,11 @@
 let value = 'Elodie'
-log.info(value) // Expect: Elodie
+std::io::print_line(value) // Expect: Elodie
 
 let value : Number = 42
-log.info(value) // Expect: 42
+std::io::print_line(value) // Expect: 42
 
 let value : Bool = true
-log.info(value) // Expect: true
+std::io::print_line(value) // Expect: true
 
 let value : Bool = false
-log.info(value) // Expect: false
+std::io::print_line(value) // Expect: false

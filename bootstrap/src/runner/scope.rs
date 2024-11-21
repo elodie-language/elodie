@@ -1,8 +1,8 @@
 use std::collections::HashMap;
 use std::rc::Rc;
+
 use crate::runner::value::{HostFunctionValue, ObjectValue, Value};
 use crate::runner::value::Value::HostFunction;
-
 
 pub struct Scope {
     pub values: Vec<HashMap<String, Value>>,
@@ -18,17 +18,20 @@ impl Scope {
 
         let mut logger = ObjectValue::new();
         logger.set_property(
-            "info",
+            "print",
             HostFunction(HostFunctionValue(Rc::new(|args: &[Value]| {
                 for arg in args {
-                    print!("{} ", arg.to_string());
+                    if arg.to_string() == "\\n" {
+                        println!();
+                    } else {
+                        print!("{} ", arg.to_string());
+                    }
                 }
-                println!();
                 Ok(Value::Unit)
             }))),
         );
 
-        root.insert("log".to_string(), Value::Object(logger));
+        root.insert("intrinsics".to_string(), Value::Object(logger));
 
         result.values.push(root);
 

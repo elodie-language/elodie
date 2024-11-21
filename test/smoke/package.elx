@@ -1,6 +1,6 @@
 package my_package {
     export fun hello() {
-        log.info('Hello, hellO')
+        std::io::print_line('Hello, hellO')
     }
 }
 
