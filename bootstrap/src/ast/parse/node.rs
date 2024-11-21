@@ -43,6 +43,7 @@ pub enum Node {
     Let(LetNode),
     Literal(LiteralNode),
     Loop(LoopNode),
+    Nop,
     PackageDeclaration(PackageDeclarationNode),
     Prefix(PrefixNode),
     Return(ReturnNode),

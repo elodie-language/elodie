@@ -49,26 +49,9 @@ impl Compiler {
 
         let mut result = Vec::new();
         for node in &node.nodes {
-            // match node {
-            //     Node::Infix(InfixNode { left, right, .. }) => {
-            //         let Node::Identifier(object_identifier) = left.deref() else { todo!() };
-            //         let Node::Infix(InfixNode { left, operator, right }) = right.deref() else { todo!() };
-            //         let Node::Identifier(function_identifier) = left.deref() else { todo!() };
-            //         let Node::Tuple(tuple) = right.deref() else { todo!() };
-            //         let Node::Literal(LiteralNode::String(value)) = &tuple.nodes[0] else { todo!() };
-            //
-            //         result.push(
-            //             Ast::CallFunctionOfObject {
-            //                 object: ast::ObjectIdentifier(object_identifier.value().to_string()),
-            //                 function: ast::FunctionIdentifier(function_identifier.value().to_string()),
-            //                 arguments: vec![Ast::StringValue(value.value().to_string())],
-            //             }
-            //         )
-            //     }
-            //     Node::Let(let_node) => {}
-            //     _ => todo!()
-            // }
-            result.push(self.compile_node(node)?);
+            if !matches!(node, parse::Node::Nop) {
+                result.push(self.compile_node(node)?);
+            }
         }
 
         Ok(SourceFile { body: result })

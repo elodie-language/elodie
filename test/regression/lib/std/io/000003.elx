@@ -1,0 +1,4 @@
+std::io::print_line('1')    // Expect: 1
+std::io::print_line('2')    // Expect: 2
+std::io::print_line('')     // Expect:
+std::io::print_line('3')    // Expect: 3

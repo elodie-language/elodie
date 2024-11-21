@@ -1,0 +1,6 @@
+std::io::print('1')
+std::io::print('2')
+std::io::print('\n')
+std::io::print('3')
+// Expect: 12
+// Expect: 3

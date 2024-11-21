@@ -1,16 +1,30 @@
+use SeparatorToken::NewLine;
+
 use crate::ast::parse::{Error, Parser};
 use crate::ast::parse::Error::UnsupportedToken;
 use crate::ast::parse::node::{Node, PrefixNode, PrefixOperator};
 use crate::ast::parse::node::Node::{Break, Continue, FunctionDeclaration, If, Let, Loop, Return};
 use crate::ast::parse::Node::PackageDeclaration;
 use crate::ast::parse::precedence::Precedence;
-use crate::ast::token::{KeywordToken, OperatorToken};
+use crate::ast::token::{KeywordToken, OperatorToken, SeparatorToken};
 use crate::ast::token::LiteralToken::{False, Number, String, True};
 use crate::ast::token::TokenKind::{Keyword, Operator};
 use crate::common::{is_pascal_snake_case, is_snake_case};
 
 impl Parser {
     pub(crate) fn parse_prefix(&mut self) -> crate::ast::parse::Result<Node> {
+        loop {
+            if self.is_eof(){
+                return Ok(Node::Nop);
+            }
+
+            let is_new_line = self.current()?.is_separator(NewLine);
+            if !is_new_line {
+                break;
+            }
+            let _ = self.advance()?;
+        }
+
         let current = self.current()?;
         match &current.kind {
             Operator(operator) => {
