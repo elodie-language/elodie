@@ -15,7 +15,7 @@ fn main() {
 
     let mut runner = Runner::new();
 
-    let std_content = load_library_file("std/index.e").unwrap();
+    let std_content = load_library_file("std/index.elx").unwrap();
     let std_file = ast::parse_str(std_content.as_str()).unwrap();
 
     runner.run(std_file).unwrap();

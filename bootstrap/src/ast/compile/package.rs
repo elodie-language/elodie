@@ -44,7 +44,7 @@ impl Compiler {
 }
 
 fn load_declared_packages(name: &str) -> Vec<DeclarePackageNode> {
-    let content = crate::load_library_file("std/io/index.e").unwrap();
+    let content = crate::load_library_file("std/io/index.elx").unwrap();
     let src_file = ast::parse_str(content.as_str()).unwrap();
 
     let mut result = vec![];
