@@ -4,7 +4,7 @@ export package io {
     }
 
     export fun print_line(message: String) {
-        intrinsics.print(message)
-        intrinsics.print('\n')
+        print(message)
+        print('\n')
     }
 }

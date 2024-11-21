@@ -94,35 +94,37 @@ impl Runner {
                 let Value::Package(root_package) = self.scope.get(root).unwrap().clone() else { panic!() };
 
                 //FIXME recursively get package
-                let func = if package.len() == 1 {
-                    root_package.get_function(function).unwrap()
+                let target_package = if package.len() == 1 {
+                    &root_package
                 } else {
-                    let target_package = root_package.packages.get(package.last().unwrap().0.as_str()).unwrap();
-                    target_package.get_function(function).unwrap()
+                    root_package.packages.get(package.last().unwrap().0.as_str()).unwrap()
                 };
+
+                let func = target_package.get_function(function).unwrap();
+
+                // makes sure that a package can access its internal functions
+                self.scope.enter();
+                for (key, value) in &target_package.functions {
+                    self.scope.insert(key, Value::Function(value.clone()))
+                }
 
                 let mut counter = 0;
                 for arg in arguments {
-                    // args.push(self.run_node(arg)?);
                     let arg_node = func.arguments.get(counter).unwrap();
-
                     let name = arg_node.identifier.0.clone();
-                    // FIXME resolve  name from definition
                     args.insert(name, self.run_node(arg)?);
                     counter += 1;
                 }
 
-
-                if arguments.len() > 0 {
-                    if let Node::UseIdentifier(load_varialbe_node) = &arguments[0] {
-                        let value = self.scope.get(load_varialbe_node.identifier.0.as_str()).unwrap().clone();
-                        let mut args = HashMap::new();
-                        args.insert("message".to_string(),value);
-                        return self.run_node_call(func.clone(), args);
-                    }
+                for (key, value) in &target_package.functions {
+                    self.scope.insert(key, Value::Function(value.clone()))
                 }
 
-                self.run_node_call(func.clone(), args)
+                let result = self.run_node_call(func.clone(), args);
+
+                self.scope.leave();
+
+                result
             }
 
             Node::CallFunction(function_node) => self.run_node_call_function(function_node),
