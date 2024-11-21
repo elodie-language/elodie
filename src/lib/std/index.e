@@ -1,1 +1,3 @@
-export io from './io'
+export package std {
+   from './io' export io
+}

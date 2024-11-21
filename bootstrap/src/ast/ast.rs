@@ -13,24 +13,6 @@ pub struct SourceFile {
 }
 
 #[derive(Debug)]
-pub struct Package {
-    pub exports: Vec<Exports>,
-    pub body: Vec<Node>,
-}
-
-#[derive(Debug)]
-pub enum Exports {
-    Function(ExportedFunctionSignature)
-}
-
-#[derive(Debug)]
-pub struct ExportedFunctionSignature {
-    pub identifier: Identifier,
-    pub arguments: Vec<Rc<FunctionArgumentNode>>,
-    pub return_type: TypeId,
-}
-
-#[derive(Debug)]
 pub struct BlockNode {
     pub body: Vec<Node>,
     pub return_type: TypeId,
@@ -81,7 +63,7 @@ pub struct CallFunctionOfObjectNode {
 
 #[derive(Debug)]
 pub struct CallFunctionOfPackageNode {
-    pub package: Identifier,
+    pub package: Vec<Identifier>, // [std, io]
     pub function: Identifier,
     pub arguments: Vec<Node>,
 }
@@ -90,6 +72,12 @@ pub struct CallFunctionOfPackageNode {
 pub struct CallFunctionNode {
     pub function: Identifier,
     pub arguments: Vec<Node>,
+}
+
+#[derive(Debug)]
+pub struct ExportPackageNode {
+    pub identifier: Identifier,
+    pub source: Source,
 }
 
 #[derive(Debug)]
@@ -116,6 +104,8 @@ pub enum Node {
     CallFunctionOfObject(CallFunctionOfObjectNode),
     CallFunctionOfPackage(CallFunctionOfPackageNode),
     CallFunction(CallFunctionNode),
+
+    ExportPackage(ExportPackageNode),
 
     ReturnFromFunction(ReturnFromFunctionNode),
 
@@ -168,7 +158,6 @@ impl AsRef<Identifier> for Identifier {
     }
 }
 
-
 #[derive(Debug)]
 pub struct DeclareVariableNode {
     pub identifier: Identifier,
@@ -200,4 +189,15 @@ pub struct DeclarePackageNode {
     pub identifier: Identifier,
     pub modifiers: Modifiers,
     pub functions: Vec<DeclareFunctionNode>,
+    pub packages: Vec<DeclarePackageNode>,
+}
+
+#[derive(Debug, PartialEq)]
+pub enum Source {
+    LocalFile(SourceLocalFileNode)
+}
+
+#[derive(Debug, PartialEq)]
+pub struct SourceLocalFileNode {
+    pub path: String,
 }

@@ -1,7 +1,8 @@
 use std::ops::Deref;
+use log::set_logger_racy;
 
 use crate::ast;
-use crate::ast::{CalculateNode, CalculationOperator, CallFunctionNode, CallFunctionOfObjectNode, CallFunctionOfPackageNode, CompareNode, CompareOperator, parse};
+use crate::ast::{CalculateNode, CalculationOperator, CallFunctionNode, CallFunctionOfObjectNode, CallFunctionOfPackageNode, CompareNode, CompareOperator, Identifier, parse};
 use crate::ast::compile::Compiler;
 use crate::ast::parse::{InfixNode, InfixOperator, LiteralNode, Node};
 use crate::ast::r#type::DefaultTypeIds;
@@ -11,9 +12,27 @@ impl Compiler {
         let InfixNode { left, right, operator } = node;
 
         if let InfixOperator::AccessPackage(_) = operator {
-            let Node::Identifier(package_identifier) = left.deref() else { todo!() };
+            // let Node::Identifier(package_identifier) = left.deref() else { todo!() };
+            //
+            // let Node::Infix(InfixNode { left, operator, right }) = right.deref() else { todo!() };
+            // if let InfixOperator::Call(_) = operator {
+            //     let ast::Node::UseIdentifier(function_identifier) = self.compile_node(left.deref())? else { panic!() };
+            //
+            //     let parse::Node::Tuple(tuple_node) = right.deref() else { panic!() };
+            //     let mut arguments = Vec::with_capacity(tuple_node.nodes.len());
+            //     for node in &tuple_node.nodes {
+            //         arguments.push(self.compile_node(node)?)
+            //     }
+            //
+            //     return Ok(ast::Node::CallFunctionOfPackage(CallFunctionOfPackageNode {
+            //         package: vec![ast::Identifier(package_identifier.value().to_string())],
+            //         function: ast::Identifier(function_identifier.identifier.0.to_string()),
+            //         arguments,
+            //     }));
+            // }
 
-            let Node::Infix(InfixNode { left, operator, right }) = right.deref() else { todo!() };
+            let (paths, node) = Self::handle_package_access(node);
+            let InfixNode { left, right, operator } = node;
             if let InfixOperator::Call(_) = operator {
                 let ast::Node::UseIdentifier(function_identifier) = self.compile_node(left.deref())? else { panic!() };
 
@@ -23,15 +42,12 @@ impl Compiler {
                     arguments.push(self.compile_node(node)?)
                 }
 
-
                 return Ok(ast::Node::CallFunctionOfPackage(CallFunctionOfPackageNode {
-                    package: ast::Identifier(package_identifier.value().to_string()),
+                    package: paths,
                     function: ast::Identifier(function_identifier.identifier.0.to_string()),
                     arguments,
                 }));
             }
-
-            unimplemented!();
         }
 
         if let InfixOperator::AccessProperty(_) = operator {
@@ -174,5 +190,27 @@ impl Compiler {
         }
 
         unimplemented!("{:?}", node);
+    }
+
+    fn handle_package_access(node: &parse::InfixNode) -> (Vec<Identifier>, &InfixNode) {
+        let mut paths = vec![];
+        let mut current = node;
+
+        loop {
+            if !matches!(current.right.deref(), Node::Infix(_)){
+                return (paths, current);
+            }
+
+            let Node::Identifier(package_identifier) = current.left.deref() else { todo!() };
+            paths.push(Identifier(package_identifier.value().to_string()));
+
+            let Node::Infix(right) = &current.right.deref() else { panic!() };
+
+            if !matches!(current.operator,InfixOperator::AccessPackage(_)) {
+                return (paths, right);
+            }
+
+            current = right
+        }
     }
 }

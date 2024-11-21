@@ -31,7 +31,8 @@ impl Parser {
                 match keyword {
                     KeywordToken::Break => Ok(Break(self.parse_break()?)),
                     KeywordToken::Continue => Ok(Continue(self.parse_continue()?)),
-                    KeywordToken::Export => Ok(self.parse_modifier_export()?),
+                    KeywordToken::Export => Ok(self.parse_export()?),
+                    KeywordToken::From => Ok(Node::From(self.parse_from()?)),
                     KeywordToken::Function => Ok(FunctionDeclaration(self.parse_function_declaration()?)),
                     KeywordToken::If => Ok(If(self.parse_if()?)),
                     KeywordToken::Let => Ok(Let(self.parse_let()?)),

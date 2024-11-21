@@ -1,7 +1,7 @@
 use std::ops::Index;
 use std::str::FromStr;
-use crate::ast::modifier::Modifiers;
 
+use crate::ast::modifier::Modifiers;
 use crate::ast::parse::Error;
 use crate::ast::token::{LiteralToken, Token, TokenKind};
 
@@ -35,6 +35,7 @@ pub enum Node {
     Break(BreakNode),
     Call(CallNode),
     Continue(ContinueNode),
+    From(FromNode),
     FunctionDeclaration(FunctionDeclarationNode),
     Identifier(IdentifierNode),
     If(IfNode),
@@ -61,6 +62,8 @@ impl Node {
 
     pub fn is_continue(&self) -> bool { matches!(self, Node::Continue(_)) }
     pub fn as_continue(&self) -> &ContinueNode { if let Node::Continue(result) = self { result } else { panic!("not continue") } }
+
+    pub fn as_from(&self) -> &FromNode { if let Node::From(result) = self { result } else { panic!("not from") } }
 
     pub fn is_function_declaration(&self) -> bool { matches!(self, Node::FunctionDeclaration(_)) }
     pub fn as_function_declaration(&self) -> &FunctionDeclarationNode {
@@ -153,6 +156,19 @@ pub struct CallArgument {
 #[derive(Debug, PartialEq)]
 pub struct ContinueNode {
     pub token: Token,
+}
+
+#[derive(Debug, PartialEq)]
+pub struct FromExportNode {
+    pub token: Token,
+    pub from_node: Box<Node>,
+    pub what_node: Box<Node>,
+}
+
+
+#[derive(Debug, PartialEq)]
+pub enum FromNode {
+    Export(FromExportNode)
 }
 
 #[derive(Debug, PartialEq)]

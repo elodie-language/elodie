@@ -15,9 +15,9 @@ fn main() {
 
     let mut runner = Runner::new();
 
-    let std_content = load_library_file("std/io/index.e").unwrap();
+    let std_content = load_library_file("std/index.e").unwrap();
     let std_file = ast::parse_str(std_content.as_str()).unwrap();
-    // println!("{std_file:?}");
+
     runner.run(std_file).unwrap();
 
     let mut path = PathBuf::from(args.get(1).unwrap());
@@ -35,17 +35,11 @@ fn load_text_from_file(path: &str) -> io::Result<String> {
 }
 
 fn load_library_file(filename: &str) -> io::Result<String> {
-    // Get the path to the project root directory
     let manifest_dir = "/home/ddymke/repo/elodie/src/lib/";
-
-    // Construct the full path to the file
     let file_path = PathBuf::from(manifest_dir).join(filename);
-    // println!("{file_path:?}");
 
-    // Read the file's contents
     let mut file = File::open(file_path)?;
     let mut contents = String::new();
     file.read_to_string(&mut contents)?;
-    // println!("{contents}");
     Ok(contents)
 }

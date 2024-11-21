@@ -34,10 +34,8 @@ impl Runner {
         let identifier = node.identifier.0.to_string();
 
         let mut functions = HashMap::new();
-
         for node in &node.functions {
             let name = node.identifier.0.clone();
-
             let mut arguments = Vec::with_capacity(node.arguments.len());
             for arg in &node.arguments {
                 arguments.push(arg.clone())
@@ -49,14 +47,33 @@ impl Runner {
             functions.insert(name, f);
         }
 
-        self.scope.insert(
-            identifier,
+        let mut packages = HashMap::new();
+        for node in &node.packages {
+            let identifier = node.identifier.0.clone();
+            let value =  self.run_package_declaration(node)?;
+            let Value::Package(package) = value else { panic!() };
+            packages.insert(identifier, package);
+        }
+
+        //
+        // self.scope.insert(
+        //     identifier,
+        //     Value::Package(PackageValue {
+        //         identifier: node.identifier.0.to_string(),
+        //         functions,
+        //         packages,
+        //     }),
+        // );
+        //
+        // Ok(Value::Unit)
+
+
+       Ok(
             Value::Package(PackageValue {
                 identifier: node.identifier.0.to_string(),
                 functions,
+                packages,
             }),
-        );
-
-        Ok(Value::Unit)
+        )
     }
 }

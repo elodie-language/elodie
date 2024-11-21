@@ -1,1 +1,1 @@
-io::print('This is nice') // Expect: This is nice
+std::io::print('Elodie says hi') // Expect: Elodie says hi

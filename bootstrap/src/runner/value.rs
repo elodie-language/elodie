@@ -53,6 +53,7 @@ pub struct FunctionValue {
 pub struct PackageValue {
     pub identifier: String,
     pub functions: HashMap<String, FunctionValue>,
+    pub packages: HashMap<String, PackageValue>
 }
 
 impl PackageValue {

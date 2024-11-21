@@ -52,7 +52,12 @@ impl Runner {
 
             Node::DeclareVariable(declaration) => self.run_variable_declaration(declaration),
             Node::DeclareFunction(declaration) => self.run_function_declaration(declaration),
-            Node::DeclarePackage(declaration) => self.run_package_declaration(declaration),
+            Node::DeclarePackage(declaration) => {
+                let value = self.run_package_declaration(declaration)?;
+                let Value::Package(package) = value else { panic!() };
+                self.scope.insert(package.identifier.clone(), Value::Package(package));
+                Ok(Value::Unit)
+            }
 
             Node::CallFunctionOfObject(CallFunctionOfObjectNode { object, function, arguments }) => {
                 // let some_arg_value = if let Node::CallFunction(arg_1) = &arguments[0] {
@@ -85,9 +90,16 @@ impl Runner {
             Node::CallFunctionOfPackage(CallFunctionOfPackageNode { package, function, arguments }) => {
                 let mut args = HashMap::with_capacity(arguments.len());
 
-                let Value::Package(package) = self.scope.get(package.deref()).unwrap().clone() else { panic!() };
-                let func = package.get_function(function).unwrap();
+                let root = package.first().unwrap();
+                let Value::Package(root_package) = self.scope.get(root).unwrap().clone() else { panic!() };
 
+                //FIXME recursively get package
+                let func = if package.len() == 1 {
+                    root_package.get_function(function).unwrap()
+                } else {
+                    let target_package = root_package.packages.get(package.last().unwrap().0.as_str()).unwrap();
+                    target_package.get_function(function).unwrap()
+                };
 
                 let mut counter = 0;
                 for arg in arguments {
@@ -101,14 +113,14 @@ impl Runner {
                 }
 
 
-                // if arguments.len() > 0 {
-                //     if let Node::UseIdentifier(load_varialbe_node) = &arguments[0] {
-                //         let value = self.scope.get(load_varialbe_node.identifier.0.as_str()).unwrap().clone();
-                //         let mut args = HashMap::new();
-                //         args.insert("message".to_string(), Value::String("you are on he right track".to_string()));
-                //         return self.run_node_call(func.clone(), args);
-                //     }
-                // }
+                if arguments.len() > 0 {
+                    if let Node::UseIdentifier(load_varialbe_node) = &arguments[0] {
+                        let value = self.scope.get(load_varialbe_node.identifier.0.as_str()).unwrap().clone();
+                        let mut args = HashMap::new();
+                        args.insert("message".to_string(), Value::String("you are on he right track".to_string()));
+                        return self.run_node_call(func.clone(), args);
+                    }
+                }
 
                 self.run_node_call(func.clone(), args)
             }
