@@ -18,6 +18,7 @@ mod block;
 mod function;
 mod package;
 mod from;
+mod r#type;
 
 #[derive(Debug)]
 pub enum Error {}
@@ -72,6 +73,7 @@ impl Compiler {
             parse::Node::Literal(literal_node) => Ok(self.compile_literal(literal_node)?),
             parse::Node::Loop(loop_node) => Ok(self.compile_loop(loop_node)?),
             parse::Node::Return(return_node) => Ok(self.compile_function_return(return_node)?),
+            parse::Node::TypeDeclaration(node) => Ok(self.compile_declare_type(node)?),
             _ => unimplemented!("{:?}", node)
         }
     }

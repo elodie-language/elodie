@@ -35,6 +35,7 @@ impl Parser {
                 OperatorToken::Asterisk => Ok(InfixOperator::Multiply(token)),
                 OperatorToken::Slash => Ok(InfixOperator::Divide(token)),
                 OperatorToken::Percent => Ok(InfixOperator::Modulo(token)),
+                OperatorToken::Equal => Ok(InfixOperator::Assign(token)),
                 OperatorToken::DoubleEqual => Ok(InfixOperator::Equal(token)),
                 OperatorToken::BangEqual => Ok(InfixOperator::NotEqual(token)),
                 OperatorToken::LeftAngle => Ok(InfixOperator::LessThan(token)),
@@ -224,5 +225,14 @@ mod tests {
 
         let TupleNode { nodes, .. } = right.as_tuple();
         assert_eq!(*nodes, vec![]);
+    }
+
+    #[test]
+    fn instantiate_type_without_properties() {
+        let tokens = lex("Point()").unwrap();
+        let result = parse(tokens).unwrap();
+        assert_eq!(result.len(), 1);
+
+        let block = result[0].as_infix();
     }
 }

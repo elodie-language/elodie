@@ -79,6 +79,7 @@ impl Node {
     pub fn as_loop(&self) -> &LoopNode {
         if let Node::Loop(result) = self { result } else { panic!("not loop") }
     }
+
     pub fn as_package_declaration(&self) -> &PackageDeclarationNode {
         if let Node::PackageDeclaration(result) = self { result } else { panic!("not package declaration") }
     }
@@ -206,6 +207,7 @@ pub enum InfixOperator {
     Arrow(Token),
     AccessPackage(Token),
     AccessProperty(Token),
+    Assign(Token),
     Call(Token),
     Subtract(Token),
     Multiply(Token),
@@ -227,6 +229,7 @@ impl InfixOperator {
             InfixOperator::Arrow(t) => t.clone(),
             InfixOperator::AccessPackage(t) => t.clone(),
             InfixOperator::AccessProperty(t) => t.clone(),
+            InfixOperator::Assign(t) => t.clone(),
             InfixOperator::Call(t) => t.clone(),
             InfixOperator::Subtract(t) => t.clone(),
             InfixOperator::Multiply(t) => t.clone(),
@@ -292,7 +295,6 @@ pub struct LoopNode {
     pub block: BlockNode,
 }
 
-
 #[derive(Debug, PartialEq)]
 pub struct PackageDeclarationNode {
     pub token: Token,
@@ -335,6 +337,7 @@ pub struct TupleNode {
 pub enum TypeNode {
     Fundamental(TypeFundamentalNode),
     Function(TypeFunctionNode),
+    Custom(TypeCustomNode),
 }
 
 #[derive(Debug, PartialEq)]
@@ -342,6 +345,11 @@ pub enum TypeFundamentalNode {
     Boolean(Token),
     Number(Token),
     String(Token),
+}
+
+#[derive(Debug, PartialEq)]
+pub struct TypeCustomNode {
+    pub token: Token,
 }
 
 #[derive(Debug, PartialEq)]

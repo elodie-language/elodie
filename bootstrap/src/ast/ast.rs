@@ -114,7 +114,8 @@ pub enum Node {
 
     If(IfNode),
 
-    UseIdentifier(UseIdentifierNode),
+    LoadValue(UseIdentifierNode),
+    LoadValueFromObject(LoadValueFromObjectNode),
     Loop(LoopNode),
 
     ValueNumber(f64),
@@ -125,6 +126,9 @@ pub enum Node {
     DeclareVariable(DeclareVariableNode),
     DeclareFunction(DeclareFunctionNode),
     DeclarePackage(DeclarePackageNode),
+    DeclareType(DeclareTypeNode),
+
+    InstantiateType(InstantiateTypeNode),
 }
 
 #[derive(Debug)]
@@ -192,12 +196,43 @@ pub struct DeclarePackageNode {
     pub packages: Vec<DeclarePackageNode>,
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug)]
+pub struct DeclareTypeNode {
+    pub identifier: Identifier,
+    pub modifiers: Modifiers,
+    pub properties: Vec<DeclarePropertyNode>,
+}
+
+#[derive(Debug)]
+pub struct DeclarePropertyNode {
+    pub identifier: Identifier,
+    pub r#type: TypeId,
+}
+
+#[derive(Debug)]
 pub enum Source {
     LocalFile(SourceLocalFileNode)
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug)]
 pub struct SourceLocalFileNode {
     pub path: String,
+}
+
+#[derive(Debug)]
+pub struct InstantiateTypeNode {
+    pub type_id: TypeId,
+    pub arguments: Vec<NamedArgumentNode>,
+}
+
+#[derive(Debug)]
+pub struct NamedArgumentNode {
+    pub identifier: Identifier,
+    pub value: Node,
+}
+
+#[derive(Debug)]
+pub struct LoadValueFromObjectNode {
+    pub object: Identifier,
+    pub property: Identifier,
 }

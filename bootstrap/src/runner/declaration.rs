@@ -6,10 +6,11 @@ use crate::runner::Runner;
 use crate::runner::value::{FunctionValue, PackageValue, Value};
 
 impl Runner {
+
     pub(crate) fn run_variable_declaration(&mut self, node: &DeclareVariableNode) -> crate::runner::Result<Value> {
         let name = node.identifier.0.clone();
         let value = self.run_node(node.value.deref())?;
-        self.scope.insert(name, value);
+        self.scope.insert_value(name, value);
         Ok(Value::Unit)
     }
 
@@ -26,7 +27,7 @@ impl Runner {
             arguments,
         });
 
-        self.scope.insert(name, f);
+        self.scope.insert_value(name, f);
         Ok(Value::Unit)
     }
 
@@ -50,25 +51,12 @@ impl Runner {
         let mut packages = HashMap::new();
         for node in &node.packages {
             let identifier = node.identifier.0.clone();
-            let value =  self.run_package_declaration(node)?;
+            let value = self.run_package_declaration(node)?;
             let Value::Package(package) = value else { panic!() };
             packages.insert(identifier, package);
         }
 
-        //
-        // self.scope.insert(
-        //     identifier,
-        //     Value::Package(PackageValue {
-        //         identifier: node.identifier.0.to_string(),
-        //         functions,
-        //         packages,
-        //     }),
-        // );
-        //
-        // Ok(Value::Unit)
-
-
-       Ok(
+        Ok(
             Value::Package(PackageValue {
                 identifier: node.identifier.0.to_string(),
                 functions,

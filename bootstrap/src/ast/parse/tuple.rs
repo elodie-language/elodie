@@ -17,7 +17,7 @@ impl Parser {
         let mut nodes = Vec::new();
         loop {
             self.skip_new_line()?;
-            
+
             if self.current()?.is_operator(CloseParen) {
                 break;
             }
@@ -33,10 +33,10 @@ impl Parser {
 #[cfg(test)]
 mod tests {
     use crate::ast::lex::lex;
+    use crate::ast::parse::{InfixOperator, LiteralNode, parse};
     use crate::ast::parse::node::{InfixNode, TypeFundamentalNode, TypeNode};
     use crate::ast::parse::node::LiteralNode::Number;
-    use crate::ast::parse::node::Node::{Identifier, Infix, Literal, Tuple, Type};
-    use crate::ast::parse::parse;
+    use crate::ast::parse::node::Node::{Identifier, Infix, Literal, Type};
 
     #[test]
     fn empty_tuple() {
@@ -146,6 +146,31 @@ mod tests {
         let Identifier(identifier) = &left.as_ref() else { panic!() };
         assert_eq!(identifier.value(), "v");
         let Type(TypeNode::Fundamental(TypeFundamentalNode::String(_))) = right.as_ref() else { panic!() };
+    }
+
+    #[test]
+    fn tuple_with_identifiers_and_declaration() {
+        let tokens = lex("(u = 1, v = 2)").unwrap();
+        let result = parse(tokens).unwrap();
+        assert_eq!(result.len(), 1);
+
+        let node = result[0].as_tuple();
+
+        let Some(u_node) = node.nodes.first() else { panic!() };
+        let Infix(InfixNode { left, operator, right }) = &u_node else { panic!() };
+        let Identifier(identifier) = &left.as_ref() else { panic!() };
+        assert_eq!(identifier.value(), "u");
+        assert!(matches!(operator, InfixOperator::Assign(_)));
+        let Literal(LiteralNode::Number(number)) = right.as_ref() else { panic!() };
+        assert_eq!(number.value().unwrap(), 1.0);
+
+        let Some(v_node) = node.nodes.last() else { panic!() };
+        let Infix(InfixNode { left, operator, right }) = &v_node else { panic!() };
+        let Identifier(identifier) = &left.as_ref() else { panic!() };
+        assert_eq!(identifier.value(), "v");
+        assert!(matches!(operator, InfixOperator::Assign(_)));
+        let Literal(LiteralNode::Number(number)) = right.as_ref() else { panic!() };
+        assert_eq!(number.value().unwrap(), 2.0);
     }
 
     #[test]

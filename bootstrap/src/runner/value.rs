@@ -65,7 +65,7 @@ impl PackageValue {
 
 #[derive(Debug, Clone)]
 pub struct ObjectValue {
-    properties: HashMap<String, Value>,
+    pub properties: HashMap<String, Value>,
 }
 
 impl ObjectValue {

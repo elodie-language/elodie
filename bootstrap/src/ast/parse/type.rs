@@ -1,13 +1,12 @@
-use crate::ast::parse::Error::{InvalidType, UnknownType};
-use crate::ast::parse::node::{TypeFunctionArgumentNode, TypeFunctionNode, TypeFundamentalNode, TypeNode};
-use crate::ast::parse::{Parser, TypeDeclarationNode};
+use crate::ast::parse::{Parser, TypeCustomNode, TypeFundamentalNode};
+use crate::ast::parse::Error::InvalidType;
+use crate::ast::parse::node::{TypeFunctionArgumentNode, TypeFunctionNode, TypeNode};
 use crate::ast::token::OperatorToken::{Arrow, CloseParen, Colon, OpenParen};
 use crate::ast::token::SeparatorToken::Comma;
 use crate::ast::token::TokenKind::{Operator, Separator};
 use crate::common::is_pascal_snake_case;
 
 impl Parser {
-
     pub(crate) fn parse_type(&mut self) -> crate::ast::parse::Result<TypeNode> {
         let token = self.advance()?;
         if !(is_pascal_snake_case(token.value()) || token.value() == "fun") {
@@ -18,7 +17,7 @@ impl Parser {
             "Number" => Ok(TypeNode::Fundamental(TypeFundamentalNode::Number(token))),
             "String" => Ok(TypeNode::Fundamental(TypeFundamentalNode::String(token))),
             "fun" => Ok(TypeNode::Function(self.parse_function_type()?)),
-            _ => Err(UnknownType(token))
+            _ => Ok(TypeNode::Custom(TypeCustomNode { token }))
         }
     }
 
@@ -67,9 +66,9 @@ impl Parser {
 #[cfg(test)]
 mod tests {
     use crate::ast::lex::lex;
-    use crate::ast::parse::Error::{InvalidType, UnknownType};
+    use crate::ast::parse::{Parser, TypeCustomNode};
+    use crate::ast::parse::Error::InvalidType;
     use crate::ast::parse::node::{TypeFunctionArgumentNode, TypeFundamentalNode, TypeNode};
-    use crate::ast::parse::Parser;
 
     #[test]
     fn not_a_type() {
@@ -77,6 +76,15 @@ mod tests {
         let mut parser = Parser::new(tokens);
         let result = parser.parse_type();
         let Err(InvalidType(_)) = result else { panic!() };
+    }
+
+    #[test]
+    fn custom_type_point() {
+        let tokens = lex("Point").unwrap();
+        let mut parser = Parser::new(tokens);
+        let result = parser.parse_type().unwrap();
+        let TypeNode::Custom(TypeCustomNode { token }) = result else { panic!() };
+        assert_eq!(token.value(), "Point");
     }
 
     #[test]

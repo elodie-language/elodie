@@ -7,7 +7,7 @@ mod compile;
 mod lex;
 mod parse;
 mod token;
-mod r#type;
+pub mod r#type;
 mod modifier;
 
 #[derive(Debug)]

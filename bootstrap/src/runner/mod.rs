@@ -2,8 +2,9 @@ use std::collections::HashMap;
 use std::ops::Deref;
 
 use crate::ast::{CalculationOperator, CallFunctionOfObjectNode, CallFunctionOfPackageNode, CompareOperator, Node, SourceFile};
+use crate::ast::r#type::{Property, Type, TypeId, TypeName};
 use crate::runner::scope::Scope;
-use crate::runner::value::Value;
+use crate::runner::value::{ObjectValue, Value};
 
 mod scope;
 mod value;
@@ -55,7 +56,7 @@ impl Runner {
             Node::DeclarePackage(declaration) => {
                 let value = self.run_package_declaration(declaration)?;
                 let Value::Package(package) = value else { panic!() };
-                self.scope.insert(package.identifier.clone(), Value::Package(package));
+                self.scope.insert_value(package.identifier.clone(), Value::Package(package));
                 Ok(Value::Unit)
             }
 
@@ -72,11 +73,11 @@ impl Runner {
                     args.push(self.run_node(arg)?);
                 }
 
-                let Value::Object(object) = self.scope.get(object.deref()).unwrap() else { panic!() };
+                let Value::Object(object) = self.scope.get_value(object.deref()).unwrap() else { panic!() };
                 let func = object.get_property_host_function(function).unwrap();
 
-                if let Node::UseIdentifier(load_varialbe_node) = &arguments[0] {
-                    let value = self.scope.get(load_varialbe_node.identifier.0.as_str()).unwrap().clone();
+                if let Node::LoadValue(load_varialbe_node) = &arguments[0] {
+                    let value = self.scope.get_value(load_varialbe_node.identifier.0.as_str()).unwrap().clone();
                     return func.0(&[value]);
                 }
 
@@ -91,7 +92,7 @@ impl Runner {
                 let mut args = HashMap::with_capacity(arguments.len());
 
                 let root = package.first().unwrap();
-                let Value::Package(root_package) = self.scope.get(root).unwrap().clone() else { panic!() };
+                let Value::Package(root_package) = self.scope.get_value(root).unwrap().clone() else { panic!() };
 
                 //FIXME recursively get package
                 let target_package = if package.len() == 1 {
@@ -105,7 +106,7 @@ impl Runner {
                 // makes sure that a package can access its internal functions
                 self.scope.enter();
                 for (key, value) in &target_package.functions {
-                    self.scope.insert(key, Value::Function(value.clone()))
+                    self.scope.insert_value(key, Value::Function(value.clone()))
                 }
 
                 let mut counter = 0;
@@ -117,7 +118,7 @@ impl Runner {
                 }
 
                 for (key, value) in &target_package.functions {
-                    self.scope.insert(key, Value::Function(value.clone()))
+                    self.scope.insert_value(key, Value::Function(value.clone()))
                 }
 
                 let result = self.run_node_call(func.clone(), args);
@@ -185,9 +186,45 @@ impl Runner {
 
                 unimplemented!()
             }
-            Node::UseIdentifier(load_variable) => {
-                let value = self.scope.get(load_variable.identifier.0.as_str()).unwrap().clone();
+            Node::LoadValue(load_variable) => {
+                let value = self.scope.get_value(load_variable.identifier.0.as_str()).unwrap().clone();
                 Ok(value)
+            }
+            Node::LoadValueFromObject(load) => {
+                let value = self.scope.get_value(load.object.0.as_str()).unwrap().clone();
+                let Value::Object(object_value) = value else { panic!("not object") };
+                Ok(object_value.get_property(load.property.0.as_str()).cloned().unwrap())
+            }
+            Node::DeclareType(decl) => {
+                let mut properties = HashMap::new();
+
+                for prop in &decl.properties {
+                    properties.insert(prop.identifier.0.clone(), Property {});
+                }
+
+                let r#type = Type {
+                    id: TypeId(0),
+                    name: TypeName(decl.identifier.0.clone()),
+                    properties,
+                };
+
+                self.scope.insert_type(decl.identifier.0.clone(), r#type);
+                Ok(Value::Unit)
+            }
+            Node::InstantiateType(node) => {
+                let mut properties = HashMap::with_capacity(node.arguments.len());
+
+                for arg in &node.arguments {
+                    properties.insert(arg.identifier.0.clone(), self.run_node(&arg.value)?);
+                }
+
+                let obj = Value::Object(ObjectValue {
+                    properties
+                });
+
+                // self.scope.insert_value(node.identifier.0.to_string(), obj.clone());
+
+                Ok(obj)
             }
             _ => unimplemented!("{:?}", node)
         }

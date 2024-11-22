@@ -1,11 +1,11 @@
 use std::ops::Deref;
-use log::set_logger_racy;
 
 use crate::ast;
-use crate::ast::{CalculateNode, CalculationOperator, CallFunctionNode, CallFunctionOfObjectNode, CallFunctionOfPackageNode, CompareNode, CompareOperator, Identifier, parse};
+use crate::ast::{CalculateNode, CalculationOperator, CallFunctionNode, CallFunctionOfObjectNode, CallFunctionOfPackageNode, CompareNode, CompareOperator, Identifier, InstantiateTypeNode, LoadValueFromObjectNode, NamedArgumentNode, parse};
 use crate::ast::compile::Compiler;
-use crate::ast::parse::{InfixNode, InfixOperator, LiteralNode, Node};
-use crate::ast::r#type::DefaultTypeIds;
+use crate::ast::parse::{InfixNode, InfixOperator, LiteralNode, Node, TypeNode};
+use crate::ast::parse::Node::Type;
+use crate::ast::r#type::{DefaultTypeIds, TypeId};
 
 impl Compiler {
     pub(crate) fn compile_infix(&mut self, node: &parse::InfixNode) -> crate::ast::compile::Result<ast::Node> {
@@ -34,7 +34,7 @@ impl Compiler {
             let (paths, node) = Self::handle_package_access(node);
             let InfixNode { left, right, operator } = node;
             if let InfixOperator::Call(_) = operator {
-                let ast::Node::UseIdentifier(function_identifier) = self.compile_node(left.deref())? else { panic!() };
+                let ast::Node::LoadValue(function_identifier) = self.compile_node(left.deref())? else { panic!() };
 
                 let parse::Node::Tuple(tuple_node) = right.deref() else { panic!() };
                 let mut arguments = Vec::with_capacity(tuple_node.nodes.len());
@@ -52,6 +52,14 @@ impl Compiler {
 
         if let InfixOperator::AccessProperty(_) = operator {
             let Node::Identifier(object_identifier) = left.deref() else { todo!() };
+
+            if let Node::Identifier(property) = right.deref() {
+                return Ok(ast::Node::LoadValueFromObject(LoadValueFromObjectNode {
+                    object: ast::Identifier(object_identifier.value().to_string()),
+                    property: ast::Identifier(property.value().to_string()),
+                }));
+            }
+
             let Node::Infix(InfixNode { left, operator, right }) = right.deref() else { todo!() };
             let Node::Identifier(function_identifier) = left.deref() else { todo!() };
             let Node::Tuple(tuple) = right.deref() else { todo!() };
@@ -62,7 +70,7 @@ impl Compiler {
                 return Ok(ast::Node::CallFunctionOfObject(CallFunctionOfObjectNode {
                     object: ast::Identifier(object_identifier.value().to_string()),
                     function: ast::Identifier(function_identifier.value().to_string()),
-                    arguments: vec![ast::Node::UseIdentifier(ast::UseIdentifierNode {
+                    arguments: vec![ast::Node::LoadValue(ast::UseIdentifierNode {
                         identifier: ast::Identifier(identifier_node.value().to_string()),
                         type_id: DefaultTypeIds::string(),
                     })],
@@ -80,7 +88,7 @@ impl Compiler {
 
             let parse::Node::Infix(InfixNode { left, right, operator }) = &tuple.nodes[0] else { panic!() };
             if let InfixOperator::Call(_) = operator {
-                let ast::Node::UseIdentifier(identifier) = self.compile_node(left.deref())? else { panic!() };
+                let ast::Node::LoadValue(identifier) = self.compile_node(left.deref())? else { panic!() };
 
                 let parse::Node::Tuple(tuple_node) = right.deref() else { panic!() };
                 let mut arguments = Vec::with_capacity(tuple_node.nodes.len());
@@ -115,11 +123,29 @@ impl Compiler {
         }
 
         if let InfixOperator::Call(_) = operator {
-            let ast::Node::UseIdentifier(identifier) = self.compile_node(left.deref())? else { panic!() };
-            // let right = Box::new(self.compile_node(right.deref())?);
 
-            // println!("{:?}", right);
+            // type instantiation
+            if let Type(TypeNode::Custom(custom_node)) = left.deref() {
+                let parse::Node::Tuple(tuple_node) = right.deref() else { panic!() };
+                let mut arguments = Vec::with_capacity(tuple_node.nodes.len());
+                for node in &tuple_node.nodes {
+                    let parse::Node::Infix(InfixNode { left, operator, right }) = node else { panic!() };
+                    assert!(matches!(operator, InfixOperator::Assign(_)));
+                    let parse::Node::Identifier(identifier) = left.deref() else { panic!() };
+                    let right = self.compile_node(right)?;
+                    arguments.push(NamedArgumentNode {
+                        identifier: Identifier(identifier.value().to_string()),
+                        value: right,
+                    })
+                }
+                return Ok(ast::Node::InstantiateType(InstantiateTypeNode {
+                    type_id: TypeId(23),
+                    arguments,
+                }));
+            };
 
+
+            let ast::Node::LoadValue(identifier) = self.compile_node(left.deref())? else { panic!() };
             let parse::Node::Tuple(tuple_node) = right.deref() else { panic!() };
             let mut arguments = Vec::with_capacity(tuple_node.nodes.len());
             for node in &tuple_node.nodes {
@@ -197,7 +223,7 @@ impl Compiler {
         let mut current = node;
 
         loop {
-            if !matches!(current.right.deref(), Node::Infix(_)){
+            if !matches!(current.right.deref(), Node::Infix(_)) {
                 return (paths, current);
             }
 

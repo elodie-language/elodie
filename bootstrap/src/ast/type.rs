@@ -1,9 +1,20 @@
+use std::collections::HashMap;
+
 #[derive(Debug)]
-pub struct TypeId(usize);
+pub struct TypeId(pub usize);
+
+#[derive(Debug)]
+pub struct TypeName(pub String);
+
 
 pub struct Type {
     pub id: TypeId,
+    pub name: TypeName,
+    pub properties: HashMap<String, Property>,
 }
+
+pub struct Property {}
+
 
 pub struct DefaultTypeIds {}
 

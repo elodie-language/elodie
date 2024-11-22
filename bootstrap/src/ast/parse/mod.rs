@@ -61,6 +61,7 @@ struct Parser {
 impl Parser {
     fn new(tokens: Vec<Token>) -> Self {
         let mut precedence_map = HashMap::new();
+        precedence_map.insert(Operator(OperatorToken::Equal), Precedence::Assignment);
 
         precedence_map.insert(Operator(OperatorToken::DoubleEqual), Precedence::Equality);
         precedence_map.insert(Operator(OperatorToken::BangEqual), Precedence::Equality);
