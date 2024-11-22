@@ -22,7 +22,7 @@ for FILE in "$TEST_DIR"/**/*.elx; do
 
     # Run the test and compare output
     if ! ${DIFF_TOOL} \
-        <(awk -F '// Expect: ' '/Expect/{print $2}' "$FILE") \
+        <(awk -F '// out:' '/out/{print $2}' "$FILE") \
         <(${BIN} "$FILE" 2> /dev/null); then
             printf "\e[31mFail\e[0m\t$FILE\n"
             ERR_COUNT=$((ERR_COUNT + 1))

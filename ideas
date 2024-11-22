@@ -150,11 +150,24 @@ from '@dee/package' import {
     mega_awesome
 }
 
+
+// types are fixed
 type Point (
     x: Number,
     y: Number
 )
 
-implement Some_Type {
+Point(x = 1, y = 2 ) -- uses the default allocator
+Point(x = 1) -- y = 0     -- uses the default allocator and initialises every property with the default value
 
-}
+Point::allocate_on(some_allocator){ x = 0, y = 0}
+
+object point()
+point.x = 10
+point == Point --> false
+
+point.y = 20
+point == Point --> true
+
+fun return_object() -> (x: Number, y: Number){...}
+return_object() == Point --> true

@@ -5,4 +5,6 @@ let result = loop {
     }
 }
 
-std::io::print_line(result) // Expect: 20
+std::io::print_line(result)
+
+// out:20

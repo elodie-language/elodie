@@ -3,30 +3,30 @@ fun receiver(fn: fun()){
 }
 
 receiver(fun x (){
-    log.info('1') // Expect: 1
+    log.info('1') // out:1
 })
 
 receiver(fun _ (){
-    log.info('2') // Expect: 2
+    log.info('2') // out:2
 })
 
 receiver(fun(){
-    log.info('3') // Expect: 3
+    log.info('3') // out:3
 })
 
 receiver({
-    log.info('4') // Expect: 4
+    log.info('4') // out:4
 })
 
 receiver(){
-    log.info('5') // Expect: 5
+    log.info('5') // out:5
 }
 
 receiver {
-    log.info('6') // Expect: 6
+    log.info('6') // out:6
 }
 
 receiver { () =>
-    log.info('7') // Expect: 7
+    log.info('7') // out:7
 }
 
