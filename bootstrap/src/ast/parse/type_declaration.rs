@@ -1,6 +1,6 @@
 use crate::ast::modifier::Modifiers;
 use crate::ast::parse::{Parser, TypeDeclarationNode};
-use crate::ast::lex::token::KeywordToken::Type;
+use crate::lex::token::KeywordToken::Type;
 
 impl Parser {
     pub(crate) fn parse_type_declaration(&mut self) -> crate::ast::parse::Result<TypeDeclarationNode> {
@@ -22,8 +22,8 @@ impl Parser {
 
 #[cfg(test)]
 mod tests {
-    use crate::ast::lex::lex;
     use crate::ast::parse::{Error, InfixOperator, parse, TypeFundamentalNode, TypeNode};
+    use crate::lex::lex;
 
     #[test]
     fn parse_empty_type_declaration() {

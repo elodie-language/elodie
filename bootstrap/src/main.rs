@@ -9,6 +9,7 @@ mod common;
 mod cli;
 mod ast;
 mod run;
+mod lex;
 
 fn main() {
     let args: Vec<String> = env::args().collect();

@@ -2,8 +2,8 @@ use KeywordToken::Export;
 
 use crate::ast::modifier::{Modifier, Modifiers};
 use crate::ast::parse::{Node, Parser};
-use crate::ast::lex::token::KeywordToken;
-use crate::ast::lex::token::KeywordToken::{Function, Package, Type};
+use crate::lex::token::KeywordToken;
+use crate::lex::token::KeywordToken::{Function, Package, Type};
 
 impl Parser {
     pub(crate) fn parse_export(&mut self) -> crate::ast::parse::Result<Node> {

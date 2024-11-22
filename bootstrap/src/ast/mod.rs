@@ -1,10 +1,10 @@
 pub use crate::ast::ast::*;
-use crate::ast::lex::lex;
 use crate::ast::parse::parse;
+use crate::lex;
+use crate::lex::lex;
 
 mod ast;
 mod compile;
-mod lex;
 mod parse;
 pub mod r#type;
 mod modifier;

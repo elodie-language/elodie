@@ -1,10 +1,10 @@
 use crate::ast::parse::{Parser, TypeCustomNode, TypeFundamentalNode};
 use crate::ast::parse::Error::InvalidType;
 use crate::ast::parse::node::{TypeFunctionArgumentNode, TypeFunctionNode, TypeNode};
-use crate::ast::lex::token::OperatorToken::{Arrow, CloseParen, Colon, OpenParen};
-use crate::ast::lex::token::SeparatorToken::Comma;
-use crate::ast::lex::token::TokenKind::{Operator, Separator};
 use crate::common::is_pascal_snake_case;
+use crate::lex::token::OperatorToken::{Arrow, CloseParen, Colon, OpenParen};
+use crate::lex::token::SeparatorToken::Comma;
+use crate::lex::token::TokenKind::{Operator, Separator};
 
 impl Parser {
     pub(crate) fn parse_type(&mut self) -> crate::ast::parse::Result<TypeNode> {
@@ -65,10 +65,10 @@ impl Parser {
 
 #[cfg(test)]
 mod tests {
-    use crate::ast::lex::lex;
     use crate::ast::parse::{Parser, TypeCustomNode};
     use crate::ast::parse::Error::InvalidType;
     use crate::ast::parse::node::{TypeFunctionArgumentNode, TypeFundamentalNode, TypeNode};
+    use crate::lex::lex;
 
     #[test]
     fn not_a_type() {

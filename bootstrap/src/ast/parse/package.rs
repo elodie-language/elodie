@@ -1,9 +1,8 @@
 use crate::ast::modifier::Modifiers;
 use crate::ast::parse::{PackageDeclarationNode, Parser};
-use crate::ast::lex::token::KeywordToken;
+use crate::lex::token::KeywordToken;
 
 impl Parser {
-
     pub(crate) fn parse_package_declaration(&mut self) -> crate::ast::parse::Result<PackageDeclarationNode> {
         self.parse_package_declaration_with_modifiers(Modifiers(vec![]))
     }
@@ -24,8 +23,8 @@ impl Parser {
 
 #[cfg(test)]
 mod tests {
-    use crate::ast::lex::lex;
     use crate::ast::parse::parse;
+    use crate::lex::lex;
 
     #[test]
     fn empty_package() {

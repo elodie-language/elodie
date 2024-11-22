@@ -3,7 +3,7 @@ use KeywordToken::Let;
 use crate::ast::parse::node::LetNode;
 use crate::ast::parse::Parser;
 use crate::ast::parse::precedence::Precedence;
-use crate::ast::lex::token::{KeywordToken, OperatorToken};
+use crate::lex::token::{KeywordToken, OperatorToken};
 
 impl Parser {
     pub(crate) fn parse_let(&mut self) -> crate::ast::parse::Result<LetNode> {
@@ -34,10 +34,10 @@ impl Parser {
 mod tests {
     use std::ops::Deref;
 
-    use crate::ast::lex::lex;
     use crate::ast::parse::node::{LiteralNode, TypeFundamentalNode, TypeNode};
     use crate::ast::parse::node::Node::Literal;
     use crate::ast::parse::parse;
+    use crate::lex::lex;
 
     #[test]
     fn let_without_type_string() {

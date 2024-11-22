@@ -4,7 +4,7 @@ use SeparatorToken::NewLine;
 use crate::ast::parse::node::{BreakNode, ContinueNode, LoopNode};
 use crate::ast::parse::Parser;
 use crate::ast::parse::precedence::Precedence;
-use crate::ast::lex::token::{KeywordToken, OperatorToken, SeparatorToken};
+use crate::lex::token::{KeywordToken, OperatorToken, SeparatorToken};
 
 impl Parser {
     pub(crate) fn parse_loop(&mut self) -> crate::ast::parse::Result<LoopNode> {
@@ -33,10 +33,11 @@ impl Parser {
 mod tests {
     use std::ops::Deref;
 
-    use crate::ast::lex::lex;
+    use crate::lex;
     use crate::ast::parse::node::LiteralNode;
     use crate::ast::parse::node::Node::{Continue, Literal};
     use crate::ast::parse::parse;
+    use crate::lex::lex;
 
     #[test]
     fn empty_loop() {

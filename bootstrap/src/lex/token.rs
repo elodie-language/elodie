@@ -1,4 +1,4 @@
-use crate::ast::lex::token::TokenKind::{EOF, Identifier};
+use crate::lex::token::TokenKind::{EOF, Identifier};
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct Token {

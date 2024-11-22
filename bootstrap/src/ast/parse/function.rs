@@ -2,13 +2,13 @@ use KeywordToken::Return;
 use OperatorToken::OpenParen;
 use SeparatorToken::Comma;
 use TokenKind::{Operator, Separator};
-use crate::ast::modifier::Modifiers;
 
+use crate::ast::modifier::Modifiers;
 use crate::ast::parse::node::{FunctionDeclarationArgumentNode, FunctionDeclarationNode, ReturnNode};
 use crate::ast::parse::Parser;
 use crate::ast::parse::precedence::Precedence;
-use crate::ast::lex::token::{KeywordToken, OperatorToken, SeparatorToken, TokenKind};
-use crate::ast::lex::token::OperatorToken::{Arrow, CloseParen};
+use crate::lex::token::{KeywordToken, OperatorToken, SeparatorToken, TokenKind};
+use crate::lex::token::OperatorToken::{Arrow, CloseParen};
 
 impl Parser {
     pub(crate) fn parse_function_declaration(&mut self) -> crate::ast::parse::Result<FunctionDeclarationNode> {
@@ -76,10 +76,10 @@ impl Parser {
 
 #[cfg(test)]
 mod tests {
-    use crate::ast::lex::lex;
-    use crate::ast::parse::{parse};
     use crate::ast::parse::node::{LiteralNode, TypeFundamentalNode, TypeNode};
     use crate::ast::parse::node::Node::Literal;
+    use crate::ast::parse::parse;
+    use crate::lex::lex;
 
     #[test]
     fn return_without_result() {

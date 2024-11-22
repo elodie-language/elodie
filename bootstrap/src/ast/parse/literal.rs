@@ -2,7 +2,7 @@ use std::str::FromStr;
 
 use crate::ast::parse::node::{LiteralBooleanNode, LiteralNode, LiteralNumberNode, LiteralStringNode};
 use crate::ast::parse::Parser;
-use crate::ast::lex::token::LiteralToken;
+use crate::lex::token::LiteralToken;
 
 impl Parser {
     pub(crate) fn parse_literal_string(&mut self) -> crate::ast::parse::Result<LiteralNode> {
@@ -28,10 +28,10 @@ impl Parser {
 
 #[cfg(test)]
 mod tests {
-    use crate::ast::lex::lex;
     use crate::ast::parse::node::LiteralNode;
     use crate::ast::parse::node::Node::Literal;
     use crate::ast::parse::parse;
+    use crate::lex::lex;
 
     #[test]
     fn string() {

@@ -1,7 +1,7 @@
 use crate::ast::parse::Error::InvalidIdentifier;
 use crate::ast::parse::node::IdentifierNode;
 use crate::ast::parse::Parser;
-use crate::ast::lex::token::TokenKind;
+use crate::lex::token::TokenKind;
 use crate::common::{is_pascal_snake_case, is_snake_case};
 
 impl Parser {
@@ -26,8 +26,9 @@ impl Parser {
 
 #[cfg(test)]
 mod tests {
-    use crate::ast::lex::lex;
+    use crate::lex;
     use crate::ast::parse::parse;
+    use crate::lex::lex;
 
     #[test]
     fn identifier() {

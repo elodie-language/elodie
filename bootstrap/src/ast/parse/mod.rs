@@ -4,9 +4,9 @@ use std::collections::HashMap;
 use crate::ast::parse::Error::UnexpectedEndOfFile;
 pub use crate::ast::parse::node::*;
 use crate::ast::parse::precedence::Precedence;
-use crate::ast::lex::token::{KeywordToken, LiteralToken, OperatorToken, SeparatorToken, Token, TokenKind};
-use crate::ast::lex::token::SeparatorToken::NewLine;
-use crate::ast::lex::token::TokenKind::{Keyword, Literal, Operator, Separator};
+use crate::lex::token::{KeywordToken, LiteralToken, OperatorToken, SeparatorToken, Token, TokenKind};
+use crate::lex::token::SeparatorToken::NewLine;
+use crate::lex::token::TokenKind::{Keyword, Literal, Operator, Separator};
 
 pub(crate) mod precedence;
 mod node;
@@ -223,13 +223,13 @@ mod tests {
     use LiteralToken::False;
     use OperatorToken::Plus;
 
-    use crate::ast::lex::lex;
     use crate::ast::parse::{Error, Parser};
     use crate::ast::parse::precedence::Precedence;
     use crate::ast::parse::precedence::Precedence::Term;
-    use crate::ast::lex::token::{literal, LiteralToken, OperatorToken, separator};
-    use crate::ast::lex::token::LiteralToken::{Number, True};
-    use crate::ast::lex::token::SeparatorToken::Semicolon;
+    use crate::lex::lex;
+    use crate::lex::token::{literal, LiteralToken, OperatorToken, separator};
+    use crate::lex::token::LiteralToken::{Number, True};
+    use crate::lex::token::SeparatorToken::Semicolon;
 
     #[test]
     fn advance_but_eof() {

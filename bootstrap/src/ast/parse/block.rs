@@ -4,8 +4,8 @@ use TokenKind::Separator;
 use crate::ast::parse::node::BlockNode;
 use crate::ast::parse::Parser;
 use crate::ast::parse::precedence::Precedence;
-use crate::ast::lex::token::{OperatorToken, TokenKind};
-use crate::ast::lex::token::SeparatorToken::NewLine;
+use crate::lex::token::{OperatorToken, TokenKind};
+use crate::lex::token::SeparatorToken::NewLine;
 
 impl Parser {
     pub(crate) fn parse_block(&mut self) -> crate::ast::parse::Result<BlockNode> {
@@ -30,11 +30,11 @@ impl Parser {
 
 #[cfg(test)]
 mod tests {
-    use crate::ast::lex::lex;
     use crate::ast::parse::node::{BlockNode, InfixNode, InfixOperator, LiteralBooleanNode, LiteralNode, TupleNode};
     use crate::ast::parse::node::Node::{Block, Literal};
     use crate::ast::parse::parse;
-    use crate::ast::lex::token::{LiteralToken, test_token_with_offset, TokenKind};
+    use crate::lex::lex;
+    use crate::lex::token::{LiteralToken, test_token_with_offset, TokenKind};
 
     #[test]
     fn empty_block() {

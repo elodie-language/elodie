@@ -1,8 +1,8 @@
-use crate::ast::lex::Lexer;
-use crate::ast::lex::token::{TextSpan, Token, TokenKind};
+use crate::lex::Lexer;
+use crate::lex::token::{TextSpan, Token, TokenKind};
 
 impl Lexer<'_> {
-    pub(crate) fn consume_identifier(&self) -> crate::ast::lex::Result<Token> {
+    pub(crate) fn consume_identifier(&self) -> crate::lex::Result<Token> {
         let start = self.position();
 
         let mut text = self.consume_while(|c| {
@@ -18,8 +18,8 @@ impl Lexer<'_> {
 
 #[cfg(test)]
 mod test {
-    use crate::ast::lex::Lexer;
-    use crate::ast::lex::token::{LiteralToken, OperatorToken, TokenKind};
+    use crate::lex::Lexer;
+    use crate::lex::token::{LiteralToken, OperatorToken, TokenKind};
 
     #[test]
     fn some_var() {

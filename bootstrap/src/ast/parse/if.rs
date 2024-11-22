@@ -3,7 +3,7 @@ use KeywordToken::{Else, If};
 use crate::ast::parse::node::{ElseNode, IfNode};
 use crate::ast::parse::Parser;
 use crate::ast::parse::precedence::Precedence;
-use crate::ast::lex::token::KeywordToken;
+use crate::lex::token::KeywordToken;
 
 impl Parser {
     pub(crate) fn parse_if(&mut self) -> crate::ast::parse::Result<IfNode> {
@@ -31,10 +31,10 @@ impl Parser {
 mod tests {
     use std::ops::Deref;
 
-    use crate::ast::lex::lex;
     use crate::ast::parse::node::{IfNode, LiteralNode};
-    use crate::ast::parse::node::Node::{If, Literal};
+    use crate::ast::parse::node::Node::Literal;
     use crate::ast::parse::parse;
+    use crate::lex::lex;
 
     #[test]
     fn empty_if_no_else() {

@@ -3,9 +3,9 @@ use SeparatorToken::Comma;
 use crate::ast::parse::node::TupleNode;
 use crate::ast::parse::Parser;
 use crate::ast::parse::precedence::Precedence;
-use crate::ast::lex::token::{OperatorToken, SeparatorToken, Token};
-use crate::ast::lex::token::OperatorToken::CloseParen;
-use crate::ast::lex::token::TokenKind::Separator;
+use crate::lex::token::{OperatorToken, SeparatorToken, Token};
+use crate::lex::token::OperatorToken::CloseParen;
+use crate::lex::token::TokenKind::Separator;
 
 impl Parser {
     pub(crate) fn parse_tuple(&mut self) -> crate::ast::parse::Result<TupleNode> {
@@ -32,11 +32,11 @@ impl Parser {
 
 #[cfg(test)]
 mod tests {
-    use crate::ast::lex::lex;
     use crate::ast::parse::{InfixOperator, LiteralNode, parse};
     use crate::ast::parse::node::{InfixNode, TypeFundamentalNode, TypeNode};
     use crate::ast::parse::node::LiteralNode::Number;
     use crate::ast::parse::node::Node::{Identifier, Infix, Literal, Type};
+    use crate::lex::lex;
 
     #[test]
     fn empty_tuple() {

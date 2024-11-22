@@ -6,9 +6,9 @@ use crate::ast::parse::node::{Node, PrefixNode, PrefixOperator};
 use crate::ast::parse::Node::{PackageDeclaration, TypeDeclaration};
 use crate::ast::parse::node::Node::{Break, Continue, FunctionDeclaration, If, Let, Loop, Return};
 use crate::ast::parse::precedence::Precedence;
-use crate::ast::lex::token::{KeywordToken, OperatorToken, SeparatorToken};
-use crate::ast::lex::token::LiteralToken::{False, Number, String, True};
-use crate::ast::lex::token::TokenKind::{Keyword, Operator};
+use crate::lex::token::{KeywordToken, OperatorToken, SeparatorToken};
+use crate::lex::token::LiteralToken::{False, Number, String, True};
+use crate::lex::token::TokenKind::{Keyword, Operator};
 use crate::common::{is_pascal_snake_case, is_snake_case};
 
 impl Parser {
@@ -96,8 +96,8 @@ mod tests {
     use crate::ast::parse::node::{PrefixNode, PrefixOperator};
     use crate::ast::parse::Node;
     use crate::ast::parse::Parser;
-    use crate::ast::lex::token::{operator, test_token};
-    use crate::ast::lex::token::OperatorToken::{Bang, Minus, Plus};
+    use crate::lex::token::{operator, test_token};
+    use crate::lex::token::OperatorToken::{Bang, Minus, Plus};
 
     macro_rules! parse_prefix {
     ($($name:ident, $input:expr => $expected:expr,)*) => {
