@@ -1,12 +1,13 @@
 use crate::ast::parse::Error::{InvalidType, UnknownType};
 use crate::ast::parse::node::{TypeFunctionArgumentNode, TypeFunctionNode, TypeFundamentalNode, TypeNode};
-use crate::ast::parse::Parser;
+use crate::ast::parse::{Parser, TypeDeclarationNode};
 use crate::ast::token::OperatorToken::{Arrow, CloseParen, Colon, OpenParen};
 use crate::ast::token::SeparatorToken::Comma;
 use crate::ast::token::TokenKind::{Operator, Separator};
 use crate::common::is_pascal_snake_case;
 
 impl Parser {
+
     pub(crate) fn parse_type(&mut self) -> crate::ast::parse::Result<TypeNode> {
         let token = self.advance()?;
         if !(is_pascal_snake_case(token.value()) || token.value() == "fun") {

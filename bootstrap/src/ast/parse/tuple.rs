@@ -16,6 +16,8 @@ impl Parser {
     pub(crate) fn parse_tuple_call(&mut self, operator: Token) -> crate::ast::parse::Result<TupleNode> {
         let mut nodes = Vec::new();
         loop {
+            self.skip_new_line()?;
+            
             if self.current()?.is_operator(CloseParen) {
                 break;
             }
@@ -128,6 +130,30 @@ mod tests {
     #[test]
     fn tuple_with_identifiers_and_types() {
         let tokens = lex("(u: Bool, v: String)").unwrap();
+        let result = parse(tokens).unwrap();
+        assert_eq!(result.len(), 1);
+
+        let node = result[0].as_tuple();
+
+        let Some(u_node) = node.nodes.first() else { panic!() };
+        let Infix(InfixNode { left, operator, right }) = &u_node else { panic!() };
+        let Identifier(identifier) = &left.as_ref() else { panic!() };
+        assert_eq!(identifier.value(), "u");
+        let Type(TypeNode::Fundamental(TypeFundamentalNode::Boolean(_))) = right.as_ref() else { panic!() };
+
+        let Some(v_node) = node.nodes.last() else { panic!() };
+        let Infix(InfixNode { left, operator, right }) = &v_node else { panic!() };
+        let Identifier(identifier) = &left.as_ref() else { panic!() };
+        assert_eq!(identifier.value(), "v");
+        let Type(TypeNode::Fundamental(TypeFundamentalNode::String(_))) = right.as_ref() else { panic!() };
+    }
+
+    #[test]
+    fn multiline_tuple() {
+        let tokens = lex(r#"(
+        u: Bool,
+        v: String
+        )"#).unwrap();
         let result = parse(tokens).unwrap();
         assert_eq!(result.len(), 1);
 

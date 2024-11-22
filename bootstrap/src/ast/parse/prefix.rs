@@ -3,8 +3,8 @@ use SeparatorToken::NewLine;
 use crate::ast::parse::{Error, Parser};
 use crate::ast::parse::Error::UnsupportedToken;
 use crate::ast::parse::node::{Node, PrefixNode, PrefixOperator};
+use crate::ast::parse::Node::{PackageDeclaration, TypeDeclaration};
 use crate::ast::parse::node::Node::{Break, Continue, FunctionDeclaration, If, Let, Loop, Return};
-use crate::ast::parse::Node::PackageDeclaration;
 use crate::ast::parse::precedence::Precedence;
 use crate::ast::token::{KeywordToken, OperatorToken, SeparatorToken};
 use crate::ast::token::LiteralToken::{False, Number, String, True};
@@ -14,7 +14,7 @@ use crate::common::{is_pascal_snake_case, is_snake_case};
 impl Parser {
     pub(crate) fn parse_prefix(&mut self) -> crate::ast::parse::Result<Node> {
         loop {
-            if self.is_eof(){
+            if self.is_eof() {
                 return Ok(Node::Nop);
             }
 
@@ -53,6 +53,7 @@ impl Parser {
                     KeywordToken::Loop => Ok(Loop(self.parse_loop()?)),
                     KeywordToken::Package => Ok(PackageDeclaration(self.parse_package_declaration()?)),
                     KeywordToken::Return => Ok(Return(self.parse_return()?)),
+                    KeywordToken::Type => Ok(TypeDeclaration(self.parse_type_declaration()?)),
                     _ => Err(Error::unsupported(self.advance()?))
                 }
             }

@@ -149,3 +149,12 @@ from '@dee/package' import {
     super_awesome,
     mega_awesome
 }
+
+type Point (
+    x: Number,
+    y: Number
+)
+
+implement Some_Type {
+
+}

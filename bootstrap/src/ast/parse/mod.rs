@@ -5,6 +5,7 @@ use crate::ast::parse::Error::UnexpectedEndOfFile;
 pub use crate::ast::parse::node::*;
 use crate::ast::parse::precedence::Precedence;
 use crate::ast::token::{KeywordToken, LiteralToken, OperatorToken, SeparatorToken, Token, TokenKind};
+use crate::ast::token::SeparatorToken::NewLine;
 use crate::ast::token::TokenKind::{Keyword, Literal, Operator, Separator};
 
 pub(crate) mod precedence;
@@ -23,6 +24,7 @@ mod tuple;
 mod package;
 mod export;
 mod from;
+mod type_declaration;
 
 #[derive(Debug, PartialEq)]
 pub enum Error {
@@ -207,6 +209,11 @@ impl Parser {
 
     fn is_eof(&self) -> bool {
         self.tokens.is_empty()
+    }
+
+    pub(crate) fn skip_new_line(&mut self) -> Result<()> {
+        self.consume_if(Separator(NewLine))?;
+        Ok(())
     }
 }
 
