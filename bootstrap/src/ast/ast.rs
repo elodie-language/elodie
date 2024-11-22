@@ -2,7 +2,7 @@ use std::ops::Deref;
 use std::rc::Rc;
 
 use crate::ast::modifier::Modifiers;
-use crate::ast::r#type::TypeId;
+use crate::r#type::TypeId;
 
 #[derive(Debug)]
 pub struct SourceFile {

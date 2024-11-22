@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 use std::rc::Rc;
 
-use crate::ast::r#type::Type;
+use crate::r#type::Type;
 use crate::run::value::{HostFunctionValue, ObjectValue, Value};
 use crate::run::value::Value::HostFunction;
 

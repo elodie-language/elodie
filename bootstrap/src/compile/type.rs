@@ -3,7 +3,7 @@ use std::ops::Deref;
 use crate::{ast, parse};
 use crate::ast::{DeclarePropertyNode, DeclareTypeNode, Identifier};
 use crate::ast::Node::DeclareType;
-use crate::ast::r#type::DefaultTypeIds;
+use crate::r#type::DefaultTypeIds;
 use crate::compile::Compiler;
 use crate::parse::{InfixNode, InfixOperator};
 

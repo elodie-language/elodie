@@ -7,7 +7,6 @@ use crate::lex::lex;
 use crate::parse::{parse, RootNode};
 
 mod r#let;
-mod typesystem;
 mod symbol;
 mod validate;
 mod collect;

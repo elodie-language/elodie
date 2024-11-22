@@ -1,6 +1,6 @@
 use crate::{ast, compile, parse};
 use crate::ast::{BreakLoopNode, ContinueLoopNode, LoopNode, Node};
-use crate::ast::r#type::DefaultTypeIds;
+use crate::r#type::DefaultTypeIds;
 use crate::compile::Compiler;
 
 impl Compiler {

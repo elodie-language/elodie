@@ -2,7 +2,7 @@ use std::ops::Deref;
 
 use crate::{ast, parse};
 use crate::ast::{BlockNode, IfNode};
-use crate::ast::r#type::DefaultTypeIds;
+use crate::r#type::DefaultTypeIds;
 use crate::compile::Compiler;
 
 impl Compiler {

@@ -2,8 +2,8 @@ use std::{env, io};
 use std::fs::File;
 use std::io::Read;
 use std::path::PathBuf;
-use crate::compile::compile_str;
 
+use crate::compile::compile_str;
 use crate::run::Runner;
 
 mod common;
@@ -13,6 +13,7 @@ mod compile;
 mod run;
 mod lex;
 mod parse;
+mod r#type;
 
 fn main() {
     let args: Vec<String> = env::args().collect();

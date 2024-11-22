@@ -1,6 +1,6 @@
 use crate::{ast, parse};
 use crate::ast::BlockNode;
-use crate::ast::r#type::DefaultTypeIds;
+use crate::r#type::DefaultTypeIds;
 use crate::compile::Compiler;
 
 impl Compiler {

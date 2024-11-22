@@ -2,7 +2,7 @@ use std::ops::Deref;
 
 use crate::{ast, parse};
 use crate::ast::{CalculateNode, CalculationOperator, CallFunctionNode, CallFunctionOfObjectNode, CallFunctionOfPackageNode, CompareNode, CompareOperator, Identifier, InstantiateTypeNode, LoadValueFromObjectNode, NamedArgumentNode};
-use crate::ast::r#type::{DefaultTypeIds, TypeId};
+use crate::r#type::{DefaultTypeIds, TypeId};
 use crate::compile::Compiler;
 use crate::parse::{InfixNode, InfixOperator, LiteralNode, Node, TypeNode};
 use crate::parse::Node::Type;

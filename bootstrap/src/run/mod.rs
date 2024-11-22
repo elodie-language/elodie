@@ -2,7 +2,7 @@ use std::collections::HashMap;
 use std::ops::Deref;
 
 use crate::ast::{CalculationOperator, CallFunctionOfObjectNode, CallFunctionOfPackageNode, CompareOperator, Node, SourceFile};
-use crate::ast::r#type::{Property, Type, TypeId, TypeName};
+use crate::r#type::{Property, Type, TypeId, TypeName};
 use crate::run::scope::Scope;
 use crate::run::value::{ObjectValue, Value};
 

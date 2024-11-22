@@ -4,7 +4,7 @@ use std::rc::Rc;
 use crate::{ast, parse};
 use crate::ast::{BlockNode, DeclareFunctionNode, FunctionArgumentNode, Identifier, Node, ReturnFromFunctionNode};
 use crate::ast::Node::ReturnFromFunction;
-use crate::ast::r#type::DefaultTypeIds;
+use crate::r#type::DefaultTypeIds;
 use crate::compile::Compiler;
 
 impl Compiler {
