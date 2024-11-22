@@ -1,9 +1,9 @@
 use std::cmp::PartialOrd;
 use std::collections::HashMap;
 
-use crate::ast::parse::Error::UnexpectedEndOfFile;
-pub use crate::ast::parse::node::*;
-use crate::ast::parse::precedence::Precedence;
+use crate::parse::Error::UnexpectedEndOfFile;
+pub use crate::parse::node::*;
+use crate::parse::precedence::Precedence;
 use crate::lex::token::{KeywordToken, LiteralToken, OperatorToken, SeparatorToken, Token, TokenKind};
 use crate::lex::token::SeparatorToken::NewLine;
 use crate::lex::token::TokenKind::{Keyword, Literal, Operator, Separator};
@@ -223,9 +223,9 @@ mod tests {
     use LiteralToken::False;
     use OperatorToken::Plus;
 
-    use crate::ast::parse::{Error, Parser};
-    use crate::ast::parse::precedence::Precedence;
-    use crate::ast::parse::precedence::Precedence::Term;
+    use crate::parse::{Error, Parser};
+    use crate::parse::precedence::Precedence;
+    use crate::parse::precedence::Precedence::Term;
     use crate::lex::lex;
     use crate::lex::token::{literal, LiteralToken, OperatorToken, separator};
     use crate::lex::token::LiteralToken::{Number, True};

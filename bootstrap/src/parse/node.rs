@@ -2,8 +2,8 @@ use std::ops::Index;
 use std::str::FromStr;
 
 use crate::ast::modifier::Modifiers;
-use crate::ast::parse::Error;
 use crate::lex::token::{LiteralToken, Token, TokenKind};
+use crate::parse::Error;
 
 #[derive(Debug)]
 pub struct RootNode {
@@ -265,7 +265,7 @@ pub enum LiteralNode {
 pub struct LiteralNumberNode(pub Token);
 
 impl LiteralNumberNode {
-    pub fn value(&self) -> crate::ast::parse::Result<f64> {
+    pub fn value(&self) -> crate::parse::Result<f64> {
         f64::from_str(self.0.value())
             .map_err(|_| Error::UnsupportedNumber(self.0.value().to_string()))
     }

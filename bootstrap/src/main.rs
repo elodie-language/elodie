@@ -10,6 +10,7 @@ mod cli;
 mod ast;
 mod run;
 mod lex;
+mod parse;
 
 fn main() {
     let args: Vec<String> = env::args().collect();

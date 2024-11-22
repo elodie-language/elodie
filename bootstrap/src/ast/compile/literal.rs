@@ -1,6 +1,6 @@
 use crate::ast;
 use crate::ast::compile::Compiler;
-use crate::ast::parse::LiteralNode;
+use crate::parse::LiteralNode;
 
 impl Compiler {
     pub(crate) fn compile_literal(&mut self, node: &LiteralNode) -> crate::ast::compile::Result<ast::Node> {

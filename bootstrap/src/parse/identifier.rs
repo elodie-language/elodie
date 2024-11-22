@@ -1,11 +1,11 @@
-use crate::ast::parse::Error::InvalidIdentifier;
-use crate::ast::parse::node::IdentifierNode;
-use crate::ast::parse::Parser;
+use crate::parse::Error::InvalidIdentifier;
+use crate::parse::node::IdentifierNode;
+use crate::parse::Parser;
 use crate::lex::token::TokenKind;
 use crate::common::{is_pascal_snake_case, is_snake_case};
 
 impl Parser {
-    pub(crate) fn parse_identifier(&mut self) -> crate::ast::parse::Result<IdentifierNode> {
+    pub(crate) fn parse_identifier(&mut self) -> crate::parse::Result<IdentifierNode> {
         let token = self.consume(TokenKind::Identifier)?;
         if !is_snake_case(token.value()) {
             Err(InvalidIdentifier(token))
@@ -14,7 +14,7 @@ impl Parser {
         }
     }
 
-    pub(crate) fn parse_type_identifier(&mut self) -> crate::ast::parse::Result<IdentifierNode> {
+    pub(crate) fn parse_type_identifier(&mut self) -> crate::parse::Result<IdentifierNode> {
         let token = self.consume(TokenKind::Identifier)?;
         if !is_pascal_snake_case(token.value()) {
             Err(InvalidIdentifier(token))
@@ -27,7 +27,7 @@ impl Parser {
 #[cfg(test)]
 mod tests {
     use crate::lex;
-    use crate::ast::parse::parse;
+    use crate::parse::parse;
     use crate::lex::lex;
 
     #[test]

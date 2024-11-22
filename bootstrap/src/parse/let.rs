@@ -1,12 +1,12 @@
 use KeywordToken::Let;
 
-use crate::ast::parse::node::LetNode;
-use crate::ast::parse::Parser;
-use crate::ast::parse::precedence::Precedence;
+use crate::parse::node::LetNode;
+use crate::parse::Parser;
+use crate::parse::precedence::Precedence;
 use crate::lex::token::{KeywordToken, OperatorToken};
 
 impl Parser {
-    pub(crate) fn parse_let(&mut self) -> crate::ast::parse::Result<LetNode> {
+    pub(crate) fn parse_let(&mut self) -> crate::parse::Result<LetNode> {
         let token = self.consume_keyword(Let)?;
         let identifier = self.parse_identifier()?;
 
@@ -34,9 +34,9 @@ impl Parser {
 mod tests {
     use std::ops::Deref;
 
-    use crate::ast::parse::node::{LiteralNode, TypeFundamentalNode, TypeNode};
-    use crate::ast::parse::node::Node::Literal;
-    use crate::ast::parse::parse;
+    use crate::parse::node::{LiteralNode, TypeFundamentalNode, TypeNode};
+    use crate::parse::node::Node::Literal;
+    use crate::parse::parse;
     use crate::lex::lex;
 
     #[test]

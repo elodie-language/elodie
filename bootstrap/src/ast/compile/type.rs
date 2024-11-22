@@ -4,7 +4,7 @@ use crate::ast;
 use crate::ast::{DeclarePropertyNode, DeclareTypeNode, Identifier, parse};
 use crate::ast::compile::Compiler;
 use crate::ast::Node::DeclareType;
-use crate::ast::parse::{InfixNode, InfixOperator};
+use crate::parse::{InfixNode, InfixOperator};
 use crate::ast::r#type::DefaultTypeIds;
 
 impl Compiler {

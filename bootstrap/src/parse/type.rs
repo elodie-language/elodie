@@ -1,13 +1,13 @@
-use crate::ast::parse::{Parser, TypeCustomNode, TypeFundamentalNode};
-use crate::ast::parse::Error::InvalidType;
-use crate::ast::parse::node::{TypeFunctionArgumentNode, TypeFunctionNode, TypeNode};
+use crate::parse::{Parser, TypeCustomNode, TypeFundamentalNode};
+use crate::parse::Error::InvalidType;
+use crate::parse::node::{TypeFunctionArgumentNode, TypeFunctionNode, TypeNode};
 use crate::common::is_pascal_snake_case;
 use crate::lex::token::OperatorToken::{Arrow, CloseParen, Colon, OpenParen};
 use crate::lex::token::SeparatorToken::Comma;
 use crate::lex::token::TokenKind::{Operator, Separator};
 
 impl Parser {
-    pub(crate) fn parse_type(&mut self) -> crate::ast::parse::Result<TypeNode> {
+    pub(crate) fn parse_type(&mut self) -> crate::parse::Result<TypeNode> {
         let token = self.advance()?;
         if !(is_pascal_snake_case(token.value()) || token.value() == "fun") {
             return Err(InvalidType(token));
@@ -21,7 +21,7 @@ impl Parser {
         }
     }
 
-    pub(crate) fn parse_function_type(&mut self) -> crate::ast::parse::Result<TypeFunctionNode> {
+    pub(crate) fn parse_function_type(&mut self) -> crate::parse::Result<TypeFunctionNode> {
         self.consume_operator(OpenParen)?;
 
         let mut arguments = vec![];
@@ -49,7 +49,7 @@ impl Parser {
         )
     }
 
-    pub(crate) fn parse_function_type_argument(&mut self) -> crate::ast::parse::Result<TypeFunctionArgumentNode> {
+    pub(crate) fn parse_function_type_argument(&mut self) -> crate::parse::Result<TypeFunctionArgumentNode> {
         let identifier = if self.peek()?.is_operator(Colon) {
             Some(self.parse_identifier()?)
         } else {
@@ -65,9 +65,9 @@ impl Parser {
 
 #[cfg(test)]
 mod tests {
-    use crate::ast::parse::{Parser, TypeCustomNode};
-    use crate::ast::parse::Error::InvalidType;
-    use crate::ast::parse::node::{TypeFunctionArgumentNode, TypeFundamentalNode, TypeNode};
+    use crate::parse::{Parser, TypeCustomNode};
+    use crate::parse::Error::InvalidType;
+    use crate::parse::node::{TypeFunctionArgumentNode, TypeFundamentalNode, TypeNode};
     use crate::lex::lex;
 
     #[test]

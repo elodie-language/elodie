@@ -1,12 +1,12 @@
 use KeywordToken::{Else, If};
 
-use crate::ast::parse::node::{ElseNode, IfNode};
-use crate::ast::parse::Parser;
-use crate::ast::parse::precedence::Precedence;
+use crate::parse::node::{ElseNode, IfNode};
+use crate::parse::Parser;
+use crate::parse::precedence::Precedence;
 use crate::lex::token::KeywordToken;
 
 impl Parser {
-    pub(crate) fn parse_if(&mut self) -> crate::ast::parse::Result<IfNode> {
+    pub(crate) fn parse_if(&mut self) -> crate::parse::Result<IfNode> {
         let token = self.consume_keyword(If)?;
         let condition = Box::new(self.parse_node(Precedence::None)?);
         let then = self.parse_block()?;
@@ -31,9 +31,9 @@ impl Parser {
 mod tests {
     use std::ops::Deref;
 
-    use crate::ast::parse::node::{IfNode, LiteralNode};
-    use crate::ast::parse::node::Node::Literal;
-    use crate::ast::parse::parse;
+    use crate::parse::node::{IfNode, LiteralNode};
+    use crate::parse::node::Node::Literal;
+    use crate::parse::parse;
     use crate::lex::lex;
 
     #[test]

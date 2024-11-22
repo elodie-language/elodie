@@ -1,26 +1,26 @@
 use std::str::FromStr;
 
-use crate::ast::parse::node::{LiteralBooleanNode, LiteralNode, LiteralNumberNode, LiteralStringNode};
-use crate::ast::parse::Parser;
+use crate::parse::node::{LiteralBooleanNode, LiteralNode, LiteralNumberNode, LiteralStringNode};
+use crate::parse::Parser;
 use crate::lex::token::LiteralToken;
 
 impl Parser {
-    pub(crate) fn parse_literal_string(&mut self) -> crate::ast::parse::Result<LiteralNode> {
+    pub(crate) fn parse_literal_string(&mut self) -> crate::parse::Result<LiteralNode> {
         let token = self.consume_literal(LiteralToken::String)?;
         return Ok(LiteralNode::String(LiteralStringNode(token)));
     }
 
-    pub(crate) fn parse_literal_number(&mut self) -> crate::ast::parse::Result<LiteralNode> {
+    pub(crate) fn parse_literal_number(&mut self) -> crate::parse::Result<LiteralNode> {
         let token = self.consume_literal(LiteralToken::Number)?;
         return Ok(LiteralNode::Number(LiteralNumberNode(token)));
     }
 
-    pub(crate) fn parse_literal_true(&mut self) -> crate::ast::parse::Result<LiteralNode> {
+    pub(crate) fn parse_literal_true(&mut self) -> crate::parse::Result<LiteralNode> {
         let token = self.consume_literal(LiteralToken::True)?;
         return Ok(LiteralNode::Boolean(LiteralBooleanNode(token)));
     }
 
-    pub(crate) fn parse_literal_false(&mut self) -> crate::ast::parse::Result<LiteralNode> {
+    pub(crate) fn parse_literal_false(&mut self) -> crate::parse::Result<LiteralNode> {
         let token = self.consume_literal(LiteralToken::False)?;
         return Ok(LiteralNode::Boolean(LiteralBooleanNode(token)));
     }
@@ -28,9 +28,9 @@ impl Parser {
 
 #[cfg(test)]
 mod tests {
-    use crate::ast::parse::node::LiteralNode;
-    use crate::ast::parse::node::Node::Literal;
-    use crate::ast::parse::parse;
+    use crate::parse::node::LiteralNode;
+    use crate::parse::node::Node::Literal;
+    use crate::parse::parse;
     use crate::lex::lex;
 
     #[test]

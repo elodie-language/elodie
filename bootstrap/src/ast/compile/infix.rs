@@ -3,8 +3,8 @@ use std::ops::Deref;
 use crate::ast;
 use crate::ast::{CalculateNode, CalculationOperator, CallFunctionNode, CallFunctionOfObjectNode, CallFunctionOfPackageNode, CompareNode, CompareOperator, Identifier, InstantiateTypeNode, LoadValueFromObjectNode, NamedArgumentNode, parse};
 use crate::ast::compile::Compiler;
-use crate::ast::parse::{InfixNode, InfixOperator, LiteralNode, Node, TypeNode};
-use crate::ast::parse::Node::Type;
+use crate::parse::{InfixNode, InfixOperator, LiteralNode, Node, TypeNode};
+use crate::parse::Node::Type;
 use crate::ast::r#type::{DefaultTypeIds, TypeId};
 
 impl Compiler {

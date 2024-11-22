@@ -1,13 +1,13 @@
 use crate::ast::modifier::Modifiers;
-use crate::ast::parse::{PackageDeclarationNode, Parser};
+use crate::parse::{PackageDeclarationNode, Parser};
 use crate::lex::token::KeywordToken;
 
 impl Parser {
-    pub(crate) fn parse_package_declaration(&mut self) -> crate::ast::parse::Result<PackageDeclarationNode> {
+    pub(crate) fn parse_package_declaration(&mut self) -> crate::parse::Result<PackageDeclarationNode> {
         self.parse_package_declaration_with_modifiers(Modifiers(vec![]))
     }
 
-    pub(crate) fn parse_package_declaration_with_modifiers(&mut self, modifiers: Modifiers) -> crate::ast::parse::Result<PackageDeclarationNode> {
+    pub(crate) fn parse_package_declaration_with_modifiers(&mut self, modifiers: Modifiers) -> crate::parse::Result<PackageDeclarationNode> {
         let fun_token = self.consume_keyword(KeywordToken::Package)?;
         let identifier = self.parse_identifier()?;
         let block = self.parse_block()?;
@@ -23,7 +23,7 @@ impl Parser {
 
 #[cfg(test)]
 mod tests {
-    use crate::ast::parse::parse;
+    use crate::parse::parse;
     use crate::lex::lex;
 
     #[test]

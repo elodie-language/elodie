@@ -1,23 +1,23 @@
 use OperatorToken::CloseCurly;
 use SeparatorToken::NewLine;
 
-use crate::ast::parse::node::{BreakNode, ContinueNode, LoopNode};
-use crate::ast::parse::Parser;
-use crate::ast::parse::precedence::Precedence;
+use crate::parse::node::{BreakNode, ContinueNode, LoopNode};
+use crate::parse::Parser;
+use crate::parse::precedence::Precedence;
 use crate::lex::token::{KeywordToken, OperatorToken, SeparatorToken};
 
 impl Parser {
-    pub(crate) fn parse_loop(&mut self) -> crate::ast::parse::Result<LoopNode> {
+    pub(crate) fn parse_loop(&mut self) -> crate::parse::Result<LoopNode> {
         let token = self.consume_keyword(KeywordToken::Loop)?;
         Ok(LoopNode { token, block: self.parse_block()? })
     }
 
-    pub(crate) fn parse_continue(&mut self) -> crate::ast::parse::Result<ContinueNode> {
+    pub(crate) fn parse_continue(&mut self) -> crate::parse::Result<ContinueNode> {
         let token = self.consume_keyword(KeywordToken::Continue)?;
         Ok(ContinueNode { token })
     }
 
-    pub(crate) fn parse_break(&mut self) -> crate::ast::parse::Result<BreakNode> {
+    pub(crate) fn parse_break(&mut self) -> crate::parse::Result<BreakNode> {
         let token = self.consume_keyword(KeywordToken::Break)?;
 
         let current = self.current()?;
@@ -34,9 +34,9 @@ mod tests {
     use std::ops::Deref;
 
     use crate::lex;
-    use crate::ast::parse::node::LiteralNode;
-    use crate::ast::parse::node::Node::{Continue, Literal};
-    use crate::ast::parse::parse;
+    use crate::parse::node::LiteralNode;
+    use crate::parse::node::Node::{Continue, Literal};
+    use crate::parse::parse;
     use crate::lex::lex;
 
     #[test]

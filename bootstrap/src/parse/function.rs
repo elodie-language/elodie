@@ -4,18 +4,18 @@ use SeparatorToken::Comma;
 use TokenKind::{Operator, Separator};
 
 use crate::ast::modifier::Modifiers;
-use crate::ast::parse::node::{FunctionDeclarationArgumentNode, FunctionDeclarationNode, ReturnNode};
-use crate::ast::parse::Parser;
-use crate::ast::parse::precedence::Precedence;
+use crate::parse::node::{FunctionDeclarationArgumentNode, FunctionDeclarationNode, ReturnNode};
+use crate::parse::Parser;
+use crate::parse::precedence::Precedence;
 use crate::lex::token::{KeywordToken, OperatorToken, SeparatorToken, TokenKind};
 use crate::lex::token::OperatorToken::{Arrow, CloseParen};
 
 impl Parser {
-    pub(crate) fn parse_function_declaration(&mut self) -> crate::ast::parse::Result<FunctionDeclarationNode> {
+    pub(crate) fn parse_function_declaration(&mut self) -> crate::parse::Result<FunctionDeclarationNode> {
         self.parse_function_declaration_with_modifiers(Modifiers(vec![]))
     }
 
-    pub(crate) fn parse_function_declaration_with_modifiers(&mut self, modifiers: Modifiers) -> crate::ast::parse::Result<FunctionDeclarationNode> {
+    pub(crate) fn parse_function_declaration_with_modifiers(&mut self, modifiers: Modifiers) -> crate::parse::Result<FunctionDeclarationNode> {
         let fun_token = self.consume_keyword(KeywordToken::Function)?;
         let identifier = self.parse_identifier()?;
         self.consume_operator(OpenParen)?;
@@ -49,7 +49,7 @@ impl Parser {
         })
     }
 
-    pub(crate) fn parse_function_declaration_argument(&mut self) -> crate::ast::parse::Result<FunctionDeclarationArgumentNode> {
+    pub(crate) fn parse_function_declaration_argument(&mut self) -> crate::parse::Result<FunctionDeclarationArgumentNode> {
         let identifier = self.parse_identifier()?;
         let r#type = if self.current()?.is_operator(OperatorToken::Colon) {
             self.advance()?;
@@ -61,7 +61,7 @@ impl Parser {
         Ok(FunctionDeclarationArgumentNode { identifier, r#type })
     }
 
-    pub(crate) fn parse_return(&mut self) -> crate::ast::parse::Result<ReturnNode> {
+    pub(crate) fn parse_return(&mut self) -> crate::parse::Result<ReturnNode> {
         let token = self.consume_keyword(Return)?;
         let result = if !self.is_eof() && !self.current()?.is_separator(SeparatorToken::NewLine) {
             Some(Box::new(self.parse_node(Precedence::None)?))
@@ -76,9 +76,9 @@ impl Parser {
 
 #[cfg(test)]
 mod tests {
-    use crate::ast::parse::node::{LiteralNode, TypeFundamentalNode, TypeNode};
-    use crate::ast::parse::node::Node::Literal;
-    use crate::ast::parse::parse;
+    use crate::parse::node::{LiteralNode, TypeFundamentalNode, TypeNode};
+    use crate::parse::node::Node::Literal;
+    use crate::parse::parse;
     use crate::lex::lex;
 
     #[test]

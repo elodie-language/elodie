@@ -1,12 +1,12 @@
 use KeywordToken::Export;
 
 use crate::ast::modifier::{Modifier, Modifiers};
-use crate::ast::parse::{Node, Parser};
+use crate::parse::{Node, Parser};
 use crate::lex::token::KeywordToken;
 use crate::lex::token::KeywordToken::{Function, Package, Type};
 
 impl Parser {
-    pub(crate) fn parse_export(&mut self) -> crate::ast::parse::Result<Node> {
+    pub(crate) fn parse_export(&mut self) -> crate::parse::Result<Node> {
         let token = self.consume_keyword(Export)?;
         let modifier = Modifier::Export(token.clone());
 

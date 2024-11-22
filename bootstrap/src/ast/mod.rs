@@ -1,13 +1,12 @@
+use crate::{lex, parse};
 pub use crate::ast::ast::*;
-use crate::ast::parse::parse;
-use crate::lex;
 use crate::lex::lex;
+use crate::parse::parse;
 
 mod ast;
 mod compile;
-mod parse;
 pub mod r#type;
-mod modifier;
+pub(crate) mod modifier;
 
 #[derive(Debug)]
 pub enum Error {

@@ -1,11 +1,11 @@
-use crate::ast::parse::Error::UnsupportedToken;
-use crate::ast::parse::node::{InfixNode, InfixOperator, Node};
-use crate::ast::parse::Parser;
 use crate::lex::token::OperatorToken;
 use crate::lex::token::TokenKind::Operator;
+use crate::parse::Error::UnsupportedToken;
+use crate::parse::node::{InfixNode, InfixOperator, Node};
+use crate::parse::Parser;
 
 impl Parser {
-    pub(crate) fn parse_infix(&mut self, left: Node) -> crate::ast::parse::Result<InfixNode> {
+    pub(crate) fn parse_infix(&mut self, left: Node) -> crate::parse::Result<InfixNode> {
         let operator = self.parse_infix_operator()?;
 
         let precedence = self.current_precedence()?;
@@ -25,7 +25,7 @@ impl Parser {
         })
     }
 
-    pub(crate) fn parse_infix_operator(&mut self) -> crate::ast::parse::Result<InfixOperator> {
+    pub(crate) fn parse_infix_operator(&mut self) -> crate::parse::Result<InfixOperator> {
         let token = self.advance()?;
         match &token.kind {
             Operator(operator) => match operator {
@@ -57,11 +57,11 @@ impl Parser {
 mod tests {
     use std::ops::Deref;
 
-    use crate::ast::lex;
-    use crate::ast::parse::{parse, Parser};
-    use crate::ast::parse::node::{InfixNode, InfixOperator, LiteralNode, TupleNode, TypeFundamentalNode, TypeNode};
-    use crate::ast::parse::node::Node::{Identifier, Infix, Literal, Type};
+    use crate::lex::lex;
     use crate::lex::token::{operator, OperatorToken::*, test_token, test_token_with_offset};
+    use crate::parse::{parse, Parser};
+    use crate::parse::node::{InfixNode, InfixOperator, LiteralNode, TupleNode, TypeFundamentalNode, TypeNode};
+    use crate::parse::node::Node::{Identifier, Infix, Literal, Type};
 
     #[test]
     fn identifier_with_type() {

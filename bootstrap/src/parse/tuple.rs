@@ -1,19 +1,19 @@
 use SeparatorToken::Comma;
 
-use crate::ast::parse::node::TupleNode;
-use crate::ast::parse::Parser;
-use crate::ast::parse::precedence::Precedence;
+use crate::parse::node::TupleNode;
+use crate::parse::Parser;
+use crate::parse::precedence::Precedence;
 use crate::lex::token::{OperatorToken, SeparatorToken, Token};
 use crate::lex::token::OperatorToken::CloseParen;
 use crate::lex::token::TokenKind::Separator;
 
 impl Parser {
-    pub(crate) fn parse_tuple(&mut self) -> crate::ast::parse::Result<TupleNode> {
+    pub(crate) fn parse_tuple(&mut self) -> crate::parse::Result<TupleNode> {
         let token = self.consume_operator(OperatorToken::OpenParen)?;
         self.parse_tuple_call(token)
     }
 
-    pub(crate) fn parse_tuple_call(&mut self, operator: Token) -> crate::ast::parse::Result<TupleNode> {
+    pub(crate) fn parse_tuple_call(&mut self, operator: Token) -> crate::parse::Result<TupleNode> {
         let mut nodes = Vec::new();
         loop {
             self.skip_new_line()?;
@@ -32,10 +32,10 @@ impl Parser {
 
 #[cfg(test)]
 mod tests {
-    use crate::ast::parse::{InfixOperator, LiteralNode, parse};
-    use crate::ast::parse::node::{InfixNode, TypeFundamentalNode, TypeNode};
-    use crate::ast::parse::node::LiteralNode::Number;
-    use crate::ast::parse::node::Node::{Identifier, Infix, Literal, Type};
+    use crate::parse::{InfixOperator, LiteralNode, parse};
+    use crate::parse::node::{InfixNode, TypeFundamentalNode, TypeNode};
+    use crate::parse::node::LiteralNode::Number;
+    use crate::parse::node::Node::{Identifier, Infix, Literal, Type};
     use crate::lex::lex;
 
     #[test]

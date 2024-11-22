@@ -2,7 +2,7 @@ use std::ops::Deref;
 
 use crate::ast::{ast, BlockNode, ExportPackageNode, Node, parse, Source, SourceLocalFileNode};
 use crate::ast::compile::Compiler;
-use crate::ast::parse::LiteralNode;
+use crate::parse::LiteralNode;
 use crate::ast::r#type::DefaultTypeIds;
 
 impl Compiler {

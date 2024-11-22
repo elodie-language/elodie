@@ -1,10 +1,10 @@
-use crate::ast::parse::{FromExportNode, FromNode, Parser};
-use crate::ast::parse::precedence::Precedence;
+use crate::parse::{FromExportNode, FromNode, Parser};
+use crate::parse::precedence::Precedence;
 use crate::lex::token::KeywordToken;
 use crate::lex::token::KeywordToken::Export;
 
 impl Parser {
-    pub(crate) fn parse_from(&mut self) -> crate::ast::parse::Result<FromNode> {
+    pub(crate) fn parse_from(&mut self) -> crate::parse::Result<FromNode> {
         let token = self.consume_keyword(KeywordToken::From)?;
         let where_node = Box::new(self.parse_node(Precedence::None)?);
 
@@ -27,7 +27,7 @@ impl Parser {
 
 #[cfg(test)]
 mod tests {
-    use crate::ast::parse::{FromNode, LiteralNode, parse};
+    use crate::parse::{FromNode, LiteralNode, parse};
     use crate::lex::lex;
 
     #[test]

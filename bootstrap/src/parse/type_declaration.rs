@@ -1,13 +1,13 @@
 use crate::ast::modifier::Modifiers;
-use crate::ast::parse::{Parser, TypeDeclarationNode};
+use crate::parse::{Parser, TypeDeclarationNode};
 use crate::lex::token::KeywordToken::Type;
 
 impl Parser {
-    pub(crate) fn parse_type_declaration(&mut self) -> crate::ast::parse::Result<TypeDeclarationNode> {
+    pub(crate) fn parse_type_declaration(&mut self) -> crate::parse::Result<TypeDeclarationNode> {
         self.parse_type_declaration_with_modifiers(Modifiers(vec![]))
     }
 
-    pub(crate) fn parse_type_declaration_with_modifiers(&mut self, modifiers: Modifiers) -> crate::ast::parse::Result<TypeDeclarationNode> {
+    pub(crate) fn parse_type_declaration_with_modifiers(&mut self, modifiers: Modifiers) -> crate::parse::Result<TypeDeclarationNode> {
         let token = self.consume_keyword(Type)?;
         let identifier = self.parse_type_identifier()?;
         let properties = self.parse_tuple()?;
@@ -22,7 +22,7 @@ impl Parser {
 
 #[cfg(test)]
 mod tests {
-    use crate::ast::parse::{Error, InfixOperator, parse, TypeFundamentalNode, TypeNode};
+    use crate::parse::{Error, InfixOperator, parse, TypeFundamentalNode, TypeNode};
     use crate::lex::lex;
 
     #[test]

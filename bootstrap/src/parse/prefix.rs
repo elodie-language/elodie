@@ -1,18 +1,18 @@
 use SeparatorToken::NewLine;
 
-use crate::ast::parse::{Error, Parser};
-use crate::ast::parse::Error::UnsupportedToken;
-use crate::ast::parse::node::{Node, PrefixNode, PrefixOperator};
-use crate::ast::parse::Node::{PackageDeclaration, TypeDeclaration};
-use crate::ast::parse::node::Node::{Break, Continue, FunctionDeclaration, If, Let, Loop, Return};
-use crate::ast::parse::precedence::Precedence;
+use crate::common::{is_pascal_snake_case, is_snake_case};
 use crate::lex::token::{KeywordToken, OperatorToken, SeparatorToken};
 use crate::lex::token::LiteralToken::{False, Number, String, True};
 use crate::lex::token::TokenKind::{Keyword, Operator};
-use crate::common::{is_pascal_snake_case, is_snake_case};
+use crate::parse::{Error, Parser};
+use crate::parse::Error::UnsupportedToken;
+use crate::parse::node::{Node, PrefixNode, PrefixOperator};
+use crate::parse::Node::{PackageDeclaration, TypeDeclaration};
+use crate::parse::node::Node::{Break, Continue, FunctionDeclaration, If, Let, Loop, Return};
+use crate::parse::precedence::Precedence;
 
 impl Parser {
-    pub(crate) fn parse_prefix(&mut self) -> crate::ast::parse::Result<Node> {
+    pub(crate) fn parse_prefix(&mut self) -> crate::parse::Result<Node> {
         loop {
             if self.is_eof() {
                 return Ok(Node::Nop);
@@ -76,7 +76,7 @@ impl Parser {
         }
     }
 
-    pub(crate) fn parse_prefix_operator(&mut self) -> crate::ast::parse::Result<PrefixOperator> {
+    pub(crate) fn parse_prefix_operator(&mut self) -> crate::parse::Result<PrefixOperator> {
         let token = self.advance()?;
         match &token.kind {
             Operator(operator) => match operator {
@@ -92,12 +92,12 @@ impl Parser {
 
 #[cfg(test)]
 mod tests {
-    use crate::ast::lex;
-    use crate::ast::parse::node::{PrefixNode, PrefixOperator};
-    use crate::ast::parse::Node;
-    use crate::ast::parse::Parser;
+    use crate::lex::lex;
     use crate::lex::token::{operator, test_token};
     use crate::lex::token::OperatorToken::{Bang, Minus, Plus};
+    use crate::parse::node::{PrefixNode, PrefixOperator};
+    use crate::parse::Node;
+    use crate::parse::Parser;
 
     macro_rules! parse_prefix {
     ($($name:ident, $input:expr => $expected:expr,)*) => {

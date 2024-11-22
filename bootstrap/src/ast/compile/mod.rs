@@ -2,7 +2,7 @@ use std::ops::Deref;
 
 use crate::ast::{ast, parse, SourceFile};
 use crate::ast::compile::symbol::SymbolTable;
-use crate::ast::parse::RootNode;
+use crate::parse::RootNode;
 
 mod r#let;
 mod typesystem;

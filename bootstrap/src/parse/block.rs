@@ -1,21 +1,21 @@
 use OperatorToken::{CloseCurly, OpenCurly};
 use TokenKind::Separator;
 
-use crate::ast::parse::node::BlockNode;
-use crate::ast::parse::Parser;
-use crate::ast::parse::precedence::Precedence;
+use crate::parse::node::BlockNode;
+use crate::parse::Parser;
+use crate::parse::precedence::Precedence;
 use crate::lex::token::{OperatorToken, TokenKind};
 use crate::lex::token::SeparatorToken::NewLine;
 
 impl Parser {
-    pub(crate) fn parse_block(&mut self) -> crate::ast::parse::Result<BlockNode> {
+    pub(crate) fn parse_block(&mut self) -> crate::parse::Result<BlockNode> {
         self.consume_operator(OpenCurly)?;
         let result = self.parse_block_inner()?;
         self.consume_operator(CloseCurly)?;
         Ok(result)
     }
 
-    pub(crate) fn parse_block_inner(&mut self) -> crate::ast::parse::Result<BlockNode> {
+    pub(crate) fn parse_block_inner(&mut self) -> crate::parse::Result<BlockNode> {
         let mut nodes = Vec::new();
         loop {
             self.consume_if(Separator(NewLine))?;
@@ -30,9 +30,9 @@ impl Parser {
 
 #[cfg(test)]
 mod tests {
-    use crate::ast::parse::node::{BlockNode, InfixNode, InfixOperator, LiteralBooleanNode, LiteralNode, TupleNode};
-    use crate::ast::parse::node::Node::{Block, Literal};
-    use crate::ast::parse::parse;
+    use crate::parse::node::{BlockNode, InfixNode, InfixOperator, LiteralBooleanNode, LiteralNode, TupleNode};
+    use crate::parse::node::Node::{Block, Literal};
+    use crate::parse::parse;
     use crate::lex::lex;
     use crate::lex::token::{LiteralToken, test_token_with_offset, TokenKind};
 

@@ -2,7 +2,7 @@ use std::ops::Deref;
 
 use crate::ast::{ast, DeclareVariableNode, Identifier, Node};
 use crate::ast::compile::Compiler;
-use crate::ast::parse::LetNode;
+use crate::parse::LetNode;
 use crate::ast::r#type::DefaultTypeIds;
 
 impl Compiler {
