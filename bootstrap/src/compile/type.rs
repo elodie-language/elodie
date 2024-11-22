@@ -18,14 +18,14 @@ impl<'a> Compiler<'a> {
             let r#type = right.deref().as_type();
             properties.push(
                 DeclarePropertyNode {
-                    identifier: Identifier(self.ctx.get_str(identifier.value()).to_string()),
+                    identifier: Identifier::from(identifier),
                     r#type: DefaultTypeIds::never(),
                 }
             )
         }
 
         Ok(DeclareType(DeclareTypeNode {
-            identifier: Identifier(self.ctx.get_str(node.identifier.value()).to_string()),
+            identifier: Identifier::from(&node.identifier),
             modifiers: node.modifiers.clone(),
             properties,
         }))

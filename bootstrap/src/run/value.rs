@@ -1,9 +1,9 @@
 use std::collections::HashMap;
 use std::fmt::{Debug, Formatter};
-use std::ops::Deref;
 use std::rc::Rc;
 
 use crate::ast::{BlockNode, FunctionArgumentNode, Identifier};
+use crate::common::StringCacheIdx;
 
 #[derive(Debug, Clone)]
 pub enum Value {
@@ -51,21 +51,20 @@ pub struct FunctionValue {
 
 #[derive(Debug, Clone)]
 pub struct PackageValue {
-    pub identifier: String,
-    pub functions: HashMap<String, FunctionValue>,
-    pub packages: HashMap<String, PackageValue>
+    pub identifier: StringCacheIdx,
+    pub functions: HashMap<StringCacheIdx, FunctionValue>,
+    pub packages: HashMap<StringCacheIdx, PackageValue>,
 }
 
 impl PackageValue {
-    pub fn get_function(&self, identifier: impl AsRef<Identifier>) -> Option<&FunctionValue> {
-        let identifier = identifier.as_ref();
-        self.functions.get(identifier.to_string().as_str())
+    pub fn get_function(&self, identifier: StringCacheIdx) -> Option<&FunctionValue> {
+        self.functions.get(&identifier)
     }
 }
 
 #[derive(Debug, Clone)]
 pub struct ObjectValue {
-    pub properties: HashMap<String, Value>,
+    pub properties: HashMap<StringCacheIdx, Value>,
 }
 
 impl ObjectValue {
@@ -75,17 +74,17 @@ impl ObjectValue {
         }
     }
 
-    pub fn set_property(&mut self, key: &str, value: Value) {
-        self.properties.insert(key.to_string(), value);
+    pub fn set_property(&mut self, key: StringCacheIdx, value: Value) {
+        self.properties.insert(key, value);
     }
 
-    pub fn get_property(&self, key: &str) -> Option<&Value> {
+    pub fn get_property(&self, key: &StringCacheIdx) -> Option<&Value> {
         self.properties.get(key)
     }
 
     pub fn get_property_host_function(&self, identifier: impl AsRef<Identifier>) -> Option<&HostFunctionValue> {
         let identifier = identifier.as_ref();
-        if let Some(Value::HostFunction(result)) = &self.properties.get(identifier.deref()) {
+        if let Some(Value::HostFunction(result)) = &self.properties.get(&identifier.0) {
             Some(result)
         } else {
             None

@@ -8,7 +8,7 @@ use crate::r#type::DefaultTypeIds;
 
 impl<'a> Compiler<'a> {
     pub(crate) fn compile_let(&mut self, node: &LetNode) -> crate::compile::Result<ast::Node> {
-        let identifier = Identifier(self.ctx.string_cache.get(node.identifier.0.value()).to_string());
+        let identifier = Identifier::from(&node.identifier);
 
         Ok(Node::DeclareVariable(DeclareVariableNode {
             identifier,

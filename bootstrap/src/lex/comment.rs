@@ -21,7 +21,7 @@ mod test {
     #[test]
     fn comment() {
         let text = "// some comment";
-        let mut ctx = Context::default();
+        let mut ctx = Context::new();
         let mut lexer = Lexer::new(&mut ctx, text);
         let result = lexer.advance().unwrap();
         assert_eq!(result.kind, TokenKind::EOF);

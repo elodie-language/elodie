@@ -2,7 +2,7 @@ use crate::ast::BlockNode;
 use crate::run::{Interrupt, Runner};
 use crate::run::value::Value;
 
-impl Runner {
+impl<'a> Runner<'a> {
     pub(crate) fn run_block(&mut self, node: &BlockNode) -> crate::run::Result<Value> {
         let mut value = Value::Unit;
         self.scope.enter();

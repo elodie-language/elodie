@@ -144,7 +144,7 @@ mod test {
     #[test]
     fn open_paren() {
         let text = "(";
-        let mut ctx = Context::default();
+        let mut ctx = Context::new();
         let mut lexer = Lexer::new(&mut ctx, text);
         let result = lexer.advance().unwrap();
         assert_eq!(result.kind, TokenKind::Operator(OpenParen));
@@ -156,7 +156,7 @@ mod test {
     #[test]
     fn close_paren() {
         let text = ")";
-        let mut ctx = Context::default();
+        let mut ctx = Context::new();
         let mut lexer = Lexer::new(&mut ctx, text);
         let result = lexer.advance().unwrap();
         assert_eq!(result.kind, TokenKind::Operator(CloseParen));
@@ -168,7 +168,7 @@ mod test {
     #[test]
     fn open_curly() {
         let text = "{";
-        let mut ctx = Context::default();
+        let mut ctx = Context::new();
         let mut lexer = Lexer::new(&mut ctx, text);
         let result = lexer.advance().unwrap();
         assert_eq!(result.kind, TokenKind::Operator(OpenCurly));
@@ -180,7 +180,7 @@ mod test {
     #[test]
     fn close_curly() {
         let text = "}";
-        let mut ctx = Context::default();
+        let mut ctx = Context::new();
         let mut lexer = Lexer::new(&mut ctx, text);
         let result = lexer.advance().unwrap();
         assert_eq!(result.kind, TokenKind::Operator(CloseCurly));
@@ -192,7 +192,7 @@ mod test {
     #[test]
     fn open_bracket() {
         let text = "[";
-        let mut ctx = Context::default();
+        let mut ctx = Context::new();
         let mut lexer = Lexer::new(&mut ctx, text);
         let result = lexer.advance().unwrap();
         assert_eq!(result.kind, TokenKind::Operator(OpenBracket));
@@ -204,7 +204,7 @@ mod test {
     #[test]
     fn close_bracket() {
         let text = "]";
-        let mut ctx = Context::default();
+        let mut ctx = Context::new();
         let mut lexer = Lexer::new(&mut ctx, text);
         let result = lexer.advance().unwrap();
         assert_eq!(result.kind, TokenKind::Operator(CloseBracket));
@@ -216,7 +216,7 @@ mod test {
     #[test]
     fn left_angle() {
         let text = "<";
-        let mut ctx = Context::default();
+        let mut ctx = Context::new();
         let mut lexer = Lexer::new(&mut ctx, text);
         let result = lexer.advance().unwrap();
         assert_eq!(result.kind, TokenKind::Operator(LeftAngle));
@@ -228,7 +228,7 @@ mod test {
     #[test]
     fn double_left_angle() {
         let text = "<<";
-        let mut ctx = Context::default();
+        let mut ctx = Context::new();
         let mut lexer = Lexer::new(&mut ctx, text);
         let result = lexer.advance().unwrap();
         assert_eq!(result.kind, TokenKind::Operator(DoubleLeftAngle));
@@ -240,7 +240,7 @@ mod test {
     #[test]
     fn left_angle_equals() {
         let text = "<=";
-        let mut ctx = Context::default();
+        let mut ctx = Context::new();
         let mut lexer = Lexer::new(&mut ctx, text);
         let result = lexer.advance().unwrap();
         assert_eq!(result.kind, TokenKind::Operator(LeftAngleEqual));
@@ -252,7 +252,7 @@ mod test {
     #[test]
     fn right_angle() {
         let text = ">";
-        let mut ctx = Context::default();
+        let mut ctx = Context::new();
         let mut lexer = Lexer::new(&mut ctx, text);
         let result = lexer.advance().unwrap();
         assert_eq!(result.kind, TokenKind::Operator(RightAngle));
@@ -264,7 +264,7 @@ mod test {
     #[test]
     fn double_right_angle() {
         let text = ">>";
-        let mut ctx = Context::default();
+        let mut ctx = Context::new();
         let mut lexer = Lexer::new(&mut ctx, text);
         let result = lexer.advance().unwrap();
         assert_eq!(result.kind, TokenKind::Operator(DoubleRightAngle));
@@ -276,7 +276,7 @@ mod test {
     #[test]
     fn right_angle_equals() {
         let text = ">=";
-        let mut ctx = Context::default();
+        let mut ctx = Context::new();
         let mut lexer = Lexer::new(&mut ctx, text);
         let result = lexer.advance().unwrap();
         assert_eq!(result.kind, TokenKind::Operator(RightAngleEqual));
@@ -288,7 +288,7 @@ mod test {
     #[test]
     fn dot() {
         let text = ".";
-        let mut ctx = Context::default();
+        let mut ctx = Context::new();
         let mut lexer = Lexer::new(&mut ctx, text);
         let result = lexer.advance().unwrap();
         assert_eq!(result.kind, TokenKind::Operator(Dot));
@@ -300,7 +300,7 @@ mod test {
     #[test]
     fn double_dot() {
         let text = "..";
-        let mut ctx = Context::default();
+        let mut ctx = Context::new();
         let mut lexer = Lexer::new(&mut ctx, text);
         let result = lexer.advance().unwrap();
         assert_eq!(result.kind, TokenKind::Operator(DoubleDot));
@@ -313,7 +313,7 @@ mod test {
     #[test]
     fn colon() {
         let text = ":";
-        let mut ctx = Context::default();
+        let mut ctx = Context::new();
         let mut lexer = Lexer::new(&mut ctx, text);
         let result = lexer.advance().unwrap();
         assert_eq!(result.kind, TokenKind::Operator(Colon));
@@ -325,7 +325,7 @@ mod test {
     #[test]
     fn double_colon() {
         let text = "::";
-        let mut ctx = Context::default();
+        let mut ctx = Context::new();
         let mut lexer = Lexer::new(&mut ctx, text);
         let result = lexer.advance().unwrap();
         assert_eq!(result.kind, TokenKind::Operator(DoubleColon));
@@ -337,7 +337,7 @@ mod test {
     #[test]
     fn minus() {
         let text = "-";
-        let mut ctx = Context::default();
+        let mut ctx = Context::new();
         let mut lexer = Lexer::new(&mut ctx, text);
         let result = lexer.advance().unwrap();
         assert_eq!(result.kind, TokenKind::Operator(Minus));
@@ -349,7 +349,7 @@ mod test {
     #[test]
     fn arrow() {
         let text = "->";
-        let mut ctx = Context::default();
+        let mut ctx = Context::new();
         let mut lexer = Lexer::new(&mut ctx, text);
         let result = lexer.advance().unwrap();
         assert_eq!(result.kind, TokenKind::Operator(Arrow));
@@ -361,7 +361,7 @@ mod test {
     #[test]
     fn plus() {
         let text = "+";
-        let mut ctx = Context::default();
+        let mut ctx = Context::new();
         let mut lexer = Lexer::new(&mut ctx, text);
         let result = lexer.advance().unwrap();
         assert_eq!(result.kind, TokenKind::Operator(Plus));
@@ -373,7 +373,7 @@ mod test {
     #[test]
     fn asterisk() {
         let text = "*";
-        let mut ctx = Context::default();
+        let mut ctx = Context::new();
         let mut lexer = Lexer::new(&mut ctx, text);
         let result = lexer.advance().unwrap();
         assert_eq!(result.kind, TokenKind::Operator(Asterisk));
@@ -385,7 +385,7 @@ mod test {
     #[test]
     fn slash() {
         let text = "/";
-        let mut ctx = Context::default();
+        let mut ctx = Context::new();
         let mut lexer = Lexer::new(&mut ctx, text);
         let result = lexer.advance().unwrap();
         assert_eq!(result.kind, TokenKind::Operator(Slash));
@@ -397,7 +397,7 @@ mod test {
     #[test]
     fn ampersand() {
         let text = "&";
-        let mut ctx = Context::default();
+        let mut ctx = Context::new();
         let mut lexer = Lexer::new(&mut ctx, text);
         let result = lexer.advance().unwrap();
         assert_eq!(result.kind, TokenKind::Operator(Ampersand));
@@ -409,7 +409,7 @@ mod test {
     #[test]
     fn double_ampersand() {
         let text = "&&";
-        let mut ctx = Context::default();
+        let mut ctx = Context::new();
         let mut lexer = Lexer::new(&mut ctx, text);
         let result = lexer.advance().unwrap();
         assert_eq!(result.kind, TokenKind::Operator(DoubleAmpersand));
@@ -421,7 +421,7 @@ mod test {
     #[test]
     fn pipe() {
         let text = "|";
-        let mut ctx = Context::default();
+        let mut ctx = Context::new();
         let mut lexer = Lexer::new(&mut ctx, text);
         let result = lexer.advance().unwrap();
         assert_eq!(result.kind, TokenKind::Operator(Pipe));
@@ -433,7 +433,7 @@ mod test {
     #[test]
     fn double_pipe() {
         let text = "||";
-        let mut ctx = Context::default();
+        let mut ctx = Context::new();
         let mut lexer = Lexer::new(&mut ctx, text);
         let result = lexer.advance().unwrap();
         assert_eq!(result.kind, TokenKind::Operator(DoublePipe));
@@ -445,7 +445,7 @@ mod test {
     #[test]
     fn caret() {
         let text = "^";
-        let mut ctx = Context::default();
+        let mut ctx = Context::new();
         let mut lexer = Lexer::new(&mut ctx, text);
         let result = lexer.advance().unwrap();
         assert_eq!(result.kind, TokenKind::Operator(Caret));
@@ -457,7 +457,7 @@ mod test {
     #[test]
     fn percent() {
         let text = "%";
-        let mut ctx = Context::default();
+        let mut ctx = Context::new();
         let mut lexer = Lexer::new(&mut ctx, text);
         let result = lexer.advance().unwrap();
         assert_eq!(result.kind, TokenKind::Operator(Percent));
@@ -469,7 +469,7 @@ mod test {
     #[test]
     fn equals() {
         let text = "=";
-        let mut ctx = Context::default();
+        let mut ctx = Context::new();
         let mut lexer = Lexer::new(&mut ctx, text);
         let result = lexer.advance().unwrap();
         assert_eq!(result.kind, TokenKind::Operator(Equal));
@@ -481,7 +481,7 @@ mod test {
     #[test]
     fn equals_equals() {
         let text = "==";
-        let mut ctx = Context::default();
+        let mut ctx = Context::new();
         let mut lexer = Lexer::new(&mut ctx, text);
         let result = lexer.advance().unwrap();
         assert_eq!(result.kind, TokenKind::Operator(DoubleEqual));
@@ -493,7 +493,7 @@ mod test {
     #[test]
     fn bang() {
         let text = "!";
-        let mut ctx = Context::default();
+        let mut ctx = Context::new();
         let mut lexer = Lexer::new(&mut ctx, text);
         let result = lexer.advance().unwrap();
         assert_eq!(result.kind, TokenKind::Operator(Bang));
@@ -505,7 +505,7 @@ mod test {
     #[test]
     fn bang_equals() {
         let text = "!=";
-        let mut ctx = Context::default();
+        let mut ctx = Context::new();
         let mut lexer = Lexer::new(&mut ctx, text);
         let result = lexer.advance().unwrap();
         assert_eq!(result.kind, TokenKind::Operator(BangEqual));

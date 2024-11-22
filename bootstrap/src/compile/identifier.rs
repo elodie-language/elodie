@@ -7,7 +7,7 @@ use crate::r#type::DefaultTypeIds;
 impl<'a> Compiler<'a> {
     pub(crate) fn compile_identifier(&mut self, node: &parse::IdentifierNode) -> crate::compile::Result<ast::Node> {
         return Ok(LoadValue(UseIdentifierNode {
-            identifier: Identifier(self.ctx.get_str(node.value()).to_string()),
+            identifier: Identifier::from(node),
             type_id: DefaultTypeIds::never(),
         }));
     }

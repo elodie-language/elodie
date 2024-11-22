@@ -1,14 +1,15 @@
 use std::collections::HashMap;
 
 use crate::ast::CallFunctionNode;
+use crate::common::StringCacheIdx;
 use crate::run::Runner;
 use crate::run::value::{FunctionValue, Value};
 
-impl Runner {
+impl<'a> Runner<'a> {
     pub(crate) fn run_node_call_function(&mut self, node: &CallFunctionNode) -> crate::run::Result<Value> {
         self.reset_interrupt();
 
-        let function = if let Some(Value::Function(func)) = self.scope.get_value(node.function.0.as_str()) {
+        let function = if let Some(Value::Function(func)) = self.scope.get_value(&node.function.0) {
             func.clone()
         } else {
             todo!()
@@ -33,7 +34,7 @@ impl Runner {
 
         self.scope.enter();
         for arg in &args {
-            self.scope.insert_value(arg.0, arg.1.clone())
+            self.scope.insert_value(arg.0.clone(), arg.1.clone())
         }
         let result = self.run_block(&function.body);
         self.scope.leave();
@@ -42,12 +43,12 @@ impl Runner {
         result
     }
 
-    pub(crate) fn run_node_call(&mut self, function_value: FunctionValue, arguments: HashMap<String, Value>) -> crate::run::Result<Value> {
+    pub(crate) fn run_node_call(&mut self, function_value: FunctionValue, arguments: HashMap<StringCacheIdx, Value>) -> crate::run::Result<Value> {
         self.reset_interrupt();
 
         self.scope.enter();
         for arg in &arguments {
-            self.scope.insert_value(arg.0, arg.1.clone())
+            self.scope.insert_value(arg.0.clone(), arg.1.clone())
         }
         let result = self.run_block(&function_value.body);
         self.scope.leave();

@@ -84,7 +84,7 @@ mod tests {
 
     #[test]
     fn return_without_result() {
-        let mut ctx = Context::default();
+        let mut ctx = Context::new();
         let tokens = lex(&mut ctx, "return").unwrap();
         let result = parse(&mut ctx, tokens).unwrap();
         assert_eq!(result.len(), 1);
@@ -95,7 +95,7 @@ mod tests {
 
     #[test]
     fn return_with_result() {
-        let mut ctx = Context::default();
+        let mut ctx = Context::new();
         let tokens = lex(&mut ctx, "return 9924").unwrap();
         let result = parse(&mut ctx, tokens).unwrap();
         assert_eq!(result.len(), 1);
@@ -107,7 +107,7 @@ mod tests {
 
     #[test]
     fn export_function_without_args_and_without_return() {
-        let mut ctx = Context::default();
+        let mut ctx = Context::new();
         let tokens = lex(&mut ctx, "export fun magic(){ }").unwrap();
         let result = parse(&mut ctx, tokens).unwrap();
         assert_eq!(result.len(), 1);
@@ -122,7 +122,7 @@ mod tests {
 
     #[test]
     fn function_without_args_and_without_return() {
-        let mut ctx = Context::default();
+        let mut ctx = Context::new();
         let tokens = lex(&mut ctx, "fun magic(){ }").unwrap();
         let result = parse(&mut ctx, tokens).unwrap();
         assert_eq!(result.len(), 1);
@@ -137,7 +137,7 @@ mod tests {
 
     #[test]
     fn function_without_args_and_with_return() {
-        let mut ctx = Context::default();
+        let mut ctx = Context::new();
         let tokens = lex(&mut ctx, "fun magic() -> Bool { }").unwrap();
         let result = parse(&mut ctx, tokens).unwrap();
         assert_eq!(result.len(), 1);
@@ -155,7 +155,7 @@ mod tests {
 
     #[test]
     fn function_with_single_arg() {
-        let mut ctx = Context::default();
+        let mut ctx = Context::new();
         let tokens = lex(&mut ctx, "fun magic(arg_1: String){ }").unwrap();
         let result = parse(&mut ctx, tokens).unwrap();
         assert_eq!(result.len(), 1);
@@ -175,7 +175,7 @@ mod tests {
 
     #[test]
     fn function_with_multiple_args() {
-        let mut ctx = Context::default();
+        let mut ctx = Context::new();
         let tokens = lex(&mut ctx, "fun magic(arg_1: String, arg_2: Number){ }").unwrap();
         let result = parse(&mut ctx, tokens).unwrap();
         assert_eq!(result.len(), 1);
@@ -201,7 +201,7 @@ mod tests {
 
     #[test]
     fn function_with_function_arg() {
-        let mut ctx = Context::default();
+        let mut ctx = Context::new();
         let tokens = lex(&mut ctx, "fun magic(test_case: fun() -> Bool){ }").unwrap();
         let result = parse(&mut ctx, tokens).unwrap();
         assert_eq!(result.len(), 1);

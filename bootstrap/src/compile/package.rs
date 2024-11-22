@@ -20,14 +20,14 @@ impl<'a> Compiler<'a> {
             if let ast::Node::Block(block) = node {
                 for node in &block.body {
                     if let ast::Node::ExportPackage(_) = node {
-                        packages.append(load_declared_packages("FIXME").as_mut());
+                        packages.append(self.load_declared_packages("FIXME").as_mut());
                     }
                 }
             }
         }
 
         Ok(ast::Node::DeclarePackage(DeclarePackageNode {
-            identifier: Identifier(self.ctx.get_str(node.identifier.value()).to_string()),
+            identifier: Identifier::from(&node.identifier),
             modifiers: node.modifiers.clone(),
             functions: compiled_body.into_iter()
                 .filter_map(|n| {
@@ -41,21 +41,22 @@ impl<'a> Compiler<'a> {
             packages,
         }))
     }
-}
 
-fn load_declared_packages(name: &str) -> Vec<DeclarePackageNode> {
-    let content = crate::load_library_file("std/io/index.elx").unwrap();
-    let (ctx, src_file) = compile_str(content.as_str()).unwrap();
 
-    let mut result = vec![];
+    fn load_declared_packages(&mut self, name: &str) -> Vec<DeclarePackageNode> {
+        let content = crate::load_library_file("std/io/index.elx").unwrap();
+        let src_file = compile_str(&mut self.ctx, content.as_str()).unwrap();
 
-    for node in src_file.body {
-        if let ast::Node::DeclarePackage(package_node) = node {
-            result.push(package_node);
+        let mut result = vec![];
+
+        for node in src_file.body {
+            if let ast::Node::DeclarePackage(package_node) = node {
+                result.push(package_node);
+            }
         }
-    }
 
-    result
+        result
+    }
 }
 
 fn load_library_file(filename: &str) -> io::Result<String> {

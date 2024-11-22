@@ -44,7 +44,7 @@ impl<'a> Compiler<'a> {
 
                 return Ok(ast::Node::CallFunctionOfPackage(CallFunctionOfPackageNode {
                     package: paths,
-                    function: ast::Identifier(function_identifier.identifier.0.to_string()),
+                    function: function_identifier.identifier.clone(),
                     arguments,
                 }));
             }
@@ -55,8 +55,8 @@ impl<'a> Compiler<'a> {
 
             if let Node::Identifier(property) = right.deref() {
                 return Ok(ast::Node::LoadValueFromObject(LoadValueFromObjectNode {
-                    object: ast::Identifier(self.ctx.get_str(object_identifier.value()).to_string()),
-                    property: ast::Identifier(self.ctx.get_str(property.value()).to_string()),
+                    object: ast::Identifier::from(object_identifier),
+                    property: ast::Identifier::from(property),
                 }));
             }
 
@@ -68,10 +68,10 @@ impl<'a> Compiler<'a> {
                 // load variable
 
                 return Ok(ast::Node::CallFunctionOfObject(CallFunctionOfObjectNode {
-                    object: ast::Identifier(self.ctx.get_str(object_identifier.value()).to_string()),
-                    function: ast::Identifier(self.ctx.get_str(function_identifier.value()).to_string()),
+                    object: ast::Identifier::from(object_identifier),
+                    function: ast::Identifier::from(function_identifier),
                     arguments: vec![ast::Node::LoadValue(ast::UseIdentifierNode {
-                        identifier: ast::Identifier(self.ctx.get_str(identifier_node.value()).to_string()),
+                        identifier: ast::Identifier::from(identifier_node),
                         type_id: DefaultTypeIds::string(),
                     })],
                 }));
@@ -79,8 +79,8 @@ impl<'a> Compiler<'a> {
 
             if let Node::Literal(LiteralNode::String(value)) = &tuple.nodes[0] {
                 return Ok(ast::Node::CallFunctionOfObject(CallFunctionOfObjectNode {
-                    object: ast::Identifier(self.ctx.get_str(object_identifier.value()).to_string()),
-                    function: ast::Identifier(self.ctx.get_str(function_identifier.value()).to_string()),
+                    object: ast::Identifier::from(object_identifier),
+                    function: ast::Identifier::from(function_identifier),
                     arguments: vec![ast::Node::ValueString(self.ctx.get_str(value.value()).to_string())],
                 }));
             }
@@ -102,8 +102,8 @@ impl<'a> Compiler<'a> {
                 });
 
                 return Ok(ast::Node::CallFunctionOfObject(CallFunctionOfObjectNode {
-                    object: ast::Identifier(self.ctx.get_str(object_identifier.value()).to_string()),
-                    function: ast::Identifier(self.ctx.get_str(function_identifier.value()).to_string()),
+                    object: ast::Identifier::from(object_identifier),
+                    function: ast::Identifier::from(function_identifier),
                     arguments: vec![function_call],
                 }));
             }
@@ -113,8 +113,8 @@ impl<'a> Compiler<'a> {
                 let arg = self.compile_infix(infix_node)?;
 
                 return Ok(ast::Node::CallFunctionOfObject(CallFunctionOfObjectNode {
-                    object: ast::Identifier(self.ctx.get_str(object_identifier.value()).to_string()),
-                    function: ast::Identifier(self.ctx.get_str(function_identifier.value()).to_string()),
+                    object: ast::Identifier::from(object_identifier),
+                    function: ast::Identifier::from(function_identifier),
                     arguments: vec![arg],
                 }));
             }
@@ -134,7 +134,7 @@ impl<'a> Compiler<'a> {
                     let parse::Node::Identifier(identifier) = left.deref() else { panic!() };
                     let right = self.compile_node(right)?;
                     arguments.push(NamedArgumentNode {
-                        identifier: Identifier(self.ctx.get_str(identifier.value()).to_string()),
+                        identifier: Identifier::from(identifier),
                         value: right,
                     })
                 }
@@ -228,7 +228,7 @@ impl<'a> Compiler<'a> {
             }
 
             let Node::Identifier(package_identifier) = current.left.deref() else { todo!() };
-            paths.push(Identifier(self.ctx.get_str(package_identifier.value()).to_string()));
+            paths.push(Identifier::from(package_identifier));
 
             let Node::Infix(right) = &current.right.deref() else { panic!() };
 

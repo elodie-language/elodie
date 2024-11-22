@@ -41,7 +41,7 @@ mod tests {
 
     #[test]
     fn empty_loop() {
-        let mut ctx = Context::default();
+        let mut ctx = Context::new();
         let tokens = lex(&mut ctx, "loop{}").unwrap();
         let result = parse(&mut ctx, tokens).unwrap();
         assert_eq!(result.len(), 1);
@@ -52,7 +52,7 @@ mod tests {
 
     #[test]
     fn loop_with_single_node() {
-        let mut ctx = Context::default();
+        let mut ctx = Context::new();
         let tokens = lex(&mut ctx, "loop{ 42 }").unwrap();
         let result = parse(&mut ctx, tokens).unwrap();
         assert_eq!(result.len(), 1);
@@ -66,7 +66,7 @@ mod tests {
 
     #[test]
     fn nested_loop() {
-        let mut ctx = Context::default();
+        let mut ctx = Context::new();
         let tokens = lex(&mut ctx, "loop{ loop { 42 } }").unwrap();
         let result = parse(&mut ctx, tokens).unwrap();
         assert_eq!(result.len(), 1);
@@ -83,7 +83,7 @@ mod tests {
 
     #[test]
     fn loop_continue() {
-        let mut ctx = Context::default();
+        let mut ctx = Context::new();
         let tokens = lex(&mut ctx, "loop{ continue }").unwrap();
         let result = parse(&mut ctx, tokens).unwrap();
         assert_eq!(result.len(), 1);
@@ -96,7 +96,7 @@ mod tests {
 
     #[test]
     fn loop_break() {
-        let mut ctx = Context::default();
+        let mut ctx = Context::new();
         let tokens = lex(&mut ctx, "loop{ break }").unwrap();
         let result = parse(&mut ctx, tokens).unwrap();
         assert_eq!(result.len(), 1);
@@ -110,7 +110,7 @@ mod tests {
 
     #[test]
     fn loop_break_with_result() {
-        let mut ctx = Context::default();
+        let mut ctx = Context::new();
         let tokens = lex(&mut ctx, "loop{ break 9924 }").unwrap();
         let result = parse(&mut ctx, tokens).unwrap();
         assert_eq!(result.len(), 1);

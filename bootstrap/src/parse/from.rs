@@ -33,7 +33,7 @@ mod tests {
 
     #[test]
     fn export_single_package_from_local_file() {
-        let mut ctx = Context::default();
+        let mut ctx = Context::new();
         let tokens = lex(&mut ctx, "from './io' export io").unwrap();
         let result = parse(&mut ctx, tokens).unwrap();
         assert_eq!(result.len(), 1);

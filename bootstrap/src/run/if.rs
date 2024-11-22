@@ -2,7 +2,7 @@ use crate::ast::IfNode;
 use crate::run::Runner;
 use crate::run::value::Value;
 
-impl Runner {
+impl<'a> Runner<'a> {
     pub(crate) fn run_if(&mut self, node: &IfNode) -> crate::run::Result<Value> {
         let condition = self.run_node(&node.condition)?;
         match condition {

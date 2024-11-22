@@ -1,7 +1,9 @@
-use std::ops::Deref;
 use std::rc::Rc;
 
 use crate::ast::modifier::Modifiers;
+use crate::common::StringCacheIdx;
+use crate::parse;
+use crate::parse::IdentifierNode;
 use crate::r#type::TypeId;
 
 #[derive(Debug)]
@@ -145,14 +147,18 @@ pub struct UseIdentifierNode {
 }
 
 
-#[derive(Debug)]
-pub struct Identifier(pub String);
+#[derive(Clone, Debug)]
+pub struct Identifier(pub StringCacheIdx);
 
-impl Deref for Identifier {
-    type Target = str;
+impl From<parse::IdentifierNode> for Identifier {
+    fn from(value: IdentifierNode) -> Self {
+        Identifier(value.0.span.value)
+    }
+}
 
-    fn deref(&self) -> &Self::Target {
-        self.0.as_str()
+impl From<&parse::IdentifierNode> for Identifier {
+    fn from(value: &IdentifierNode) -> Self {
+        Identifier(value.0.value())
     }
 }
 

@@ -24,7 +24,7 @@ impl<'a> Compiler<'a> {
 
         let identifier = if let parse::Node::Identifier(identifier) = &node.what_node.deref() {
             // at this point in time it should be clear what identifier refers to at the moment in can only be package
-            ast::Identifier(self.ctx.get_str(identifier.value()).to_string())
+            ast::Identifier::from(identifier)
         } else {
             todo!()
         };

@@ -25,7 +25,7 @@ mod test {
     #[test]
     fn some_var() {
         let text = "some_var";
-        let mut ctx = Context::default();
+        let mut ctx = Context::new();
         let mut lexer = Lexer::new(&mut ctx, text);
         let result = lexer.advance().unwrap();
         assert_eq!(result.kind, TokenKind::Identifier);
@@ -37,7 +37,7 @@ mod test {
     #[test]
     fn var() {
         let text = "var";
-        let mut ctx = Context::default();
+        let mut ctx = Context::new();
         let mut lexer = Lexer::new(&mut ctx, text);
         let result = lexer.advance().unwrap();
         assert_eq!(result.kind, TokenKind::Identifier);
@@ -49,7 +49,7 @@ mod test {
     #[test]
     fn console_log() {
         let text = "console.log('test')";
-        let mut ctx = Context::default();
+        let mut ctx = Context::new();
         let mut lexer = Lexer::new(&mut ctx, text);
 
         let token_one = lexer.advance().unwrap();

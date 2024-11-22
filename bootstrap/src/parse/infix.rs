@@ -67,7 +67,7 @@ mod tests {
 
     #[test]
     fn identifier_with_type() {
-        let mut ctx = Context::default();
+        let mut ctx = Context::new();
         let tokens = lex(&mut ctx, "u: Bool").unwrap();
         let result = parse(&mut ctx, tokens).unwrap();
         assert_eq!(result.len(), 1);
@@ -85,7 +85,7 @@ mod tests {
 //     macro_rules! parse_infix {
 //     ($($name:ident, $input:expr => $expected:expr,)*) => {
 //         $(
-//             static ctx: Context = Context::default();
+//             static ctx: Context = Context::new();
 //
 //             #[test]
 //             fn $name() {
@@ -154,7 +154,7 @@ mod tests {
 
     #[test]
     fn call_function_of_object() {
-        let mut ctx = Context::default();
+        let mut ctx = Context::new();
         let tokens = lex(&mut ctx, "console.log()").unwrap();
         let result = parse(&mut ctx, tokens).unwrap();
         assert_eq!(result.len(), 1);
@@ -178,7 +178,7 @@ mod tests {
 
     #[test]
     fn call_without_arguments() {
-        let mut ctx = Context::default();
+        let mut ctx = Context::new();
         let tokens = lex(&mut ctx, "test()").unwrap();
         let result = parse(&mut ctx, tokens).unwrap();
         assert_eq!(result.len(), 1);
@@ -195,7 +195,7 @@ mod tests {
 
     #[test]
     fn call_with_argument() {
-        let mut ctx = Context::default();
+        let mut ctx = Context::new();
         let tokens = lex(&mut ctx, "test('elodie')").unwrap();
         let result = parse(&mut ctx, tokens).unwrap();
         assert_eq!(result.len(), 1);
@@ -215,7 +215,7 @@ mod tests {
 
     #[test]
     fn call_package_function() {
-        let mut ctx = Context::default();
+        let mut ctx = Context::new();
         let tokens = lex(&mut ctx, "some_package::some_function()").unwrap();
         let result = parse(&mut ctx, tokens).unwrap();
         assert_eq!(result.len(), 1);
@@ -238,7 +238,7 @@ mod tests {
 
     #[test]
     fn instantiate_type_without_properties() {
-        let mut ctx = Context::default();
+        let mut ctx = Context::new();
         let tokens = lex(&mut ctx, "Point()").unwrap();
         let result = parse(&mut ctx, tokens).unwrap();
         assert_eq!(result.len(), 1);

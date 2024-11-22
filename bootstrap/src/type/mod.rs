@@ -1,6 +1,8 @@
-mod system;
-
 use std::collections::HashMap;
+
+use crate::common::StringCacheIdx;
+
+mod system;
 
 #[derive(Debug)]
 pub struct TypeId(pub usize);
@@ -12,7 +14,7 @@ pub struct TypeName(pub String);
 pub struct Type {
     pub id: TypeId,
     pub name: TypeName,
-    pub properties: HashMap<String, Property>,
+    pub properties: HashMap<StringCacheIdx, Property>,
 }
 
 pub struct Property {}

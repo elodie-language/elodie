@@ -40,12 +40,11 @@ impl From<parse::Error> for Error {
 
 pub(crate) type Result<T, E = Error> = core::result::Result<T, E>;
 
-pub fn compile_str(str: &str) -> Result<(Context, SourceFile)> {
-    let mut ctx = Context::default();
-    let tokens = lex(&mut ctx, str)?;
-    let root = parse(&mut ctx, tokens)?;
-    let result = compile::from(&mut ctx, root)?;
-    Ok((ctx, result))
+pub fn compile_str(ctx: &mut Context, str: &str) -> Result<SourceFile> {
+    let tokens = lex(ctx, str)?;
+    let root = parse(ctx, tokens)?;
+    let result = compile::from(ctx, root)?;
+    Ok(result)
 }
 
 

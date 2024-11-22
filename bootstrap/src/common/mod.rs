@@ -9,8 +9,8 @@ pub struct Context {
     pub string_cache: StringCache,
 }
 
-impl Default for Context {
-    fn default() -> Self {
+impl Context {
+    pub fn new() -> Self {
         Self { string_cache: StringCache::new() }
     }
 }

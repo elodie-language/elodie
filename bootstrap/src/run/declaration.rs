@@ -5,8 +5,7 @@ use crate::ast::{DeclareFunctionNode, DeclarePackageNode, DeclareVariableNode};
 use crate::run::Runner;
 use crate::run::value::{FunctionValue, PackageValue, Value};
 
-impl Runner {
-
+impl<'a> Runner<'a> {
     pub(crate) fn run_variable_declaration(&mut self, node: &DeclareVariableNode) -> crate::run::Result<Value> {
         let name = node.identifier.0.clone();
         let value = self.run_node(node.value.deref())?;
@@ -32,7 +31,6 @@ impl Runner {
     }
 
     pub(crate) fn run_package_declaration(&mut self, node: &DeclarePackageNode) -> crate::run::Result<Value> {
-        let identifier = node.identifier.0.to_string();
 
         let mut functions = HashMap::new();
         for node in &node.functions {
@@ -58,7 +56,7 @@ impl Runner {
 
         Ok(
             Value::Package(PackageValue {
-                identifier: node.identifier.0.to_string(),
+                identifier: node.identifier.0,
                 functions,
                 packages,
             }),

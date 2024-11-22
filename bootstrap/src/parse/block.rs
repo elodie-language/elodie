@@ -39,7 +39,7 @@ mod tests {
 
     #[test]
     fn empty_block() {
-        let mut ctx = Context::default();
+        let mut ctx = Context::new();
         let tokens = lex(&mut ctx, "{}").unwrap();
         let result = parse(&mut ctx, tokens).unwrap();
         assert_eq!(result.len(), 1);
@@ -51,7 +51,7 @@ mod tests {
 
     #[test]
     fn empty_lambda() {
-        let mut ctx = Context::default();
+        let mut ctx = Context::new();
         let tokens = lex(&mut ctx, "{ () -> }").unwrap();
         let result = parse(&mut ctx, tokens).unwrap();
         assert_eq!(result.len(), 1);
@@ -69,7 +69,7 @@ mod tests {
 
     #[test]
     fn lambda_with_single_argument() {
-        let mut ctx = Context::default();
+        let mut ctx = Context::new();
         let tokens = lex(&mut ctx, "{ (arg_1) -> true }").unwrap();
         let result = parse(&mut ctx, tokens).unwrap();
         assert_eq!(result.len(), 1);
@@ -94,7 +94,7 @@ mod tests {
 
     #[test]
     fn block_with_white_spaces() {
-        let mut ctx = Context::default();
+        let mut ctx = Context::new();
         let tokens = lex(&mut ctx, "{    \t     }").unwrap();
         let result = parse(&mut ctx, tokens).unwrap();
         assert_eq!(result.len(), 1);
@@ -105,7 +105,7 @@ mod tests {
 
     #[test]
     fn block_with_new_lines() {
-        let mut ctx = Context::default();
+        let mut ctx = Context::new();
         let tokens = lex(&mut ctx, r#"{
 
 
@@ -119,7 +119,7 @@ mod tests {
 
     #[test]
     fn block_nested() {
-        let mut ctx = Context::default();
+        let mut ctx = Context::new();
         let tokens = lex(&mut ctx, r#"{
         {      }
         }"#).unwrap();
@@ -132,7 +132,7 @@ mod tests {
 
     #[test]
     fn block_multilayer_nested() {
-        let mut ctx = Context::default();
+        let mut ctx = Context::new();
         let tokens = lex(&mut ctx, r#"{{   {  true }   }}"#).unwrap();
         let result = parse(&mut ctx, tokens).unwrap();
         assert_eq!(result.len(), 1);

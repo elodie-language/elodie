@@ -2,7 +2,7 @@ use crate::ast::{BreakLoopNode, ContinueLoopNode, LoopNode};
 use crate::run::{Interrupt, Runner};
 use crate::run::value::Value;
 
-impl Runner {
+impl<'a> Runner<'a> {
 
     pub(crate) fn run_continue(&mut self, _node: &ContinueLoopNode) -> crate::run::Result<Value> {
         self.interrupt(Interrupt::Continue);

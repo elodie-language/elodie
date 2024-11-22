@@ -1,12 +1,13 @@
 use std::collections::HashMap;
+use std::rc::Rc;
 
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
-pub struct StringCacheIdx(usize);
+pub struct StringCacheIdx(pub usize);
 
 #[derive(Debug, Clone)]
 pub struct StringCache {
-    indexes: HashMap<Box<str>, StringCacheIdx>,
-    values: Vec<Box<str>>,
+    indexes: HashMap<Rc<str>, StringCacheIdx>,
+    values: Vec<Rc<str>>,
 }
 
 impl StringCache {

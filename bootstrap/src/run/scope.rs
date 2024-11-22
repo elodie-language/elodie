@@ -1,49 +1,26 @@
 use std::collections::HashMap;
-use std::rc::Rc;
 
+use crate::common::StringCacheIdx;
 use crate::r#type::Type;
-use crate::run::value::{HostFunctionValue, ObjectValue, Value};
-use crate::run::value::Value::HostFunction;
+use crate::run::value::Value;
 
 pub struct Scope {
-    pub values: Vec<HashMap<String, Value>>,
-    pub types: Vec<HashMap<String, Type>>,
+    pub values: Vec<HashMap<StringCacheIdx, Value>>,
+    pub types: Vec<HashMap<StringCacheIdx, Type>>,
 }
 
 impl Scope {
-    pub fn new() -> Self {
-        let mut result = Self {
-            values: vec![],
-            types: vec![],
-        };
-
-        let mut root = HashMap::new();
-
-        let mut logger = ObjectValue::new();
-        logger.set_property(
-            "print",
-            HostFunction(HostFunctionValue(Rc::new(|args: &[Value]| {
-                for arg in args {
-                    if arg.to_string() == "\\n" {
-                        println!();
-                    } else {
-                        print!("{} ", arg.to_string());
-                    }
-                }
-                Ok(Value::Unit)
-            }))),
-        );
-
-        root.insert("intrinsics".to_string(), Value::Object(logger));
-
-        result.values.push(root);
-
-        result.types.push(HashMap::new());
-
-        result
+    pub fn new(
+        root_values: HashMap<StringCacheIdx, Value>,
+        root_types: HashMap<StringCacheIdx, Type>,
+    ) -> Self {
+        Self {
+            values: vec![root_values],
+            types: vec![root_types],
+        }
     }
 
-    pub fn get_value(&self, key: &str) -> Option<&Value> {
+    pub fn get_value(&self, key: &StringCacheIdx) -> Option<&Value> {
         for scope in self.values.iter().rev() {
             if let Some(value) = scope.get(key) {
                 return Some(value);
@@ -52,7 +29,7 @@ impl Scope {
         None
     }
 
-    pub fn get_type(&self, key: &str) -> Option<&Type> {
+    pub fn get_type(&self, key: &StringCacheIdx) -> Option<&Type> {
         for scope in self.types.iter().rev() {
             if let Some(value) = scope.get(key) {
                 return Some(value);
@@ -61,12 +38,12 @@ impl Scope {
         None
     }
 
-    pub fn insert_value(&mut self, name: impl Into<String>, value: Value) {
-        self.values.last_mut().unwrap().insert(name.into(), value);
+    pub fn insert_value(&mut self, name: StringCacheIdx, value: Value) {
+        self.values.last_mut().unwrap().insert(name, value);
     }
 
-    pub fn insert_type(&mut self, name: impl Into<String>, r#type: Type) {
-        self.types.last_mut().unwrap().insert(name.into(), r#type);
+    pub fn insert_type(&mut self, name: StringCacheIdx, r#type: Type) {
+        self.types.last_mut().unwrap().insert(name, r#type);
     }
 
     pub fn enter(&mut self) {

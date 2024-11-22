@@ -41,7 +41,7 @@ mod tests {
 
     #[test]
     fn empty_tuple() {
-        let mut ctx = Context::default();
+        let mut ctx = Context::new();
         let tokens = lex(&mut ctx, "()").unwrap();
         let result = parse(&mut ctx, tokens).unwrap();
         assert_eq!(result.len(), 1);
@@ -52,7 +52,7 @@ mod tests {
 
     #[test]
     fn tuple_with_number() {
-        let mut ctx = Context::default();
+        let mut ctx = Context::new();
         let tokens = lex(&mut ctx, "(9924)").unwrap();
         let result = parse(&mut ctx, tokens).unwrap();
         assert_eq!(result.len(), 1);
@@ -65,7 +65,7 @@ mod tests {
 
     #[test]
     fn nested_tuple() {
-        let mut ctx = Context::default();
+        let mut ctx = Context::new();
         let tokens = lex(&mut ctx, "(1 * ( 2 + 3 ))").unwrap();
         let result = parse(&mut ctx, tokens).unwrap();
         assert_eq!(result.len(), 1);
@@ -90,7 +90,7 @@ mod tests {
 
     #[test]
     fn tuple_with_identifier() {
-        let mut ctx = Context::default();
+        let mut ctx = Context::new();
         let tokens = lex(&mut ctx, "(u)").unwrap();
         let result = parse(&mut ctx, tokens).unwrap();
         assert_eq!(result.len(), 1);
@@ -103,7 +103,7 @@ mod tests {
 
     #[test]
     fn tuple_with_identifier_and_type() {
-        let mut ctx = Context::default();
+        let mut ctx = Context::new();
         let tokens = lex(&mut ctx, "(u: Bool)").unwrap();
         let result = parse(&mut ctx, tokens).unwrap();
         assert_eq!(result.len(), 1);
@@ -120,7 +120,7 @@ mod tests {
 
     #[test]
     fn tuple_with_multiple_identifiers() {
-        let mut ctx = Context::default();
+        let mut ctx = Context::new();
         let tokens = lex(&mut ctx, "(u,v)").unwrap();
         let result = parse(&mut ctx, tokens).unwrap();
         assert_eq!(result.len(), 1);
@@ -136,7 +136,7 @@ mod tests {
 
     #[test]
     fn tuple_with_identifiers_and_types() {
-        let mut ctx = Context::default();
+        let mut ctx = Context::new();
         let tokens = lex(&mut ctx, "(u: Bool, v: String)").unwrap();
         let result = parse(&mut ctx, tokens).unwrap();
         assert_eq!(result.len(), 1);
@@ -158,7 +158,7 @@ mod tests {
 
     #[test]
     fn tuple_with_identifiers_and_declaration() {
-        let mut ctx = Context::default();
+        let mut ctx = Context::new();
         let tokens = lex(&mut ctx, "(u = 1, v = 2)").unwrap();
         let result = parse(&mut ctx, tokens).unwrap();
         assert_eq!(result.len(), 1);
@@ -184,7 +184,7 @@ mod tests {
 
     #[test]
     fn multiline_tuple() {
-        let mut ctx = Context::default();
+        let mut ctx = Context::new();
         let tokens = lex(&mut ctx, r#"(
         u: Bool,
         v: String
