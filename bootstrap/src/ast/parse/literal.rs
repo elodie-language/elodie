@@ -2,7 +2,7 @@ use std::str::FromStr;
 
 use crate::ast::parse::node::{LiteralBooleanNode, LiteralNode, LiteralNumberNode, LiteralStringNode};
 use crate::ast::parse::Parser;
-use crate::ast::token::LiteralToken;
+use crate::ast::lex::token::LiteralToken;
 
 impl Parser {
     pub(crate) fn parse_literal_string(&mut self) -> crate::ast::parse::Result<LiteralNode> {

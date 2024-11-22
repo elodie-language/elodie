@@ -1,7 +1,7 @@
 use crate::ast::parse::{FromExportNode, FromNode, Parser};
 use crate::ast::parse::precedence::Precedence;
-use crate::ast::token::KeywordToken;
-use crate::ast::token::KeywordToken::Export;
+use crate::ast::lex::token::KeywordToken;
+use crate::ast::lex::token::KeywordToken::Export;
 
 impl Parser {
     pub(crate) fn parse_from(&mut self) -> crate::ast::parse::Result<FromNode> {

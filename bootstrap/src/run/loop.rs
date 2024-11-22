@@ -1,17 +1,17 @@
-use crate::ast::{BreakExpression, ContinueExpression, LoopExpression};
-use crate::interpreter::{Interpreter, Interrupt};
-use crate::interpreter::value::Value;
-use crate::interpreter::value::Value::Unit;
+use crate::ast::{BreakLoopNode, ContinueLoopNode, LoopNode};
+use crate::run::{Interrupt, Runner};
+use crate::run::value::Value;
 
-impl Interpreter {
-    pub(crate) fn interpret_continue_expression(&mut self, _expr: &ContinueExpression) -> crate::interpreter::Result<Value> {
+impl Runner {
+
+    pub(crate) fn run_continue(&mut self, _node: &ContinueLoopNode) -> crate::run::Result<Value> {
         self.interrupt(Interrupt::Continue);
-        Ok(Unit)
+        Ok(Value::Unit)
     }
 
-    pub(crate) fn interpret_break_expression(&mut self, expr: &BreakExpression) -> crate::interpreter::Result<Value> {
-        let value = if let Some(result) = expr.result.as_ref() {
-            self.interpret_expression(result)?
+    pub(crate) fn run_break(&mut self, node: &BreakLoopNode) -> crate::run::Result<Value> {
+        let value = if let Some(result) = node.body.as_ref() {
+            self.run_node(result)?
         } else {
             Value::Unit
         };
@@ -19,7 +19,7 @@ impl Interpreter {
         Ok(value)
     }
 
-    pub(crate) fn interpret_loop_expression(&mut self, expr: &LoopExpression) -> crate::interpreter::Result<Value> {
+    pub(crate) fn run_loop(&mut self, node: &LoopNode) -> crate::run::Result<Value> {
         'main: loop {
             self.scope.enter();
 
@@ -27,8 +27,8 @@ impl Interpreter {
                 return Ok(return_value.clone());
             }
 
-            for expr in &expr.body.body {
-                self.interpret_expression(expr)?;
+            for node in &node.body {
+                self.run_node(node)?;
 
                 if let Some(interrupt) = &self.interrupt {
                     let interrupt = interrupt.clone();

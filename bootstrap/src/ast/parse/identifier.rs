@@ -1,7 +1,7 @@
 use crate::ast::parse::Error::InvalidIdentifier;
 use crate::ast::parse::node::IdentifierNode;
 use crate::ast::parse::Parser;
-use crate::ast::token::TokenKind;
+use crate::ast::lex::token::TokenKind;
 use crate::common::{is_pascal_snake_case, is_snake_case};
 
 impl Parser {

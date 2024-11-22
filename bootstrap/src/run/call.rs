@@ -1,11 +1,11 @@
 use std::collections::HashMap;
 
 use crate::ast::CallFunctionNode;
-use crate::runner::Runner;
-use crate::runner::value::{FunctionValue, Value};
+use crate::run::Runner;
+use crate::run::value::{FunctionValue, Value};
 
 impl Runner {
-    pub(crate) fn run_node_call_function(&mut self, node: &CallFunctionNode) -> crate::runner::Result<Value> {
+    pub(crate) fn run_node_call_function(&mut self, node: &CallFunctionNode) -> crate::run::Result<Value> {
         self.reset_interrupt();
 
         let function = if let Some(Value::Function(func)) = self.scope.get_value(node.function.0.as_str()) {
@@ -42,7 +42,7 @@ impl Runner {
         result
     }
 
-    pub(crate) fn run_node_call(&mut self, function_value: FunctionValue, arguments: HashMap<String, Value>) -> crate::runner::Result<Value> {
+    pub(crate) fn run_node_call(&mut self, function_value: FunctionValue, arguments: HashMap<String, Value>) -> crate::run::Result<Value> {
         self.reset_interrupt();
 
         self.scope.enter();

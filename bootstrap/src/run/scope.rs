@@ -2,8 +2,8 @@ use std::collections::HashMap;
 use std::rc::Rc;
 
 use crate::ast::r#type::Type;
-use crate::runner::value::{HostFunctionValue, ObjectValue, Value};
-use crate::runner::value::Value::HostFunction;
+use crate::run::value::{HostFunctionValue, ObjectValue, Value};
+use crate::run::value::Value::HostFunction;
 
 pub struct Scope {
     pub values: Vec<HashMap<String, Value>>,

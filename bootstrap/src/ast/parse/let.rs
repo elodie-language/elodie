@@ -3,7 +3,7 @@ use KeywordToken::Let;
 use crate::ast::parse::node::LetNode;
 use crate::ast::parse::Parser;
 use crate::ast::parse::precedence::Precedence;
-use crate::ast::token::{KeywordToken, OperatorToken};
+use crate::ast::lex::token::{KeywordToken, OperatorToken};
 
 impl Parser {
     pub(crate) fn parse_let(&mut self) -> crate::ast::parse::Result<LetNode> {

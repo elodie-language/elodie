@@ -3,9 +3,9 @@ use SeparatorToken::Comma;
 use crate::ast::parse::node::TupleNode;
 use crate::ast::parse::Parser;
 use crate::ast::parse::precedence::Precedence;
-use crate::ast::token::{OperatorToken, SeparatorToken, Token};
-use crate::ast::token::OperatorToken::CloseParen;
-use crate::ast::token::TokenKind::Separator;
+use crate::ast::lex::token::{OperatorToken, SeparatorToken, Token};
+use crate::ast::lex::token::OperatorToken::CloseParen;
+use crate::ast::lex::token::TokenKind::Separator;
 
 impl Parser {
     pub(crate) fn parse_tuple(&mut self) -> crate::ast::parse::Result<TupleNode> {

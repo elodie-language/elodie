@@ -1,6 +1,6 @@
 use crate::ast::lex::Lexer;
-use crate::ast::token::{TextSpan, Token, TokenKind};
-use crate::ast::token::SeparatorToken::{Comma, NewLine, Semicolon};
+use crate::ast::lex::token::{TextSpan, Token, TokenKind};
+use crate::ast::lex::token::SeparatorToken::{Comma, NewLine, Semicolon};
 
 impl Lexer<'_> {
     pub(crate) fn is_whitespace(&self, c: char) -> bool {
@@ -53,8 +53,8 @@ impl Lexer<'_> {
 #[cfg(test)]
 mod test {
     use crate::ast::lex::Lexer;
-    use crate::ast::token::SeparatorToken::{Comma, NewLine, Semicolon};
-    use crate::ast::token::TokenKind;
+    use crate::ast::lex::token::SeparatorToken::{Comma, NewLine, Semicolon};
+    use crate::ast::lex::token::TokenKind;
 
     #[test]
     fn tab() {

@@ -1,6 +1,6 @@
 use crate::ast::lex::Lexer;
-use crate::ast::token::{TextSpan, Token, TokenKind};
-use crate::ast::token::OperatorToken::*;
+use crate::ast::lex::token::{TextSpan, Token, TokenKind};
+use crate::ast::lex::token::OperatorToken::*;
 
 impl Lexer<'_> {
     pub(crate) fn is_operator(&self, c: char) -> bool {
@@ -137,8 +137,8 @@ impl Lexer<'_> {
 #[cfg(test)]
 mod test {
     use crate::ast::lex::Lexer;
-    use crate::ast::token::OperatorToken::*;
-    use crate::ast::token::TokenKind;
+    use crate::ast::lex::token::OperatorToken::*;
+    use crate::ast::lex::token::TokenKind;
 
     #[test]
     fn open_paren() {

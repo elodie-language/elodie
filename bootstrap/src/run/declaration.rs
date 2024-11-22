@@ -2,19 +2,19 @@ use std::collections::HashMap;
 use std::ops::Deref;
 
 use crate::ast::{DeclareFunctionNode, DeclarePackageNode, DeclareVariableNode};
-use crate::runner::Runner;
-use crate::runner::value::{FunctionValue, PackageValue, Value};
+use crate::run::Runner;
+use crate::run::value::{FunctionValue, PackageValue, Value};
 
 impl Runner {
 
-    pub(crate) fn run_variable_declaration(&mut self, node: &DeclareVariableNode) -> crate::runner::Result<Value> {
+    pub(crate) fn run_variable_declaration(&mut self, node: &DeclareVariableNode) -> crate::run::Result<Value> {
         let name = node.identifier.0.clone();
         let value = self.run_node(node.value.deref())?;
         self.scope.insert_value(name, value);
         Ok(Value::Unit)
     }
 
-    pub(crate) fn run_function_declaration(&mut self, node: &DeclareFunctionNode) -> crate::runner::Result<Value> {
+    pub(crate) fn run_function_declaration(&mut self, node: &DeclareFunctionNode) -> crate::run::Result<Value> {
         let name = node.identifier.0.clone();
 
         let mut arguments = Vec::with_capacity(node.arguments.len());
@@ -31,7 +31,7 @@ impl Runner {
         Ok(Value::Unit)
     }
 
-    pub(crate) fn run_package_declaration(&mut self, node: &DeclarePackageNode) -> crate::runner::Result<Value> {
+    pub(crate) fn run_package_declaration(&mut self, node: &DeclarePackageNode) -> crate::run::Result<Value> {
         let identifier = node.identifier.0.to_string();
 
         let mut functions = HashMap::new();

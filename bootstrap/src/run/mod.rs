@@ -3,8 +3,8 @@ use std::ops::Deref;
 
 use crate::ast::{CalculationOperator, CallFunctionOfObjectNode, CallFunctionOfPackageNode, CompareOperator, Node, SourceFile};
 use crate::ast::r#type::{Property, Type, TypeId, TypeName};
-use crate::runner::scope::Scope;
-use crate::runner::value::{ObjectValue, Value};
+use crate::run::scope::Scope;
+use crate::run::value::{ObjectValue, Value};
 
 mod scope;
 mod value;

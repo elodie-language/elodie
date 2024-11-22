@@ -7,8 +7,8 @@ use crate::ast::modifier::Modifiers;
 use crate::ast::parse::node::{FunctionDeclarationArgumentNode, FunctionDeclarationNode, ReturnNode};
 use crate::ast::parse::Parser;
 use crate::ast::parse::precedence::Precedence;
-use crate::ast::token::{KeywordToken, OperatorToken, SeparatorToken, TokenKind};
-use crate::ast::token::OperatorToken::{Arrow, CloseParen};
+use crate::ast::lex::token::{KeywordToken, OperatorToken, SeparatorToken, TokenKind};
+use crate::ast::lex::token::OperatorToken::{Arrow, CloseParen};
 
 impl Parser {
     pub(crate) fn parse_function_declaration(&mut self) -> crate::ast::parse::Result<FunctionDeclarationNode> {

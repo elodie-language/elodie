@@ -1,8 +1,8 @@
 use crate::ast::parse::Error::UnsupportedToken;
 use crate::ast::parse::node::{InfixNode, InfixOperator, Node};
 use crate::ast::parse::Parser;
-use crate::ast::token::OperatorToken;
-use crate::ast::token::TokenKind::Operator;
+use crate::ast::lex::token::OperatorToken;
+use crate::ast::lex::token::TokenKind::Operator;
 
 impl Parser {
     pub(crate) fn parse_infix(&mut self, left: Node) -> crate::ast::parse::Result<InfixNode> {
@@ -61,7 +61,7 @@ mod tests {
     use crate::ast::parse::{parse, Parser};
     use crate::ast::parse::node::{InfixNode, InfixOperator, LiteralNode, TupleNode, TypeFundamentalNode, TypeNode};
     use crate::ast::parse::node::Node::{Identifier, Infix, Literal, Type};
-    use crate::ast::token::{operator, OperatorToken::*, test_token, test_token_with_offset};
+    use crate::ast::lex::token::{operator, OperatorToken::*, test_token, test_token_with_offset};
 
     #[test]
     fn identifier_with_type() {

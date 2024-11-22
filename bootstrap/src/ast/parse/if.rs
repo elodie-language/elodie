@@ -3,7 +3,7 @@ use KeywordToken::{Else, If};
 use crate::ast::parse::node::{ElseNode, IfNode};
 use crate::ast::parse::Parser;
 use crate::ast::parse::precedence::Precedence;
-use crate::ast::token::KeywordToken;
+use crate::ast::lex::token::KeywordToken;
 
 impl Parser {
     pub(crate) fn parse_if(&mut self) -> crate::ast::parse::Result<IfNode> {

@@ -3,12 +3,12 @@ use std::fs::File;
 use std::io::Read;
 use std::path::PathBuf;
 
-use crate::runner::Runner;
+use crate::run::Runner;
 
 mod common;
 mod cli;
 mod ast;
-mod runner;
+mod run;
 
 fn main() {
     let args: Vec<String> = env::args().collect();

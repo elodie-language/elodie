@@ -1,6 +1,6 @@
 use crate::ast::modifier::Modifiers;
 use crate::ast::parse::{Parser, TypeDeclarationNode};
-use crate::ast::token::KeywordToken::Type;
+use crate::ast::lex::token::KeywordToken::Type;
 
 impl Parser {
     pub(crate) fn parse_type_declaration(&mut self) -> crate::ast::parse::Result<TypeDeclarationNode> {

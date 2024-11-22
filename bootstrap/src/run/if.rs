@@ -1,9 +1,9 @@
 use crate::ast::IfNode;
-use crate::runner::Runner;
-use crate::runner::value::Value;
+use crate::run::Runner;
+use crate::run::value::Value;
 
 impl Runner {
-    pub(crate) fn run_if(&mut self, node: &IfNode) -> crate::runner::Result<Value> {
+    pub(crate) fn run_if(&mut self, node: &IfNode) -> crate::run::Result<Value> {
         let condition = self.run_node(&node.condition)?;
         match condition {
             Value::Bool(v) => {

@@ -1,9 +1,9 @@
 use crate::ast::parse::{Parser, TypeCustomNode, TypeFundamentalNode};
 use crate::ast::parse::Error::InvalidType;
 use crate::ast::parse::node::{TypeFunctionArgumentNode, TypeFunctionNode, TypeNode};
-use crate::ast::token::OperatorToken::{Arrow, CloseParen, Colon, OpenParen};
-use crate::ast::token::SeparatorToken::Comma;
-use crate::ast::token::TokenKind::{Operator, Separator};
+use crate::ast::lex::token::OperatorToken::{Arrow, CloseParen, Colon, OpenParen};
+use crate::ast::lex::token::SeparatorToken::Comma;
+use crate::ast::lex::token::TokenKind::{Operator, Separator};
 use crate::common::is_pascal_snake_case;
 
 impl Parser {

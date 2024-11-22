@@ -4,7 +4,7 @@ use SeparatorToken::NewLine;
 use crate::ast::parse::node::{BreakNode, ContinueNode, LoopNode};
 use crate::ast::parse::Parser;
 use crate::ast::parse::precedence::Precedence;
-use crate::ast::token::{KeywordToken, OperatorToken, SeparatorToken};
+use crate::ast::lex::token::{KeywordToken, OperatorToken, SeparatorToken};
 
 impl Parser {
     pub(crate) fn parse_loop(&mut self) -> crate::ast::parse::Result<LoopNode> {

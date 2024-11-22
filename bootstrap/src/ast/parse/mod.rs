@@ -4,9 +4,9 @@ use std::collections::HashMap;
 use crate::ast::parse::Error::UnexpectedEndOfFile;
 pub use crate::ast::parse::node::*;
 use crate::ast::parse::precedence::Precedence;
-use crate::ast::token::{KeywordToken, LiteralToken, OperatorToken, SeparatorToken, Token, TokenKind};
-use crate::ast::token::SeparatorToken::NewLine;
-use crate::ast::token::TokenKind::{Keyword, Literal, Operator, Separator};
+use crate::ast::lex::token::{KeywordToken, LiteralToken, OperatorToken, SeparatorToken, Token, TokenKind};
+use crate::ast::lex::token::SeparatorToken::NewLine;
+use crate::ast::lex::token::TokenKind::{Keyword, Literal, Operator, Separator};
 
 pub(crate) mod precedence;
 mod node;
@@ -227,9 +227,9 @@ mod tests {
     use crate::ast::parse::{Error, Parser};
     use crate::ast::parse::precedence::Precedence;
     use crate::ast::parse::precedence::Precedence::Term;
-    use crate::ast::token::{literal, LiteralToken, OperatorToken, separator};
-    use crate::ast::token::LiteralToken::{Number, True};
-    use crate::ast::token::SeparatorToken::Semicolon;
+    use crate::ast::lex::token::{literal, LiteralToken, OperatorToken, separator};
+    use crate::ast::lex::token::LiteralToken::{Number, True};
+    use crate::ast::lex::token::SeparatorToken::Semicolon;
 
     #[test]
     fn advance_but_eof() {

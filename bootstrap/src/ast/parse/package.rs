@@ -1,6 +1,6 @@
 use crate::ast::modifier::Modifiers;
 use crate::ast::parse::{PackageDeclarationNode, Parser};
-use crate::ast::token::KeywordToken;
+use crate::ast::lex::token::KeywordToken;
 
 impl Parser {
 

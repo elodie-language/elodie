@@ -15,7 +15,7 @@ impl Lexer<'_> {
 #[cfg(test)]
 mod test {
     use crate::ast::lex::Lexer;
-    use crate::ast::token::TokenKind;
+    use crate::ast::lex::token::TokenKind;
 
     #[test]
     fn comment() {

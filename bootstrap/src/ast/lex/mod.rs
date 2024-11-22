@@ -1,8 +1,8 @@
 use std::cell::RefCell;
 
 use crate::ast::lex::Error::UnexpectedEndOfFile;
-use crate::ast::token::{Column, Index, Position, Row, TextSpan, Token, TokenKind};
-use crate::ast::token::TokenKind::EOF;
+use crate::ast::lex::token::{Column, Index, Position, Row, TextSpan, Token, TokenKind};
+use crate::ast::lex::token::TokenKind::EOF;
 
 mod comment;
 mod separator;
@@ -10,6 +10,7 @@ mod operator;
 mod keyword;
 mod literal;
 mod identifier;
+pub mod token;
 
 #[derive(Debug)]
 pub enum Error {

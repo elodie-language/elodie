@@ -6,7 +6,6 @@ mod ast;
 mod compile;
 mod lex;
 mod parse;
-mod token;
 pub mod r#type;
 mod modifier;
 

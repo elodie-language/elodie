@@ -3,7 +3,7 @@ use std::str::FromStr;
 
 use crate::ast::modifier::Modifiers;
 use crate::ast::parse::Error;
-use crate::ast::token::{LiteralToken, Token, TokenKind};
+use crate::ast::lex::token::{LiteralToken, Token, TokenKind};
 
 #[derive(Debug)]
 pub struct RootNode {

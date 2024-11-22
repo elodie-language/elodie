@@ -35,7 +35,7 @@ impl Value {
 }
 
 #[derive(Clone)]
-pub struct HostFunctionValue(pub Rc<dyn Fn(&[Value]) -> crate::runner::Result<Value>>);
+pub struct HostFunctionValue(pub Rc<dyn Fn(&[Value]) -> crate::run::Result<Value>>);
 
 impl Debug for HostFunctionValue {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
