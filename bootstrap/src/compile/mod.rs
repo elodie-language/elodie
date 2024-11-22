@@ -1,7 +1,6 @@
-use std::ops::Deref;
-
 use crate::{ast, compile, lex, parse};
 use crate::ast::SourceFile;
+use crate::common::Context;
 use crate::compile::symbol::SymbolTable;
 use crate::lex::lex;
 use crate::parse::{parse, RootNode};
@@ -41,31 +40,35 @@ impl From<parse::Error> for Error {
 
 pub(crate) type Result<T, E = Error> = core::result::Result<T, E>;
 
-pub fn compile_str(str: &str) -> Result<SourceFile> {
-    let tokens = lex(str)?;
-    let root = parse(tokens)?;
-    Ok(compile::from(root)?)
+pub fn compile_str(str: &str) -> Result<(Context, SourceFile)> {
+    let mut ctx = Context::default();
+    let tokens = lex(&mut ctx, str)?;
+    let root = parse(&mut ctx, tokens)?;
+    let result = compile::from(&mut ctx, root)?;
+    Ok((ctx, result))
 }
 
 
-pub(crate) fn from(node: RootNode) -> Result<SourceFile> {
-    let mut compiler = Compiler::default();
+pub(crate) fn from(ctx: &mut Context, node: RootNode) -> Result<SourceFile> {
+    let mut compiler = Compiler::new(ctx);
     compiler.compile(node)
 }
 
-pub(crate) struct Compiler {
+pub(crate) struct Compiler<'a> {
+    ctx: &'a mut Context,
     symbol_table: SymbolTable,
 }
 
-impl Default for Compiler {
-    fn default() -> Self {
+impl<'a> Compiler<'a> {
+    fn new(ctx: &'a mut Context) -> Self {
         Self {
+            ctx,
             symbol_table: Default::default(),
         }
     }
 }
 
-impl Compiler {
+impl<'a> Compiler<'a> {
     pub(crate) fn compile(&mut self, node: RootNode) -> Result<SourceFile> {
         // 2 pass
         // populate symbol table

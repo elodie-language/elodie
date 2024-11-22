@@ -6,9 +6,9 @@ use crate::compile::Compiler;
 use crate::parse::LetNode;
 use crate::r#type::DefaultTypeIds;
 
-impl Compiler {
+impl<'a> Compiler<'a> {
     pub(crate) fn compile_let(&mut self, node: &LetNode) -> crate::compile::Result<ast::Node> {
-        let identifier = Identifier(node.identifier.0.value().to_string());
+        let identifier = Identifier(self.ctx.string_cache.get(node.identifier.0.value()).to_string());
 
         Ok(Node::DeclareVariable(DeclareVariableNode {
             identifier,

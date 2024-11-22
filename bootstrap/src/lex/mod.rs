@@ -1,7 +1,8 @@
 use std::cell::RefCell;
 
+use crate::common::Context;
 use crate::lex::Error::UnexpectedEndOfFile;
-use crate::lex::token::{Column, Index, Position, Row, TextSpan, Token, TokenKind};
+use crate::lex::token::{Column, Index, Position, Row, TextSpan, Token};
 use crate::lex::token::TokenKind::EOF;
 
 mod comment;
@@ -137,27 +138,29 @@ impl<'a> Reader<'a> {
     }
 }
 
-pub fn lex(str: &str) -> Result<Vec<Token>> {
-    let lexer = Lexer::new(str);
+pub fn lex(ctx: &mut Context, str: &str) -> Result<Vec<Token>> {
+    let mut lexer = Lexer::new(ctx, str);
     lexer.all()
 }
 
 pub(crate) struct Lexer<'a> {
+    ctx: &'a mut Context,
     reader: Reader<'a>,
     current_line: RefCell<Row>,
     current_column: RefCell<Column>,
 }
 
 impl<'a> Lexer<'a> {
-    pub(crate) fn new(str: &'a str) -> Self {
+    pub(crate) fn new(ctx: &'a mut Context, str: &'a str) -> Self {
         Self {
+            ctx,
             reader: Reader::new(str),
             current_line: RefCell::new(Row(1)),
             current_column: RefCell::new(Column(1)),
         }
     }
 
-    pub(crate) fn all(&self) -> Result<Vec<Token>> {
+    pub(crate) fn all(&mut self) -> Result<Vec<Token>> {
         let mut result = vec![];
         loop {
             let token = self.advance()?;
@@ -172,14 +175,14 @@ impl<'a> Lexer<'a> {
         Ok(result)
     }
 
-    pub fn advance(&self) -> Result<Token> {
+    pub fn advance(&mut self) -> Result<Token> {
         if self.reader.at_the_end() {
             return Ok(Token {
-                kind: TokenKind::EOF,
+                kind: EOF,
                 span: TextSpan {
                     start: self.position(),
                     end: self.position(),
-                    value: "".to_string(),
+                    value: self.ctx.string_cache.insert(""),
                 },
             });
         }
@@ -195,11 +198,11 @@ impl<'a> Lexer<'a> {
                 }
             } else {
                 return Ok(Token {
-                    kind: TokenKind::EOF,
+                    kind: EOF,
                     span: TextSpan {
                         start: self.position(),
                         end: self.position(),
-                        value: "".to_string(),
+                        value: self.ctx.string_cache.insert(""),
                     },
                 });
             }

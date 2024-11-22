@@ -3,7 +3,7 @@ use crate::ast::BlockNode;
 use crate::r#type::DefaultTypeIds;
 use crate::compile::Compiler;
 
-impl Compiler {
+impl<'a> Compiler<'a> {
     pub(crate) fn compile_block(&mut self, node: &parse::BlockNode) -> crate::compile::Result<ast::Node> {
         let mut body = Vec::with_capacity(node.nodes.len());
 

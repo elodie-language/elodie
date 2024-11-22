@@ -1,13 +1,13 @@
 use SeparatorToken::Comma;
 
-use crate::parse::node::TupleNode;
-use crate::parse::Parser;
-use crate::parse::precedence::Precedence;
 use crate::lex::token::{OperatorToken, SeparatorToken, Token};
 use crate::lex::token::OperatorToken::CloseParen;
 use crate::lex::token::TokenKind::Separator;
+use crate::parse::node::TupleNode;
+use crate::parse::Parser;
+use crate::parse::precedence::Precedence;
 
-impl Parser {
+impl<'a> Parser<'a> {
     pub(crate) fn parse_tuple(&mut self) -> crate::parse::Result<TupleNode> {
         let token = self.consume_operator(OperatorToken::OpenParen)?;
         self.parse_tuple_call(token)
@@ -32,16 +32,18 @@ impl Parser {
 
 #[cfg(test)]
 mod tests {
+    use crate::common::Context;
+    use crate::lex::lex;
     use crate::parse::{InfixOperator, LiteralNode, parse};
     use crate::parse::node::{InfixNode, TypeFundamentalNode, TypeNode};
     use crate::parse::node::LiteralNode::Number;
     use crate::parse::node::Node::{Identifier, Infix, Literal, Type};
-    use crate::lex::lex;
 
     #[test]
     fn empty_tuple() {
-        let tokens = lex("()").unwrap();
-        let result = parse(tokens).unwrap();
+        let mut ctx = Context::default();
+        let tokens = lex(&mut ctx, "()").unwrap();
+        let result = parse(&mut ctx, tokens).unwrap();
         assert_eq!(result.len(), 1);
 
         let node = result[0].as_tuple();
@@ -50,20 +52,22 @@ mod tests {
 
     #[test]
     fn tuple_with_number() {
-        let tokens = lex("(9924)").unwrap();
-        let result = parse(tokens).unwrap();
+        let mut ctx = Context::default();
+        let tokens = lex(&mut ctx, "(9924)").unwrap();
+        let result = parse(&mut ctx, tokens).unwrap();
         assert_eq!(result.len(), 1);
 
         let node = result[0].as_tuple();
         let Some(node) = node.nodes.first() else { panic!() };
         let Literal(Number(number)) = &node else { panic!() };
-        assert_eq!(number.value().unwrap(), 9924.);
+        assert_eq!(ctx.get_str(number.value()), "9924");
     }
 
     #[test]
     fn nested_tuple() {
-        let tokens = lex("(1 * ( 2 + 3 ))").unwrap();
-        let result = parse(tokens).unwrap();
+        let mut ctx = Context::default();
+        let tokens = lex(&mut ctx, "(1 * ( 2 + 3 ))").unwrap();
+        let result = parse(&mut ctx, tokens).unwrap();
         assert_eq!(result.len(), 1);
 
         let node = result[0].as_tuple();
@@ -71,35 +75,37 @@ mod tests {
         let Infix(InfixNode { left, operator, right }) = &node else { panic!() };
 
         let Literal(Number(left)) = &left.as_ref() else { panic!() };
-        assert_eq!(left.value().unwrap(), 1.);
+        assert_eq!(ctx.get_str(left.value()), "1");
 
         let node = right.as_tuple();
         let Some(node) = node.nodes.first() else { panic!() };
         let InfixNode { left, operator, right } = &node.as_infix();
 
         let Literal(Number(left)) = &left.as_ref() else { panic!() };
-        assert_eq!(left.value().unwrap(), 2.);
+        assert_eq!(ctx.get_str(left.value()), "2");
 
         let Literal(Number(right)) = &right.as_ref() else { panic!() };
-        assert_eq!(right.value().unwrap(), 3.);
+        assert_eq!(ctx.get_str(right.value()), "3");
     }
 
     #[test]
     fn tuple_with_identifier() {
-        let tokens = lex("(u)").unwrap();
-        let result = parse(tokens).unwrap();
+        let mut ctx = Context::default();
+        let tokens = lex(&mut ctx, "(u)").unwrap();
+        let result = parse(&mut ctx, tokens).unwrap();
         assert_eq!(result.len(), 1);
 
         let node = &result[0].as_tuple();
         let Some(node) = node.nodes.first() else { panic!() };
         let Identifier(node) = node else { panic!() };
-        assert_eq!(node.value(), "u");
+        assert_eq!(ctx.get_str(node.value()), "u");
     }
 
     #[test]
     fn tuple_with_identifier_and_type() {
-        let tokens = lex("(u: Bool)").unwrap();
-        let result = parse(tokens).unwrap();
+        let mut ctx = Context::default();
+        let tokens = lex(&mut ctx, "(u: Bool)").unwrap();
+        let result = parse(&mut ctx, tokens).unwrap();
         assert_eq!(result.len(), 1);
 
         let node = result[0].as_tuple();
@@ -107,30 +113,32 @@ mod tests {
         let Infix(InfixNode { left, operator, right }) = &node else { panic!() };
 
         let identifier = &left.as_identifier();
-        assert_eq!(identifier.value(), "u");
+        assert_eq!(ctx.get_str(identifier.value()), "u");
 
         let Type(TypeNode::Fundamental(TypeFundamentalNode::Boolean(_))) = right.as_ref() else { panic!() };
     }
 
     #[test]
     fn tuple_with_multiple_identifiers() {
-        let tokens = lex("(u,v)").unwrap();
-        let result = parse(tokens).unwrap();
+        let mut ctx = Context::default();
+        let tokens = lex(&mut ctx, "(u,v)").unwrap();
+        let result = parse(&mut ctx, tokens).unwrap();
         assert_eq!(result.len(), 1);
 
         let node = result[0].as_tuple();
 
         let Some(Identifier(u_node)) = &node.nodes.first() else { panic!() };
-        assert_eq!(u_node.value(), "u");
+        assert_eq!(ctx.get_str(u_node.value()), "u");
 
         let Some(Identifier(v_node)) = &node.nodes.last() else { panic!() };
-        assert_eq!(v_node.value(), "v");
+        assert_eq!(ctx.get_str(v_node.value()), "v");
     }
 
     #[test]
     fn tuple_with_identifiers_and_types() {
-        let tokens = lex("(u: Bool, v: String)").unwrap();
-        let result = parse(tokens).unwrap();
+        let mut ctx = Context::default();
+        let tokens = lex(&mut ctx, "(u: Bool, v: String)").unwrap();
+        let result = parse(&mut ctx, tokens).unwrap();
         assert_eq!(result.len(), 1);
 
         let node = result[0].as_tuple();
@@ -138,20 +146,21 @@ mod tests {
         let Some(u_node) = node.nodes.first() else { panic!() };
         let Infix(InfixNode { left, operator, right }) = &u_node else { panic!() };
         let Identifier(identifier) = &left.as_ref() else { panic!() };
-        assert_eq!(identifier.value(), "u");
+        assert_eq!(ctx.get_str(identifier.value()), "u");
         let Type(TypeNode::Fundamental(TypeFundamentalNode::Boolean(_))) = right.as_ref() else { panic!() };
 
         let Some(v_node) = node.nodes.last() else { panic!() };
         let Infix(InfixNode { left, operator, right }) = &v_node else { panic!() };
         let Identifier(identifier) = &left.as_ref() else { panic!() };
-        assert_eq!(identifier.value(), "v");
+        assert_eq!(ctx.get_str(identifier.value()), "v");
         let Type(TypeNode::Fundamental(TypeFundamentalNode::String(_))) = right.as_ref() else { panic!() };
     }
 
     #[test]
     fn tuple_with_identifiers_and_declaration() {
-        let tokens = lex("(u = 1, v = 2)").unwrap();
-        let result = parse(tokens).unwrap();
+        let mut ctx = Context::default();
+        let tokens = lex(&mut ctx, "(u = 1, v = 2)").unwrap();
+        let result = parse(&mut ctx, tokens).unwrap();
         assert_eq!(result.len(), 1);
 
         let node = result[0].as_tuple();
@@ -159,27 +168,28 @@ mod tests {
         let Some(u_node) = node.nodes.first() else { panic!() };
         let Infix(InfixNode { left, operator, right }) = &u_node else { panic!() };
         let Identifier(identifier) = &left.as_ref() else { panic!() };
-        assert_eq!(identifier.value(), "u");
+        assert_eq!(ctx.get_str(identifier.value()), "u");
         assert!(matches!(operator, InfixOperator::Assign(_)));
         let Literal(LiteralNode::Number(number)) = right.as_ref() else { panic!() };
-        assert_eq!(number.value().unwrap(), 1.0);
+        assert_eq!(ctx.get_str(number.value()), "1");
 
         let Some(v_node) = node.nodes.last() else { panic!() };
         let Infix(InfixNode { left, operator, right }) = &v_node else { panic!() };
         let Identifier(identifier) = &left.as_ref() else { panic!() };
-        assert_eq!(identifier.value(), "v");
+        assert_eq!(ctx.get_str(identifier.value()), "v");
         assert!(matches!(operator, InfixOperator::Assign(_)));
         let Literal(LiteralNode::Number(number)) = right.as_ref() else { panic!() };
-        assert_eq!(number.value().unwrap(), 2.0);
+        assert_eq!(ctx.get_str(number.value()), "2");
     }
 
     #[test]
     fn multiline_tuple() {
-        let tokens = lex(r#"(
+        let mut ctx = Context::default();
+        let tokens = lex(&mut ctx, r#"(
         u: Bool,
         v: String
         )"#).unwrap();
-        let result = parse(tokens).unwrap();
+        let result = parse(&mut ctx, tokens).unwrap();
         assert_eq!(result.len(), 1);
 
         let node = result[0].as_tuple();
@@ -187,13 +197,13 @@ mod tests {
         let Some(u_node) = node.nodes.first() else { panic!() };
         let Infix(InfixNode { left, operator, right }) = &u_node else { panic!() };
         let Identifier(identifier) = &left.as_ref() else { panic!() };
-        assert_eq!(identifier.value(), "u");
+        assert_eq!(ctx.get_str(identifier.value()), "u");
         let Type(TypeNode::Fundamental(TypeFundamentalNode::Boolean(_))) = right.as_ref() else { panic!() };
 
         let Some(v_node) = node.nodes.last() else { panic!() };
         let Infix(InfixNode { left, operator, right }) = &v_node else { panic!() };
         let Identifier(identifier) = &left.as_ref() else { panic!() };
-        assert_eq!(identifier.value(), "v");
+        assert_eq!(ctx.get_str(identifier.value()), "v");
         let Type(TypeNode::Fundamental(TypeFundamentalNode::String(_))) = right.as_ref() else { panic!() };
     }
 }

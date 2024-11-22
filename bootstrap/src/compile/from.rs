@@ -2,11 +2,11 @@ use std::ops::Deref;
 
 use crate::{ast, parse};
 use crate::ast::{BlockNode, ExportPackageNode, Node, Source, SourceLocalFileNode};
-use crate::r#type::DefaultTypeIds;
 use crate::compile::Compiler;
 use crate::parse::LiteralNode;
+use crate::r#type::DefaultTypeIds;
 
-impl Compiler {
+impl<'a> Compiler<'a> {
     pub(crate) fn compile_from(&mut self, node: &parse::FromNode) -> crate::compile::Result<ast::Node> {
         if let parse::FromNode::Export(export_node) = node {
             return self.compile_from_export(export_node);
@@ -17,14 +17,14 @@ impl Compiler {
 
     pub(crate) fn compile_from_export(&mut self, node: &parse::FromExportNode) -> crate::compile::Result<ast::Node> {
         let source = if let parse::Node::Literal(LiteralNode::String(from)) = &node.from_node.deref() {
-            Source::LocalFile(SourceLocalFileNode { path: from.value().to_string() })
+            Source::LocalFile(SourceLocalFileNode { path: self.ctx.get_str(from.value()).to_string() })
         } else {
             todo!()
         };
 
         let identifier = if let parse::Node::Identifier(identifier) = &node.what_node.deref() {
             // at this point in time it should be clear what identifier refers to at the moment in can only be package
-            ast::Identifier(identifier.value().to_string())
+            ast::Identifier(self.ctx.get_str(identifier.value()).to_string())
         } else {
             todo!()
         };

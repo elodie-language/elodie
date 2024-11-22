@@ -1,11 +1,11 @@
 use KeywordToken::{Else, If};
 
+use crate::lex::token::KeywordToken;
 use crate::parse::node::{ElseNode, IfNode};
 use crate::parse::Parser;
 use crate::parse::precedence::Precedence;
-use crate::lex::token::KeywordToken;
 
-impl Parser {
+impl<'a> Parser<'a> {
     pub(crate) fn parse_if(&mut self) -> crate::parse::Result<IfNode> {
         let token = self.consume_keyword(If)?;
         let condition = Box::new(self.parse_node(Precedence::None)?);
@@ -31,15 +31,17 @@ impl Parser {
 mod tests {
     use std::ops::Deref;
 
+    use crate::common::Context;
+    use crate::lex::lex;
     use crate::parse::node::{IfNode, LiteralNode};
     use crate::parse::node::Node::Literal;
     use crate::parse::parse;
-    use crate::lex::lex;
 
     #[test]
     fn empty_if_no_else() {
-        let tokens = lex("if true {}").unwrap();
-        let result = parse(tokens).unwrap();
+        let mut ctx = Context::default();
+        let tokens = lex(&mut ctx, "if true {}").unwrap();
+        let result = parse(&mut ctx, tokens).unwrap();
         assert_eq!(result.len(), 1);
 
         let IfNode { condition, then, otherwise, .. } = result[0].as_if();
@@ -52,11 +54,12 @@ mod tests {
 
     #[test]
     fn if_multiple_then_nodes() {
-        let tokens = lex(r#"if true {
+        let mut ctx = Context::default();
+        let tokens = lex(&mut ctx, r#"if true {
             99
             24
         }"#).unwrap();
-        let result = parse(tokens).unwrap();
+        let result = parse(&mut ctx, tokens).unwrap();
         assert_eq!(result.len(), 1);
 
         let IfNode { condition, then, otherwise, .. } = result[0].as_if();
@@ -66,18 +69,19 @@ mod tests {
         assert_eq!(then.nodes.len(), 2);
 
         let Some(Literal(LiteralNode::Number(first))) = then.nodes.first() else { panic!("not a number node") };
-        assert_eq!(first.value().unwrap(), 99.0);
+        assert_eq!(ctx.get_str(first.value()), "99");
 
         let Some(Literal(LiteralNode::Number(last))) = then.nodes.last() else { panic!("not a number node") };
-        assert_eq!(last.value().unwrap(), 24.0);
+        assert_eq!(ctx.get_str(last.value()), "24");
 
         assert_eq!(*otherwise, None);
     }
 
     #[test]
     fn empty_if_and_else() {
-        let tokens = lex("if true {} else {}").unwrap();
-        let result = parse(tokens).unwrap();
+        let mut ctx = Context::default();
+        let tokens = lex(&mut ctx, "if true {} else {}").unwrap();
+        let result = parse(&mut ctx, tokens).unwrap();
         assert_eq!(result.len(), 1);
 
         let IfNode { condition, then, otherwise, .. } = result[0].as_if();
@@ -92,14 +96,15 @@ mod tests {
 
     #[test]
     fn if_else_multiple_nodes() {
-        let tokens = lex(r#"if true {
+        let mut ctx = Context::default();
+        let tokens = lex(&mut ctx, r#"if true {
             1
             2
         }else{
             3
             4
         }"#).unwrap();
-        let result = parse(tokens).unwrap();
+        let result = parse(&mut ctx, tokens).unwrap();
         assert_eq!(result.len(), 1);
 
         let IfNode { condition, then, otherwise, .. } = result[0].as_if();
@@ -109,18 +114,18 @@ mod tests {
         assert_eq!(then.nodes.len(), 2);
 
         let Some(Literal(LiteralNode::Number(first))) = then.nodes.first() else { panic!("not a number node") };
-        assert_eq!(first.value().unwrap(), 1.0);
+        assert_eq!(ctx.get_str(first.value()), "1");
 
         let Some(Literal(LiteralNode::Number(last))) = then.nodes.last() else { panic!("not a number node") };
-        assert_eq!(last.value().unwrap(), 2.0);
+        assert_eq!(ctx.get_str(last.value()), "2");
 
         let Some(otherwise) = otherwise else { panic!("no else node") };
         assert_eq!(otherwise.block.nodes.len(), 2);
 
         let Some(Literal(LiteralNode::Number(first))) = otherwise.block.nodes.first() else { panic!("not a number node") };
-        assert_eq!(first.value().unwrap(), 3.0);
+        assert_eq!(ctx.get_str(first.value()), "3");
 
         let Some(Literal(LiteralNode::Number(last))) = otherwise.block.nodes.last() else { panic!("not a number node") };
-        assert_eq!(last.value().unwrap(), 4.0);
+        assert_eq!(ctx.get_str(last.value()), "4");
     }
 }

@@ -4,13 +4,13 @@ use SeparatorToken::Comma;
 use TokenKind::{Operator, Separator};
 
 use crate::ast::modifier::Modifiers;
+use crate::lex::token::{KeywordToken, OperatorToken, SeparatorToken, TokenKind};
+use crate::lex::token::OperatorToken::{Arrow, CloseParen};
 use crate::parse::node::{FunctionDeclarationArgumentNode, FunctionDeclarationNode, ReturnNode};
 use crate::parse::Parser;
 use crate::parse::precedence::Precedence;
-use crate::lex::token::{KeywordToken, OperatorToken, SeparatorToken, TokenKind};
-use crate::lex::token::OperatorToken::{Arrow, CloseParen};
 
-impl Parser {
+impl<'a> Parser<'a> {
     pub(crate) fn parse_function_declaration(&mut self) -> crate::parse::Result<FunctionDeclarationNode> {
         self.parse_function_declaration_with_modifiers(Modifiers(vec![]))
     }
@@ -76,15 +76,17 @@ impl Parser {
 
 #[cfg(test)]
 mod tests {
+    use crate::common::Context;
+    use crate::lex::lex;
     use crate::parse::node::{LiteralNode, TypeFundamentalNode, TypeNode};
     use crate::parse::node::Node::Literal;
     use crate::parse::parse;
-    use crate::lex::lex;
 
     #[test]
     fn return_without_result() {
-        let tokens = lex("return").unwrap();
-        let result = parse(tokens).unwrap();
+        let mut ctx = Context::default();
+        let tokens = lex(&mut ctx, "return").unwrap();
+        let result = parse(&mut ctx, tokens).unwrap();
         assert_eq!(result.len(), 1);
 
         let node = &result.nodes[0].as_return();
@@ -93,23 +95,25 @@ mod tests {
 
     #[test]
     fn return_with_result() {
-        let tokens = lex("return 9924").unwrap();
-        let result = parse(tokens).unwrap();
+        let mut ctx = Context::default();
+        let tokens = lex(&mut ctx, "return 9924").unwrap();
+        let result = parse(&mut ctx, tokens).unwrap();
         assert_eq!(result.len(), 1);
 
         let node = result.nodes[0].as_return().as_result();
         let Literal(LiteralNode::Number(node)) = node else { panic!() };
-        assert_eq!(node.value().unwrap(), 9924.0);
+        assert_eq!(ctx.get_str(node.value()), "9924");
     }
 
     #[test]
     fn export_function_without_args_and_without_return() {
-        let tokens = lex("export fun magic(){ }").unwrap();
-        let result = parse(tokens).unwrap();
+        let mut ctx = Context::default();
+        let tokens = lex(&mut ctx, "export fun magic(){ }").unwrap();
+        let result = parse(&mut ctx, tokens).unwrap();
         assert_eq!(result.len(), 1);
 
         let node = result.nodes[0].as_function_declaration();
-        assert_eq!(node.identifier.value(), "magic");
+        assert_eq!(ctx.get_str(node.identifier.value()), "magic");
         assert!(node.modifiers.is_exported());
         assert_eq!(node.block.nodes, vec![]);
         assert_eq!(node.arguments, vec![]);
@@ -118,12 +122,13 @@ mod tests {
 
     #[test]
     fn function_without_args_and_without_return() {
-        let tokens = lex("fun magic(){ }").unwrap();
-        let result = parse(tokens).unwrap();
+        let mut ctx = Context::default();
+        let tokens = lex(&mut ctx, "fun magic(){ }").unwrap();
+        let result = parse(&mut ctx, tokens).unwrap();
         assert_eq!(result.len(), 1);
 
         let node = result.nodes[0].as_function_declaration();
-        assert_eq!(node.identifier.value(), "magic");
+        assert_eq!(ctx.get_str(node.identifier.value()), "magic");
         assert_eq!(node.block.nodes, vec![]);
         assert_eq!(node.arguments, vec![]);
         assert_eq!(node.return_type, None);
@@ -132,12 +137,13 @@ mod tests {
 
     #[test]
     fn function_without_args_and_with_return() {
-        let tokens = lex("fun magic() -> Bool { }").unwrap();
-        let result = parse(tokens).unwrap();
+        let mut ctx = Context::default();
+        let tokens = lex(&mut ctx, "fun magic() -> Bool { }").unwrap();
+        let result = parse(&mut ctx, tokens).unwrap();
         assert_eq!(result.len(), 1);
 
         let node = result.nodes[0].as_function_declaration();
-        assert_eq!(node.identifier.value(), "magic");
+        assert_eq!(ctx.get_str(node.identifier.value()), "magic");
         assert_eq!(node.block.nodes, vec![]);
         assert_eq!(node.arguments, vec![]);
         assert!(!node.modifiers.is_exported());
@@ -149,18 +155,19 @@ mod tests {
 
     #[test]
     fn function_with_single_arg() {
-        let tokens = lex("fun magic(arg_1: String){ }").unwrap();
-        let result = parse(tokens).unwrap();
+        let mut ctx = Context::default();
+        let tokens = lex(&mut ctx, "fun magic(arg_1: String){ }").unwrap();
+        let result = parse(&mut ctx, tokens).unwrap();
         assert_eq!(result.len(), 1);
 
         let node = result.nodes[0].as_function_declaration();
-        assert_eq!(node.identifier.value(), "magic");
+        assert_eq!(ctx.get_str(node.identifier.value()), "magic");
         assert_eq!(node.block.nodes, vec![]);
         assert!(!node.modifiers.is_exported());
         assert_eq!(node.arguments.len(), 1);
 
         let arg = &node.arguments[0];
-        assert_eq!(arg.identifier.value(), "arg_1");
+        assert_eq!(ctx.get_str(arg.identifier.value()), "arg_1");
 
         let TypeNode::Fundamental(TypeFundamentalNode::String(_)) = arg.as_type() else { panic!("not string") };
         assert_eq!(node.return_type, None);
@@ -168,23 +175,24 @@ mod tests {
 
     #[test]
     fn function_with_multiple_args() {
-        let tokens = lex("fun magic(arg_1: String, arg_2: Number){ }").unwrap();
-        let result = parse(tokens).unwrap();
+        let mut ctx = Context::default();
+        let tokens = lex(&mut ctx, "fun magic(arg_1: String, arg_2: Number){ }").unwrap();
+        let result = parse(&mut ctx, tokens).unwrap();
         assert_eq!(result.len(), 1);
 
         let node = result.nodes[0].as_function_declaration();
-        assert_eq!(node.identifier.value(), "magic");
+        assert_eq!(ctx.get_str(node.identifier.value()), "magic");
         assert_eq!(node.block.nodes, vec![]);
         assert!(!node.modifiers.is_exported());
         assert_eq!(node.arguments.len(), 2);
 
         let arg_1 = &node.arguments[0];
-        assert_eq!(arg_1.identifier.value(), "arg_1");
+        assert_eq!(ctx.get_str(arg_1.identifier.value()), "arg_1");
 
         let TypeNode::Fundamental(TypeFundamentalNode::String(_)) = arg_1.as_type() else { panic!("not string") };
 
         let arg_2 = node.arguments.last().unwrap();
-        assert_eq!(arg_2.identifier.value(), "arg_2");
+        assert_eq!(ctx.get_str(arg_2.identifier.value()), "arg_2");
 
         let TypeNode::Fundamental(TypeFundamentalNode::Number(_)) = arg_2.as_type() else { panic!("not number") };
 
@@ -193,12 +201,13 @@ mod tests {
 
     #[test]
     fn function_with_function_arg() {
-        let tokens = lex("fun magic(test_case: fun() -> Bool){ }").unwrap();
-        let result = parse(tokens).unwrap();
+        let mut ctx = Context::default();
+        let tokens = lex(&mut ctx, "fun magic(test_case: fun() -> Bool){ }").unwrap();
+        let result = parse(&mut ctx, tokens).unwrap();
         assert_eq!(result.len(), 1);
 
         let node = result.nodes[0].as_function_declaration();
-        assert_eq!(node.identifier.value(), "magic");
+        assert_eq!(ctx.get_str(node.identifier.value()), "magic");
         assert_eq!(node.block.nodes, vec![]);
         assert!(!node.modifiers.is_exported());
         assert_eq!(node.arguments.len(), 1);
@@ -206,7 +215,7 @@ mod tests {
 
 
         let arg_1 = &node.arguments[0];
-        assert_eq!(arg_1.identifier.value(), "test_case");
+        assert_eq!(ctx.get_str(arg_1.identifier.value()), "test_case");
         let TypeNode::Function(function_node) = arg_1.as_type() else { panic!("not function") };
         assert_eq!(function_node.arguments, vec![]);
 

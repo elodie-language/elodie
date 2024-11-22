@@ -7,7 +7,7 @@ use crate::{ast, parse};
 use crate::ast::{DeclarePackageNode, Identifier};
 use crate::compile::{compile_str, Compiler};
 
-impl Compiler {
+impl<'a> Compiler<'a> {
     pub(crate) fn compile_declare_package(&mut self, node: &parse::PackageDeclarationNode) -> crate::compile::Result<ast::Node> {
         let mut compiled_body = vec![];
 
@@ -27,7 +27,7 @@ impl Compiler {
         }
 
         Ok(ast::Node::DeclarePackage(DeclarePackageNode {
-            identifier: Identifier(node.identifier.value().to_string()),
+            identifier: Identifier(self.ctx.get_str(node.identifier.value()).to_string()),
             modifiers: node.modifiers.clone(),
             functions: compiled_body.into_iter()
                 .filter_map(|n| {
@@ -45,7 +45,7 @@ impl Compiler {
 
 fn load_declared_packages(name: &str) -> Vec<DeclarePackageNode> {
     let content = crate::load_library_file("std/io/index.elx").unwrap();
-    let src_file = compile_str(content.as_str()).unwrap();
+    let (ctx, src_file) = compile_str(content.as_str()).unwrap();
 
     let mut result = vec![];
 

@@ -3,7 +3,7 @@ use crate::ast::{BreakLoopNode, ContinueLoopNode, LoopNode, Node};
 use crate::r#type::DefaultTypeIds;
 use crate::compile::Compiler;
 
-impl Compiler {
+impl<'a> Compiler<'a> {
     pub(crate) fn compile_break(&mut self, node: &parse::BreakNode) -> compile::Result<ast::Node> {
         if node.result.is_none() {
             Ok(Node::BreakLoop(BreakLoopNode { body: None, return_type: DefaultTypeIds::unit() }))

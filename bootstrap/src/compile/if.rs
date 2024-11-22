@@ -5,7 +5,7 @@ use crate::ast::{BlockNode, IfNode};
 use crate::r#type::DefaultTypeIds;
 use crate::compile::Compiler;
 
-impl Compiler {
+impl<'a> Compiler<'a> {
     pub(crate) fn compile_if(&mut self, node: &parse::IfNode) -> crate::compile::Result<ast::Node> {
         // condition needs to be of type boolean --> every node has a type?!
         let condition = Box::new(self.compile_node(node.condition.deref())?);

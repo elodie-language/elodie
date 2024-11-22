@@ -1,13 +1,13 @@
 use OperatorToken::{CloseCurly, OpenCurly};
 use TokenKind::Separator;
 
+use crate::lex::token::{OperatorToken, TokenKind};
+use crate::lex::token::SeparatorToken::NewLine;
 use crate::parse::node::BlockNode;
 use crate::parse::Parser;
 use crate::parse::precedence::Precedence;
-use crate::lex::token::{OperatorToken, TokenKind};
-use crate::lex::token::SeparatorToken::NewLine;
 
-impl Parser {
+impl<'a> Parser<'a> {
     pub(crate) fn parse_block(&mut self) -> crate::parse::Result<BlockNode> {
         self.consume_operator(OpenCurly)?;
         let result = self.parse_block_inner()?;
@@ -30,16 +30,18 @@ impl Parser {
 
 #[cfg(test)]
 mod tests {
+    use crate::common::Context;
+    use crate::lex::lex;
+    use crate::lex::token::{LiteralToken, test_token_with_offset, TokenKind};
     use crate::parse::node::{BlockNode, InfixNode, InfixOperator, LiteralBooleanNode, LiteralNode, TupleNode};
     use crate::parse::node::Node::{Block, Literal};
     use crate::parse::parse;
-    use crate::lex::lex;
-    use crate::lex::token::{LiteralToken, test_token_with_offset, TokenKind};
 
     #[test]
     fn empty_block() {
-        let tokens = lex("{}").unwrap();
-        let result = parse(tokens).unwrap();
+        let mut ctx = Context::default();
+        let tokens = lex(&mut ctx, "{}").unwrap();
+        let result = parse(&mut ctx, tokens).unwrap();
         assert_eq!(result.len(), 1);
 
         let block = result[0].as_block();
@@ -49,8 +51,9 @@ mod tests {
 
     #[test]
     fn empty_lambda() {
-        let tokens = lex("{ () -> }").unwrap();
-        let result = parse(tokens).unwrap();
+        let mut ctx = Context::default();
+        let tokens = lex(&mut ctx, "{ () -> }").unwrap();
+        let result = parse(&mut ctx, tokens).unwrap();
         assert_eq!(result.len(), 1);
 
         let block = result.nodes[0].as_block();
@@ -66,8 +69,9 @@ mod tests {
 
     #[test]
     fn lambda_with_single_argument() {
-        let tokens = lex("{ (arg_1) -> true }").unwrap();
-        let result = parse(tokens).unwrap();
+        let mut ctx = Context::default();
+        let tokens = lex(&mut ctx, "{ (arg_1) -> true }").unwrap();
+        let result = parse(&mut ctx, tokens).unwrap();
         assert_eq!(result.len(), 1);
 
         let block = result.nodes[0].as_block();
@@ -76,7 +80,7 @@ mod tests {
         assert_eq!(nodes.len(), 1);
 
         let arg_1 = nodes[0].as_identifier();
-        assert_eq!(arg_1.value(), "arg_1");
+        assert_eq!(ctx.get_str(arg_1.value()), "arg_1");
 
         let InfixOperator::Arrow(_) = operator else { panic!() };
 
@@ -90,8 +94,9 @@ mod tests {
 
     #[test]
     fn block_with_white_spaces() {
-        let tokens = lex("{    \t     }").unwrap();
-        let result = parse(tokens).unwrap();
+        let mut ctx = Context::default();
+        let tokens = lex(&mut ctx, "{    \t     }").unwrap();
+        let result = parse(&mut ctx, tokens).unwrap();
         assert_eq!(result.len(), 1);
 
         let block = &result[0].as_block();
@@ -100,11 +105,12 @@ mod tests {
 
     #[test]
     fn block_with_new_lines() {
-        let tokens = lex(r#"{
+        let mut ctx = Context::default();
+        let tokens = lex(&mut ctx, r#"{
 
 
         }"#).unwrap();
-        let result = parse(tokens).unwrap();
+        let result = parse(&mut ctx, tokens).unwrap();
         assert_eq!(result.len(), 1);
 
         let block = &result[0].as_block();
@@ -113,10 +119,11 @@ mod tests {
 
     #[test]
     fn block_nested() {
-        let tokens = lex(r#"{
+        let mut ctx = Context::default();
+        let tokens = lex(&mut ctx, r#"{
         {      }
         }"#).unwrap();
-        let result = parse(tokens).unwrap();
+        let result = parse(&mut ctx, tokens).unwrap();
         assert_eq!(result.len(), 1);
 
         let block = &result[0].as_block();
@@ -125,8 +132,9 @@ mod tests {
 
     #[test]
     fn block_multilayer_nested() {
-        let tokens = lex(r#"{{   {  true }   }}"#).unwrap();
-        let result = parse(tokens).unwrap();
+        let mut ctx = Context::default();
+        let tokens = lex(&mut ctx, r#"{{   {  true }   }}"#).unwrap();
+        let result = parse(&mut ctx, tokens).unwrap();
         assert_eq!(result.len(), 1);
 
         let block = result[0].as_block();
@@ -136,7 +144,7 @@ mod tests {
                     Block(BlockNode {
                         nodes: vec![
                             Literal(LiteralNode::Boolean(
-                                LiteralBooleanNode(test_token_with_offset(TokenKind::Literal(LiteralToken::True), "true", 8)))
+                                LiteralBooleanNode(test_token_with_offset(&mut ctx, TokenKind::Literal(LiteralToken::True), "true", 8)))
                             )
                         ]
                     })

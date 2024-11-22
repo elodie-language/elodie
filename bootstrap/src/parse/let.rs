@@ -1,11 +1,11 @@
 use KeywordToken::Let;
 
+use crate::lex::token::{KeywordToken, OperatorToken};
 use crate::parse::node::LetNode;
 use crate::parse::Parser;
 use crate::parse::precedence::Precedence;
-use crate::lex::token::{KeywordToken, OperatorToken};
 
-impl Parser {
+impl<'a> Parser<'a> {
     pub(crate) fn parse_let(&mut self) -> crate::parse::Result<LetNode> {
         let token = self.consume_keyword(Let)?;
         let identifier = self.parse_identifier()?;
@@ -34,64 +34,69 @@ impl Parser {
 mod tests {
     use std::ops::Deref;
 
+    use crate::common::Context;
+    use crate::lex::lex;
     use crate::parse::node::{LiteralNode, TypeFundamentalNode, TypeNode};
     use crate::parse::node::Node::Literal;
     use crate::parse::parse;
-    use crate::lex::lex;
 
     #[test]
     fn let_without_type_string() {
-        let tokens = lex("let value = 'Elodie'").unwrap();
-        let result = parse(tokens).unwrap();
+        let mut ctx = Context::default();
+        let tokens = lex(&mut ctx, "let value = 'Elodie'").unwrap();
+        let result = parse(&mut ctx, tokens).unwrap();
         assert_eq!(result.len(), 1);
 
         let node = result[0].as_let();
-        assert_eq!(node.identifier.value(), "value");
+        assert_eq!(ctx.get_str(node.identifier.value()), "value");
 
         assert_eq!(node.r#type, None);
 
         let Literal(LiteralNode::String(result)) = &node.node.deref() else { panic!() };
-        assert_eq!(result.value(), "Elodie");
+        assert_eq!(ctx.get_str(result.value()), "Elodie");
     }
 
     #[test]
     fn let_with_type_string() {
-        let tokens = lex("let value : String = 'Elodie'").unwrap();
-        let result = parse(tokens).unwrap();
+        let mut ctx = Context::default();
+        let tokens = lex(&mut ctx, "let value : String = 'Elodie'").unwrap();
+        let result = parse(&mut ctx, tokens).unwrap();
         assert_eq!(result.len(), 1);
 
         let node = result[0].as_let();
-        assert_eq!(node.identifier.value(), "value");
+        assert_eq!(ctx.get_str(node.identifier.value()), "value");
 
         let Some(TypeNode::Fundamental(TypeFundamentalNode::String(_))) = node.r#type else { panic!() };
 
         let Literal(LiteralNode::String(result)) = &node.node.deref() else { panic!() };
-        assert_eq!(result.value(), "Elodie");
+        assert_eq!(ctx.get_str(result.value()), "Elodie");
     }
 
     #[test]
     fn let_without_type_number() {
-        let tokens = lex("let value = 9924").unwrap();
-        let result = parse(tokens).unwrap();
+        let mut ctx = Context::default();
+        let tokens = lex(&mut ctx, "let value = 9924").unwrap();
+        let result = parse(&mut ctx, tokens).unwrap();
         assert_eq!(result.len(), 1);
 
         let node = result[0].as_let();
-        assert_eq!(node.identifier.value(), "value");
+        assert_eq!(ctx.get_str(node.identifier.value()), "value");
 
         assert_eq!(node.r#type, None);
 
         let Literal(LiteralNode::Number(result)) = &node.node.deref() else { panic!() };
-        assert_eq!(result.value().unwrap(), 9924.0);
+        assert_eq!(ctx.get_str(result.value()), "9924");
     }
 
     #[test]
     fn let_without_type_boolean() {
-        let tokens = lex("let value = false").unwrap();
-        let result = parse(tokens).unwrap();
+        let mut ctx = Context::default();
+        let tokens = lex(&mut ctx, "let value = false").unwrap();
+        let result = parse(&mut ctx, tokens).unwrap();
         assert_eq!(result.len(), 1);
 
         let node = &result[0].as_let();
-        assert_eq!(node.identifier.value(), "value");
+        assert_eq!(ctx.get_str(node.identifier.value()), "value");
         assert_eq!(node.r#type, None);
 
         let Literal(LiteralNode::Boolean(result)) = &node.node.deref() else { panic!() };

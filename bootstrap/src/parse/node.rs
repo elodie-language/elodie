@@ -1,9 +1,8 @@
 use std::ops::Index;
-use std::str::FromStr;
 
 use crate::ast::modifier::Modifiers;
+use crate::common::StringCacheIdx;
 use crate::lex::token::{LiteralToken, Token, TokenKind};
-use crate::parse::Error;
 
 #[derive(Debug)]
 pub struct RootNode {
@@ -175,8 +174,8 @@ impl FunctionDeclarationArgumentNode {
 pub struct IdentifierNode(pub Token);
 
 impl IdentifierNode {
-    pub fn value(&self) -> &str {
-        self.0.span.value.as_str()
+    pub fn value(&self) -> StringCacheIdx {
+        self.0.span.value
     }
 }
 
@@ -265,9 +264,8 @@ pub enum LiteralNode {
 pub struct LiteralNumberNode(pub Token);
 
 impl LiteralNumberNode {
-    pub fn value(&self) -> crate::parse::Result<f64> {
-        f64::from_str(self.0.value())
-            .map_err(|_| Error::UnsupportedNumber(self.0.value().to_string()))
+    pub fn value(&self) -> StringCacheIdx {
+        self.0.value()
     }
 }
 
@@ -275,7 +273,7 @@ impl LiteralNumberNode {
 pub struct LiteralStringNode(pub Token);
 
 impl LiteralStringNode {
-    pub fn value(&self) -> &str {
+    pub fn value(&self) -> StringCacheIdx {
         self.0.value()
     }
 }

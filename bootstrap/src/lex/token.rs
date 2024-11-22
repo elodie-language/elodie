@@ -1,3 +1,4 @@
+use crate::common::{Context, StringCacheIdx};
 use crate::lex::token::TokenKind::{EOF, Identifier};
 
 #[derive(Debug, Clone, PartialEq)]
@@ -13,7 +14,7 @@ impl Token {
     pub fn is_separator(&self, separator: SeparatorToken) -> bool { self.kind == TokenKind::Separator(separator) }
     pub fn is_keyword(&self, keyword: KeywordToken) -> bool { self.kind == TokenKind::Keyword(keyword) }
     pub fn is_operator(&self, operator: OperatorToken) -> bool { self.kind == TokenKind::Operator(operator) }
-    pub fn value(&self) -> &str { return self.span.value.as_str(); }
+    pub fn value(&self) -> StringCacheIdx { return self.span.value; }
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
@@ -39,24 +40,24 @@ pub fn operator(operator: OperatorToken) -> TokenKind { TokenKind::Operator(oper
 
 pub fn separator(separator: SeparatorToken) -> TokenKind { TokenKind::Separator(separator) }
 
-pub fn test_token(kind: TokenKind, value: &str) -> Token {
+pub fn test_token(ctx: &mut Context, kind: TokenKind, value: &str) -> Token {
     Token {
         kind,
         span: TextSpan {
             start: Position::new(Row(1), Column(1), Index(0)),
             end: Position::new(Row(1), Column(1 + value.len()), Index(value.len())),
-            value: value.to_string(),
+            value: ctx.string_cache.insert(value),
         },
     }
 }
 
-pub fn test_token_with_offset(kind: TokenKind, value: &str, offset: usize) -> Token {
+pub fn test_token_with_offset(ctx: &mut Context, kind: TokenKind, value: &str, offset: usize) -> Token {
     Token {
         kind,
         span: TextSpan {
             start: Position::new(Row(1), Column(offset + 1), Index(offset)),
             end: Position::new(Row(1), Column(offset + 1 + value.len()), Index(offset + value.len())),
-            value: value.to_string(),
+            value: ctx.string_cache.insert(value),
         },
     }
 }
@@ -139,11 +140,11 @@ pub enum SeparatorToken {
 pub struct TextSpan {
     pub start: Position,
     pub end: Position,
-    pub value: String,
+    pub value: StringCacheIdx,
 }
 
 impl TextSpan {
-    pub fn new(start: Position, end: Position, value: String) -> Self {
+    pub fn new(start: Position, end: Position, value: StringCacheIdx) -> Self {
         Self {
             start,
             end,

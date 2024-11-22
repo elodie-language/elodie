@@ -2,12 +2,12 @@ use std::ops::Deref;
 
 use crate::{ast, parse};
 use crate::ast::{CalculateNode, CalculationOperator, CallFunctionNode, CallFunctionOfObjectNode, CallFunctionOfPackageNode, CompareNode, CompareOperator, Identifier, InstantiateTypeNode, LoadValueFromObjectNode, NamedArgumentNode};
-use crate::r#type::{DefaultTypeIds, TypeId};
 use crate::compile::Compiler;
 use crate::parse::{InfixNode, InfixOperator, LiteralNode, Node, TypeNode};
 use crate::parse::Node::Type;
+use crate::r#type::{DefaultTypeIds, TypeId};
 
-impl Compiler {
+impl<'a> Compiler<'a> {
     pub(crate) fn compile_infix(&mut self, node: &parse::InfixNode) -> crate::compile::Result<ast::Node> {
         let InfixNode { left, right, operator } = node;
 
@@ -31,7 +31,7 @@ impl Compiler {
             //     }));
             // }
 
-            let (paths, node) = Self::handle_package_access(node);
+            let (paths, node) = self.handle_package_access(node);
             let InfixNode { left, right, operator } = node;
             if let InfixOperator::Call(_) = operator {
                 let ast::Node::LoadValue(function_identifier) = self.compile_node(left.deref())? else { panic!() };
@@ -55,8 +55,8 @@ impl Compiler {
 
             if let Node::Identifier(property) = right.deref() {
                 return Ok(ast::Node::LoadValueFromObject(LoadValueFromObjectNode {
-                    object: ast::Identifier(object_identifier.value().to_string()),
-                    property: ast::Identifier(property.value().to_string()),
+                    object: ast::Identifier(self.ctx.get_str(object_identifier.value()).to_string()),
+                    property: ast::Identifier(self.ctx.get_str(property.value()).to_string()),
                 }));
             }
 
@@ -68,10 +68,10 @@ impl Compiler {
                 // load variable
 
                 return Ok(ast::Node::CallFunctionOfObject(CallFunctionOfObjectNode {
-                    object: ast::Identifier(object_identifier.value().to_string()),
-                    function: ast::Identifier(function_identifier.value().to_string()),
+                    object: ast::Identifier(self.ctx.get_str(object_identifier.value()).to_string()),
+                    function: ast::Identifier(self.ctx.get_str(function_identifier.value()).to_string()),
                     arguments: vec![ast::Node::LoadValue(ast::UseIdentifierNode {
-                        identifier: ast::Identifier(identifier_node.value().to_string()),
+                        identifier: ast::Identifier(self.ctx.get_str(identifier_node.value()).to_string()),
                         type_id: DefaultTypeIds::string(),
                     })],
                 }));
@@ -79,9 +79,9 @@ impl Compiler {
 
             if let Node::Literal(LiteralNode::String(value)) = &tuple.nodes[0] {
                 return Ok(ast::Node::CallFunctionOfObject(CallFunctionOfObjectNode {
-                    object: ast::Identifier(object_identifier.value().to_string()),
-                    function: ast::Identifier(function_identifier.value().to_string()),
-                    arguments: vec![ast::Node::ValueString(value.value().to_string())],
+                    object: ast::Identifier(self.ctx.get_str(object_identifier.value()).to_string()),
+                    function: ast::Identifier(self.ctx.get_str(function_identifier.value()).to_string()),
+                    arguments: vec![ast::Node::ValueString(self.ctx.get_str(value.value()).to_string())],
                 }));
             }
 
@@ -102,8 +102,8 @@ impl Compiler {
                 });
 
                 return Ok(ast::Node::CallFunctionOfObject(CallFunctionOfObjectNode {
-                    object: ast::Identifier(object_identifier.value().to_string()),
-                    function: ast::Identifier(function_identifier.value().to_string()),
+                    object: ast::Identifier(self.ctx.get_str(object_identifier.value()).to_string()),
+                    function: ast::Identifier(self.ctx.get_str(function_identifier.value()).to_string()),
                     arguments: vec![function_call],
                 }));
             }
@@ -113,8 +113,8 @@ impl Compiler {
                 let arg = self.compile_infix(infix_node)?;
 
                 return Ok(ast::Node::CallFunctionOfObject(CallFunctionOfObjectNode {
-                    object: ast::Identifier(object_identifier.value().to_string()),
-                    function: ast::Identifier(function_identifier.value().to_string()),
+                    object: ast::Identifier(self.ctx.get_str(object_identifier.value()).to_string()),
+                    function: ast::Identifier(self.ctx.get_str(function_identifier.value()).to_string()),
                     arguments: vec![arg],
                 }));
             }
@@ -134,7 +134,7 @@ impl Compiler {
                     let parse::Node::Identifier(identifier) = left.deref() else { panic!() };
                     let right = self.compile_node(right)?;
                     arguments.push(NamedArgumentNode {
-                        identifier: Identifier(identifier.value().to_string()),
+                        identifier: Identifier(self.ctx.get_str(identifier.value()).to_string()),
                         value: right,
                     })
                 }
@@ -218,7 +218,7 @@ impl Compiler {
         unimplemented!("{:?}", node);
     }
 
-    fn handle_package_access(node: &parse::InfixNode) -> (Vec<Identifier>, &InfixNode) {
+    fn handle_package_access<'b>(&self, node: &'b parse::InfixNode) -> (Vec<Identifier>, &'b InfixNode) {
         let mut paths = vec![];
         let mut current = node;
 
@@ -228,7 +228,7 @@ impl Compiler {
             }
 
             let Node::Identifier(package_identifier) = current.left.deref() else { todo!() };
-            paths.push(Identifier(package_identifier.value().to_string()));
+            paths.push(Identifier(self.ctx.get_str(package_identifier.value()).to_string()));
 
             let Node::Infix(right) = &current.right.deref() else { panic!() };
 

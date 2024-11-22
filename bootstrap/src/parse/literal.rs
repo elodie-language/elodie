@@ -1,10 +1,10 @@
 use std::str::FromStr;
 
+use crate::lex::token::LiteralToken;
 use crate::parse::node::{LiteralBooleanNode, LiteralNode, LiteralNumberNode, LiteralStringNode};
 use crate::parse::Parser;
-use crate::lex::token::LiteralToken;
 
-impl Parser {
+impl<'a> Parser<'a> {
     pub(crate) fn parse_literal_string(&mut self) -> crate::parse::Result<LiteralNode> {
         let token = self.consume_literal(LiteralToken::String)?;
         return Ok(LiteralNode::String(LiteralStringNode(token)));
@@ -28,47 +28,39 @@ impl Parser {
 
 #[cfg(test)]
 mod tests {
+    use crate::common::Context;
+    use crate::lex::lex;
     use crate::parse::node::LiteralNode;
     use crate::parse::node::Node::Literal;
     use crate::parse::parse;
-    use crate::lex::lex;
 
     #[test]
     fn string() {
-        let tokens = lex("'Elodie'").unwrap();
-        let result = parse(tokens).unwrap();
+        let mut ctx = Context::default();
+        let tokens = lex(&mut ctx, "'Elodie'").unwrap();
+        let result = parse(&mut ctx, tokens).unwrap();
         assert_eq!(result.len(), 1);
 
         let Literal(LiteralNode::String(node)) = &result[0] else { panic!() };
-        assert_eq!(node.value(), "Elodie");
+        assert_eq!(ctx.get_str(node.value()), "Elodie");
     }
 
-    macro_rules! parse_number_test {
-    ($($name:ident, $input:expr => $expected:expr,)*) => {
-        $(
-            #[test]
-            fn $name() {
-                println!("Test input: {:?}", $input);
-                let tokens = lex($input).unwrap();
-                let result = parse(tokens).unwrap();
-                assert_eq!(result.len(), 1);
+    #[test]
+    fn number_42() {
+        let mut ctx = Context::default();
+        let tokens = lex(&mut ctx, "42").unwrap();
+        let result = parse(&mut ctx, tokens).unwrap();
+        assert_eq!(result.len(), 1);
 
-                let Literal(LiteralNode::Number(node)) = &result[0] else { panic!() };
-                assert_eq!(node.value().unwrap(), $expected);
-            }
-        )*
-    };
-    }
-
-    parse_number_test! {
-        number_42, "42" =>  42.0f64,
-        number_42_dot_0, "42.0" => 42.0f64,
+        let Literal(LiteralNode::Number(node)) = &result[0] else { panic!() };
+        assert_eq!(ctx.get_str(node.value()), "42");
     }
 
     #[test]
     fn r#true() {
-        let tokens = lex("true").unwrap();
-        let result = parse(tokens).unwrap();
+        let mut ctx = Context::default();
+        let tokens = lex(&mut ctx, "true").unwrap();
+        let result = parse(&mut ctx, tokens).unwrap();
         assert_eq!(result.len(), 1);
 
         let Literal(LiteralNode::Boolean(node)) = &result[0] else { panic!() };
@@ -77,8 +69,9 @@ mod tests {
 
     #[test]
     fn r#false() {
-        let tokens = lex("false").unwrap();
-        let result = parse(tokens).unwrap();
+        let mut ctx = Context::default();
+        let tokens = lex(&mut ctx, "false").unwrap();
+        let result = parse(&mut ctx, tokens).unwrap();
         assert_eq!(result.len(), 1);
 
         let Literal(LiteralNode::Boolean(node)) = &result[0] else { panic!() };

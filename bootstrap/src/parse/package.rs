@@ -1,8 +1,8 @@
 use crate::ast::modifier::Modifiers;
-use crate::parse::{PackageDeclarationNode, Parser};
 use crate::lex::token::KeywordToken;
+use crate::parse::{PackageDeclarationNode, Parser};
 
-impl Parser {
+impl<'a> Parser<'a> {
     pub(crate) fn parse_package_declaration(&mut self) -> crate::parse::Result<PackageDeclarationNode> {
         self.parse_package_declaration_with_modifiers(Modifiers(vec![]))
     }
@@ -23,50 +23,54 @@ impl Parser {
 
 #[cfg(test)]
 mod tests {
-    use crate::parse::parse;
+    use crate::common::Context;
     use crate::lex::lex;
+    use crate::parse::parse;
 
     #[test]
     fn empty_package() {
-        let tokens = lex("package magic{ }").unwrap();
-        let result = parse(tokens).unwrap();
+        let mut ctx = Context::default();
+        let tokens = lex(&mut ctx, "package magic{ }").unwrap();
+        let result = parse(&mut ctx, tokens).unwrap();
         assert_eq!(result.len(), 1);
 
         let node = result.nodes[0].as_package_declaration();
-        assert_eq!(node.identifier.value(), "magic");
+        assert_eq!(ctx.get_str(node.identifier.value()), "magic");
         assert_eq!(node.block.nodes, vec![]);
         assert!(!node.modifiers.is_exported());
     }
 
     #[test]
     fn package_with_exported_function() {
-        let tokens = lex("package magic{ export fun some_fn() {} }").unwrap();
-        let result = parse(tokens).unwrap();
+        let mut ctx = Context::default();
+        let tokens = lex(&mut ctx, "package magic{ export fun some_fn() {} }").unwrap();
+        let result = parse(&mut ctx, tokens).unwrap();
         assert_eq!(result.len(), 1);
 
         let node = result.nodes[0].as_package_declaration();
-        assert_eq!(node.identifier.value(), "magic");
+        assert_eq!(ctx.get_str(node.identifier.value()), "magic");
         assert_eq!(node.block.nodes.len(), 1);
         assert!(!node.modifiers.is_exported());
 
         let fn_decl = unsafe { node.block.nodes.get_unchecked(0) }.as_function_declaration();
-        assert_eq!(fn_decl.identifier.value(), "some_fn");
+        assert_eq!(ctx.get_str(fn_decl.identifier.value()), "some_fn");
         assert!(fn_decl.modifiers.is_exported());
     }
 
     #[test]
     fn exported_package_with_exported_function() {
-        let tokens = lex("export package magic{ export fun some_fn() {} }").unwrap();
-        let result = parse(tokens).unwrap();
+        let mut ctx = Context::default();
+        let tokens = lex(&mut ctx, "export package magic{ export fun some_fn() {} }").unwrap();
+        let result = parse(&mut ctx, tokens).unwrap();
         assert_eq!(result.len(), 1);
 
         let node = result.nodes[0].as_package_declaration();
-        assert_eq!(node.identifier.value(), "magic");
+        assert_eq!(ctx.get_str(node.identifier.value()), "magic");
         assert_eq!(node.block.nodes.len(), 1);
         assert!(node.modifiers.is_exported());
 
         let fn_decl = unsafe { node.block.nodes.get_unchecked(0) }.as_function_declaration();
-        assert_eq!(fn_decl.identifier.value(), "some_fn");
+        assert_eq!(ctx.get_str(fn_decl.identifier.value()), "some_fn");
         assert!(fn_decl.modifiers.is_exported());
     }
 }

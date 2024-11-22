@@ -1,8 +1,8 @@
 use crate::ast::modifier::Modifiers;
-use crate::parse::{Parser, TypeDeclarationNode};
 use crate::lex::token::KeywordToken::Type;
+use crate::parse::{Parser, TypeDeclarationNode};
 
-impl Parser {
+impl<'a> Parser<'a> {
     pub(crate) fn parse_type_declaration(&mut self) -> crate::parse::Result<TypeDeclarationNode> {
         self.parse_type_declaration_with_modifiers(Modifiers(vec![]))
     }
@@ -22,42 +22,46 @@ impl Parser {
 
 #[cfg(test)]
 mod tests {
-    use crate::parse::{Error, InfixOperator, parse, TypeFundamentalNode, TypeNode};
+    use crate::common::Context;
     use crate::lex::lex;
+    use crate::parse::{Error, InfixOperator, parse, TypeFundamentalNode, TypeNode};
 
     #[test]
     fn parse_empty_type_declaration() {
-        let tokens = lex("type New_Type()").unwrap();
-        let result = parse(tokens).unwrap();
+        let mut ctx = Context::default();
+        let tokens = lex(&mut ctx, "type New_Type()").unwrap();
+        let result = parse(&mut ctx, tokens).unwrap();
         assert_eq!(result.len(), 1);
 
         let decl = result[0].as_type_declaration();
-        assert_eq!(decl.identifier.value(), "New_Type");
+        assert_eq!(ctx.get_str(decl.identifier.value()), "New_Type");
         assert_eq!(decl.properties.nodes, vec![]);
         assert!(!decl.modifiers.is_exported());
     }
 
     #[test]
     fn parse_invalid_type_declaration() {
-        let tokens = lex("type new_type()").unwrap();
-        let result = parse(tokens);
+        let mut ctx = Context::default();
+        let tokens = lex(&mut ctx, "type new_type()").unwrap();
+        let result = parse(&mut ctx, tokens);
         assert!(result.is_err());
         let Error::InvalidIdentifier { .. } = result.err().unwrap() else { panic!() };
     }
 
     #[test]
     fn parse_type_declaration_with_single_property() {
-        let tokens = lex("type New_Type(p_1: Number)").unwrap();
-        let result = parse(tokens).unwrap();
+        let mut ctx = Context::default();
+        let tokens = lex(&mut ctx, "type New_Type(p_1: Number)").unwrap();
+        let result = parse(&mut ctx, tokens).unwrap();
         assert_eq!(result.len(), 1);
 
         let decl = result[0].as_type_declaration();
-        assert_eq!(decl.identifier.value(), "New_Type");
+        assert_eq!(ctx.get_str(decl.identifier.value()), "New_Type");
         assert_eq!(decl.properties.nodes.len(), 1);
 
         let prop = decl.properties.nodes.get(0).unwrap().as_infix();
         let prop_ident = prop.left.as_identifier();
-        assert_eq!(prop_ident.value(), "p_1");
+        assert_eq!(ctx.get_str(prop_ident.value()), "p_1");
         assert!(matches!(prop.operator, InfixOperator::TypeAscription(_)));
         assert!(matches!(prop.right.as_type(), TypeNode::Fundamental(TypeFundamentalNode::Number(_))));
 
@@ -66,23 +70,24 @@ mod tests {
 
     #[test]
     fn parse_type_declaration_with_multiple_properties() {
-        let tokens = lex("export type New_Type(p_1: Number, p_2: Bool)").unwrap();
-        let result = parse(tokens).unwrap();
+        let mut ctx = Context::default();
+        let tokens = lex(&mut ctx, "export type New_Type(p_1: Number, p_2: Bool)").unwrap();
+        let result = parse(&mut ctx, tokens).unwrap();
         assert_eq!(result.len(), 1);
 
         let decl = result[0].as_type_declaration();
-        assert_eq!(decl.identifier.value(), "New_Type");
+        assert_eq!(ctx.get_str(decl.identifier.value()), "New_Type");
         assert_eq!(decl.properties.nodes.len(), 2);
 
         let prop = decl.properties.nodes.get(0).unwrap().as_infix();
         let prop_ident = prop.left.as_identifier();
-        assert_eq!(prop_ident.value(), "p_1");
+        assert_eq!(ctx.get_str(prop_ident.value()), "p_1");
         assert!(matches!(prop.operator, InfixOperator::TypeAscription(_)));
         assert!(matches!(prop.right.as_type(), TypeNode::Fundamental(TypeFundamentalNode::Number(_))));
 
         let prop = decl.properties.nodes.get(1).unwrap().as_infix();
         let prop_ident = prop.left.as_identifier();
-        assert_eq!(prop_ident.value(), "p_2");
+        assert_eq!(ctx.get_str(prop_ident.value()), "p_2");
         assert!(matches!(prop.operator, InfixOperator::TypeAscription(_)));
         assert!(matches!(prop.right.as_type(), TypeNode::Fundamental(TypeFundamentalNode::Boolean(_))));
 
@@ -91,26 +96,27 @@ mod tests {
 
     #[test]
     fn parse_multiline_type_declaration() {
-        let tokens = lex(r#"export type New_Type(
+        let mut ctx = Context::default();
+        let tokens = lex(&mut ctx, r#"export type New_Type(
             p_1: Number,
             p_2: Bool
         )"#).unwrap();
-        let result = parse(tokens).unwrap();
+        let result = parse(&mut ctx, tokens).unwrap();
         assert_eq!(result.len(), 1);
 
         let decl = result[0].as_type_declaration();
-        assert_eq!(decl.identifier.value(), "New_Type");
+        assert_eq!(ctx.get_str(decl.identifier.value()), "New_Type");
         assert_eq!(decl.properties.nodes.len(), 2);
 
         let prop = decl.properties.nodes.get(0).unwrap().as_infix();
         let prop_ident = prop.left.as_identifier();
-        assert_eq!(prop_ident.value(), "p_1");
+        assert_eq!(ctx.get_str(prop_ident.value()), "p_1");
         assert!(matches!(prop.operator, InfixOperator::TypeAscription(_)));
         assert!(matches!(prop.right.as_type(), TypeNode::Fundamental(TypeFundamentalNode::Number(_))));
 
         let prop = decl.properties.nodes.get(1).unwrap().as_infix();
         let prop_ident = prop.left.as_identifier();
-        assert_eq!(prop_ident.value(), "p_2");
+        assert_eq!(ctx.get_str(prop_ident.value()), "p_2");
         assert!(matches!(prop.operator, InfixOperator::TypeAscription(_)));
         assert!(matches!(prop.right.as_type(), TypeNode::Fundamental(TypeFundamentalNode::Boolean(_))));
 

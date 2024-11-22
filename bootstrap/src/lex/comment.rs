@@ -14,17 +14,19 @@ impl Lexer<'_> {
 
 #[cfg(test)]
 mod test {
+    use crate::common::Context;
     use crate::lex::Lexer;
     use crate::lex::token::TokenKind;
 
     #[test]
     fn comment() {
         let text = "// some comment";
-        let lexer = Lexer::new(text);
+        let mut ctx = Context::default();
+        let mut lexer = Lexer::new(&mut ctx, text);
         let result = lexer.advance().unwrap();
         assert_eq!(result.kind, TokenKind::EOF);
         assert_eq!(result.span.start, (1, 16, 15));
         assert_eq!(result.span.end, (1, 16, 15));
-        assert_eq!(result.value(), "")
+        assert_eq!(ctx.get_str(result.value()), "")
     }
 }

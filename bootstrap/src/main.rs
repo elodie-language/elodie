@@ -21,13 +21,13 @@ fn main() {
     let mut runner = Runner::new();
 
     let std_content = load_library_file("std/index.elx").unwrap();
-    let std_file = compile_str(std_content.as_str()).unwrap();
+    let (ctx, std_file) = compile_str(std_content.as_str()).unwrap();
 
     runner.run(std_file).unwrap();
 
     let mut path = PathBuf::from(args.get(1).unwrap());
     let content = load_text_from_file(path.to_str().unwrap()).unwrap();
-    let source_file = compile_str(content.as_str()).unwrap();
+    let (ctx, source_file) = compile_str(content.as_str()).unwrap();
 
     runner.run(source_file).unwrap();
 }

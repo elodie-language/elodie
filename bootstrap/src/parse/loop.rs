@@ -1,12 +1,12 @@
 use OperatorToken::CloseCurly;
 use SeparatorToken::NewLine;
 
+use crate::lex::token::{KeywordToken, OperatorToken, SeparatorToken};
 use crate::parse::node::{BreakNode, ContinueNode, LoopNode};
 use crate::parse::Parser;
 use crate::parse::precedence::Precedence;
-use crate::lex::token::{KeywordToken, OperatorToken, SeparatorToken};
 
-impl Parser {
+impl<'a> Parser<'a> {
     pub(crate) fn parse_loop(&mut self) -> crate::parse::Result<LoopNode> {
         let token = self.consume_keyword(KeywordToken::Loop)?;
         Ok(LoopNode { token, block: self.parse_block()? })
@@ -33,16 +33,17 @@ impl Parser {
 mod tests {
     use std::ops::Deref;
 
-    use crate::lex;
+    use crate::common::Context;
+    use crate::lex::lex;
     use crate::parse::node::LiteralNode;
     use crate::parse::node::Node::{Continue, Literal};
     use crate::parse::parse;
-    use crate::lex::lex;
 
     #[test]
     fn empty_loop() {
-        let tokens = lex("loop{}").unwrap();
-        let result = parse(tokens).unwrap();
+        let mut ctx = Context::default();
+        let tokens = lex(&mut ctx, "loop{}").unwrap();
+        let result = parse(&mut ctx, tokens).unwrap();
         assert_eq!(result.len(), 1);
 
         let node = result[0].as_loop();
@@ -51,21 +52,23 @@ mod tests {
 
     #[test]
     fn loop_with_single_node() {
-        let tokens = lex("loop{ 42 }").unwrap();
-        let result = parse(tokens).unwrap();
+        let mut ctx = Context::default();
+        let tokens = lex(&mut ctx, "loop{ 42 }").unwrap();
+        let result = parse(&mut ctx, tokens).unwrap();
         assert_eq!(result.len(), 1);
 
         let node = result[0].as_loop();
         assert_eq!(node.block.nodes.len(), 1);
 
         let Literal(LiteralNode::Number(number)) = &node.block.nodes[0] else { panic!() };
-        assert_eq!(number.value().unwrap(), 42.0);
+        assert_eq!(ctx.get_str(number.value()), "42");
     }
 
     #[test]
     fn nested_loop() {
-        let tokens = lex("loop{ loop { 42 } }").unwrap();
-        let result = parse(tokens).unwrap();
+        let mut ctx = Context::default();
+        let tokens = lex(&mut ctx, "loop{ loop { 42 } }").unwrap();
+        let result = parse(&mut ctx, tokens).unwrap();
         assert_eq!(result.len(), 1);
 
         let outer_loop = result[0].as_loop();
@@ -75,13 +78,14 @@ mod tests {
         assert_eq!(inner_loop.block.nodes.len(), 1);
 
         let Literal(LiteralNode::Number(number)) = &inner_loop.block.nodes[0] else { panic!() };
-        assert_eq!(number.value().unwrap(), 42.0);
+        assert_eq!(ctx.get_str(number.value()), "42");
     }
 
     #[test]
     fn loop_continue() {
-        let tokens = lex("loop{ continue }").unwrap();
-        let result = parse(tokens).unwrap();
+        let mut ctx = Context::default();
+        let tokens = lex(&mut ctx, "loop{ continue }").unwrap();
+        let result = parse(&mut ctx, tokens).unwrap();
         assert_eq!(result.len(), 1);
 
         let node = result[0].as_loop();
@@ -92,8 +96,9 @@ mod tests {
 
     #[test]
     fn loop_break() {
-        let tokens = lex("loop{ break }").unwrap();
-        let result = parse(tokens).unwrap();
+        let mut ctx = Context::default();
+        let tokens = lex(&mut ctx, "loop{ break }").unwrap();
+        let result = parse(&mut ctx, tokens).unwrap();
         assert_eq!(result.len(), 1);
 
         let node = result[0].as_loop();
@@ -105,8 +110,9 @@ mod tests {
 
     #[test]
     fn loop_break_with_result() {
-        let tokens = lex("loop{ break 9924 }").unwrap();
-        let result = parse(tokens).unwrap();
+        let mut ctx = Context::default();
+        let tokens = lex(&mut ctx, "loop{ break 9924 }").unwrap();
+        let result = parse(&mut ctx, tokens).unwrap();
         assert_eq!(result.len(), 1);
 
         let node = result[0].as_loop();
@@ -116,6 +122,6 @@ mod tests {
         let Some(ref node) = node.result else { panic!() };
 
         let Literal(LiteralNode::Number(node)) = &node.deref() else { panic!() };
-        assert_eq!(node.value().unwrap(), 9924.0);
+        assert_eq!(ctx.get_str(node.value()), "9924");
     }
 }

@@ -1,12 +1,13 @@
 use std::cmp::PartialOrd;
 use std::collections::HashMap;
 
-use crate::parse::Error::UnexpectedEndOfFile;
-pub use crate::parse::node::*;
-use crate::parse::precedence::Precedence;
+use crate::common::Context;
 use crate::lex::token::{KeywordToken, LiteralToken, OperatorToken, SeparatorToken, Token, TokenKind};
 use crate::lex::token::SeparatorToken::NewLine;
 use crate::lex::token::TokenKind::{Keyword, Literal, Operator, Separator};
+use crate::parse::Error::UnexpectedEndOfFile;
+pub use crate::parse::node::*;
+use crate::parse::precedence::Precedence;
 
 pub(crate) mod precedence;
 mod node;
@@ -48,18 +49,19 @@ impl Error {
 
 pub(crate) type Result<T, E = Error> = core::result::Result<T, E>;
 
-pub(crate) fn parse(tokens: Vec<Token>) -> Result<RootNode> {
-    Parser::new(tokens).parse()
+pub(crate) fn parse(ctx: &mut Context, tokens: Vec<Token>) -> Result<RootNode> {
+    Parser::new(ctx, tokens).parse()
 }
 
-struct Parser {
+struct Parser<'a> {
+    ctx: &'a mut Context,
     tokens: Vec<Token>,
     precedence_map: HashMap<TokenKind, Precedence>,
 }
 
 
-impl Parser {
-    fn new(tokens: Vec<Token>) -> Self {
+impl<'a> Parser<'a> {
+    fn new(ctx: &'a mut Context, tokens: Vec<Token>) -> Self {
         let mut precedence_map = HashMap::new();
         precedence_map.insert(Operator(OperatorToken::Equal), Precedence::Assignment);
 
@@ -91,6 +93,7 @@ impl Parser {
         tokens.reverse();
 
         Self {
+            ctx,
             tokens,
             precedence_map,
         }
@@ -223,51 +226,58 @@ mod tests {
     use LiteralToken::False;
     use OperatorToken::Plus;
 
-    use crate::parse::{Error, Parser};
-    use crate::parse::precedence::Precedence;
-    use crate::parse::precedence::Precedence::Term;
+    use crate::common::Context;
     use crate::lex::lex;
     use crate::lex::token::{literal, LiteralToken, OperatorToken, separator};
     use crate::lex::token::LiteralToken::{Number, True};
     use crate::lex::token::SeparatorToken::Semicolon;
+    use crate::parse::{Error, Parser};
+    use crate::parse::precedence::Precedence;
+    use crate::parse::precedence::Precedence::Term;
 
     #[test]
     fn advance_but_eof() {
-        let tokens = lex("").unwrap();
-        let mut parser = Parser::new(tokens);
+        let mut ctx = Context::default();
+        let tokens = lex(&mut ctx, "").unwrap();
+        let mut parser = Parser::new(&mut ctx, tokens);
         let result = parser.advance();
         assert_eq!(result, Err(Error::UnexpectedEndOfFile))
     }
 
     #[test]
     fn advance() {
-        let tokens = lex("1 + 2").unwrap();
-        let mut parser = Parser::new(tokens);
+        let mut ctx = Context::default();
+        let tokens = lex(&mut ctx, "1 + 2").unwrap();
+        let mut parser = Parser::new(&mut ctx, tokens);
 
-        let result = parser.advance().unwrap();
-        assert!(result.is_literal(Number));
-        assert_eq!(result.value(), "1");
+        let token_one = parser.advance().unwrap();
+        let token_two = parser.advance().unwrap();
+        let token_three = parser.advance().unwrap();
 
-        let result = parser.advance().unwrap();
-        assert!(result.is_operator(Plus));
 
-        let result = parser.advance().unwrap();
-        assert!(result.is_literal(Number));
-        assert_eq!(result.value(), "2");
+        assert_eq!(ctx.get_str(token_one.value()), "1");
+        assert!(token_one.is_literal(Number));
+
+        assert!(token_two.is_operator(Plus));
+
+        assert!(token_three.is_literal(Number));
+        assert_eq!(ctx.get_str(token_three.value()), "2");
     }
 
     #[test]
     fn consume_but_eof() {
-        let tokens = lex("").unwrap();
-        let mut parser = Parser::new(tokens);
+        let mut ctx = Context::default();
+        let tokens = lex(&mut ctx, "").unwrap();
+        let mut parser = Parser::new(&mut ctx, tokens);
         let result = parser.consume(literal(True));
         assert_eq!(result, Err(Error::UnexpectedEndOfFile))
     }
 
     #[test]
     fn consume_but_unexpected_token() {
-        let tokens = lex("false").unwrap();
-        let mut parser = Parser::new(tokens);
+        let mut ctx = Context::default();
+        let tokens = lex(&mut ctx, "false").unwrap();
+        let mut parser = Parser::new(&mut ctx, tokens);
         let result = parser.consume(literal(True));
         assert!(result.is_err());
 
@@ -279,8 +289,9 @@ mod tests {
 
     #[test]
     fn consume() {
-        let tokens = lex("true 99").unwrap();
-        let mut parser = Parser::new(tokens);
+        let mut ctx = Context::default();
+        let tokens = lex(&mut ctx, "true 99").unwrap();
+        let mut parser = Parser::new(&mut ctx, tokens);
         let result = parser.consume(literal(True)).unwrap();
         assert!(result.is_literal(True));
 
@@ -290,24 +301,27 @@ mod tests {
 
     #[test]
     fn consume_if_but_eof() {
-        let tokens = lex("").unwrap();
-        let mut parser = Parser::new(tokens);
+        let mut ctx = Context::default();
+        let tokens = lex(&mut ctx, "").unwrap();
+        let mut parser = Parser::new(&mut ctx, tokens);
         let result = parser.consume_if(literal(True));
         assert_eq!(result, Ok(None))
     }
 
     #[test]
     fn consume_if_but_unexpected_token() {
-        let tokens = lex("false").unwrap();
-        let mut parser = Parser::new(tokens);
+        let mut ctx = Context::default();
+        let tokens = lex(&mut ctx, "false").unwrap();
+        let mut parser = Parser::new(&mut ctx, tokens);
         let result = parser.consume_if(literal(True));
         assert_eq!(result, Ok(None));
     }
 
     #[test]
     fn consume_if() {
-        let tokens = lex("true 99").unwrap();
-        let mut parser = Parser::new(tokens);
+        let mut ctx = Context::default();
+        let tokens = lex(&mut ctx, "true 99").unwrap();
+        let mut parser = Parser::new(&mut ctx, tokens);
         let result = parser.consume_if(literal(True)).unwrap().unwrap();
         assert!(result.is_literal(True));
 
@@ -317,38 +331,44 @@ mod tests {
 
     #[test]
     fn current_but_eof() {
-        let tokens = lex("").unwrap();
-        let mut parser = Parser::new(tokens);
+        let mut ctx = Context::default();
+        let tokens = lex(&mut ctx, "").unwrap();
+        let mut parser = Parser::new(&mut ctx, tokens);
         let result = parser.current();
         assert_eq!(result, Err(Error::UnexpectedEndOfFile))
     }
 
     #[test]
     fn current() {
-        let tokens = lex("true false").unwrap();
-        let mut parser = Parser::new(tokens);
-        let result = parser.current().unwrap();
-        assert!(result.is_literal(True));
-        assert_eq!(result.value(), "true");
+        let mut ctx = Context::default();
+        let tokens = lex(&mut ctx, "true false").unwrap();
+        let mut parser = Parser::new(&mut ctx, tokens);
 
+        let token_one = parser.current().unwrap().clone();
         parser.advance().unwrap();
-        let result = parser.current().unwrap();
-        assert!(result.is_literal(False));
-        assert_eq!(result.value(), "false");
+        let token_two = parser.current().unwrap().clone();
+
+        assert!(token_one.is_literal(True));
+        assert_eq!(ctx.get_str(token_one.value()), "true");
+
+        assert!(token_two.is_literal(False));
+        assert_eq!(ctx.get_str(token_two.value()), "false");
     }
 
     #[test]
     fn current_expect_but_eof() {
-        let tokens = lex("").unwrap();
-        let mut parser = Parser::new(tokens);
+        let mut ctx = Context::default();
+        let tokens = lex(&mut ctx, "").unwrap();
+        let mut parser = Parser::new(&mut ctx, tokens);
         let result = parser.current_expect(separator(Semicolon));
         assert_eq!(result, Err(Error::UnexpectedEndOfFile))
     }
 
     #[test]
     fn current_expect() {
-        let tokens = lex("true false").unwrap();
-        let mut parser = Parser::new(tokens);
+        let mut ctx = Context::default();
+        let tokens = lex(&mut ctx, "true false").unwrap();
+        let mut parser = Parser::new(&mut ctx, tokens);
 
         let result = parser.current_expect(literal(True));
         assert!(result.is_ok());
@@ -361,8 +381,9 @@ mod tests {
 
     #[test]
     fn current_expect_but_different() {
-        let tokens = lex("true").unwrap();
-        let mut parser = Parser::new(tokens);
+        let mut ctx = Context::default();
+        let tokens = lex(&mut ctx, "true").unwrap();
+        let mut parser = Parser::new(&mut ctx, tokens);
 
         let result = parser.current_expect(literal(False));
         assert!(result.is_err());
@@ -375,64 +396,71 @@ mod tests {
 
     #[test]
     fn current_precedence_but_eof() {
-        let tokens = lex("").unwrap();
-        let mut parser = Parser::new(tokens);
+        let mut ctx = Context::default();
+        let tokens = lex(&mut ctx, "").unwrap();
+        let mut parser = Parser::new(&mut ctx, tokens);
         let result = parser.current_precedence();
         assert_eq!(result, Ok(Precedence::None))
     }
 
     #[test]
     fn current_precedence() {
-        let tokens = lex("+").unwrap();
-        let mut parser = Parser::new(tokens);
+        let mut ctx = Context::default();
+        let tokens = lex(&mut ctx, "+").unwrap();
+        let mut parser = Parser::new(&mut ctx, tokens);
         let result = parser.current_precedence();
         assert_eq!(result, Ok(Term))
     }
 
     #[test]
     fn peek_but_eof() {
-        let tokens = lex("").unwrap();
-        let mut parser = Parser::new(tokens);
+        let mut ctx = Context::default();
+        let tokens = lex(&mut ctx, "").unwrap();
+        let mut parser = Parser::new(&mut ctx, tokens);
         let result = parser.peek();
         assert_eq!(result, Err(Error::UnexpectedEndOfFile))
     }
 
     #[test]
     fn peek_but_nothing_to_peek() {
-        let tokens = lex("true").unwrap();
-        let mut parser = Parser::new(tokens);
+        let mut ctx = Context::default();
+        let tokens = lex(&mut ctx, "true").unwrap();
+        let mut parser = Parser::new(&mut ctx, tokens);
         let result = parser.peek();
         assert_eq!(result, Err(Error::UnexpectedEndOfFile))
     }
 
     #[test]
     fn peek() {
-        let tokens = lex("true false 1").unwrap();
-        let mut parser = Parser::new(tokens);
+        let mut ctx = Context::default();
+        let tokens = lex(&mut ctx, "true false 1").unwrap();
+        let mut parser = Parser::new(&mut ctx, tokens);
 
-        let result = parser.peek().unwrap();
-        assert!(result.is_literal(False));
-        assert_eq!(result.value(), "false");
-
+        let token_one = parser.peek().unwrap().clone();
         parser.advance().unwrap();
+        let token_two = parser.peek().unwrap().clone();
 
-        let result = parser.peek().unwrap();
-        assert!(result.is_literal(Number));
-        assert_eq!(result.value(), "1");
+        assert!(token_one.is_literal(False));
+        assert_eq!(ctx.get_str(token_one.value()), "false");
+
+        assert!(token_two.is_literal(Number));
+        assert_eq!(ctx.get_str(token_two.value()), "1");
     }
 
     #[test]
     fn peek_expect_but_eof() {
-        let tokens = lex("").unwrap();
-        let mut parser = Parser::new(tokens);
+        let mut ctx = Context::default();
+        let tokens = lex(&mut ctx, "").unwrap();
+        let mut parser = Parser::new(&mut ctx, tokens);
         let result = parser.peek_expect(separator(Semicolon));
         assert_eq!(result, Err(Error::UnexpectedEndOfFile))
     }
 
     #[test]
     fn peek_expect_but_nothing_to_peek() {
-        let tokens = lex("true").unwrap();
-        let mut parser = Parser::new(tokens);
+        let mut ctx = Context::default();
+        let tokens = lex(&mut ctx, "true").unwrap();
+        let mut parser = Parser::new(&mut ctx, tokens);
 
         let result = parser.peek_expect(separator(Semicolon));
         assert_eq!(result, Err(Error::UnexpectedEndOfFile));
@@ -440,8 +468,9 @@ mod tests {
 
     #[test]
     fn peek_expect() {
-        let tokens = lex("true false 99").unwrap();
-        let mut parser = Parser::new(tokens);
+        let mut ctx = Context::default();
+        let tokens = lex(&mut ctx, "true false 99").unwrap();
+        let mut parser = Parser::new(&mut ctx, tokens);
 
         let result = parser.peek_expect(literal(False));
         assert!(result.is_ok());
@@ -454,8 +483,9 @@ mod tests {
 
     #[test]
     fn peek_expect_but_different() {
-        let tokens = lex("true 99").unwrap();
-        let mut parser = Parser::new(tokens);
+        let mut ctx = Context::default();
+        let tokens = lex(&mut ctx, "true 99").unwrap();
+        let mut parser = Parser::new(&mut ctx, tokens);
 
         let result = parser.peek_expect(literal(False));
         assert!(result.is_err());

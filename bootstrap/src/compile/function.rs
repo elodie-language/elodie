@@ -4,10 +4,10 @@ use std::rc::Rc;
 use crate::{ast, parse};
 use crate::ast::{BlockNode, DeclareFunctionNode, FunctionArgumentNode, Identifier, Node, ReturnFromFunctionNode};
 use crate::ast::Node::ReturnFromFunction;
-use crate::r#type::DefaultTypeIds;
 use crate::compile::Compiler;
+use crate::r#type::DefaultTypeIds;
 
-impl Compiler {
+impl<'a> Compiler<'a> {
     pub(crate) fn compile_declare_function(&mut self, node: &parse::FunctionDeclarationNode) -> crate::compile::Result<ast::Node> {
         let mut arguments = Vec::with_capacity(node.arguments.len());
         for arg in &node.arguments {
@@ -20,7 +20,7 @@ impl Compiler {
         }
 
         Ok(ast::Node::DeclareFunction(DeclareFunctionNode {
-            identifier: Identifier(node.identifier.value().to_string()),
+            identifier: Identifier(self.ctx.get_str(node.identifier.value()).to_string()),
             arguments,
             return_type: DefaultTypeIds::never(),
             body: Rc::new(BlockNode { body, return_type: DefaultTypeIds::never() }),
@@ -29,7 +29,7 @@ impl Compiler {
 
     pub(crate) fn compile_declare_function_argument(&mut self, node: &parse::FunctionDeclarationArgumentNode) -> crate::compile::Result<ast::FunctionArgumentNode> {
         Ok(FunctionArgumentNode {
-            identifier: Identifier(node.identifier.value().to_string()),
+            identifier: Identifier(self.ctx.get_str(node.identifier.value()).to_string()),
             type_id: DefaultTypeIds::never(),
         })
     }

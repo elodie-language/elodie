@@ -25,7 +25,7 @@ impl Lexer<'_> {
         Ok(())
     }
 
-    pub(crate) fn consume_separator(&self) -> crate::lex::Result<Token> {
+    pub(crate) fn consume_separator(&mut self) -> crate::lex::Result<Token> {
         let start = self.position();
         let mut text = String::from(self.consume_next()?);
 
@@ -44,7 +44,7 @@ impl Lexer<'_> {
 
         Ok(Token {
             kind,
-            span: TextSpan { start, end: self.position(), value: text },
+            span: TextSpan { start, end: self.position(), value: self.ctx.string_cache.insert(text.as_str()) },
         })
     }
 }
@@ -52,62 +52,68 @@ impl Lexer<'_> {
 
 #[cfg(test)]
 mod test {
+    use crate::common::Context;
+    use crate::lex::Lexer;
     use crate::lex::token::SeparatorToken::{Comma, NewLine, Semicolon};
     use crate::lex::token::TokenKind;
-    use crate::lex::Lexer;
 
     #[test]
     fn tab() {
         let text = "\t";
-        let lexer = Lexer::new(text);
+        let mut ctx = Context::default();
+        let mut lexer = Lexer::new(&mut ctx, text);
         let result = lexer.advance().unwrap();
         assert_eq!(result.kind, TokenKind::EOF);
         assert_eq!(result.span.start, (1, 2, 1));
         assert_eq!(result.span.end, (1, 2, 1));
-        assert_eq!(result.value(), "")
+        assert_eq!(ctx.get_str(result.value()), "")
     }
 
     #[test]
     fn whitespace() {
         let text = "     ";
-        let lexer = Lexer::new(text);
+        let mut ctx = Context::default();
+        let mut lexer = Lexer::new(&mut ctx, text);
         let result = lexer.advance().unwrap();
         assert_eq!(result.kind, TokenKind::EOF);
         assert_eq!(result.span.start, (1, 6, 5));
         assert_eq!(result.span.end, (1, 6, 5));
-        assert_eq!(result.value(), "")
+        assert_eq!(ctx.get_str(result.value()), "")
     }
 
     #[test]
     fn comma() {
         let text = ",";
-        let lexer = Lexer::new(text);
+        let mut ctx = Context::default();
+        let mut lexer = Lexer::new(&mut ctx, text);
         let result = lexer.advance().unwrap();
         assert_eq!(result.kind, TokenKind::Separator(Comma));
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 2, 1));
-        assert_eq!(result.value(), ",");
+        assert_eq!(ctx.get_str(result.value()), ",");
     }
 
     #[test]
     fn semicolon() {
         let text = ";";
-        let lexer = Lexer::new(text);
+        let mut ctx = Context::default();
+        let mut lexer = Lexer::new(&mut ctx, text);
         let result = lexer.advance().unwrap();
         assert_eq!(result.kind, TokenKind::Separator(Semicolon));
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 2, 1));
-        assert_eq!(result.value(), ";");
+        assert_eq!(ctx.get_str(result.value()), ";");
     }
 
     #[test]
     fn new_line() {
         let text = "\n\n\n";
-        let lexer = Lexer::new(text);
+        let mut ctx = Context::default();
+        let mut lexer = Lexer::new(&mut ctx, text);
         let result = lexer.advance().unwrap();
         assert_eq!(result.kind, TokenKind::Separator(NewLine));
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (3, 1, 3));
-        assert_eq!(result.value(), "\n\n\n");
+        assert_eq!(ctx.get_str(result.value()), "\n\n\n");
     }
 }
