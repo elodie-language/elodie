@@ -1,6 +1,6 @@
 use std::ops::Index;
 
-use crate::ast::modifier::Modifiers;
+use crate::ir::Modifiers;
 use crate::common::StringCacheIdx;
 use crate::lex::token::{LiteralToken, Token, TokenKind};
 

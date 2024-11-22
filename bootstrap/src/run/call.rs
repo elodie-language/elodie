@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 
-use crate::ast::CallFunctionNode;
+use crate::ir::CallFunctionNode;
 use crate::common::StringCacheIdx;
 use crate::run::Runner;
 use crate::run::value::{FunctionValue, Value};

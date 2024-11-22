@@ -1,4 +1,4 @@
-use crate::ast::{BreakLoopNode, ContinueLoopNode, LoopNode};
+use crate::ir::{BreakLoopNode, ContinueLoopNode, LoopNode};
 use crate::run::{Interrupt, Runner};
 use crate::run::value::Value;
 

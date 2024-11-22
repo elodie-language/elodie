@@ -1,4 +1,4 @@
-use crate::ast::IfNode;
+use crate::ir::IfNode;
 use crate::run::Runner;
 use crate::run::value::Value;
 

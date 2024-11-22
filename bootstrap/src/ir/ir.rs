@@ -1,6 +1,6 @@
 use std::rc::Rc;
 
-use crate::ast::modifier::Modifiers;
+use crate::ir::modifier::Modifiers;
 use crate::common::StringCacheIdx;
 use crate::parse;
 use crate::parse::IdentifierNode;

@@ -1,4 +1,4 @@
-use crate::ast::modifier::Modifiers;
+use crate::ir::Modifiers;
 use crate::lex::token::KeywordToken;
 use crate::parse::{PackageDeclarationNode, Parser};
 

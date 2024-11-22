@@ -1,6 +1,6 @@
 use KeywordToken::Export;
 
-use crate::ast::modifier::{Modifier, Modifiers};
+use crate::ir::{Modifier, Modifiers};
 use crate::parse::{Node, Parser};
 use crate::lex::token::KeywordToken;
 use crate::lex::token::KeywordToken::{Function, Package, Type};

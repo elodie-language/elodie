@@ -3,7 +3,7 @@ use OperatorToken::OpenParen;
 use SeparatorToken::Comma;
 use TokenKind::{Operator, Separator};
 
-use crate::ast::modifier::Modifiers;
+use crate::ir::Modifiers;
 use crate::lex::token::{KeywordToken, OperatorToken, SeparatorToken, TokenKind};
 use crate::lex::token::OperatorToken::{Arrow, CloseParen};
 use crate::parse::node::{FunctionDeclarationArgumentNode, FunctionDeclarationNode, ReturnNode};

@@ -14,7 +14,7 @@ use crate::run::value::Value::HostFunction;
 
 mod common;
 mod cli;
-mod ast;
+mod ir;
 mod compile;
 mod run;
 mod lex;

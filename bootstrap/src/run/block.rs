@@ -1,4 +1,4 @@
-use crate::ast::BlockNode;
+use crate::ir::BlockNode;
 use crate::run::{Interrupt, Runner};
 use crate::run::value::Value;
 

@@ -2,7 +2,7 @@ use std::collections::HashMap;
 use std::fmt::{Debug, Formatter};
 use std::rc::Rc;
 
-use crate::ast::{BlockNode, FunctionArgumentNode, Identifier};
+use crate::ir::{BlockNode, FunctionArgumentNode, Identifier};
 use crate::common::StringCacheIdx;
 
 #[derive(Debug, Clone)]

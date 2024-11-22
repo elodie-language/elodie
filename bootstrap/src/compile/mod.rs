@@ -1,7 +1,7 @@
-use crate::{ast, compile, lex, parse};
-use crate::ast::SourceFile;
+use crate::{ir, compile, lex, parse};
 use crate::common::Context;
 use crate::compile::symbol::SymbolTable;
+use crate::ir::SourceFile;
 use crate::lex::lex;
 use crate::parse::{parse, RootNode};
 
@@ -71,7 +71,7 @@ impl<'a> Compiler<'a> {
     pub(crate) fn compile(&mut self, node: RootNode) -> Result<SourceFile> {
         // 2 pass
         // populate symbol table
-        // create ast
+        // create ir
 
         let mut result = Vec::new();
         for node in &node.nodes {
@@ -83,7 +83,7 @@ impl<'a> Compiler<'a> {
         Ok(SourceFile { body: result })
     }
 
-    pub(crate) fn compile_node(&mut self, node: &parse::Node) -> Result<ast::Node> {
+    pub(crate) fn compile_node(&mut self, node: &parse::Node) -> Result<ir::Node> {
         match node {
             parse::Node::Block(block_node) => Ok(self.compile_block(block_node)?),
             parse::Node::Break(break_node) => Ok(self.compile_break(break_node)?),

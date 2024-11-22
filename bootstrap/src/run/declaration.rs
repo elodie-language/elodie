@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 use std::ops::Deref;
 
-use crate::ast::{DeclareFunctionNode, DeclarePackageNode, DeclareVariableNode};
+use crate::ir::{DeclareFunctionNode, DeclarePackageNode, DeclareVariableNode};
 use crate::run::Runner;
 use crate::run::value::{FunctionValue, PackageValue, Value};
 

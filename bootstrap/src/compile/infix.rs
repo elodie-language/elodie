@@ -1,14 +1,14 @@
 use std::ops::Deref;
 
-use crate::{ast, parse};
-use crate::ast::{CalculateNode, CalculationOperator, CallFunctionNode, CallFunctionOfObjectNode, CallFunctionOfPackageNode, CompareNode, CompareOperator, Identifier, InstantiateTypeNode, LoadValueFromObjectNode, NamedArgumentNode};
+use crate::{ir, parse};
+use crate::ir::{CalculateNode, CalculationOperator, CallFunctionNode, CallFunctionOfObjectNode, CallFunctionOfPackageNode, CompareNode, CompareOperator, Identifier, InstantiateTypeNode, LoadValueFromObjectNode, NamedArgumentNode};
 use crate::compile::Compiler;
 use crate::parse::{InfixNode, InfixOperator, LiteralNode, Node, TypeNode};
 use crate::parse::Node::Type;
 use crate::r#type::{DefaultTypeIds, TypeId};
 
 impl<'a> Compiler<'a> {
-    pub(crate) fn compile_infix(&mut self, node: &parse::InfixNode) -> crate::compile::Result<ast::Node> {
+    pub(crate) fn compile_infix(&mut self, node: &parse::InfixNode) -> crate::compile::Result<ir::Node> {
         let InfixNode { left, right, operator } = node;
 
         if let InfixOperator::AccessPackage(_) = operator {
@@ -16,7 +16,7 @@ impl<'a> Compiler<'a> {
             //
             // let Node::Infix(InfixNode { left, operator, right }) = right.deref() else { todo!() };
             // if let InfixOperator::Call(_) = operator {
-            //     let ast::Node::UseIdentifier(function_identifier) = self.compile_node(left.deref())? else { panic!() };
+            //     let ir::Node::UseIdentifier(function_identifier) = self.compile_node(left.deref())? else { panic!() };
             //
             //     let parse::Node::Tuple(tuple_node) = right.deref() else { panic!() };
             //     let mut arguments = Vec::with_capacity(tuple_node.nodes.len());
@@ -24,9 +24,9 @@ impl<'a> Compiler<'a> {
             //         arguments.push(self.compile_node(node)?)
             //     }
             //
-            //     return Ok(ast::Node::CallFunctionOfPackage(CallFunctionOfPackageNode {
-            //         package: vec![ast::Identifier(package_identifier.value().to_string())],
-            //         function: ast::Identifier(function_identifier.identifier.0.to_string()),
+            //     return Ok(ir::Node::CallFunctionOfPackage(CallFunctionOfPackageNode {
+            //         package: vec![ir::Identifier(package_identifier.value().to_string())],
+            //         function: ir::Identifier(function_identifier.identifier.0.to_string()),
             //         arguments,
             //     }));
             // }
@@ -34,7 +34,7 @@ impl<'a> Compiler<'a> {
             let (paths, node) = self.handle_package_access(node);
             let InfixNode { left, right, operator } = node;
             if let InfixOperator::Call(_) = operator {
-                let ast::Node::LoadValue(function_identifier) = self.compile_node(left.deref())? else { panic!() };
+                let ir::Node::LoadValue(function_identifier) = self.compile_node(left.deref())? else { panic!() };
 
                 let parse::Node::Tuple(tuple_node) = right.deref() else { panic!() };
                 let mut arguments = Vec::with_capacity(tuple_node.nodes.len());
@@ -42,7 +42,7 @@ impl<'a> Compiler<'a> {
                     arguments.push(self.compile_node(node)?)
                 }
 
-                return Ok(ast::Node::CallFunctionOfPackage(CallFunctionOfPackageNode {
+                return Ok(ir::Node::CallFunctionOfPackage(CallFunctionOfPackageNode {
                     package: paths,
                     function: function_identifier.identifier.clone(),
                     arguments,
@@ -54,9 +54,9 @@ impl<'a> Compiler<'a> {
             let Node::Identifier(object_identifier) = left.deref() else { todo!() };
 
             if let Node::Identifier(property) = right.deref() {
-                return Ok(ast::Node::LoadValueFromObject(LoadValueFromObjectNode {
-                    object: ast::Identifier::from(object_identifier),
-                    property: ast::Identifier::from(property),
+                return Ok(ir::Node::LoadValueFromObject(LoadValueFromObjectNode {
+                    object: ir::Identifier::from(object_identifier),
+                    property: ir::Identifier::from(property),
                 }));
             }
 
@@ -67,28 +67,28 @@ impl<'a> Compiler<'a> {
             if let Node::Identifier(identifier_node) = &tuple.nodes[0] {
                 // load variable
 
-                return Ok(ast::Node::CallFunctionOfObject(CallFunctionOfObjectNode {
-                    object: ast::Identifier::from(object_identifier),
-                    function: ast::Identifier::from(function_identifier),
-                    arguments: vec![ast::Node::LoadValue(ast::UseIdentifierNode {
-                        identifier: ast::Identifier::from(identifier_node),
+                return Ok(ir::Node::CallFunctionOfObject(CallFunctionOfObjectNode {
+                    object: ir::Identifier::from(object_identifier),
+                    function: ir::Identifier::from(function_identifier),
+                    arguments: vec![ir::Node::LoadValue(ir::UseIdentifierNode {
+                        identifier: ir::Identifier::from(identifier_node),
                         type_id: DefaultTypeIds::string(),
                     })],
                 }));
             };
 
             if let Node::Literal(LiteralNode::String(value)) = &tuple.nodes[0] {
-                return Ok(ast::Node::CallFunctionOfObject(CallFunctionOfObjectNode {
-                    object: ast::Identifier::from(object_identifier),
-                    function: ast::Identifier::from(function_identifier),
-                    arguments: vec![ast::Node::ValueString(self.ctx.get_str(value.value()).to_string())],
+                return Ok(ir::Node::CallFunctionOfObject(CallFunctionOfObjectNode {
+                    object: ir::Identifier::from(object_identifier),
+                    function: ir::Identifier::from(function_identifier),
+                    arguments: vec![ir::Node::ValueString(self.ctx.get_str(value.value()).to_string())],
                 }));
             }
 
 
             let parse::Node::Infix(InfixNode { left, right, operator }) = &tuple.nodes[0] else { panic!() };
             if let InfixOperator::Call(_) = operator {
-                let ast::Node::LoadValue(identifier) = self.compile_node(left.deref())? else { panic!() };
+                let ir::Node::LoadValue(identifier) = self.compile_node(left.deref())? else { panic!() };
 
                 let parse::Node::Tuple(tuple_node) = right.deref() else { panic!() };
                 let mut arguments = Vec::with_capacity(tuple_node.nodes.len());
@@ -96,14 +96,14 @@ impl<'a> Compiler<'a> {
                     arguments.push(self.compile_node(node)?)
                 }
 
-                let function_call = ast::Node::CallFunction(CallFunctionNode {
+                let function_call = ir::Node::CallFunction(CallFunctionNode {
                     function: identifier.identifier,
                     arguments,
                 });
 
-                return Ok(ast::Node::CallFunctionOfObject(CallFunctionOfObjectNode {
-                    object: ast::Identifier::from(object_identifier),
-                    function: ast::Identifier::from(function_identifier),
+                return Ok(ir::Node::CallFunctionOfObject(CallFunctionOfObjectNode {
+                    object: ir::Identifier::from(object_identifier),
+                    function: ir::Identifier::from(function_identifier),
                     arguments: vec![function_call],
                 }));
             }
@@ -112,9 +112,9 @@ impl<'a> Compiler<'a> {
                 let parse::Node::Infix(infix_node) = &tuple.nodes[0] else { panic!() };
                 let arg = self.compile_infix(infix_node)?;
 
-                return Ok(ast::Node::CallFunctionOfObject(CallFunctionOfObjectNode {
-                    object: ast::Identifier::from(object_identifier),
-                    function: ast::Identifier::from(function_identifier),
+                return Ok(ir::Node::CallFunctionOfObject(CallFunctionOfObjectNode {
+                    object: ir::Identifier::from(object_identifier),
+                    function: ir::Identifier::from(function_identifier),
                     arguments: vec![arg],
                 }));
             }
@@ -138,14 +138,14 @@ impl<'a> Compiler<'a> {
                         value: right,
                     })
                 }
-                return Ok(ast::Node::InstantiateType(InstantiateTypeNode {
+                return Ok(ir::Node::InstantiateType(InstantiateTypeNode {
                     type_id: TypeId(23),
                     arguments,
                 }));
             };
 
 
-            let ast::Node::LoadValue(identifier) = self.compile_node(left.deref())? else { panic!() };
+            let ir::Node::LoadValue(identifier) = self.compile_node(left.deref())? else { panic!() };
             let parse::Node::Tuple(tuple_node) = right.deref() else { panic!() };
             let mut arguments = Vec::with_capacity(tuple_node.nodes.len());
             for node in &tuple_node.nodes {
@@ -153,7 +153,7 @@ impl<'a> Compiler<'a> {
             }
 
 
-            return Ok(ast::Node::CallFunction(CallFunctionNode {
+            return Ok(ir::Node::CallFunction(CallFunctionNode {
                 function: identifier.identifier,
                 arguments,
             }));
@@ -162,7 +162,7 @@ impl<'a> Compiler<'a> {
         if let InfixOperator::Add(_) = operator {
             let left = Box::new(self.compile_node(left.deref())?);
             let right = Box::new(self.compile_node(right.deref())?);
-            return Ok(ast::Node::Calculate(CalculateNode {
+            return Ok(ir::Node::Calculate(CalculateNode {
                 left,
                 operator: CalculationOperator::Add,
                 right,
@@ -174,7 +174,7 @@ impl<'a> Compiler<'a> {
             let left = Box::new(self.compile_node(left.deref())?);
             let right = Box::new(self.compile_node(right.deref())?);
 
-            return Ok(ast::Node::Compare(CompareNode {
+            return Ok(ir::Node::Compare(CompareNode {
                 left,
                 operator: CompareOperator::Equal,
                 right,
@@ -185,7 +185,7 @@ impl<'a> Compiler<'a> {
             let left = Box::new(self.compile_node(left.deref())?);
             let right = Box::new(self.compile_node(right.deref())?);
 
-            return Ok(ast::Node::Compare(CompareNode {
+            return Ok(ir::Node::Compare(CompareNode {
                 left,
                 operator: CompareOperator::NotEqual,
                 right,
@@ -197,7 +197,7 @@ impl<'a> Compiler<'a> {
             let left = Box::new(self.compile_node(left.deref())?);
             let right = Box::new(self.compile_node(right.deref())?);
 
-            return Ok(ast::Node::Compare(CompareNode {
+            return Ok(ir::Node::Compare(CompareNode {
                 left,
                 operator: CompareOperator::GreaterThan,
                 right,
@@ -208,7 +208,7 @@ impl<'a> Compiler<'a> {
             let left = Box::new(self.compile_node(left.deref())?);
             let right = Box::new(self.compile_node(right.deref())?);
 
-            return Ok(ast::Node::Calculate(CalculateNode {
+            return Ok(ir::Node::Calculate(CalculateNode {
                 left,
                 operator: CalculationOperator::Multiply,
                 right,

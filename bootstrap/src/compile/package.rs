@@ -3,12 +3,12 @@ use std::io;
 use std::io::Read;
 use std::path::PathBuf;
 
-use crate::{ast, parse};
-use crate::ast::{DeclarePackageNode, Identifier};
+use crate::{ir, parse};
+use crate::ir::{DeclarePackageNode, Identifier};
 use crate::compile::{compile_str, Compiler};
 
 impl<'a> Compiler<'a> {
-    pub(crate) fn compile_declare_package(&mut self, node: &parse::PackageDeclarationNode) -> crate::compile::Result<ast::Node> {
+    pub(crate) fn compile_declare_package(&mut self, node: &parse::PackageDeclarationNode) -> crate::compile::Result<ir::Node> {
         let mut compiled_body = vec![];
 
         for node in &node.block.nodes {
@@ -17,21 +17,21 @@ impl<'a> Compiler<'a> {
 
         let mut packages = vec![];
         for node in &compiled_body {
-            if let ast::Node::Block(block) = node {
+            if let ir::Node::Block(block) = node {
                 for node in &block.body {
-                    if let ast::Node::ExportPackage(_) = node {
+                    if let ir::Node::ExportPackage(_) = node {
                         packages.append(self.load_declared_packages("FIXME").as_mut());
                     }
                 }
             }
         }
 
-        Ok(ast::Node::DeclarePackage(DeclarePackageNode {
+        Ok(ir::Node::DeclarePackage(DeclarePackageNode {
             identifier: Identifier::from(&node.identifier),
             modifiers: node.modifiers.clone(),
             functions: compiled_body.into_iter()
                 .filter_map(|n| {
-                    if let ast::Node::DeclareFunction(declare_function) = n {
+                    if let ir::Node::DeclareFunction(declare_function) = n {
                         Some(declare_function) // Now directly taking ownership
                     } else {
                         None
@@ -50,7 +50,7 @@ impl<'a> Compiler<'a> {
         let mut result = vec![];
 
         for node in src_file.body {
-            if let ast::Node::DeclarePackage(package_node) = node {
+            if let ir::Node::DeclarePackage(package_node) = node {
                 result.push(package_node);
             }
         }

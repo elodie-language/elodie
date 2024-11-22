@@ -1,14 +1,14 @@
 use std::ops::Deref;
 
-use crate::{ast, parse};
-use crate::ast::{DeclarePropertyNode, DeclareTypeNode, Identifier};
-use crate::ast::Node::DeclareType;
+use crate::{ir, parse};
+use crate::ir::{DeclarePropertyNode, DeclareTypeNode, Identifier};
+use crate::ir::Node::DeclareType;
 use crate::compile::Compiler;
 use crate::parse::{InfixNode, InfixOperator};
 use crate::r#type::DefaultTypeIds;
 
 impl<'a> Compiler<'a> {
-    pub(crate) fn compile_declare_type(&mut self, node: &parse::TypeDeclarationNode) -> crate::compile::Result<ast::Node> {
+    pub(crate) fn compile_declare_type(&mut self, node: &parse::TypeDeclarationNode) -> crate::compile::Result<ir::Node> {
         let mut properties = Vec::with_capacity(node.properties.nodes.len());
 
         for node in &node.properties.nodes {

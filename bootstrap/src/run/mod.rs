@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 use std::ops::Deref;
 
-use crate::ast::{CalculationOperator, CallFunctionOfObjectNode, CallFunctionOfPackageNode, CompareOperator, Node, SourceFile};
+use crate::ir::{CalculationOperator, CallFunctionOfObjectNode, CallFunctionOfPackageNode, CompareOperator, Node, SourceFile};
 use crate::common::{Context, StringCacheIdx};
 use crate::r#type::{Property, Type, TypeId, TypeName};
 use crate::run::scope::Scope;
