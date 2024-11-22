@@ -3,12 +3,12 @@ use std::io;
 use std::io::Read;
 use std::path::PathBuf;
 
-use crate::ast;
-use crate::ast::{DeclarePackageNode, Identifier, parse};
-use crate::ast::compile::Compiler;
+use crate::{ast, parse};
+use crate::ast::{DeclarePackageNode, Identifier};
+use crate::compile::{compile_str, Compiler};
 
 impl Compiler {
-    pub(crate) fn compile_declare_package(&mut self, node: &parse::PackageDeclarationNode) -> crate::ast::compile::Result<ast::Node> {
+    pub(crate) fn compile_declare_package(&mut self, node: &parse::PackageDeclarationNode) -> crate::compile::Result<ast::Node> {
         let mut compiled_body = vec![];
 
         for node in &node.block.nodes {
@@ -45,7 +45,7 @@ impl Compiler {
 
 fn load_declared_packages(name: &str) -> Vec<DeclarePackageNode> {
     let content = crate::load_library_file("std/io/index.elx").unwrap();
-    let src_file = ast::parse_str(content.as_str()).unwrap();
+    let src_file = compile_str(content.as_str()).unwrap();
 
     let mut result = vec![];
 

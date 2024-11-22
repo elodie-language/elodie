@@ -1,8 +1,10 @@
 use std::ops::Deref;
 
-use crate::ast::{ast, parse, SourceFile};
-use crate::ast::compile::symbol::SymbolTable;
-use crate::parse::RootNode;
+use crate::{ast, compile, lex, parse};
+use crate::ast::SourceFile;
+use crate::compile::symbol::SymbolTable;
+use crate::lex::lex;
+use crate::parse::{parse, RootNode};
 
 mod r#let;
 mod typesystem;
@@ -21,9 +23,31 @@ mod from;
 mod r#type;
 
 #[derive(Debug)]
-pub enum Error {}
+pub enum Error {
+    Lexer(lex::Error),
+    Parser(parse::Error),
+}
+
+impl From<lex::Error> for Error {
+    fn from(value: lex::Error) -> Self {
+        Self::Lexer(value)
+    }
+}
+
+impl From<parse::Error> for Error {
+    fn from(value: parse::Error) -> Self {
+        Self::Parser(value)
+    }
+}
 
 pub(crate) type Result<T, E = Error> = core::result::Result<T, E>;
+
+pub fn compile_str(str: &str) -> Result<SourceFile> {
+    let tokens = lex(str)?;
+    let root = parse(tokens)?;
+    Ok(compile::from(root)?)
+}
+
 
 pub(crate) fn from(node: RootNode) -> Result<SourceFile> {
     let mut compiler = Compiler::default();

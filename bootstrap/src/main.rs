@@ -2,12 +2,14 @@ use std::{env, io};
 use std::fs::File;
 use std::io::Read;
 use std::path::PathBuf;
+use crate::compile::compile_str;
 
 use crate::run::Runner;
 
 mod common;
 mod cli;
 mod ast;
+mod compile;
 mod run;
 mod lex;
 mod parse;
@@ -18,13 +20,13 @@ fn main() {
     let mut runner = Runner::new();
 
     let std_content = load_library_file("std/index.elx").unwrap();
-    let std_file = ast::parse_str(std_content.as_str()).unwrap();
+    let std_file = compile_str(std_content.as_str()).unwrap();
 
     runner.run(std_file).unwrap();
 
     let mut path = PathBuf::from(args.get(1).unwrap());
     let content = load_text_from_file(path.to_str().unwrap()).unwrap();
-    let source_file = ast::parse_str(content.as_str()).unwrap();
+    let source_file = compile_str(content.as_str()).unwrap();
 
     runner.run(source_file).unwrap();
 }

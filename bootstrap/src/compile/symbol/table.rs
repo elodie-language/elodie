@@ -1,5 +1,5 @@
 use std::collections::HashMap;
-use crate::ast::compile::symbol::Symbol;
+use crate::compile::symbol::Symbol;
 
 pub struct SymbolTable {
     scopes: Vec<HashMap<String, Symbol>>,

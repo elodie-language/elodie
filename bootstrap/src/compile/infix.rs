@@ -1,14 +1,14 @@
 use std::ops::Deref;
 
-use crate::ast;
-use crate::ast::{CalculateNode, CalculationOperator, CallFunctionNode, CallFunctionOfObjectNode, CallFunctionOfPackageNode, CompareNode, CompareOperator, Identifier, InstantiateTypeNode, LoadValueFromObjectNode, NamedArgumentNode, parse};
-use crate::ast::compile::Compiler;
+use crate::{ast, parse};
+use crate::ast::{CalculateNode, CalculationOperator, CallFunctionNode, CallFunctionOfObjectNode, CallFunctionOfPackageNode, CompareNode, CompareOperator, Identifier, InstantiateTypeNode, LoadValueFromObjectNode, NamedArgumentNode};
+use crate::ast::r#type::{DefaultTypeIds, TypeId};
+use crate::compile::Compiler;
 use crate::parse::{InfixNode, InfixOperator, LiteralNode, Node, TypeNode};
 use crate::parse::Node::Type;
-use crate::ast::r#type::{DefaultTypeIds, TypeId};
 
 impl Compiler {
-    pub(crate) fn compile_infix(&mut self, node: &parse::InfixNode) -> crate::ast::compile::Result<ast::Node> {
+    pub(crate) fn compile_infix(&mut self, node: &parse::InfixNode) -> crate::compile::Result<ast::Node> {
         let InfixNode { left, right, operator } = node;
 
         if let InfixOperator::AccessPackage(_) = operator {
