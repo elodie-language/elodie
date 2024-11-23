@@ -1,5 +1,30 @@
+// Test_Context(
+//  test_results : List<TestResult>
+// )
+
+
+// create a test_context
+// test('message'){
+//   let test_result = Test_Result()
+//   describe('description_one'){
+//     let describe_result = Describe_Result()
+//
+//      it('should'){
+//          let it_result = It_Result()
+//          // run and evaluate assertion
+//         describe_result.append(it_result)
+//      }
+//
+//     test_result.append(describe_result)
+//  }
+// }
+
+// summaries test_results
+
 type Test_Result (
     passed: Bool
+    // describe_results: List<Describe_Result>
+    // it_results: List<It_Result>
 )
 
 type Describe_Result (
