@@ -137,6 +137,15 @@ impl<'a> Parser<'a> {
         Ok(Some(self.consume(expected)?))
     }
 
+    pub(crate) fn consume_while(&mut self, expected: TokenKind) -> Result<()> {
+        loop {
+            if self.is_eof() || self.current()?.kind != expected {
+                return Ok(());
+            }
+            self.advance()?;
+        }
+    }
+
     pub(crate) fn consume_literal(&mut self, expected: LiteralToken) -> Result<Token> {
         self.current_expect_literal(expected)?;
         self.advance()

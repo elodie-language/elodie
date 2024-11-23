@@ -18,7 +18,7 @@ impl<'a> Parser<'a> {
     pub(crate) fn parse_block_inner(&mut self) -> crate::parse::Result<BlockNode> {
         let mut nodes = Vec::new();
         loop {
-            self.consume_if(Separator(NewLine))?;
+            self.consume_while(Separator(NewLine))?;
             if self.current()?.is_operator(CloseCurly) {
                 break;
             }
@@ -122,6 +122,21 @@ mod tests {
         let mut ctx = Context::new();
         let tokens = lex(&mut ctx, r#"{
         {      }
+        }"#).unwrap();
+        let result = parse(&mut ctx, tokens).unwrap();
+        assert_eq!(result.len(), 1);
+
+        let block = &result[0].as_block();
+        assert_eq!(block.nodes, vec![Block(BlockNode { nodes: vec![] })]);
+    }
+
+    #[test]
+    fn block_with_comments() {
+        let mut ctx = Context::new();
+        let tokens = lex(&mut ctx, r#"{
+        // before
+        {}
+        // after
         }"#).unwrap();
         let result = parse(&mut ctx, tokens).unwrap();
         assert_eq!(result.len(), 1);
