@@ -1,11 +1,19 @@
 use std::collections::HashMap;
+use std::fs::File;
+use std::io;
+use std::io::Read;
 use std::ops::Deref;
+use std::path::PathBuf;
+use std::rc::Rc;
 
+use crate::common::Context;
+use crate::compile::compile_str;
 use crate::ir::{CalculationOperator, CallFunctionOfObjectNode, CallFunctionOfPackageNode, CompareOperator, Node, SourceFile};
-use crate::common::{Context, StringCacheIdx};
+use crate::load_library_file;
 use crate::r#type::{Property, Type, TypeId, TypeName};
 use crate::run::scope::Scope;
-use crate::run::value::{ObjectValue, Value};
+use crate::run::value::{HostFunctionValue, ObjectValue, Value};
+use crate::run::value::Value::HostFunction;
 
 pub mod scope;
 pub mod value;
@@ -32,6 +40,57 @@ pub enum Interrupt {
     Break(Value),
     Continue,
     Return(Value),
+}
+
+pub fn run_file(file: &String) {
+    fn load_text_from_file(path: &str) -> io::Result<String> {
+        let mut file = File::open(path)?;
+        let mut contents = String::new();
+        file.read_to_string(&mut contents)?;
+        Ok(contents)
+    }
+
+
+    let mut ctx = Context::new();
+
+
+    let mut root_values = HashMap::new();
+    let mut root_types = HashMap::new();
+
+    let mut intrinsics = ObjectValue::new();
+    intrinsics.set_property(
+        ctx.string_cache.insert("print"),
+        HostFunction(HostFunctionValue(Rc::new(|args: &[Value]| {
+            for arg in args {
+                if arg.to_string() == "\\n" {
+                    println!();
+                } else {
+                    print!("{} ", arg.to_string());
+                }
+            }
+            Ok(Value::Unit)
+        }))),
+    );
+
+    root_values.insert(ctx.string_cache.insert("intrinsics"), Value::Object(intrinsics));
+    let scope = Scope::new(
+        root_values,
+        root_types,
+    );
+
+
+    let scope = {
+        let std_content = load_library_file("std/index.elx").unwrap();
+        let std_file = compile_str(&mut ctx, std_content.as_str()).unwrap();
+        run(&mut ctx, scope, std_file).unwrap()
+    };
+
+
+    let mut path = PathBuf::from(file);
+    let content = load_text_from_file(path.to_str().unwrap()).unwrap();
+    let source_file = compile_str(&mut ctx, content.as_str()).unwrap();
+
+    run(&mut ctx, scope, source_file).unwrap();
 }
 
 pub fn run(ctx: &mut Context, scope: Scope, file: SourceFile) -> Result<Scope> {
