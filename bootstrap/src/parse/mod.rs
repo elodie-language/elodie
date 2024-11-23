@@ -225,7 +225,7 @@ impl<'a> Parser<'a> {
     }
 
     pub(crate) fn skip_new_line(&mut self) -> Result<()> {
-        self.consume_if(Separator(NewLine))?;
+        self.consume_while(Separator(NewLine))?;
         Ok(())
     }
 }

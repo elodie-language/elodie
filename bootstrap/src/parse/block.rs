@@ -18,7 +18,7 @@ impl<'a> Parser<'a> {
     pub(crate) fn parse_block_inner(&mut self) -> crate::parse::Result<BlockNode> {
         let mut nodes = Vec::new();
         loop {
-            self.consume_while(Separator(NewLine))?;
+            self.skip_new_line()?;
             if self.current()?.is_operator(CloseCurly) {
                 break;
             }
