@@ -39,6 +39,7 @@ pub enum Node {
     Identifier(IdentifierNode),
     If(IfNode),
     Infix(InfixNode),
+    Itself(ItselfNode),
     Let(LetNode),
     Literal(LiteralNode),
     Loop(LoopNode),
@@ -87,6 +88,9 @@ impl Node {
     }
     pub fn as_return(&self) -> &ReturnNode {
         if let Node::Return(result) = self { result } else { panic!("not return") }
+    }
+    pub fn as_itself(&self) -> &ItselfNode {
+        if let Node::Itself(result) = self { result } else { panic!("not itself") }
     }
     pub fn as_tuple(&self) -> &TupleNode {
         if let Node::Tuple(result) = self { result } else { panic!("not tuple") }
@@ -178,6 +182,16 @@ impl IdentifierNode {
         self.0.span.value
     }
 }
+
+#[derive(Debug, PartialEq)]
+pub struct ItselfNode(pub Token);
+
+impl ItselfNode {
+    pub fn value(&self) -> StringCacheIdx {
+        self.0.span.value
+    }
+}
+
 
 #[derive(Debug, PartialEq)]
 pub struct IfNode {

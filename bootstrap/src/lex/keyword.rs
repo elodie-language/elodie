@@ -9,13 +9,15 @@ impl Lexer<'_> {
 
         match c {
             'b' => look_ahead == "break",
-            'c' => matches!(look_ahead.as_str(), "console_log" | "const" | "continue"),
+            'c' => matches!(look_ahead.as_str(), "const" | "continue"),
+            'd' => look_ahead == "define",
             'e' => matches!(look_ahead.as_str(), "else" | "export"),
             'f' => matches!(look_ahead.as_str(), "from" | "for" | "fun"),
-            'i' => matches!(look_ahead.as_str(), "if" | "implement" | "import" | "in"),
+            'i' => matches!(look_ahead.as_str(), "if" | "import" | "in"),
             'l' => matches!(look_ahead.as_str(), "let" | "loop"),
             'p' => look_ahead == "package",
             'r' => matches!(look_ahead.as_str(), "readonly" | "return"),
+            's' => look_ahead == "self",
             't' => matches!(look_ahead.as_str(), "trait" | "type"),
             _ => false,
         }
@@ -44,13 +46,13 @@ impl Lexer<'_> {
         keywords.insert("break", KeywordToken::Break);
         keywords.insert("const", KeywordToken::Const);
         keywords.insert("continue", KeywordToken::Continue);
+        keywords.insert("define", KeywordToken::Define);
         keywords.insert("else", KeywordToken::Else);
         keywords.insert("export", KeywordToken::Export);
         keywords.insert("from", KeywordToken::From);
         keywords.insert("for", KeywordToken::For);
         keywords.insert("fun", KeywordToken::Function);
         keywords.insert("if", KeywordToken::If);
-        keywords.insert("implement", KeywordToken::Implement);
         keywords.insert("import", KeywordToken::Import);
         keywords.insert("in", KeywordToken::In);
         keywords.insert("let", KeywordToken::Let);
@@ -58,6 +60,7 @@ impl Lexer<'_> {
         keywords.insert("package", KeywordToken::Package);
         keywords.insert("readonly", KeywordToken::Readonly);
         keywords.insert("return", KeywordToken::Return);
+        keywords.insert("self", KeywordToken::Itself);
         keywords.insert("trait", KeywordToken::Trait);
         keywords.insert("type", KeywordToken::Type);
         keywords
@@ -144,6 +147,31 @@ mod test {
         assert_eq!(result.span.end, (1, 13, 12));
         assert_eq!(ctx.get_str(result.value()), "continuation");
     }
+
+    #[test]
+    fn define() {
+        let text = "define";
+        let mut ctx = Context::new();
+        let mut lexer = Lexer::new(&mut ctx, text);
+        let result = lexer.advance().unwrap();
+        assert!(result.is_keyword(Define));
+        assert_eq!(result.span.start, (1, 1, 0));
+        assert_eq!(result.span.end, (1, 7, 6));
+        assert_eq!(ctx.get_str(result.value()), "define");
+    }
+
+    #[test]
+    fn not_define() {
+        let text = "defined";
+        let mut ctx = Context::new();
+        let mut lexer = Lexer::new(&mut ctx, text);
+        let result = lexer.advance().unwrap();
+        assert_eq!(result.kind, identifier());
+        assert_eq!(result.span.start, (1, 1, 0));
+        assert_eq!(result.span.end, (1,8, 7));
+        assert_eq!(ctx.get_str(result.value()), "defined");
+    }
+
 
     #[test]
     fn r#else() {
@@ -287,30 +315,6 @@ mod test {
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 5, 4));
         assert_eq!(ctx.get_str(result.value()), "iffy");
-    }
-
-    #[test]
-    fn r#implement() {
-        let text = "implement";
-        let mut ctx = Context::new();
-        let mut lexer = Lexer::new(&mut ctx, text);
-        let result = lexer.advance().unwrap();
-        assert!(result.is_keyword(Implement));
-        assert_eq!(result.span.start, (1, 1, 0));
-        assert_eq!(result.span.end, (1, 10, 9));
-        assert_eq!(ctx.get_str(result.value()), "implement");
-    }
-
-    #[test]
-    fn not_implement() {
-        let text = "implementation";
-        let mut ctx = Context::new();
-        let mut lexer = Lexer::new(&mut ctx, text);
-        let result = lexer.advance().unwrap();
-        assert_eq!(result.kind, identifier());
-        assert_eq!(result.span.start, (1, 1, 0));
-        assert_eq!(result.span.end, (1, 15, 14));
-        assert_eq!(ctx.get_str(result.value()), "implementation");
     }
 
     #[test]
@@ -480,6 +484,30 @@ mod test {
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 8, 7));
         assert_eq!(ctx.get_str(result.value()), "returns");
+    }
+
+    #[test]
+    fn itself() {
+        let text = "self";
+        let mut ctx = Context::new();
+        let mut lexer = Lexer::new(&mut ctx, text);
+        let result = lexer.advance().unwrap();
+        assert!(result.is_keyword(Itself));
+        assert_eq!(result.span.start, (1, 1, 0));
+        assert_eq!(result.span.end, (1, 5, 4));
+        assert_eq!(ctx.get_str(result.value()), "self");
+    }
+
+    #[test]
+    fn not_self() {
+        let text = "selfmade";
+        let mut ctx = Context::new();
+        let mut lexer = Lexer::new(&mut ctx, text);
+        let result = lexer.advance().unwrap();
+        assert_eq!(result.kind, identifier());
+        assert_eq!(result.span.start, (1, 1, 0));
+        assert_eq!(result.span.end, (1, 9, 8));
+        assert_eq!(ctx.get_str(result.value()), "selfmade");
     }
 
     #[test]

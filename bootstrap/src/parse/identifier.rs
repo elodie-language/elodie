@@ -1,8 +1,11 @@
+use KeywordToken::Itself;
+use TokenKind::Keyword;
+
 use crate::common::{is_pascal_snake_case, is_snake_case};
-use crate::lex::token::TokenKind;
+use crate::lex::token::{KeywordToken, TokenKind};
+use crate::parse::{ItselfNode, Parser};
 use crate::parse::Error::InvalidIdentifier;
 use crate::parse::node::IdentifierNode;
-use crate::parse::Parser;
 
 impl<'a> Parser<'a> {
     pub(crate) fn parse_identifier(&mut self) -> crate::parse::Result<IdentifierNode> {
@@ -21,6 +24,11 @@ impl<'a> Parser<'a> {
         } else {
             Ok(IdentifierNode(token))
         }
+    }
+
+    pub(crate) fn parse_self(&mut self) -> crate::parse::Result<ItselfNode> {
+        let token = self.consume(Keyword(Itself))?;
+        Ok(ItselfNode(token))
     }
 }
 
@@ -50,5 +58,16 @@ mod tests {
 
         let node = result[0].as_identifier();
         assert_eq!(ctx.get_str(node.value()), "some_identifier")
+    }
+
+    #[test]
+    fn itself() {
+        let mut ctx = Context::new();
+        let tokens = lex(&mut ctx, "self").unwrap();
+        let result = parse(&mut ctx, tokens).unwrap();
+        assert_eq!(result.len(), 1);
+
+        let node = result[0].as_itself();
+        assert_eq!(ctx.get_str(node.value()), "self")
     }
 }

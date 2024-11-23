@@ -73,7 +73,7 @@ pub enum KeywordToken {
     For,
     Function,
     If,
-    Implement,
+    Define,
     Import,
     In,
     Let,
@@ -81,6 +81,7 @@ pub enum KeywordToken {
     Package,
     Readonly,
     Return,
+    Itself,
     Trait,
     Type,
 }
