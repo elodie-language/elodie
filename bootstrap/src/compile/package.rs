@@ -4,8 +4,8 @@ use std::io::Read;
 use std::path::PathBuf;
 
 use crate::{ir, parse};
-use crate::ir::{DeclarePackageNode, Identifier};
 use crate::compile::{compile_str, Compiler};
+use crate::ir::{DeclarePackageNode, ExportPackageNode, Identifier};
 
 impl<'a> Compiler<'a> {
     pub(crate) fn compile_declare_package(&mut self, node: &parse::PackageDeclarationNode) -> crate::compile::Result<ir::Node> {
@@ -19,8 +19,18 @@ impl<'a> Compiler<'a> {
         for node in &compiled_body {
             if let ir::Node::Block(block) = node {
                 for node in &block.body {
-                    if let ir::Node::ExportPackage(_) = node {
-                        packages.append(self.load_declared_packages("FIXME").as_mut());
+                    if let ir::Node::ExportPackage(ExportPackageNode { identifier, .. }) = node {
+                        let package = self.ctx.get_str(identifier.0).to_string();
+
+                        // FIXME temporary hack to load std packages
+                        // FIXME compiler needs to track scope so that the parent package can easily be determined
+
+                        match package.as_str() {
+                            "io" => packages.extend(self.load_declared_packages("std/io/index.elx")),
+                            "collection" => packages.extend(self.load_declared_packages("std/collection/index.elx")),
+                            "list" => packages.extend(self.load_declared_packages("std/collection/list/index.elx")),
+                            _ => unimplemented!()
+                        }
                     }
                 }
             }
@@ -44,7 +54,7 @@ impl<'a> Compiler<'a> {
 
 
     fn load_declared_packages(&mut self, name: &str) -> Vec<DeclarePackageNode> {
-        let content = crate::load_library_file("std/io/index.elx").unwrap();
+        let content = crate::load_library_file(name).unwrap();
         let src_file = compile_str(&mut self.ctx, content.as_str()).unwrap();
 
         let mut result = vec![];

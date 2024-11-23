@@ -12,8 +12,8 @@ use crate::ir::{CalculationOperator, CallFunctionOfObjectNode, CallFunctionOfPac
 use crate::load_library_file;
 use crate::r#type::{Property, Type, TypeId, TypeName};
 use crate::run::scope::Scope;
-use crate::run::value::{HostFunctionValue, ObjectValue, Value};
-use crate::run::value::Value::HostFunction;
+use crate::run::value::{IntrinsicFunctionValue, ListValue, ObjectValue, Value};
+use crate::run::value::Value::IntrinsicFunction;
 
 pub mod scope;
 pub mod value;
@@ -43,14 +43,12 @@ pub enum Interrupt {
 }
 
 pub fn run_file(file: &String) {
-
     fn load_text_from_file(path: &str) -> io::Result<String> {
         let mut file = File::open(path)?;
         let mut contents = String::new();
         file.read_to_string(&mut contents)?;
         Ok(contents)
     }
-
 
     let mut ctx = Context::new();
     let mut root_values = HashMap::new();
@@ -59,7 +57,7 @@ pub fn run_file(file: &String) {
     let mut intrinsics = ObjectValue::new();
     intrinsics.set_property(
         ctx.string_cache.insert("print"),
-        HostFunction(HostFunctionValue(Rc::new(|args: &[Value]| {
+        IntrinsicFunction(IntrinsicFunctionValue(Rc::new(|args: &[Value]| {
             for arg in args {
                 if arg.to_string() == "\\n" {
                     println!();
@@ -68,6 +66,15 @@ pub fn run_file(file: &String) {
                 }
             }
             Ok(Value::Unit)
+        }))),
+    );
+
+    intrinsics.set_property(
+        ctx.string_cache.insert("list_length"),
+        IntrinsicFunction(IntrinsicFunctionValue(Rc::new(|args| {
+            let Value::List(list) = args.get(0).unwrap() else { panic!("not list") };
+            let len : u32 = list.0.len() as u32;
+            Ok(Value::Number(len.into()))
         }))),
     );
 
@@ -83,7 +90,6 @@ pub fn run_file(file: &String) {
         let std_file = compile_str(&mut ctx, std_content.as_str()).unwrap();
         run(&mut ctx, scope, std_file).unwrap()
     };
-
 
     let mut path = PathBuf::from(file);
     let content = load_text_from_file(path.to_str().unwrap()).unwrap();
@@ -155,18 +161,31 @@ impl<'a> Runner<'a> {
                 return func.0(args.as_slice());
             }
 
-            Node::CallFunctionOfPackage(CallFunctionOfPackageNode { package, function, arguments }) => {
+            Node::CallFunctionOfPackage(CallFunctionOfPackageNode { package: packages, function, arguments }) => {
                 let mut args = HashMap::with_capacity(arguments.len());
 
-                let root = package.first().unwrap();
+                let mut packages = packages.clone();
+
+
+                let root = packages.pop().unwrap();
                 let Value::Package(root_package) = self.scope.get_value(&root.0).unwrap().clone() else { panic!() };
 
+
+                let mut target_package = root_package;
+                loop {
+                    if let Some(p) = packages.pop() {
+                        target_package = target_package.packages.get(&p.0).unwrap().clone()
+                    } else {
+                        break;
+                    }
+                }
+
                 //FIXME recursively get package
-                let target_package = if package.len() == 1 {
-                    &root_package
-                } else {
-                    root_package.packages.get(&package.last().unwrap().0).unwrap()
-                };
+                // let target_package = if package.len() == 1 {
+                //     &root_package
+                // } else {
+                //     root_package.packages.get(&package.last().unwrap().0).unwrap()
+                // };
 
                 let func = target_package.get_function(function.0).unwrap();
 
@@ -283,6 +302,13 @@ impl<'a> Runner<'a> {
 
                 for arg in &node.arguments {
                     properties.insert(arg.identifier.0.clone(), self.run_node(&arg.value)?);
+                }
+
+                let type_name = self.ctx.get_str(node.type_name.0);
+
+                // FIXME dirty hack to make lists works as quick as possible
+                if type_name == "List" {
+                    return Ok(Value::List(ListValue(Rc::new(vec![]))));
                 }
 
                 let obj = Value::Object(ObjectValue {

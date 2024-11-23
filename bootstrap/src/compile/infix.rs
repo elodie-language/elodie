@@ -140,6 +140,7 @@ impl<'a> Compiler<'a> {
                 }
                 return Ok(ir::Node::InstantiateType(InstantiateTypeNode {
                     type_id: TypeId(23),
+                    type_name: Identifier(custom_node.token.value()),
                     arguments,
                 }));
             };
@@ -224,6 +225,7 @@ impl<'a> Compiler<'a> {
 
         loop {
             if !matches!(current.right.deref(), Node::Infix(_)) {
+                paths.reverse();
                 return (paths, current);
             }
 
@@ -233,6 +235,7 @@ impl<'a> Compiler<'a> {
             let Node::Infix(right) = &current.right.deref() else { panic!() };
 
             if !matches!(current.operator,InfixOperator::AccessPackage(_)) {
+                paths.reverse();
                 return (paths, right);
             }
 

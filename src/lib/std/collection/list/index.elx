@@ -1,0 +1,18 @@
+export package list {
+
+    export type List()
+
+    export fun empty() -> List {
+        return List()
+    }
+
+   // export define List {
+   //     fun length() -> Number {
+   //         return intrinsics.list_length(self)
+   // }
+   // }
+
+    export fun length(list: List) -> Number {
+        return intrinsics.list_length(list)
+    }
+}

@@ -9,8 +9,8 @@ use crate::compile::compile_str;
 use crate::load_library_file;
 use crate::run::run;
 use crate::run::scope::Scope;
-use crate::run::value::{HostFunctionValue, ObjectValue, Value};
-use crate::run::value::Value::HostFunction;
+use crate::run::value::{IntrinsicFunctionValue, ObjectValue, Value};
+use crate::run::value::Value::IntrinsicFunction;
 
 pub fn test_files(files: Vec<PathBuf>) {
     let _ = fs::remove_dir("/tmp/elodie");
@@ -28,7 +28,7 @@ fn test_file(file: &PathBuf){
     let mut intrinsics = ObjectValue::new();
     intrinsics.set_property(
         ctx.string_cache.insert("print"),
-        HostFunction(HostFunctionValue(Rc::new(|args: &[Value]| {
+        IntrinsicFunction(IntrinsicFunctionValue(Rc::new(|args: &[Value]| {
             for arg in args {
                 if arg.to_string() == "\\n" {
                     println!();

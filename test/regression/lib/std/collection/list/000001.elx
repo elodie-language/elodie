@@ -1,0 +1,5 @@
+let list = std::collection::list::empty()
+std::io::print_line(std::collection::list::length(list))
+// std::io::print_line(list.length())
+
+// out: 0

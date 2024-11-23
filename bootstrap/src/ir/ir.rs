@@ -228,6 +228,7 @@ pub struct SourceLocalFileNode {
 #[derive(Debug)]
 pub struct InstantiateTypeNode {
     pub type_id: TypeId,
+    pub type_name: Identifier,
     pub arguments: Vec<NamedArgumentNode>,
 }
 

@@ -4,6 +4,7 @@ use crate::common::StringCacheIdx;
 use crate::r#type::Type;
 use crate::run::value::Value;
 
+#[derive(Debug)]
 pub struct Scope {
     pub values: Vec<HashMap<StringCacheIdx, Value>>,
     pub types: Vec<HashMap<StringCacheIdx, Type>>,

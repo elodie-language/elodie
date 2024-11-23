@@ -11,12 +11,14 @@ pub struct TypeId(pub usize);
 pub struct TypeName(pub String);
 
 
+#[derive(Debug)]
 pub struct Type {
     pub id: TypeId,
     pub name: TypeName,
     pub properties: HashMap<StringCacheIdx, Property>,
 }
 
+#[derive(Debug)]
 pub struct Property {}
 
 
