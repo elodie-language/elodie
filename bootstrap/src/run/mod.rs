@@ -43,6 +43,7 @@ pub enum Interrupt {
 }
 
 pub fn run_file(file: &String) {
+
     fn load_text_from_file(path: &str) -> io::Result<String> {
         let mut file = File::open(path)?;
         let mut contents = String::new();
@@ -52,8 +53,6 @@ pub fn run_file(file: &String) {
 
 
     let mut ctx = Context::new();
-
-
     let mut root_values = HashMap::new();
     let mut root_types = HashMap::new();
 

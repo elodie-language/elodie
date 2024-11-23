@@ -13,10 +13,14 @@ mod run;
 mod lex;
 mod parse;
 mod r#type;
+mod test;
 
 fn main() {
     let args: Vec<String> = env::args().collect();
     run_file(args.get(1).unwrap());
+    // test_files(vec![
+    //     PathBuf::from("/home/ddymke/repo/elodie/test/test-runner/00001.test.elx")
+    // ]);
 }
 
 
