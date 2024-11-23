@@ -92,59 +92,53 @@ impl<'a> Parser<'a> {
 
 #[cfg(test)]
 mod tests {
-    use crate::lex::lex;
-    use crate::lex::token::{operator, test_token};
-    use crate::lex::token::OperatorToken::{Bang, Minus, Plus};
-    use crate::parse::node::{PrefixNode, PrefixOperator};
-    use crate::parse::Node;
-    use crate::parse::Parser;
+    use std::ops::Deref;
 
-    //
-    //
-    // macro_rules! parse_prefix {
-    // ($($name:ident, $input:expr => $expected:expr,)*) => {
-    //     $(
-    //         #[test]
-    //         fn $name() {
-    //             println!("Test input: {:?}", $input);
-    //             let tokens = lex($input).unwrap();
-    //             let mut parser = Parser::new(&mut ctx,tokens);
-    //             let result = parser.parse().unwrap();
-    //             assert_eq!(result.len(), 1);
-    //
-    //             let Node::Prefix(PrefixNode{ ref operator, ref node }) = result[0] else { panic!() };
-    //             assert_eq!(*operator, $ expected);
-    //         }
-    //     )*
-    //     };
-    // }
-    //
-    //
-    // parse_prefix! {
-    //     plus, "+2" => PrefixOperator::Plus(test_token(operator(Plus), "+")),
-    //     negate, "-2" => PrefixOperator::Negate(test_token(operator(Minus), "-")),
-    //     notl, "!true" => PrefixOperator::Not(test_token(operator(Bang), "!")),
-    // }
-    //
-    //
-    // macro_rules! parse_prefix_operator_test {
-    // ($($name:ident, $input:expr => $expected:expr,)*) => {
-    //     $(
-    //         #[test]
-    //         fn $name() {
-    //             println!("Test input: {:?}", $input);
-    //             let tokens = lex($input).unwrap();
-    //             let mut parser = Parser::new(&mut ctx,tokens);
-    //             let result = parser.parse_prefix_operator().unwrap();
-    //             assert_eq!(result, $expected);
-    //         }
-    //     )*
-    //     };
-    // }
-    //
-    // parse_prefix_operator_test! {
-    //     operator_plus, "+" => PrefixOperator::Plus(test_token(operator(Plus), "+")),
-    //     operator_negate, "-" => PrefixOperator::Negate(test_token(operator(Minus), "-")),
-    //     operator_not, "!" => PrefixOperator::Not(test_token(operator(Bang), "!")),
-    // }
+    use crate::common::Context;
+    use crate::lex::lex;
+    use crate::parse::{LiteralNode, Node, parse};
+    use crate::parse::node::{PrefixNode, PrefixOperator};
+    use crate::parse::Node::Literal;
+
+    #[test]
+    fn plus() {
+        let mut ctx = Context::new();
+        let tokens = lex(&mut ctx, "+2").unwrap();
+        let result = parse(&mut ctx, tokens).unwrap();
+        assert_eq!(result.len(), 1);
+
+        let Node::Prefix(PrefixNode { ref operator, ref node }) = result[0] else { panic!() };
+        assert!(matches!(*operator, PrefixOperator::Plus(_)));
+
+        let Literal(LiteralNode::Number(node)) = node.deref() else { panic!() };
+        assert_eq!(ctx.get_str(node.value()), "2");
+    }
+
+    #[test]
+    fn negate() {
+        let mut ctx = Context::new();
+        let tokens = lex(&mut ctx, "-2").unwrap();
+        let result = parse(&mut ctx, tokens).unwrap();
+        assert_eq!(result.len(), 1);
+
+        let Node::Prefix(PrefixNode { ref operator, ref node }) = result[0] else { panic!() };
+        assert!(matches!(*operator, PrefixOperator::Negate(_)));
+
+        let Literal(LiteralNode::Number(node)) = node.deref() else { panic!() };
+        assert_eq!(ctx.get_str(node.value()), "2");
+    }
+
+    #[test]
+    fn not() {
+        let mut ctx = Context::new();
+        let tokens = lex(&mut ctx, "!false").unwrap();
+        let result = parse(&mut ctx, tokens).unwrap();
+        assert_eq!(result.len(), 1);
+
+        let Node::Prefix(PrefixNode { ref operator, ref node }) = result[0] else { panic!() };
+        assert!(matches!(*operator, PrefixOperator::Not(_)));
+
+        let Literal(LiteralNode::Boolean(node)) = node.deref() else { panic!() };
+        assert_eq!(node.value(), false);
+    }
 }

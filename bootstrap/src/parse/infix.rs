@@ -82,75 +82,203 @@ mod tests {
         let TypeNode::Fundamental(TypeFundamentalNode::Boolean(_)) = type_node else { panic!() };
     }
 
-//     macro_rules! parse_infix {
-//     ($($name:ident, $input:expr => $expected:expr,)*) => {
-//         $(
-//             static ctx: Context = Context::new();
-//
-//             #[test]
-//             fn $name() {
-//                 println!("Test input: {:?}", $input);
-//                 let tokens = lex($input).unwrap();
-//                 let mut parser = Parser::new(&mut ctx,tokens);
-//                 let result = parser.parse().unwrap();
-//                 assert_eq!(result.len(), 1);
-//
-//                 let Infix(InfixNode{ ref left, ref operator, ref right }) = result[0] else { panic!() };
-//
-//                 let Literal(LiteralNode::Number(node)) = left.deref() else {panic!()};
-//                 assert_eq!(node.value().unwrap(), 1.0);
-//
-//                 assert_eq!(*operator, $ expected);
-//
-//                 let Literal(LiteralNode::Number(node)) = right.deref() else {panic!()};
-//                 assert_eq!(node.value().unwrap(), 2.0);
-//             }
-//         )*
-//     };
-// }
-//
-//     parse_infix! {
-//         add, "1 + 2" => InfixOperator::Add(test_token_with_offset(operator(Plus), "+", 2)),
-//         subtract, "1 - 2" => InfixOperator::Subtract(test_token_with_offset(operator(Minus), "-", 2)),
-//         multiply, "1 * 2" => InfixOperator::Multiply(test_token_with_offset(operator(Asterisk), "*", 2)),
-//         divide, "1 / 2" => InfixOperator::Divide(test_token_with_offset(operator(Slash), "/", 2)),
-//         modulo, "1 % 2" => InfixOperator::Modulo(test_token_with_offset(operator(Percent), "%", 2)),
-//         greater_than, "1 > 2" => InfixOperator::GreaterThan(test_token_with_offset(operator(RightAngle), ">", 2)),
-//         greater_than_or_equal, "1 >= 2" => InfixOperator::GreaterThanOrEqual(test_token_with_offset(operator(RightAngleEqual), ">=", 2)),
-//         less_than, "1 < 2" => InfixOperator::LessThan(test_token_with_offset(operator(LeftAngle), "<", 2)),
-//         less_than_or_equal, "1 <= 2" => InfixOperator::LessThanOrEqual(test_token_with_offset(operator(LeftAngleEqual), "<=", 2)),
-//         equal, "1 == 2" => InfixOperator::Equal(test_token_with_offset(operator(DoubleEqual), "==", 2)),
-//         not_equal, "1 != 2" => InfixOperator::NotEqual(test_token_with_offset(operator(BangEqual), "!=", 2)),
-//     }
-//
-//     macro_rules! parse_infix_operator_test {
-//     ($($name:ident, $input:expr => $expected:expr,)*) => {
-//         $(
-//             #[test]
-//             fn $name() {
-//                 println!("Test input: {:?}", $input);
-//                 let tokens = lex($input).unwrap();
-//                 let mut parser = Parser::new(&mut ctx,tokens);
-//                 let result = parser.parse_infix_operator().unwrap();
-//                 assert_eq!(result, $expected);
-//             }
-//         )*
-//     };
-// }
-//
-//     parse_infix_operator_test! {
-//         operator_add, "+" => InfixOperator::Add(test_token(operator(Plus), "+")),
-//         operator_subtract, "-" => InfixOperator::Subtract(test_token(operator(Minus), "-")),
-//         operator_multiply, "*" => InfixOperator::Multiply(test_token(operator(Asterisk), "*")),
-//         operator_divide, "/" => InfixOperator::Divide(test_token(operator(Slash), "/")),
-//         operator_modulo, "%" => InfixOperator::Modulo(test_token(operator(Percent), "%")),
-//         operator_equal, "==" => InfixOperator::Equal(test_token(operator(DoubleEqual), "==")),
-//         operator_not_equal, "!=" => InfixOperator::NotEqual(test_token(operator(BangEqual), "!=")),
-//         operator_less_than, "<" => InfixOperator::LessThan(test_token(operator(LeftAngle), "<")),
-//         operator_less_than_or_equal, "<=" => InfixOperator::LessThanOrEqual(test_token(operator(LeftAngleEqual), "<=")),
-//         operator_greater_than, ">" => InfixOperator::GreaterThan(test_token(operator(RightAngle), ">")),
-//         operator_greater_than_or_equal, ">=" => InfixOperator::GreaterThanOrEqual(test_token(operator(RightAngleEqual), ">=")),
-//     }
+    #[test]
+    fn add() {
+        let mut ctx = Context::new();
+        let tokens = lex(&mut ctx, "1 + 2").unwrap();
+        let result = parse(&mut ctx, tokens).unwrap();
+        assert_eq!(result.len(), 1);
+
+        let Infix(InfixNode { ref left, ref operator, ref right }) = result[0] else { panic!() };
+
+        let Literal(LiteralNode::Number(node)) = left.deref() else { panic!() };
+        assert_eq!(ctx.get_str(node.value()), "1");
+
+        assert!(matches!(operator, InfixOperator::Add(_)));
+
+        let Literal(LiteralNode::Number(node)) = right.deref() else { panic!() };
+        assert_eq!(ctx.get_str(node.value()), "2");
+    }
+
+    #[test]
+    fn substract() {
+        let mut ctx = Context::new();
+        let tokens = lex(&mut ctx, "1 - 2").unwrap();
+        let result = parse(&mut ctx, tokens).unwrap();
+        assert_eq!(result.len(), 1);
+
+        let Infix(InfixNode { ref left, ref operator, ref right }) = result[0] else { panic!() };
+
+        let Literal(LiteralNode::Number(node)) = left.deref() else { panic!() };
+        assert_eq!(ctx.get_str(node.value()), "1");
+
+        assert!(matches!(operator, InfixOperator::Subtract(_)));
+
+        let Literal(LiteralNode::Number(node)) = right.deref() else { panic!() };
+        assert_eq!(ctx.get_str(node.value()), "2");
+    }
+
+    #[test]
+    fn multiply() {
+        let mut ctx = Context::new();
+        let tokens = lex(&mut ctx, "1 * 2").unwrap();
+        let result = parse(&mut ctx, tokens).unwrap();
+        assert_eq!(result.len(), 1);
+
+        let Infix(InfixNode { ref left, ref operator, ref right }) = result[0] else { panic!() };
+
+        let Literal(LiteralNode::Number(node)) = left.deref() else { panic!() };
+        assert_eq!(ctx.get_str(node.value()), "1");
+
+        assert!(matches!(operator, InfixOperator::Multiply(_)));
+
+        let Literal(LiteralNode::Number(node)) = right.deref() else { panic!() };
+        assert_eq!(ctx.get_str(node.value()), "2");
+    }
+
+    #[test]
+    fn divide() {
+        let mut ctx = Context::new();
+        let tokens = lex(&mut ctx, "1 / 2").unwrap();
+        let result = parse(&mut ctx, tokens).unwrap();
+        assert_eq!(result.len(), 1);
+
+        let Infix(InfixNode { ref left, ref operator, ref right }) = result[0] else { panic!() };
+
+        let Literal(LiteralNode::Number(node)) = left.deref() else { panic!() };
+        assert_eq!(ctx.get_str(node.value()), "1");
+
+        assert!(matches!(operator, InfixOperator::Divide(_)));
+
+        let Literal(LiteralNode::Number(node)) = right.deref() else { panic!() };
+        assert_eq!(ctx.get_str(node.value()), "2");
+    }
+
+    #[test]
+    fn modulo() {
+        let mut ctx = Context::new();
+        let tokens = lex(&mut ctx, "1 % 2").unwrap();
+        let result = parse(&mut ctx, tokens).unwrap();
+        assert_eq!(result.len(), 1);
+
+        let Infix(InfixNode { ref left, ref operator, ref right }) = result[0] else { panic!() };
+
+        let Literal(LiteralNode::Number(node)) = left.deref() else { panic!() };
+        assert_eq!(ctx.get_str(node.value()), "1");
+
+        assert!(matches!(operator, InfixOperator::Modulo(_)));
+
+        let Literal(LiteralNode::Number(node)) = right.deref() else { panic!() };
+        assert_eq!(ctx.get_str(node.value()), "2");
+    }
+
+    #[test]
+    fn greater_than() {
+        let mut ctx = Context::new();
+        let tokens = lex(&mut ctx, "1 > 2").unwrap();
+        let result = parse(&mut ctx, tokens).unwrap();
+        assert_eq!(result.len(), 1);
+
+        let Infix(InfixNode { ref left, ref operator, ref right }) = result[0] else { panic!() };
+
+        let Literal(LiteralNode::Number(node)) = left.deref() else { panic!() };
+        assert_eq!(ctx.get_str(node.value()), "1");
+
+        assert!(matches!(operator, InfixOperator::GreaterThan(_)));
+
+        let Literal(LiteralNode::Number(node)) = right.deref() else { panic!() };
+        assert_eq!(ctx.get_str(node.value()), "2");
+    }
+
+    #[test]
+    fn greater_than_or_equal() {
+        let mut ctx = Context::new();
+        let tokens = lex(&mut ctx, "1 >= 2").unwrap();
+        let result = parse(&mut ctx, tokens).unwrap();
+        assert_eq!(result.len(), 1);
+
+        let Infix(InfixNode { ref left, ref operator, ref right }) = result[0] else { panic!() };
+
+        let Literal(LiteralNode::Number(node)) = left.deref() else { panic!() };
+        assert_eq!(ctx.get_str(node.value()), "1");
+
+        assert!(matches!(operator, InfixOperator::GreaterThanOrEqual(_)));
+
+        let Literal(LiteralNode::Number(node)) = right.deref() else { panic!() };
+        assert_eq!(ctx.get_str(node.value()), "2");
+    }
+
+    #[test]
+    fn less_than() {
+        let mut ctx = Context::new();
+        let tokens = lex(&mut ctx, "1 < 2").unwrap();
+        let result = parse(&mut ctx, tokens).unwrap();
+        assert_eq!(result.len(), 1);
+
+        let Infix(InfixNode { ref left, ref operator, ref right }) = result[0] else { panic!() };
+
+        let Literal(LiteralNode::Number(node)) = left.deref() else { panic!() };
+        assert_eq!(ctx.get_str(node.value()), "1");
+
+        assert!(matches!(operator, InfixOperator::LessThan(_)));
+
+        let Literal(LiteralNode::Number(node)) = right.deref() else { panic!() };
+        assert_eq!(ctx.get_str(node.value()), "2");
+    }
+
+    #[test]
+    fn less_than_or_equal() {
+        let mut ctx = Context::new();
+        let tokens = lex(&mut ctx, "1 <= 2").unwrap();
+        let result = parse(&mut ctx, tokens).unwrap();
+        assert_eq!(result.len(), 1);
+
+        let Infix(InfixNode { ref left, ref operator, ref right }) = result[0] else { panic!() };
+
+        let Literal(LiteralNode::Number(node)) = left.deref() else { panic!() };
+        assert_eq!(ctx.get_str(node.value()), "1");
+
+        assert!(matches!(operator, InfixOperator::LessThanOrEqual(_)));
+
+        let Literal(LiteralNode::Number(node)) = right.deref() else { panic!() };
+        assert_eq!(ctx.get_str(node.value()), "2");
+    }
+
+    #[test]
+    fn equal() {
+        let mut ctx = Context::new();
+        let tokens = lex(&mut ctx, "1 == 2").unwrap();
+        let result = parse(&mut ctx, tokens).unwrap();
+        assert_eq!(result.len(), 1);
+
+        let Infix(InfixNode { ref left, ref operator, ref right }) = result[0] else { panic!() };
+
+        let Literal(LiteralNode::Number(node)) = left.deref() else { panic!() };
+        assert_eq!(ctx.get_str(node.value()), "1");
+
+        assert!(matches!(operator, InfixOperator::Equal(_)));
+
+        let Literal(LiteralNode::Number(node)) = right.deref() else { panic!() };
+        assert_eq!(ctx.get_str(node.value()), "2");
+    }
+
+    #[test]
+    fn not_equal() {
+        let mut ctx = Context::new();
+        let tokens = lex(&mut ctx, "1 != 2").unwrap();
+        let result = parse(&mut ctx, tokens).unwrap();
+        assert_eq!(result.len(), 1);
+
+        let Infix(InfixNode { ref left, ref operator, ref right }) = result[0] else { panic!() };
+
+        let Literal(LiteralNode::Number(node)) = left.deref() else { panic!() };
+        assert_eq!(ctx.get_str(node.value()), "1");
+
+        assert!(matches!(operator, InfixOperator::NotEqual(_)));
+
+        let Literal(LiteralNode::Number(node)) = right.deref() else { panic!() };
+        assert_eq!(ctx.get_str(node.value()), "2");
+    }
 
     #[test]
     fn call_function_of_object() {
