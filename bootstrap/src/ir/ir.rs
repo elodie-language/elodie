@@ -115,7 +115,7 @@ pub enum Node {
     Compare(CompareNode),
 
     If(IfNode),
-    Itself(ItselfNode),
+    // Itself(ItselfNode),
 
     LoadValue(LoadValueNode),
     LoadValueFromObject(LoadValueFromObjectNode),

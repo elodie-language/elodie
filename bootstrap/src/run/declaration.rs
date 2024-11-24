@@ -26,8 +26,8 @@ impl<'a> Runner<'a> {
             arguments,
         });
 
-        self.scope.insert_value(name, f);
-        Ok(Value::Unit)
+        self.scope.insert_value(name, f.clone());
+        Ok(f)
     }
 
     pub(crate) fn run_package_declaration(&mut self, node: &DeclarePackageNode) -> crate::run::Result<Value> {

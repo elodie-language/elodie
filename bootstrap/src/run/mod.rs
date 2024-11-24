@@ -12,6 +12,7 @@ use crate::ir::{CalculationOperator, CallFunctionOfObjectNode, CallFunctionOfPac
 use crate::load_library_file;
 use crate::r#type::{Property, Type, TypeId, TypeName};
 use crate::run::scope::Scope;
+use crate::run::type_definitions::TypeDefinitions;
 use crate::run::value::{IntrinsicFunctionValue, ListValue, ObjectValue, Value};
 use crate::run::value::Value::IntrinsicFunction;
 
@@ -22,6 +23,7 @@ mod r#loop;
 mod r#if;
 mod block;
 mod call;
+mod type_definitions;
 
 #[derive(Debug)]
 pub enum Error {}
@@ -32,6 +34,7 @@ pub struct Runner<'a> {
     ctx: &'a mut Context,
     scope: Scope,
     pub interrupt: Option<Interrupt>,
+    type_definitions: TypeDefinitions,
 }
 
 
@@ -110,6 +113,7 @@ impl<'a> Runner<'a> {
             ctx,
             scope,
             interrupt: None,
+            type_definitions: TypeDefinitions { definitions: Default::default() },
         }
     }
 
@@ -165,8 +169,17 @@ impl<'a> Runner<'a> {
 
                     return func.0(args.as_slice());
                 } else {
+                    let mut args = HashMap::with_capacity(arguments.len());
+                    args.insert(self.ctx.string_cache.insert("self"), Value::Object(object.clone()));
 
-                    unimplemented!();
+                    let func = self.type_definitions.get_function(&TypeId(99), &function.0);
+                    self.scope.enter();
+
+                    let result = self.run_node_call(func.clone(), args);
+
+                    self.scope.leave();
+
+                    return result;
                 };
             }
 
@@ -329,7 +342,20 @@ impl<'a> Runner<'a> {
                 Ok(obj)
             }
             Node::DefineType(node) => {
+                let func_ident = node.functions.get(0).unwrap().identifier.0;
+                let func = node.functions.get(0).unwrap().clone();
+                let value = self.run_function_declaration(func)?;
+
+                let Value::Function(func) = value else { panic!() };
+                self.type_definitions.add_function(TypeId(99), func_ident, func);
+
+
                 Ok(Value::Unit)
+            }
+            Node::LoadValueFromSelf(load_variable) => {
+                let value = self.scope.get_value(&self.ctx.string_cache.insert("self")).unwrap().clone();
+                let Value::Object(object_value) = value else { panic!("not object") };
+                Ok(object_value.get_property(&load_variable.property.0).cloned().unwrap())
             }
             _ => unimplemented!("{:?}", node)
         }

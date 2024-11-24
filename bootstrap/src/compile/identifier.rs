@@ -1,7 +1,7 @@
 use crate::{ir, parse};
 use crate::compile::Compiler;
 use crate::ir::{Identifier, ItselfNode, LoadValueNode};
-use crate::ir::Node::{Itself, LoadValue};
+use crate::ir::Node::{LoadValue};
 use crate::r#type::DefaultTypeIds;
 
 impl<'a> Compiler<'a> {
@@ -13,6 +13,9 @@ impl<'a> Compiler<'a> {
     }
 
     pub(crate) fn compile_self(&mut self, node: &parse::ItselfNode) -> crate::compile::Result<ir::Node> {
-        return Ok(Itself(ItselfNode()));
+        return Ok(LoadValue(LoadValueNode {
+            identifier: Identifier(node.0.value()),
+            type_id: DefaultTypeIds::never(),
+        }));
     }
 }

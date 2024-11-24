@@ -4,7 +4,7 @@ use crate::common::StringCacheIdx;
 
 mod system;
 
-#[derive(Debug)]
+#[derive(Debug, Eq, Hash, PartialEq)]
 pub struct TypeId(pub usize);
 
 #[derive(Debug)]

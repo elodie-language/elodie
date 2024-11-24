@@ -7,6 +7,6 @@ define Person {
 }
 
 let elodie = Elodie(name = 'Elodie')
-// elodie.say_name()
+elodie.say_name()
 
 // out: Hi, I am Elodie
