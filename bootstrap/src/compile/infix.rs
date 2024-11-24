@@ -1,8 +1,8 @@
 use std::ops::Deref;
 
 use crate::{ir, parse};
-use crate::ir::{CalculateNode, CalculationOperator, CallFunctionNode, CallFunctionOfObjectNode, CallFunctionOfPackageNode, CompareNode, CompareOperator, Identifier, InstantiateTypeNode, LoadValueFromObjectNode, NamedArgumentNode};
 use crate::compile::Compiler;
+use crate::ir::{CalculateNode, CalculationOperator, CallFunctionNode, CallFunctionOfObjectNode, CallFunctionOfPackageNode, CompareNode, CompareOperator, Identifier, InstantiateTypeNode, LoadValueFromObjectNode, LoadValueFromSelfNode, NamedArgumentNode};
 use crate::parse::{InfixNode, InfixOperator, LiteralNode, Node, TypeNode};
 use crate::parse::Node::Type;
 use crate::r#type::{DefaultTypeIds, TypeId};
@@ -51,6 +51,14 @@ impl<'a> Compiler<'a> {
         }
 
         if let InfixOperator::AccessProperty(_) = operator {
+            if let Node::Itself(_) = left.deref() {
+                if let Node::Identifier(property) = right.deref() {
+                    return Ok(ir::Node::LoadValueFromSelf(LoadValueFromSelfNode {
+                        property: ir::Identifier::from(property),
+                    }));
+                }
+            }
+
             let Node::Identifier(object_identifier) = left.deref() else { todo!() };
 
             if let Node::Identifier(property) = right.deref() {
@@ -64,13 +72,22 @@ impl<'a> Compiler<'a> {
             let Node::Identifier(function_identifier) = left.deref() else { todo!() };
             let Node::Tuple(tuple) = right.deref() else { todo!() };
 
+
+            if tuple.nodes.is_empty() {
+                return Ok(ir::Node::CallFunctionOfObject(CallFunctionOfObjectNode {
+                    object: ir::Identifier::from(object_identifier),
+                    function: ir::Identifier::from(function_identifier),
+                    arguments: vec![],
+                }));
+            };
+
             if let Node::Identifier(identifier_node) = &tuple.nodes[0] {
                 // load variable
 
                 return Ok(ir::Node::CallFunctionOfObject(CallFunctionOfObjectNode {
                     object: ir::Identifier::from(object_identifier),
                     function: ir::Identifier::from(function_identifier),
-                    arguments: vec![ir::Node::LoadValue(ir::UseIdentifierNode {
+                    arguments: vec![ir::Node::LoadValue(ir::LoadValueNode {
                         identifier: ir::Identifier::from(identifier_node),
                         type_id: DefaultTypeIds::string(),
                     })],

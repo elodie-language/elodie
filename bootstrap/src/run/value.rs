@@ -16,6 +16,7 @@ pub enum Value {
     Package(PackageValue),
     String(String),
     Tuple(TupleValue),
+    // FIXME make intrinsics not a normal object - have some Intrinsic value instead
     Unit,
 }
 
@@ -87,6 +88,7 @@ impl ObjectValue {
         self.properties.get(key)
     }
 
+    // FIXME intrinsics could be treated as something static
     pub fn get_property_host_function(&self, identifier: impl AsRef<Identifier>) -> Option<&IntrinsicFunctionValue> {
         let identifier = identifier.as_ref();
         if let Some(Value::IntrinsicFunction(result)) = &self.properties.get(&identifier.0) {

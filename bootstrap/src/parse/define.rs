@@ -1,18 +1,20 @@
+use KeywordToken::Define;
+
 use crate::ir::Modifiers;
 use crate::lex::token::KeywordToken;
-use crate::parse::{PackageDeclarationNode, Parser};
+use crate::parse::{DefineDeclarationNode, Parser};
 
 impl<'a> Parser<'a> {
-    pub(crate) fn parse_package_declaration(&mut self) -> crate::parse::Result<PackageDeclarationNode> {
-        self.parse_package_declaration_with_modifiers(Modifiers(vec![]))
+    pub(crate) fn parse_define(&mut self) -> crate::parse::Result<DefineDeclarationNode> {
+        self.parse_define_with_modifiers(Modifiers(vec![]))
     }
 
-    pub(crate) fn parse_package_declaration_with_modifiers(&mut self, modifiers: Modifiers) -> crate::parse::Result<PackageDeclarationNode> {
-        let token = self.consume_keyword(KeywordToken::Package)?;
-        let identifier = self.parse_identifier()?;
+    pub(crate) fn parse_define_with_modifiers(&mut self, modifiers: Modifiers) -> crate::parse::Result<DefineDeclarationNode> {
+        let token = self.consume_keyword(Define)?;
+        let identifier = self.parse_type_identifier()?;
         let block = self.parse_block()?;
 
-        Ok(PackageDeclarationNode {
+        Ok(DefineDeclarationNode {
             token,
             identifier,
             block,
@@ -28,27 +30,27 @@ mod tests {
     use crate::parse::parse;
 
     #[test]
-    fn empty_package() {
+    fn empty_definition() {
         let mut ctx = Context::new();
-        let tokens = lex(&mut ctx, "package magic{ }").unwrap();
+        let tokens = lex(&mut ctx, "define Magic{ }").unwrap();
         let result = parse(&mut ctx, tokens).unwrap();
         assert_eq!(result.len(), 1);
 
-        let node = result.nodes[0].as_package_declaration();
-        assert_eq!(ctx.get_str(node.identifier.value()), "magic");
+        let node = result.nodes[0].as_define();
+        assert_eq!(ctx.get_str(node.identifier.value()), "Magic");
         assert_eq!(node.block.nodes, vec![]);
         assert!(!node.modifiers.is_exported());
     }
 
     #[test]
-    fn package_with_exported_function() {
+    fn define_with_fun() {
         let mut ctx = Context::new();
-        let tokens = lex(&mut ctx, "package magic { export fun some_fn() {} }").unwrap();
+        let tokens = lex(&mut ctx, "define Magic { export fun some_fn() {} }").unwrap();
         let result = parse(&mut ctx, tokens).unwrap();
         assert_eq!(result.len(), 1);
 
-        let node = result.nodes[0].as_package_declaration();
-        assert_eq!(ctx.get_str(node.identifier.value()), "magic");
+        let node = result.nodes[0].as_define();
+        assert_eq!(ctx.get_str(node.identifier.value()), "Magic");
         assert_eq!(node.block.nodes.len(), 1);
         assert!(!node.modifiers.is_exported());
 
@@ -58,14 +60,14 @@ mod tests {
     }
 
     #[test]
-    fn exported_package_with_exported_function() {
+    fn exported_definition_with_exported_function() {
         let mut ctx = Context::new();
-        let tokens = lex(&mut ctx, "export package magic{ export fun some_fn() {} }").unwrap();
+        let tokens = lex(&mut ctx, "export define Magic { export fun some_fn() {} }").unwrap();
         let result = parse(&mut ctx, tokens).unwrap();
         assert_eq!(result.len(), 1);
 
-        let node = result.nodes[0].as_package_declaration();
-        assert_eq!(ctx.get_str(node.identifier.value()), "magic");
+        let node = result.nodes[0].as_define();
+        assert_eq!(ctx.get_str(node.identifier.value()), "Magic");
         assert_eq!(node.block.nodes.len(), 1);
         assert!(node.modifiers.is_exported());
 

@@ -1,7 +1,7 @@
 use std::rc::Rc;
 
-use crate::ir::modifier::Modifiers;
 use crate::common::StringCacheIdx;
+use crate::ir::modifier::Modifiers;
 use crate::parse;
 use crate::parse::IdentifierNode;
 use crate::r#type::TypeId;
@@ -115,9 +115,11 @@ pub enum Node {
     Compare(CompareNode),
 
     If(IfNode),
+    Itself(ItselfNode),
 
-    LoadValue(UseIdentifierNode),
+    LoadValue(LoadValueNode),
     LoadValueFromObject(LoadValueFromObjectNode),
+    LoadValueFromSelf(LoadValueFromSelfNode),
     Loop(LoopNode),
 
     ValueNumber(f64),
@@ -131,6 +133,7 @@ pub enum Node {
     DeclareType(DeclareTypeNode),
 
     InstantiateType(InstantiateTypeNode),
+    DefineType(DefineTypeNode),
 }
 
 #[derive(Debug)]
@@ -141,11 +144,13 @@ pub struct ReturnFromFunctionNode {
 
 
 #[derive(Debug)]
-pub struct UseIdentifierNode {
+pub struct LoadValueNode {
     pub identifier: Identifier,
     pub type_id: TypeId,
 }
 
+#[derive(Clone, Debug)]
+pub struct ItselfNode();
 
 #[derive(Clone, Debug)]
 pub struct Identifier(pub StringCacheIdx);
@@ -216,6 +221,13 @@ pub struct DeclarePropertyNode {
 }
 
 #[derive(Debug)]
+pub struct DefineTypeNode {
+    pub identifier: Identifier,
+    pub modifiers: Modifiers,
+    pub functions: Vec<DeclareFunctionNode>,
+}
+
+#[derive(Debug)]
 pub enum Source {
     LocalFile(SourceLocalFileNode)
 }
@@ -241,5 +253,10 @@ pub struct NamedArgumentNode {
 #[derive(Debug)]
 pub struct LoadValueFromObjectNode {
     pub object: Identifier,
+    pub property: Identifier,
+}
+
+#[derive(Debug)]
+pub struct LoadValueFromSelfNode {
     pub property: Identifier,
 }

@@ -1,7 +1,7 @@
 use std::ops::Index;
 
-use crate::ir::Modifiers;
 use crate::common::StringCacheIdx;
+use crate::ir::Modifiers;
 use crate::lex::token::{LiteralToken, Token, TokenKind};
 
 #[derive(Debug)]
@@ -36,6 +36,7 @@ pub enum Node {
     Continue(ContinueNode),
     From(FromNode),
     FunctionDeclaration(FunctionDeclarationNode),
+    DefineDeclaration(DefineDeclarationNode),
     Identifier(IdentifierNode),
     If(IfNode),
     Infix(InfixNode),
@@ -57,6 +58,7 @@ impl Node {
     pub fn as_break(&self) -> &BreakNode { if let Node::Break(result) = self { result } else { panic!("not break") } }
     pub fn as_call(&self) -> &CallNode { if let Node::Call(result) = self { result } else { panic!("not call") } }
     pub fn as_continue(&self) -> &ContinueNode { if let Node::Continue(result) = self { result } else { panic!("not continue") } }
+    pub fn as_define(&self) -> &DefineDeclarationNode { if let Node::DefineDeclaration(result) = self { result } else { panic!("not define declaration") } }
     pub fn as_from(&self) -> &FromNode { if let Node::From(result) = self { result } else { panic!("not from") } }
     pub fn as_function_declaration(&self) -> &FunctionDeclarationNode {
         if let Node::FunctionDeclaration(result) = self { result } else { panic!("not function declaration") }
@@ -309,6 +311,15 @@ pub struct LoopNode {
 
 #[derive(Debug, PartialEq)]
 pub struct PackageDeclarationNode {
+    pub token: Token,
+    pub identifier: IdentifierNode,
+    pub block: BlockNode,
+    pub modifiers: Modifiers,
+}
+
+
+#[derive(Debug, PartialEq)]
+pub struct DefineDeclarationNode {
     pub token: Token,
     pub identifier: IdentifierNode,
     pub block: BlockNode,

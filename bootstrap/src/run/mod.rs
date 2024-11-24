@@ -73,7 +73,7 @@ pub fn run_file(file: &String) {
         ctx.string_cache.insert("list_length"),
         IntrinsicFunction(IntrinsicFunctionValue(Rc::new(|args| {
             let Value::List(list) = args.get(0).unwrap() else { panic!("not list") };
-            let len : u32 = list.0.len() as u32;
+            let len: u32 = list.0.len() as u32;
             Ok(Value::Number(len.into()))
         }))),
     );
@@ -146,19 +146,28 @@ impl<'a> Runner<'a> {
                     args.push(self.run_node(arg)?);
                 }
 
+                let obj_name = self.ctx.get_str(object.0);
+
                 let Value::Object(object) = self.scope.get_value(&object.0).unwrap() else { panic!() };
-                let func = object.get_property_host_function(function).unwrap();
 
-                if let Node::LoadValue(load_varialbe_node) = &arguments[0] {
-                    let value = self.scope.get_value(&load_varialbe_node.identifier.0).unwrap().clone();
-                    return func.0(&[value]);
-                }
+                // FIXME
+                if obj_name == "intrinsics" {
+                    let func = object.get_property_host_function(function).unwrap();
 
-                if let Node::ValueString(arg_1) = &arguments[0] {
-                    return func.0(&[Value::String(arg_1.to_string())]);
-                }
+                    if let Node::LoadValue(load_varialbe_node) = &arguments[0] {
+                        let value = self.scope.get_value(&load_varialbe_node.identifier.0).unwrap().clone();
+                        return func.0(&[value]);
+                    }
 
-                return func.0(args.as_slice());
+                    if let Node::ValueString(arg_1) = &arguments[0] {
+                        return func.0(&[Value::String(arg_1.to_string())]);
+                    }
+
+                    return func.0(args.as_slice());
+                } else {
+
+                    unimplemented!();
+                };
             }
 
             Node::CallFunctionOfPackage(CallFunctionOfPackageNode { package: packages, function, arguments }) => {
@@ -318,6 +327,9 @@ impl<'a> Runner<'a> {
                 // self.scope.insert_value(node.identifier.0.to_string(), obj.clone());
 
                 Ok(obj)
+            }
+            Node::DefineType(node) => {
+                Ok(Value::Unit)
             }
             _ => unimplemented!("{:?}", node)
         }

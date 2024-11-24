@@ -7,7 +7,7 @@ use crate::lex::token::TokenKind::{Keyword, Operator};
 use crate::parse::{Error, Parser};
 use crate::parse::Error::UnsupportedToken;
 use crate::parse::node::{Node, PrefixNode, PrefixOperator};
-use crate::parse::Node::{Itself, PackageDeclaration, TypeDeclaration};
+use crate::parse::Node::{DefineDeclaration, Itself, PackageDeclaration, TypeDeclaration};
 use crate::parse::node::Node::{Break, Continue, FunctionDeclaration, If, Let, Loop, Return};
 use crate::parse::precedence::Precedence;
 
@@ -45,6 +45,7 @@ impl<'a> Parser<'a> {
                 match keyword {
                     KeywordToken::Break => Ok(Break(self.parse_break()?)),
                     KeywordToken::Continue => Ok(Continue(self.parse_continue()?)),
+                    KeywordToken::Define => Ok(DefineDeclaration(self.parse_define()?)),
                     KeywordToken::Export => Ok(self.parse_export()?),
                     KeywordToken::From => Ok(Node::From(self.parse_from()?)),
                     KeywordToken::Function => Ok(FunctionDeclaration(self.parse_function_declaration()?)),

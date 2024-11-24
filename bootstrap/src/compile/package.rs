@@ -42,7 +42,7 @@ impl<'a> Compiler<'a> {
             functions: compiled_body.into_iter()
                 .filter_map(|n| {
                     if let ir::Node::DeclareFunction(declare_function) = n {
-                        Some(declare_function) // Now directly taking ownership
+                        Some(declare_function)
                     } else {
                         None
                     }

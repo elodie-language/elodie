@@ -1,4 +1,4 @@
-use crate::{ir, compile, lex, parse};
+use crate::{compile, ir, lex, parse};
 use crate::common::Context;
 use crate::compile::symbol::SymbolTable;
 use crate::ir::SourceFile;
@@ -19,6 +19,7 @@ mod function;
 mod package;
 mod from;
 mod r#type;
+mod define;
 
 #[derive(Debug)]
 pub enum Error {
@@ -88,6 +89,7 @@ impl<'a> Compiler<'a> {
             parse::Node::Block(block_node) => Ok(self.compile_block(block_node)?),
             parse::Node::Break(break_node) => Ok(self.compile_break(break_node)?),
             parse::Node::Continue(continue_node) => Ok(self.compile_continue(continue_node)?),
+            parse::Node::DefineDeclaration(node) => Ok(self.compile_define(node)?),
             parse::Node::From(from_node) => Ok(self.compile_from(from_node)?),
             parse::Node::FunctionDeclaration(declaration_node) => Ok(self.compile_declare_function(declaration_node)?),
             parse::Node::PackageDeclaration(declaration_node) => Ok(self.compile_declare_package(declaration_node)?),
@@ -95,6 +97,7 @@ impl<'a> Compiler<'a> {
             parse::Node::Let(let_node) => Ok(self.compile_let(let_node)?),
             parse::Node::If(if_node) => Ok(self.compile_if(if_node)?),
             parse::Node::Infix(infix_node) => Ok(self.compile_infix(infix_node)?),
+            parse::Node::Itself(node) => Ok(self.compile_self(node)?),
             parse::Node::Literal(literal_node) => Ok(self.compile_literal(literal_node)?),
             parse::Node::Loop(loop_node) => Ok(self.compile_loop(loop_node)?),
             parse::Node::Return(return_node) => Ok(self.compile_function_return(return_node)?),

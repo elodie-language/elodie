@@ -1,9 +1,9 @@
 use KeywordToken::Export;
 
 use crate::ir::{Modifier, Modifiers};
-use crate::parse::{Node, Parser};
 use crate::lex::token::KeywordToken;
-use crate::lex::token::KeywordToken::{Function, Package, Type};
+use crate::lex::token::KeywordToken::{Define, Function, Package, Type};
+use crate::parse::{Node, Parser};
 
 impl<'a> Parser<'a> {
     pub(crate) fn parse_export(&mut self) -> crate::parse::Result<Node> {
@@ -22,6 +22,10 @@ impl<'a> Parser<'a> {
 
         if current.is_keyword(Type) {
             return Ok(Node::TypeDeclaration(self.parse_type_declaration_with_modifiers(Modifiers(vec![modifier]))?));
+        }
+
+        if current.is_keyword(Define) {
+            return Ok(Node::DefineDeclaration(self.parse_define_with_modifiers(Modifiers(vec![modifier]))?));
         }
 
         unimplemented!();

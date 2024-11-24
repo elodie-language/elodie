@@ -23,9 +23,10 @@ mod r#type;
 mod function;
 mod tuple;
 mod package;
-mod export;
+mod modifier;
 mod from;
 mod type_declaration;
+mod define;
 
 #[derive(Debug, PartialEq)]
 pub enum Error {
