@@ -205,6 +205,7 @@ pub struct DeclarePackageNode {
     pub modifiers: Modifiers,
     pub functions: Vec<DeclareFunctionNode>,
     pub packages: Vec<DeclarePackageNode>,
+    pub definitions: Vec<DefineTypeNode>,
 }
 
 #[derive(Debug)]

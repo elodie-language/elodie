@@ -1,14 +1,16 @@
-use std::collections::HashMap;
 use std::{fs, io};
+use std::collections::HashMap;
 use std::fs::File;
 use std::io::Read;
-use std::path::{Path, PathBuf};
+use std::path::PathBuf;
 use std::rc::Rc;
+
 use crate::common::Context;
 use crate::compile::compile_str;
 use crate::load_library_file;
 use crate::run::run;
 use crate::run::scope::Scope;
+use crate::run::type_definitions::TypeDefinitions;
 use crate::run::value::{IntrinsicFunctionValue, ObjectValue, Value};
 use crate::run::value::Value::IntrinsicFunction;
 
@@ -17,10 +19,9 @@ pub fn test_files(files: Vec<PathBuf>) {
     fs::create_dir("/tmp/elodie").expect("Failed to create test directory");
 
     test_file(files.first().unwrap());
-
 }
 
-fn test_file(file: &PathBuf){
+fn test_file(file: &PathBuf) {
     let mut ctx = Context::new();
     let mut root_values = HashMap::new();
     let mut root_types = HashMap::new();
@@ -46,17 +47,17 @@ fn test_file(file: &PathBuf){
         root_types,
     );
 
-    let scope = {
+    let (scope, definitions) = {
         let std_content = load_library_file("std/index.elx").unwrap();
         let std_file = compile_str(&mut ctx, std_content.as_str()).unwrap();
-        run(&mut ctx, scope, std_file).unwrap()
+        run(&mut ctx, scope, TypeDefinitions { definitions: Default::default() }, std_file).unwrap()
     };
 
     let mut path = PathBuf::from(file);
     let content = load_text_from_file(path.to_str().unwrap()).unwrap();
     let source_file = compile_str(&mut ctx, content.as_str()).unwrap();
 
-    run(&mut ctx, scope, source_file).unwrap();
+    run(&mut ctx, scope, definitions, source_file).unwrap();
 }
 
 fn load_text_from_file(path: &str) -> io::Result<String> {

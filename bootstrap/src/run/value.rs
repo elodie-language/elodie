@@ -1,3 +1,4 @@
+use std::cell::RefCell;
 use std::collections::HashMap;
 use std::fmt::{Debug, Formatter};
 use std::rc::Rc;
@@ -60,7 +61,7 @@ pub struct PackageValue {
 }
 
 #[derive(Clone, Debug)]
-pub struct ListValue(pub Rc<Vec<Value>>);
+pub struct ListValue(pub Rc<RefCell<Vec<Value>>>);
 
 impl PackageValue {
     pub fn get_function(&self, identifier: StringCacheIdx) -> Option<&FunctionValue> {

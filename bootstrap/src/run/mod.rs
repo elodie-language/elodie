@@ -1,3 +1,4 @@
+use std::cell::RefCell;
 use std::collections::HashMap;
 use std::fs::File;
 use std::io;
@@ -9,6 +10,7 @@ use std::rc::Rc;
 use crate::common::Context;
 use crate::compile::compile_str;
 use crate::ir::{CalculationOperator, CallFunctionOfObjectNode, CallFunctionOfPackageNode, CompareOperator, Node, SourceFile};
+use crate::ir::Node::ValueNumber;
 use crate::load_library_file;
 use crate::r#type::{Property, Type, TypeId, TypeName};
 use crate::run::scope::Scope;
@@ -23,7 +25,7 @@ mod r#loop;
 mod r#if;
 mod block;
 mod call;
-mod type_definitions;
+pub mod type_definitions;
 
 #[derive(Debug)]
 pub enum Error {}
@@ -76,8 +78,27 @@ pub fn run_file(file: &String) {
         ctx.string_cache.insert("list_length"),
         IntrinsicFunction(IntrinsicFunctionValue(Rc::new(|args| {
             let Value::List(list) = args.get(0).unwrap() else { panic!("not list") };
-            let len: u32 = list.0.len() as u32;
+            let len: u32 = list.0.borrow().len() as u32;
             Ok(Value::Number(len.into()))
+        }))),
+    );
+
+    intrinsics.set_property(
+        ctx.string_cache.insert("list_append"),
+        IntrinsicFunction(IntrinsicFunctionValue(Rc::new(|args| {
+            let Value::List(list) = args.get(0).unwrap() else { panic!("not list") };
+            let arg = args.get(1).cloned().unwrap();
+            list.0.borrow_mut().push(arg);
+            Ok(Value::Unit)
+        }))),
+    );
+
+    intrinsics.set_property(
+        ctx.string_cache.insert("list_get"),
+        IntrinsicFunction(IntrinsicFunctionValue(Rc::new(|args| {
+            let Value::List(list) = args.get(0).unwrap() else { panic!("not list") };
+            let Value::Number(arg) = args.get(1).cloned().unwrap() else { panic!("not a number")};
+            Ok(list.0.borrow().get(arg as usize -1).cloned().unwrap())
         }))),
     );
 
@@ -88,32 +109,32 @@ pub fn run_file(file: &String) {
     );
 
 
-    let scope = {
+    let (scope, definitions) = {
         let std_content = load_library_file("std/index.elx").unwrap();
         let std_file = compile_str(&mut ctx, std_content.as_str()).unwrap();
-        run(&mut ctx, scope, std_file).unwrap()
+        run(&mut ctx, scope, TypeDefinitions { definitions: Default::default() }, std_file).unwrap()
     };
 
     let mut path = PathBuf::from(file);
     let content = load_text_from_file(path.to_str().unwrap()).unwrap();
     let source_file = compile_str(&mut ctx, content.as_str()).unwrap();
 
-    run(&mut ctx, scope, source_file).unwrap();
+    run(&mut ctx, scope, definitions, source_file).unwrap();
 }
 
-pub fn run(ctx: &mut Context, scope: Scope, file: SourceFile) -> Result<Scope> {
-    let mut runner = Runner::new(ctx, scope);
+pub fn run(ctx: &mut Context, scope: Scope, definitions: TypeDefinitions, file: SourceFile) -> Result<(Scope, TypeDefinitions)> {
+    let mut runner = Runner::new(ctx, scope, definitions);
     runner.run(file)?;
-    Ok(runner.scope)
+    Ok((runner.scope, runner.type_definitions))
 }
 
 impl<'a> Runner<'a> {
-    pub(crate) fn new(ctx: &'a mut Context, scope: Scope) -> Self {
+    pub(crate) fn new(ctx: &'a mut Context, scope: Scope, definitions: TypeDefinitions) -> Self {
         Self {
             ctx,
             scope,
             interrupt: None,
-            type_definitions: TypeDefinitions { definitions: Default::default() },
+            type_definitions: definitions,
         }
     }
 
@@ -145,26 +166,77 @@ impl<'a> Runner<'a> {
                 //     None
                 // };
                 //
-                let mut args = Vec::with_capacity(arguments.len());
+                // let mut direct_args = Vec::with_capacity(arguments.len());
+                // for arg in arguments {
+                //     direct_args.push(self.run_node(arg)?);/
+                // }
+
+                let obj_name = self.ctx.get_str(object.0).to_string();
+
+                let mut args: Vec<Value> = Vec::with_capacity(arguments.len());
                 for arg in arguments {
-                    args.push(self.run_node(arg)?);
+                    args.push(self.run_node(arg)?); // Now we can mutably borrow `self` without conflict
                 }
 
-                let obj_name = self.ctx.get_str(object.0);
+                if let Value::List(object) = self.scope.get_value(&object.0).unwrap() {
+
+                    let mut args = HashMap::with_capacity(arguments.len());
+                    args.insert(self.ctx.string_cache.insert("self"), Value::List(object.clone()));
+
+                    let mut counter = 0;
+
+                    let func = if let Some(Value::Function(func)) = self.scope.get_value(&function.0) {
+                        func.clone()
+                    } else {
+                        todo!()
+                    };
+
+                    for arg in arguments {
+                        let arg_node = func.arguments.get(counter).unwrap();
+
+                        let name = arg_node.identifier.0.clone();
+                        // FIXME resolve  name from definition
+                        args.insert(name, self.run_node(arg)?);
+                        counter += 1;
+                    }
+
+
+
+                    // let mut args = HashMap::with_capacity(arguments.len());
+
+                    // args.extend(&direct_args);
+
+                    let func = self.type_definitions.get_function(&TypeId(99), &function.0);
+                    self.scope.enter();
+
+                    let result = self.run_node_call(func.clone(), args);
+
+                    self.scope.leave();
+
+                    return result;
+                }
 
                 let Value::Object(object) = self.scope.get_value(&object.0).unwrap() else { panic!() };
 
                 // FIXME
                 if obj_name == "intrinsics" {
+                    // println!("{}", self.ctx.get_str(function.0));
+                    // dbg!(arguments);
                     let func = object.get_property_host_function(function).unwrap();
 
-                    if let Node::LoadValue(load_varialbe_node) = &arguments[0] {
-                        let value = self.scope.get_value(&load_varialbe_node.identifier.0).unwrap().clone();
-                        return func.0(&[value]);
-                    }
-
-                    if let Node::ValueString(arg_1) = &arguments[0] {
-                        return func.0(&[Value::String(arg_1.to_string())]);
+                    let mut args = Vec::with_capacity(arguments.len());
+                    for arg in arguments {
+                        if let Node::LoadValue(load_varialbe_node) = arg {
+                            let value = self.scope.get_value(&load_varialbe_node.identifier.0).unwrap().clone();
+                            args.push(value);
+                        } else if let Node::ValueString(arg_1) = arg {
+                            args.push(Value::String(arg_1.to_string()));
+                        } else if let Node::ValueNumber(arg_1) = arg{
+                            args.push(Value::Number(arg_1.clone()))
+                        }
+                        else {
+                            unimplemented!("{:#?}",arg);
+                        }
                     }
 
                     return func.0(args.as_slice());
@@ -330,7 +402,7 @@ impl<'a> Runner<'a> {
 
                 // FIXME dirty hack to make lists works as quick as possible
                 if type_name == "List" {
-                    return Ok(Value::List(ListValue(Rc::new(vec![]))));
+                    return Ok(Value::List(ListValue(Rc::new(RefCell::new(vec![])))));
                 }
 
                 let obj = Value::Object(ObjectValue {

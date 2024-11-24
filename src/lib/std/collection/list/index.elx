@@ -6,13 +6,19 @@ export package list {
         return List()
     }
 
-   // export define List {
-   //     fun length() -> Number {
-   //         return intrinsics.list_length(self)
-   // }
-   // }
+   export define List {
 
-    export fun length(list: List) -> Number {
-        return intrinsics.list_length(list)
-    }
+        fun append(value) {
+             intrinsics.list_append(self, value)
+        }
+
+        fun get(idx) {
+            return intrinsics.list_get(self, idx)
+        }
+
+        fun length() -> Number {
+            return intrinsics.list_length(self)
+        }
+
+   }
 }

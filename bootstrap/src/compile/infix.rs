@@ -2,7 +2,7 @@ use std::ops::Deref;
 
 use crate::{ir, parse};
 use crate::compile::Compiler;
-use crate::ir::{CalculateNode, CalculationOperator, CallFunctionNode, CallFunctionOfObjectNode, CallFunctionOfPackageNode, CompareNode, CompareOperator, Identifier, InstantiateTypeNode, LoadValueFromObjectNode, LoadValueFromSelfNode, NamedArgumentNode};
+use crate::ir::{CalculateNode, CalculationOperator, CallFunctionNode, CallFunctionOfObjectNode, CallFunctionOfPackageNode, CompareNode, CompareOperator, Identifier, InstantiateTypeNode, LoadValueFromObjectNode, LoadValueFromSelfNode, LoadValueNode, NamedArgumentNode};
 use crate::parse::{InfixNode, InfixOperator, LiteralNode, Node, TypeNode};
 use crate::parse::Node::Type;
 use crate::r#type::{DefaultTypeIds, TypeId};
@@ -12,25 +12,6 @@ impl<'a> Compiler<'a> {
         let InfixNode { left, right, operator } = node;
 
         if let InfixOperator::AccessPackage(_) = operator {
-            // let Node::Identifier(package_identifier) = left.deref() else { todo!() };
-            //
-            // let Node::Infix(InfixNode { left, operator, right }) = right.deref() else { todo!() };
-            // if let InfixOperator::Call(_) = operator {
-            //     let ir::Node::UseIdentifier(function_identifier) = self.compile_node(left.deref())? else { panic!() };
-            //
-            //     let parse::Node::Tuple(tuple_node) = right.deref() else { panic!() };
-            //     let mut arguments = Vec::with_capacity(tuple_node.nodes.len());
-            //     for node in &tuple_node.nodes {
-            //         arguments.push(self.compile_node(node)?)
-            //     }
-            //
-            //     return Ok(ir::Node::CallFunctionOfPackage(CallFunctionOfPackageNode {
-            //         package: vec![ir::Identifier(package_identifier.value().to_string())],
-            //         function: ir::Identifier(function_identifier.identifier.0.to_string()),
-            //         arguments,
-            //     }));
-            // }
-
             let (paths, node) = self.handle_package_access(node);
             let InfixNode { left, right, operator } = node;
             if let InfixOperator::Call(_) = operator {
@@ -94,11 +75,32 @@ impl<'a> Compiler<'a> {
                 }));
             };
 
-            if let Node::Literal(LiteralNode::String(value)) = &tuple.nodes[0] {
+            let mut args = Vec::new();
+            let mut hit = false;
+
+            for arg in &tuple.nodes {
+                if let Node::Itself(_) = arg {
+                    hit = true;
+                    args.push(ir::Node::LoadValue(LoadValueNode { identifier: Identifier(self.ctx.string_cache.insert("self")), type_id: TypeId(99) }));
+                } else if let Node::Literal(LiteralNode::String(value)) = arg {
+                    hit = true;
+                    args.push(ir::Node::ValueString(self.ctx.get_str(value.value()).to_string()));
+                } else if let Node::Literal(LiteralNode::Number(value)) = arg {
+                    hit = true;
+                    args.push(ir::Node::ValueNumber(self.ctx.get_str(value.value()).parse().unwrap()));
+                } else if let Node::Identifier(ident) = arg {
+                    hit = true;
+                    args.push(ir::Node::LoadValue(LoadValueNode { identifier: Identifier(ident.value()), type_id: TypeId(99) }))
+                } else {
+                    unimplemented!("{arg:#?}")
+                }
+            }
+
+            if hit {
                 return Ok(ir::Node::CallFunctionOfObject(CallFunctionOfObjectNode {
                     object: ir::Identifier::from(object_identifier),
                     function: ir::Identifier::from(function_identifier),
-                    arguments: vec![ir::Node::ValueString(self.ctx.get_str(value.value()).to_string())],
+                    arguments: args,
                 }));
             }
 

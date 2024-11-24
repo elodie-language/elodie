@@ -1,7 +1,8 @@
 use std::collections::HashMap;
 use std::ops::Deref;
 
-use crate::ir::{DeclareFunctionNode, DeclarePackageNode, DeclareVariableNode};
+use crate::ir::{DeclareFunctionNode, DeclarePackageNode, DeclareVariableNode, Node};
+use crate::r#type::TypeId;
 use crate::run::Runner;
 use crate::run::value::{FunctionValue, PackageValue, Value};
 
@@ -52,6 +53,22 @@ impl<'a> Runner<'a> {
             let value = self.run_package_declaration(node)?;
             let Value::Package(package) = value else { panic!() };
             packages.insert(identifier, package);
+        }
+
+        for node in &node.definitions{
+            // self.run_node(&Node::DefineType(node))?;
+
+            for func in &node.functions{
+                let func_ident = func.identifier.0;
+                let func = func;
+                let value = self.run_function_declaration(func)?;
+
+                let Value::Function(func) = value else { panic!() };
+                self.type_definitions.add_function(TypeId(99), func_ident, func);
+            }
+
+
+
         }
 
         Ok(

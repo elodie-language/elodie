@@ -15,10 +15,13 @@ impl<'a> Compiler<'a> {
             compiled_body.push(self.compile_node(node)?);
         }
 
+        let mut functions = vec![];
+        let mut definitions = vec![];
         let mut packages = vec![];
-        for node in &compiled_body {
+
+        for node in compiled_body.into_iter() {
             if let ir::Node::Block(block) = node {
-                for node in &block.body {
+                for node in block.body {
                     if let ir::Node::ExportPackage(ExportPackageNode { identifier, .. }) = node {
                         let package = self.ctx.get_str(identifier.0).to_string();
 
@@ -31,24 +34,25 @@ impl<'a> Compiler<'a> {
                             "list" => packages.extend(self.load_declared_packages("std/collection/list/index.elx")),
                             _ => unimplemented!()
                         }
+                    } else if let ir::Node::DeclareFunction(declare_function) = node {
+                        functions.push(declare_function)
+                    } else if let ir::Node::DefineType(define_type) = node {
+                        definitions.push(define_type);
                     }
                 }
+            }else if let ir::Node::DeclareFunction(declare_function) = node {
+                functions.push(declare_function)
+            } else if let ir::Node::DefineType(define_type) = node {
+                definitions.push(define_type);
             }
         }
 
         Ok(ir::Node::DeclarePackage(DeclarePackageNode {
             identifier: Identifier::from(&node.identifier),
             modifiers: node.modifiers.clone(),
-            functions: compiled_body.into_iter()
-                .filter_map(|n| {
-                    if let ir::Node::DeclareFunction(declare_function) = n {
-                        Some(declare_function)
-                    } else {
-                        None
-                    }
-                })
-                .collect(),
+            functions,
             packages,
+            definitions,
         }))
     }
 
