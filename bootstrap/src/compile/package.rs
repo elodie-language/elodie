@@ -29,9 +29,9 @@ impl<'a> Compiler<'a> {
                         // FIXME compiler needs to track scope so that the parent package can easily be determined
 
                         match package.as_str() {
-                            "io" => packages.extend(self.load_declared_packages("std/io/index.elx")),
-                            "collection" => packages.extend(self.load_declared_packages("std/collection/index.elx")),
-                            "list" => packages.extend(self.load_declared_packages("std/collection/list/index.elx")),
+                            "io" => packages.extend(self.load_declared_packages("std/io/index.ec")),
+                            "collection" => packages.extend(self.load_declared_packages("std/collection/index.ec")),
+                            "list" => packages.extend(self.load_declared_packages("std/collection/list/index.ec")),
                             _ => unimplemented!()
                         }
                     } else if let ir::Node::DeclareFunction(declare_function) = node {

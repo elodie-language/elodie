@@ -110,7 +110,7 @@ pub fn run_file(file: &String) {
 
 
     let (scope, definitions) = {
-        let std_content = load_library_file("std/index.elx").unwrap();
+        let std_content = load_library_file("std/index.ec").unwrap();
         let std_file = compile_str(&mut ctx, std_content.as_str()).unwrap();
         run(&mut ctx, scope, TypeDefinitions { definitions: Default::default() }, std_file).unwrap()
     };

@@ -14,7 +14,7 @@ ERR_COUNT=0
 shopt -s globstar
 
 # Loop through all test files in the TEST_DIR recursively
-for FILE in "$TEST_DIR"/**/*.elx; do
+for FILE in "$TEST_DIR"/**/*.ec; do
     if [[ ! -f "$FILE" ]]; then
         echo "No test files found in directory $TEST_DIR"
         exit 1
