@@ -51,7 +51,9 @@ impl<'a> Compiler<'a> {
 
             let Node::Infix(InfixNode { left, operator, right }) = right.deref() else { todo!() };
             let Node::Identifier(function_identifier) = left.deref() else { todo!() };
-            let Node::Tuple(tuple) = right.deref() else { todo!() };
+
+
+            let Node::Tuple(tuple) = right.deref() else { todo!("{right:#?}") };
 
 
             if tuple.nodes.is_empty() {
