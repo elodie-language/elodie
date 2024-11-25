@@ -77,6 +77,12 @@ pub struct CallFunctionNode {
 }
 
 #[derive(Debug)]
+pub struct CallFunctionWithLambdaNode {
+    pub call_function: CallFunctionNode,
+    pub lambda: BlockNode,
+}
+
+#[derive(Debug)]
 pub struct ExportPackageNode {
     pub identifier: Identifier,
     pub source: Source,
@@ -106,6 +112,7 @@ pub enum Node {
     CallFunctionOfObject(CallFunctionOfObjectNode),
     CallFunctionOfPackage(CallFunctionOfPackageNode),
     CallFunction(CallFunctionNode),
+    CallFunctionWithLambda(CallFunctionWithLambdaNode),
 
     ExportPackage(ExportPackageNode),
 

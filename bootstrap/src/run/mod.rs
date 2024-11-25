@@ -309,6 +309,9 @@ impl<'a> Runner<'a> {
             }
 
             Node::CallFunction(function_node) => self.run_node_call_function(function_node),
+            Node::CallFunctionWithLambda(lambda) => {
+                todo!()
+            },
             Node::ReturnFromFunction(node) => {
                 let value = self.run_node(node.node.deref())?;
                 self.interrupt(Interrupt::Return(value.clone()));

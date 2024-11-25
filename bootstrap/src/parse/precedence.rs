@@ -10,5 +10,6 @@ pub(crate) enum Precedence {
     Factor,
     Unary,
     Call,
+    LambdaCall,
     Primary,
 }

@@ -13,7 +13,7 @@ pub(crate) mod precedence;
 mod node;
 mod infix;
 mod literal;
-mod prefix;
+mod primary;
 mod identifier;
 mod block;
 mod r#loop;
@@ -82,6 +82,8 @@ impl<'a> Parser<'a> {
         precedence_map.insert(Operator(OperatorToken::Percent), Precedence::Factor);
 
         precedence_map.insert(Operator(OperatorToken::OpenParen), Precedence::Call);
+        precedence_map.insert(Operator(OperatorToken::OpenCurly), Precedence::LambdaCall);
+
         precedence_map.insert(Operator(OperatorToken::Dot), Precedence::Primary);
         precedence_map.insert(Operator(OperatorToken::DoubleColon), Precedence::Primary);
 
@@ -113,9 +115,9 @@ impl<'a> Parser<'a> {
     }
 
     pub(crate) fn parse_node(&mut self, precedence: Precedence) -> Result<Node> {
-        let mut left = self.parse_prefix()?;
+        let mut left = self.parse_primary()?;
 
-        while precedence < self.current_precedence()? {
+        while !self.is_eof() && precedence < self.current_precedence()? {
             left = Node::Infix(self.parse_infix(left)?);
         }
         Ok(left)

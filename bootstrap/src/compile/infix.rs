@@ -2,7 +2,7 @@ use std::ops::Deref;
 
 use crate::{ir, parse};
 use crate::compile::Compiler;
-use crate::ir::{CalculateNode, CalculationOperator, CallFunctionNode, CallFunctionOfObjectNode, CallFunctionOfPackageNode, CompareNode, CompareOperator, Identifier, InstantiateTypeNode, LoadValueFromObjectNode, LoadValueFromSelfNode, LoadValueNode, NamedArgumentNode};
+use crate::ir::{CalculateNode, CalculationOperator, CallFunctionNode, CallFunctionOfObjectNode, CallFunctionOfPackageNode, CallFunctionWithLambdaNode, CompareNode, CompareOperator, Identifier, InstantiateTypeNode, LoadValueFromObjectNode, LoadValueFromSelfNode, LoadValueNode, NamedArgumentNode};
 use crate::parse::{InfixNode, InfixOperator, LiteralNode, Node, TypeNode};
 use crate::parse::Node::Type;
 use crate::r#type::{DefaultTypeIds, TypeId};
@@ -234,6 +234,19 @@ impl<'a> Compiler<'a> {
                 left,
                 operator: CalculationOperator::Multiply,
                 right,
+            }));
+        }
+
+        if let InfixOperator::LambdaCall(_) = operator {
+            let left = self.compile_node(left.deref())?;
+            let right = self.compile_node(right.deref())?;
+
+            let ir::Node::CallFunction(call_function) = left else { panic!() };
+            let ir::Node::Block(lambda) = right else { panic!() };
+
+            return Ok(ir::Node::CallFunctionWithLambda(CallFunctionWithLambdaNode {
+                call_function,
+                lambda,
             }));
         }
 

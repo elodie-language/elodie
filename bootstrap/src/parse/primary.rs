@@ -12,7 +12,8 @@ use crate::parse::node::Node::{Break, Continue, FunctionDeclaration, If, Let, Lo
 use crate::parse::precedence::Precedence;
 
 impl<'a> Parser<'a> {
-    pub(crate) fn parse_prefix(&mut self) -> crate::parse::Result<Node> {
+
+    pub(crate) fn parse_primary(&mut self) -> crate::parse::Result<Node> {
         loop {
             if self.is_eof() {
                 return Ok(Node::Nop);

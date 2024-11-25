@@ -1,15 +1,33 @@
+use std::ops::Deref;
+
 use KeywordToken::{Else, If};
 
 use crate::lex::token::KeywordToken;
+use crate::parse::{InfixNode, InfixOperator, Node, Parser};
 use crate::parse::node::{ElseNode, IfNode};
-use crate::parse::Parser;
 use crate::parse::precedence::Precedence;
 
 impl<'a> Parser<'a> {
     pub(crate) fn parse_if(&mut self) -> crate::parse::Result<IfNode> {
         let token = self.consume_keyword(If)?;
-        let condition = Box::new(self.parse_node(Precedence::None)?);
-        let then = self.parse_block()?;
+        // let condition = Box::new(self.parse_node(Precedence::None)?);
+        let condition = self.parse_node(Precedence::None)?;
+
+        dbg!(&condition);
+        // TODO make this recursive and walk down the tree to the out most right node and check for lambda call
+        let (condition, then) = if let Node::Infix(InfixNode { left, operator, right }) = condition {
+            if let Node::Infix(InfixNode { left: inner_left, operator: inner_operator, right: inner_right }) = *right {
+                assert!(matches!(inner_operator, InfixOperator::LambdaCall(_)));
+                (Node::Infix(InfixNode { left, operator, right: inner_left }), *inner_right)
+            } else {
+                (*left, *right)
+            }
+        } else {
+            (condition, Node::Block(self.parse_block()?))
+        };
+
+        let condition = Box::new(condition);
+        let Node::Block(then) = then else { panic!("not block node") };
 
         let otherwise = if !self.is_eof() && self.current()?.is_keyword(Else) {
             let token = self.consume_keyword(Else)?;
@@ -33,9 +51,9 @@ mod tests {
 
     use crate::common::Context;
     use crate::lex::lex;
+    use crate::parse::{InfixNode, InfixOperator, parse};
     use crate::parse::node::{IfNode, LiteralNode};
     use crate::parse::node::Node::Literal;
-    use crate::parse::parse;
 
     #[test]
     fn empty_if_no_else() {
@@ -48,6 +66,29 @@ mod tests {
 
         let Literal(LiteralNode::Boolean(condition)) = condition.deref() else { panic!("not boolean node") };
         assert_eq!(condition.value(), true);
+        assert_eq!(then.nodes, vec![]);
+        assert_eq!(*otherwise, None);
+    }
+
+    #[test]
+    fn if_true_equals_true() {
+        let mut ctx = Context::new();
+        let tokens = lex(&mut ctx, "if true == false {}").unwrap();
+        let result = parse(&mut ctx, tokens).unwrap();
+        assert_eq!(result.len(), 1);
+
+        let IfNode { condition, then, otherwise, .. } = result[0].as_if();
+
+        let InfixNode { left, operator, right } = condition.as_infix() else { panic!("not infix") };
+
+        let Literal(LiteralNode::Boolean(left)) = left.deref() else { panic!("not boolean node") };
+        assert_eq!(left.value(), true);
+
+        let InfixOperator::Equal(_) = operator else { panic!("not equals operator") };
+
+        let Literal(LiteralNode::Boolean(right)) = right.deref() else { panic!("not boolean node") };
+        assert_eq!(right.value(), false);
+
         assert_eq!(then.nodes, vec![]);
         assert_eq!(*otherwise, None);
     }

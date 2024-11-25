@@ -1,3 +1,5 @@
+use OperatorToken::CloseCurly;
+
 use crate::lex::token::OperatorToken;
 use crate::lex::token::TokenKind::Operator;
 use crate::parse::Error::UnsupportedToken;
@@ -5,6 +7,7 @@ use crate::parse::node::{InfixNode, InfixOperator, Node};
 use crate::parse::Parser;
 
 impl<'a> Parser<'a> {
+
     pub(crate) fn parse_infix(&mut self, left: Node) -> crate::parse::Result<InfixNode> {
         let operator = self.parse_infix_operator()?;
 
@@ -12,6 +15,10 @@ impl<'a> Parser<'a> {
 
         let right = if let InfixOperator::Call(token) = &operator {
             Node::Tuple(self.parse_tuple_call(token.clone())?)
+        } else if let InfixOperator::LambdaCall(_) = &operator {
+            let result = Node::Block(self.parse_block_inner()?);
+            self.consume_operator(CloseCurly)?;
+            result
         } else if let InfixOperator::Arrow(_) = &operator {
             Node::Block(self.parse_block_inner()?)
         } else {
@@ -30,6 +37,7 @@ impl<'a> Parser<'a> {
         match &token.kind {
             Operator(operator) => match operator {
                 OperatorToken::OpenParen => Ok(InfixOperator::Call(token)),
+                OperatorToken::OpenCurly => Ok(InfixOperator::LambdaCall(token)),
                 OperatorToken::Plus => Ok(InfixOperator::Add(token)),
                 OperatorToken::Minus => Ok(InfixOperator::Subtract(token)),
                 OperatorToken::Asterisk => Ok(InfixOperator::Multiply(token)),
@@ -60,7 +68,7 @@ mod tests {
     use crate::common::Context;
     use crate::lex::lex;
     use crate::lex::token::OperatorToken::*;
-    use crate::parse::{parse, TypeFundamentalNode, TypeNode};
+    use crate::parse::{Node, parse, TypeFundamentalNode, TypeNode};
     use crate::parse::node::{InfixNode, InfixOperator, LiteralNode, TupleNode};
     use crate::parse::Node::{Infix, Type};
     use crate::parse::node::Node::{Identifier, Literal};
@@ -372,5 +380,35 @@ mod tests {
         assert_eq!(result.len(), 1);
 
         let block = result[0].as_infix();
+    }
+
+    #[test]
+    fn call_function_with_lambda() {
+        let mut ctx = Context::new();
+        let tokens = lex(&mut ctx, "test('elodie'){ true }").unwrap();
+        let result = parse(&mut ctx, tokens).unwrap();
+        assert_eq!(result.len(), 1);
+
+        let InfixNode { left, operator, right } = &result[0].as_infix();
+        let call = left.as_infix();
+        {
+            let InfixNode { left, operator, right } = call;
+            let identifier = left.as_identifier();
+            assert_eq!(ctx.get_str(identifier.value()), "test");
+            let InfixOperator::Call(_) = operator else { panic!() };
+
+            let TupleNode { nodes, .. } = right.as_tuple();
+            assert_eq!(nodes.len(), 1);
+            let Some(Literal(LiteralNode::String(arg_1))) = &nodes.first() else { panic!() };
+            assert_eq!(ctx.get_str(arg_1.value()), "elodie");
+        }
+
+        let InfixOperator::LambdaCall(_) = operator else { panic!() };
+
+        let block = right.as_block();
+        assert_eq!(block.nodes.len(), 1);
+
+        let Literal(LiteralNode::Boolean(boolean_node)) = &block.nodes[0] else { panic!() };
+        assert!(boolean_node.value())
     }
 }
