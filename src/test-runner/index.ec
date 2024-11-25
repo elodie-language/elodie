@@ -1,8 +1,22 @@
+fun print_line(message: String) {
+    std::io::print_line(message)
+}
+
+fun print(message: String) {
+    std::io::print(message)
+}
+
 type Test_Result (
-    description: String,
+    name: String,
     passed: Bool,
     describe_results: List
 )
+
+define Test_Result {
+    fun summarize(){
+//        print_line('All in all...')
+    }
+}
 
 type Describe_Result (
     description: String,
@@ -17,16 +31,21 @@ type It_Result (
 
 let results = std::collection::list::empty()
 
-fun test(description: String, body: fun()) {
-    let test_result = Test_Result(description = description, passed = false, describe_results = std::collection::list::empty() )
+fun test(name: String, body: fun()) {
+    print_line('Test: ' + name)
+    let test_result = Test_Result(name = name, passed = false, describe_results = std::collection::list::empty() )
     results.append( test_result )
     body()
+    test_result.summarize()
 }
 
 fun describe(description: String, body: fun()) {
+    print_line('  Describe: ' + description)
+
+
     let describe_result = Describe_Result( passed = false, it_results = std::collection::list::empty() )
     let test_result = results.get(1)
-    std::io::print_line(test_result)
+//    std::io::print_line(test_result)
 
     // FIXME
     // test_result.describe_results.append(describe_result)
@@ -40,16 +59,16 @@ fun should(description: String, body: fun() -> Bool){
     let test_result = results.get(1)
     let temp = test_result.describe_results
     let describe_result = temp.get(1)
-    
+
     let temp = describe_result.it_results
 
     // measure time
     let passed = body()
 
     if passed{
-        std::io::print('Pass ')
+        print('    \x1b[0;32mPass\x1b[0m - ')
     }else {
-        std::io::print('Fail ')
+        print('    \x1b[0;31mFail\x1b[0m - ')
     }
 
     std::io::print_line(description)
@@ -79,38 +98,6 @@ fun print_summary(){
     std::io::print_line(its.length())
 
     let it = its.get(1)
-    if it.passed{
-        std::io::print('Pass ')
-    }else {
-        std::io::print('Fail ')
-    }
 
     std::io::print_line(it.description)
 }
-
-fun a(){
-    std::io::print_line('I will pass')
-    return true
-}
-
-fun b(){
-    std::io::print_line('I will fail')
-    return false
-}
-
-
-fun two(){
-//  should('test one', a)
-    should('some failing test',  b)
-}
-
-fun one(){
-    describe('desc', two)
-}
-
-test('test', one)
-
-//print_summary()
-
-// std::io::print_line(result.passing_count)
-// std::io::print_line(result.failing_count)

@@ -1,5 +1,6 @@
 BOOTSTRAP_DIR = ./bootstrap
 BOOTSTRAP_SMOKE_TEST_SCRIPT = ./test/smoke/test-bootstrap.sh
+BOOTSTRAP_SMOKE_TEST_RUNNER_TEST_SCRIPT = ./test/smoke-test-runner/test-bootstrap.sh
 BOOTSTRAP_REGRESSION_TEST_SCRIPT = ./test/regression/test-bootstrap.sh
 BOOTSTRAP_SUITE_TEST_SCRIPT = ./test/suite/test-bootstrap.sh
 
@@ -22,6 +23,12 @@ test-bootstrap: bootstrap
 test-smoke: bootstrap
 	$(BOOTSTRAP_SMOKE_TEST_SCRIPT) ./test/smoke ./bootstrap/target/debug/bootstrap
 
+# Run the smoke tests
+.PHONY: test-smoke-test-runner
+test-smoke-test-runner: bootstrap
+	$(BOOTSTRAP_SMOKE_TEST_RUNNER_TEST_SCRIPT) ./test/smoke-test-runner ./bootstrap/target/debug/bootstrap
+
+
 # Run the end 2 end tests
 .PHONY: test-regression
 test-regression: bootstrap
@@ -34,4 +41,4 @@ test-suite: bootstrap
 
 # Run the tests
 .PHONY: test
-test: test-bootstrap test-smoke test-regression test-suite
+test: test-bootstrap test-smoke test-smoke-test-runner test-regression test-suite

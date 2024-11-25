@@ -13,7 +13,6 @@ impl<'a> Parser<'a> {
         // let condition = Box::new(self.parse_node(Precedence::None)?);
         let condition = self.parse_node(Precedence::None)?;
 
-        dbg!(&condition);
         // TODO make this recursive and walk down the tree to the out most right node and check for lambda call
         let (condition, then) = if let Node::Infix(InfixNode { left, operator, right }) = condition {
             if let Node::Infix(InfixNode { left: inner_left, operator: inner_operator, right: inner_right }) = *right {

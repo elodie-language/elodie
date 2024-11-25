@@ -171,3 +171,14 @@ point == Point --> true
 
 fun return_object() -> (x: Number, y: Number){...}
 return_object() == Point --> true
+
+Parameterized tests
+
+test(
+    'name',
+    list_of( parameter_1, parameter_2 )
+){
+    (param) -> {
+
+    }
+}

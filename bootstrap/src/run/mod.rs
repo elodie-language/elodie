@@ -67,7 +67,7 @@ pub fn run_file(file: &String) {
                 if arg.to_string() == "\\n" {
                     println!();
                 } else {
-                    print!("{} ", arg.to_string());
+                    print!("{} ", arg.to_string().replace("\\x1b","\x1b"));
                 }
             }
             Ok(Value::Unit)
