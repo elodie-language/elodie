@@ -1,4 +1,5 @@
 use std::ops::Deref;
+use std::rc::Rc;
 
 use crate::{ir, parse};
 use crate::compile::Compiler;
@@ -246,7 +247,7 @@ impl<'a> Compiler<'a> {
 
             return Ok(ir::Node::CallFunctionWithLambda(CallFunctionWithLambdaNode {
                 call_function,
-                lambda,
+                lambda: Rc::new(lambda),
             }));
         }
 

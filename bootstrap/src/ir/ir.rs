@@ -79,7 +79,7 @@ pub struct CallFunctionNode {
 #[derive(Debug)]
 pub struct CallFunctionWithLambdaNode {
     pub call_function: CallFunctionNode,
-    pub lambda: BlockNode,
+    pub lambda: Rc<BlockNode>,
 }
 
 #[derive(Debug)]
