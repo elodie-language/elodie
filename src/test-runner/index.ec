@@ -67,8 +67,9 @@ fun should(description: String, body: fun() -> Bool){
 
     if passed{
         print('    \x1b[0;32mPass\x1b[0m - ')
-    }else {
+    } else {
         print('    \x1b[0;31mFail\x1b[0m - ')
+        intrinsics.report_test_failure()
     }
 
     std::io::print_line(description)
@@ -85,19 +86,3 @@ fun should(description: String, body: fun() -> Bool){
 //    }
 }
 
-fun print_summary(){
-    std::io::print_line('All in all...')
-    std::io::print_line(results.length())
-
-    let temp = results.get(1)
-    let groups = temp.describe_results
-    std::io::print_line(groups.length())
-
-    let group = groups.get(1)
-    let its = group.it_results
-    std::io::print_line(its.length())
-
-    let it = its.get(1)
-
-    std::io::print_line(it.description)
-}

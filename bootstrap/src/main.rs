@@ -25,7 +25,11 @@ fn main() {
     }
 
     if args.get(1).unwrap() == "test" {
-        test_files(vec![PathBuf::from(args.get(2).unwrap())],  args.get(3).unwrap_or(&"true".to_string()) == "true");
+        test_files(
+            vec![PathBuf::from(args.get(2).unwrap())],
+            args.get(3).unwrap_or(&"true".to_string()) == "true",
+            args.get(4).unwrap_or(&"false".to_string()) == "true",
+        );
     } else {
         run_file(args.get(1).unwrap());
     }

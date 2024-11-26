@@ -3,6 +3,7 @@ BOOTSTRAP_SMOKE_TEST_SCRIPT = ./test/smoke/test-bootstrap.sh
 BOOTSTRAP_SMOKE_TEST_RUNNER_TEST_SCRIPT = ./test/smoke-test-runner/test-bootstrap.sh
 BOOTSTRAP_REGRESSION_TEST_SCRIPT = ./test/regression/test-bootstrap.sh
 BOOTSTRAP_SUITE_TEST_SCRIPT = ./test/suite/test-bootstrap.sh
+BOOTSTRAP_STD_TEST_SCRIPT = ./src/lib/std/test-bootstrap.sh
 
 # Default target
 .PHONY: all
@@ -28,8 +29,7 @@ test-smoke: bootstrap
 test-smoke-test-runner: bootstrap
 	$(BOOTSTRAP_SMOKE_TEST_RUNNER_TEST_SCRIPT) ./test/smoke-test-runner ./bootstrap/target/debug/bootstrap
 
-
-# Run the end 2 end tests
+# Run the regression tests
 .PHONY: test-regression
 test-regression: bootstrap
 	$(BOOTSTRAP_REGRESSION_TEST_SCRIPT) ./test/regression ./bootstrap/target/debug/bootstrap
@@ -39,6 +39,11 @@ test-regression: bootstrap
 test-suite: bootstrap
 	$(BOOTSTRAP_SUITE_TEST_SCRIPT) ./test/suite ./bootstrap/target/debug/bootstrap
 
+# Run the regression tests
+.PHONY: test-std
+test-std: bootstrap
+	$(BOOTSTRAP_STD_TEST_SCRIPT) ./src/lib/std ./bootstrap/target/debug/bootstrap
+
 # Run the tests
 .PHONY: test
-test: test-bootstrap test-smoke test-smoke-test-runner test-regression test-suite
+test: test-bootstrap test-smoke test-smoke-test-runner test-regression test-suite test-std

@@ -5,12 +5,12 @@ use std::io;
 use std::io::Read;
 use std::ops::Deref;
 use std::path::PathBuf;
+use std::process::exit;
 use std::rc::Rc;
 
 use crate::common::Context;
 use crate::compile::compile_str;
 use crate::ir::{CalculationOperator, CallFunctionOfObjectNode, CallFunctionOfPackageNode, CompareOperator, Node, SourceFile};
-use crate::ir::Node::ValueNumber;
 use crate::load_library_file;
 use crate::r#type::{Property, Type, TypeId, TypeName};
 use crate::run::scope::Scope;
@@ -67,7 +67,7 @@ pub fn run_file(file: &String) {
                 if arg.to_string() == "\\n" {
                     println!();
                 } else {
-                    print!("{} ", arg.to_string().replace("\\x1b","\x1b"));
+                    print!("{} ", arg.to_string().replace("\\x1b", "\x1b"));
                 }
             }
             Ok(Value::Unit)
@@ -97,10 +97,20 @@ pub fn run_file(file: &String) {
         ctx.string_cache.insert("list_get"),
         IntrinsicFunction(IntrinsicFunctionValue(Rc::new(|args| {
             let Value::List(list) = args.get(0).unwrap() else { panic!("not list") };
-            let Value::Number(arg) = args.get(1).cloned().unwrap() else { panic!("not a number")};
-            Ok(list.0.borrow().get(arg as usize -1).cloned().unwrap())
+            let Value::Number(arg) = args.get(1).cloned().unwrap() else { panic!("not a number") };
+            Ok(list.0.borrow().get(arg as usize - 1).cloned().unwrap())
         }))),
     );
+
+
+    intrinsics.set_property(
+        ctx.string_cache.insert("exit"),
+        IntrinsicFunction(IntrinsicFunctionValue(Rc::new(|args| {
+            let Value::Number(code) = args.get(0).cloned().unwrap() else { panic!("not a number") };
+            exit(code as i32)
+        }))),
+    );
+
 
     root_values.insert(ctx.string_cache.insert("intrinsics"), Value::Object(intrinsics));
     let scope = Scope::new(
@@ -179,7 +189,6 @@ impl<'a> Runner<'a> {
                 }
 
                 if let Value::List(object) = self.scope.get_value(&object.0).unwrap() {
-
                     let mut args = HashMap::with_capacity(arguments.len());
                     args.insert(self.ctx.string_cache.insert("self"), Value::List(object.clone()));
 
@@ -199,7 +208,6 @@ impl<'a> Runner<'a> {
                         args.insert(name, self.run_node(arg)?);
                         counter += 1;
                     }
-
 
 
                     // let mut args = HashMap::with_capacity(arguments.len());
@@ -231,11 +239,10 @@ impl<'a> Runner<'a> {
                             args.push(value);
                         } else if let Node::ValueString(arg_1) = arg {
                             args.push(Value::String(arg_1.to_string()));
-                        } else if let Node::ValueNumber(arg_1) = arg{
+                        } else if let Node::ValueNumber(arg_1) = arg {
                             args.push(Value::Number(arg_1.clone()))
-                        }
-                        else {
-                            unimplemented!("{:#?}",arg);
+                        } else {
+                            unimplemented!("{:#?}", arg);
                         }
                     }
 
