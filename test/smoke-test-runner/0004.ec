@@ -7,5 +7,5 @@ test('passing and failing assertion'){
 
 // out:Test: passing and failing assertion
 // out:  Describe: Now its on
-// out:    \x1b[0;32mPass\x1b[0m -  a passing assertion
-// out:    \x1b[0;31mFail\x1b[0m -  a failing assertion
+// out:    \x1b[0;32mPass\x1b[0m - should a passing assertion
+// out:    \x1b[0;31mFail\x1b[0m - should a failing assertion

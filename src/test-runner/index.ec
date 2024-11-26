@@ -55,6 +55,7 @@ fun describe(description: String, body: fun()) {
     body()
 }
 
+
 fun should(description: String, body: fun() -> Bool){
     let test_result = results.get(1)
     let temp = test_result.describe_results
@@ -66,12 +67,13 @@ fun should(description: String, body: fun() -> Bool){
     let passed = body()
 
     if passed{
-        print('    \x1b[0;32mPass\x1b[0m - ')
+        print('    \x1b[0;32mPass\x1b[0m -')
     } else {
-        print('    \x1b[0;31mFail\x1b[0m - ')
+        print('    \x1b[0;31mFail\x1b[0m -')
         intrinsics.report_test_failure()
     }
 
+    std::io::print('should')
     std::io::print_line(description)
     // took - xyz ms
 //

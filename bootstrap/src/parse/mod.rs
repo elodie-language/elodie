@@ -66,8 +66,8 @@ impl<'a> Parser<'a> {
         let mut precedence_map = HashMap::new();
         precedence_map.insert(Operator(OperatorToken::Equal), Precedence::Assignment);
 
-        precedence_map.insert(Operator(OperatorToken::DoubleEqual), Precedence::Equality);
-        precedence_map.insert(Operator(OperatorToken::BangEqual), Precedence::Equality);
+        precedence_map.insert(Operator(OperatorToken::DoubleEqual), Precedence::Comparison);
+        precedence_map.insert(Operator(OperatorToken::BangEqual), Precedence::Comparison);
 
         precedence_map.insert(Operator(OperatorToken::LeftAngle), Precedence::Comparison);
         precedence_map.insert(Operator(OperatorToken::LeftAngleEqual), Precedence::Comparison);

@@ -2,7 +2,7 @@ BOOTSTRAP_DIR = ./bootstrap
 BOOTSTRAP_SMOKE_TEST_SCRIPT = ./test/smoke/test-bootstrap.sh
 BOOTSTRAP_SMOKE_TEST_RUNNER_TEST_SCRIPT = ./test/smoke-test-runner/test-bootstrap.sh
 BOOTSTRAP_REGRESSION_TEST_SCRIPT = ./test/regression/test-bootstrap.sh
-BOOTSTRAP_SUITE_TEST_SCRIPT = ./test/suite/test-bootstrap.sh
+BOOTSTRAP_SELF_HOSTED_TEST_SCRIPT = ./test/self-hosted/test-bootstrap.sh
 BOOTSTRAP_STD_TEST_SCRIPT = ./src/lib/std/test-bootstrap.sh
 
 # Default target
@@ -34,10 +34,10 @@ test-smoke-test-runner: bootstrap
 test-regression: bootstrap
 	$(BOOTSTRAP_REGRESSION_TEST_SCRIPT) ./test/regression ./bootstrap/target/debug/bootstrap
 
-# Run the suite tests
-.PHONY: test-suite
-test-suite: bootstrap
-	$(BOOTSTRAP_SUITE_TEST_SCRIPT) ./test/suite ./bootstrap/target/debug/bootstrap
+# Run the self_hosted tests
+.PHONY: test-self-hosted
+test-self-hosted: bootstrap
+	$(BOOTSTRAP_SELF_HOSTED_TEST_SCRIPT) ./test/self-hosted ./bootstrap/target/debug/bootstrap
 
 # Run the regression tests
 .PHONY: test-std
@@ -46,4 +46,4 @@ test-std: bootstrap
 
 # Run the tests
 .PHONY: test
-test: test-bootstrap test-smoke test-smoke-test-runner test-regression test-suite test-std
+test: test-bootstrap test-smoke test-smoke-test-runner test-regression test-self-hosted test-std

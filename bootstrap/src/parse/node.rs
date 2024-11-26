@@ -54,52 +54,90 @@ pub enum Node {
 }
 
 impl Node {
+    pub fn is_block(&self) -> bool { matches!(self, Node::Block(_)) }
     pub fn as_block(&self) -> &BlockNode { if let Node::Block(result) = self { result } else { panic!("not block") } }
+
+    pub fn is_break(&self) -> bool { matches!(self, Node::Break(_)) }
     pub fn as_break(&self) -> &BreakNode { if let Node::Break(result) = self { result } else { panic!("not break") } }
+
+    pub fn is_call(&self) -> bool { matches!(self, Node::Call(_)) }
     pub fn as_call(&self) -> &CallNode { if let Node::Call(result) = self { result } else { panic!("not call") } }
+
+    pub fn is_continue(&self) -> bool { matches!(self, Node::Continue(_)) }
     pub fn as_continue(&self) -> &ContinueNode { if let Node::Continue(result) = self { result } else { panic!("not continue") } }
-    pub fn as_define(&self) -> &DefineDeclarationNode { if let Node::DefineDeclaration(result) = self { result } else { panic!("not define declaration") } }
+
+    pub fn is_define_declaration(&self) -> bool { matches!(self, Node::DefineDeclaration(_)) }
+    pub fn as_define_declaration(&self) -> &DefineDeclarationNode { if let Node::DefineDeclaration(result) = self { result } else { panic!("not define declaration") } }
+
+    pub fn is_from(&self) -> bool { matches!(self, Node::From(_)) }
     pub fn as_from(&self) -> &FromNode { if let Node::From(result) = self { result } else { panic!("not from") } }
+
+    pub fn is_function_declaration(&self) -> bool { matches!(self, Node::FunctionDeclaration(_)) }
     pub fn as_function_declaration(&self) -> &FunctionDeclarationNode {
         if let Node::FunctionDeclaration(result) = self { result } else { panic!("not function declaration") }
     }
+
+    pub fn is_identifier(&self) -> bool { matches!(self, Node::Identifier(_)) }
     pub fn as_identifier(&self) -> &IdentifierNode {
         if let Node::Identifier(result) = self { result } else { panic!("not identifier") }
     }
+
+    pub fn is_if(&self) -> bool { matches!(self, Node::If(_)) }
     pub fn as_if(&self) -> &IfNode {
         if let Node::If(result) = self { result } else { panic!("not if") }
     }
+
+    pub fn is_infix(&self) -> bool { matches!(self, Node::Infix(_)) }
     pub fn as_infix(&self) -> &InfixNode {
         if let Node::Infix(result) = self { result } else { panic!("not infix") }
     }
+
+    pub fn is_let(&self) -> bool { matches!(self, Node::Let(_)) }
     pub fn as_let(&self) -> &LetNode {
         if let Node::Let(result) = self { result } else { panic!("not let") }
     }
+
+    pub fn is_literal(&self) -> bool { matches!(self, Node::Literal(_)) }
     pub fn as_literal(&self) -> &LiteralNode {
         if let Node::Literal(result) = self { result } else { panic!("not literal") }
     }
+
+    pub fn is_loop(&self) -> bool { matches!(self, Node::Loop(_)) }
     pub fn as_loop(&self) -> &LoopNode {
         if let Node::Loop(result) = self { result } else { panic!("not loop") }
     }
 
+    pub fn is_package_declaration(&self) -> bool { matches!(self, Node::PackageDeclaration(_)) }
     pub fn as_package_declaration(&self) -> &PackageDeclarationNode {
         if let Node::PackageDeclaration(result) = self { result } else { panic!("not package declaration") }
     }
+
+    pub fn is_prefix(&self) -> bool { matches!(self, Node::Prefix(_)) }
     pub fn as_prefix(&self) -> &PrefixNode {
         if let Node::Prefix(result) = self { result } else { panic!("not prefix") }
     }
+
+    pub fn is_return(&self) -> bool { matches!(self, Node::Return(_)) }
     pub fn as_return(&self) -> &ReturnNode {
         if let Node::Return(result) = self { result } else { panic!("not return") }
     }
+
+    pub fn is_itself(&self) -> bool { matches!(self, Node::Itself(_)) }
     pub fn as_itself(&self) -> &ItselfNode {
         if let Node::Itself(result) = self { result } else { panic!("not itself") }
     }
+
+    pub fn is_tuple(&self) -> bool { matches!(self, Node::Tuple(_)) }
     pub fn as_tuple(&self) -> &TupleNode {
         if let Node::Tuple(result) = self { result } else { panic!("not tuple") }
     }
+
+    pub fn is_type(&self) -> bool { matches!(self, Node::Type(_)) }
     pub fn as_type(&self) -> &TypeNode {
         if let Node::Type(result) = self { result } else { panic!("not type") }
     }
+
+    pub fn is_type_declaration(&self) -> bool { matches!(self, Node::TypeDeclaration(_)) }
     pub fn as_type_declaration(&self) -> &TypeDeclarationNode {
         if let Node::TypeDeclaration(result) = self { result } else { panic!("not type declaration") }
     }

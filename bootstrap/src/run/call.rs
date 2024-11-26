@@ -43,7 +43,7 @@ impl<'a> Runner<'a> {
         result
     }
 
-    pub(crate) fn run_node_call_function_with_lambdad(&mut self, node: &CallFunctionWithLambdaNode) -> crate::run::Result<Value> {
+    pub(crate) fn run_node_call_function_with_lambda(&mut self, node: &CallFunctionWithLambdaNode) -> crate::run::Result<Value> {
         self.reset_interrupt();
 
         let function = if let Some(Value::Function(func)) = self.scope.get_value(&node.call_function.function.0) {
