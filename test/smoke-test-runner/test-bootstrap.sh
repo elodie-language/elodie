@@ -22,14 +22,14 @@ for FILE in "$TEST_DIR"/**/*.ec; do
 
     # Run the test and compare output
     if ! ${DIFF_TOOL} \
-        <(awk -F '// out:' '/out/{print $2}' "$FILE") \
-        <(${BIN} "$FILE" 2> /dev/null); then
+        <(awk -F '// out:' '/out/{gsub(/\\\\033/, "\033"); print $2}' "$FILE") \
+        <(${BIN} test "$FILE" false 2> /dev/null); then
             printf "\e[31mFail\e[0m\t$FILE\n"
             ERR_COUNT=$((ERR_COUNT + 1))
             EXIT_CODE=1
     else
-        printf "\e[32mPass\e[0m\t$FILE\n"
-        OK_COUNT=$((OK_COUNT + 1))
+            printf "\e[32mPass\e[0m\t$FILE\n"
+            OK_COUNT=$((OK_COUNT + 1))
     fi
 done
 

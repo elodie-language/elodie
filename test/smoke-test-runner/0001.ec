@@ -7,5 +7,5 @@ test('test'){
 
 // out:Test: test
 // out:  Describe: desc
-// out:    Pass -  a passing assertion 1
-// out:    Fail -  a failing assertion
+// out:    \x1b[0;32mPass\x1b[0m -  a passing assertion
+// out:    \x1b[0;31mFail\x1b[0m -  a failing assertion
