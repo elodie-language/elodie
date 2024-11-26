@@ -4,6 +4,7 @@ use std::rc::Rc;
 use crate::{ir, parse};
 use crate::compile::Compiler;
 use crate::ir::{CalculateNode, CalculationOperator, CallFunctionNode, CallFunctionOfObjectNode, CallFunctionOfPackageNode, CallFunctionWithLambdaNode, CompareNode, CompareOperator, Identifier, InstantiateTypeNode, LoadValueFromObjectNode, LoadValueFromSelfNode, LoadValueNode, NamedArgumentNode};
+use crate::ir::Node::{CallFunction, CallFunctionOfObject};
 use crate::parse::{InfixNode, InfixOperator, LiteralNode, Node, TypeNode};
 use crate::parse::Node::Type;
 use crate::r#type::{DefaultTypeIds, TypeId};
@@ -51,6 +52,24 @@ impl<'a> Compiler<'a> {
             }
 
             let Node::Infix(InfixNode { left, operator, right }) = right.deref() else { todo!() };
+
+            // FIXME hack for list.length() == 1
+            if let Node::Infix(infix_node) = left.deref() {
+                let left = self.compile_infix(infix_node)?;
+                let CallFunction(CallFunctionNode { function, arguments }) = left else { todo!() };
+                let left = CallFunctionOfObject(CallFunctionOfObjectNode {
+                    object: ir::Identifier::from(object_identifier),
+                    function,
+                    arguments,
+                });
+
+                return Ok(ir::Node::Compare(CompareNode {
+                    left: Box::new(left),
+                    operator: CompareOperator::Equal,
+                    right: Box::new(self.compile_node(right)?),
+                }));
+            }
+
             let Node::Identifier(function_identifier) = left.deref() else { todo!() };
 
 
