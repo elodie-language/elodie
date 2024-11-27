@@ -4,6 +4,8 @@ use std::io::Read;
 use std::path::PathBuf;
 use std::process::exit;
 
+use crate::ir::{BlockNode, Node};
+use crate::r#type::TypeId;
 use crate::run::run_file;
 use crate::test::test_files;
 
@@ -16,12 +18,23 @@ mod lex;
 mod parse;
 mod r#type;
 mod test;
+mod generate;
 
 fn main() {
     let args: Vec<String> = env::args().collect();
     if args.len() == 0 {
         eprintln!("Requires at least one argument");
         exit(1)
+    }
+
+    if args.get(1).unwrap() == "generate" {
+        let code = generate::generate_c_code(
+            &ir::Context {
+                node: Node::Block(BlockNode { body: vec![], return_type: TypeId(0) })
+            }).unwrap();
+
+        println!("{}", code);
+        return;
     }
 
     if args.get(1).unwrap() == "test" {
