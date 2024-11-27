@@ -1,5 +1,8 @@
 BOOTSTRAP_DIR = ./bootstrap
-BOOTSTRAP_SMOKE_TEST_SCRIPT = ./test/smoke/test-bootstrap.sh
+
+BOOTSTRAP_RUN_SMOKE_TEST_SCRIPT = ./test/smoke/test-bootstrap-run.sh
+BOOTSTRAP_BUILD_SMOKE_TEST_SCRIPT = ./test/smoke/test-bootstrap-build.sh
+
 BOOTSTRAP_SMOKE_TEST_RUNNER_TEST_SCRIPT = ./test/smoke-test-runner/test-bootstrap.sh
 BOOTSTRAP_REGRESSION_TEST_SCRIPT = ./test/regression/test-bootstrap.sh
 BOOTSTRAP_SELF_HOSTED_TEST_SCRIPT = ./test/self-hosted/test-bootstrap.sh
@@ -21,8 +24,15 @@ test-bootstrap: bootstrap
 
 # Run the smoke tests
 .PHONY: test-smoke
-test-smoke: bootstrap
-	$(BOOTSTRAP_SMOKE_TEST_SCRIPT) ./test/smoke ./bootstrap/target/debug/bootstrap
+test-smoke: bootstrap test-smoke-bootstrap-run test-smoke-bootstrap-build
+
+.PHONY: test-smoke-bootstrap-run
+test-smoke-bootstrap-run: bootstrap
+	$(BOOTSTRAP_RUN_SMOKE_TEST_SCRIPT) ./test/smoke ./bootstrap/target/debug/bootstrap
+
+.PHONY: test-smoke-bootstrap-build
+test-smoke-bootstrap-build: bootstrap
+	$(BOOTSTRAP_BUILD_SMOKE_TEST_SCRIPT) ./test/smoke ./bootstrap/target/debug/bootstrap
 
 # Run the smoke tests
 .PHONY: test-smoke-test-runner

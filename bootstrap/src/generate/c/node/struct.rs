@@ -1,0 +1,21 @@
+use crate::generate::c::Indent;
+
+#[derive(Debug)]
+pub struct DeclareStructNode {
+    pub indent: Indent,
+    pub identifier: String,
+}
+
+#[derive(Debug)]
+pub struct DefineStructNode {
+    pub indent: Indent,
+    pub identifier: String,
+    pub fields: Box<[DefineStructFieldNode]>,
+}
+
+#[derive(Debug)]
+pub struct DefineStructFieldNode {
+    pub indent: Indent,
+    pub identifier: String,
+    pub ty: String,
+}

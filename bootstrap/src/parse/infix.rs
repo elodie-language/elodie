@@ -401,8 +401,6 @@ mod tests {
 
             assert!(matches!(operator, InfixOperator::AccessPackage(_)));
 
-            dbg!(right);
-
             let function = right.as_identifier();
             assert_eq!(ctx.get_str(function.value()), "print_line");
         }

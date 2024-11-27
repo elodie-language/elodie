@@ -1,2 +1,2 @@
-std::io::print_line('Elodie says hi')
-// out:Elodie says hi
+std::io::print_line('Elodie say\'s hi')
+// out:Elodie say's hi

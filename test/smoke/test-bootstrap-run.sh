@@ -3,24 +3,21 @@
 set -eu
 
 DIFF_TOOL="${DIFF_TOOL:-diff --ignore-blank-lines --ignore-all-space}"
-TEST_DIR="${1:-./test/e2e}"
+TEST_DIR="${1:-./test/smoke}"
 BIN="${2:-../bootstrap/target/debug/bootstrap}"
 
 EXIT_CODE=0
 OK_COUNT=0
 ERR_COUNT=0
 
-# Enable recursive globbing
 shopt -s globstar
 
-# Loop through all test files in the TEST_DIR recursively
 for FILE in "$TEST_DIR"/**/*.ec; do
     if [[ ! -f "$FILE" ]]; then
         echo "No test files found in directory $TEST_DIR"
         exit 1
     fi
 
-    # Run the test and compare output
     if ! ${DIFF_TOOL} \
         <(awk -F '// out:' '/out/{print $2}' "$FILE") \
         <(${BIN} "$FILE" 2> /dev/null); then
@@ -35,7 +32,7 @@ done
 
 # Summary
 echo "----------------------"
-echo -e "bootstrap::smoke - Passed:\e[32m $OK_COUNT" "\e[0mFailed:\e[31m $ERR_COUNT\e[0m"
+echo -e "bootstrap::run::smoke - Passed:\e[32m $OK_COUNT" "\e[0mFailed:\e[31m $ERR_COUNT\e[0m"
 echo "----------------------"
 
 exit $EXIT_CODE

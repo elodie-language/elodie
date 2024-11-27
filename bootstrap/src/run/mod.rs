@@ -229,7 +229,6 @@ impl<'a> Runner<'a> {
                 // FIXME
                 if obj_name == "intrinsics" {
                     // println!("{}", self.ctx.get_str(function.0));
-                    // dbg!(arguments);
                     let func = object.get_property_host_function(function).unwrap();
 
                     let mut args = Vec::with_capacity(arguments.len());

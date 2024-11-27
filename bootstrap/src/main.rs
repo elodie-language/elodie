@@ -19,6 +19,7 @@ mod parse;
 mod r#type;
 mod test;
 mod generate;
+mod build;
 
 fn main() {
     let args: Vec<String> = env::args().collect();
@@ -27,13 +28,15 @@ fn main() {
         exit(1)
     }
 
-    if args.get(1).unwrap() == "generate" {
+    if args.get(1).unwrap() == "build" {
+        let file = PathBuf::from(args.get(2).unwrap());
+
         let code = generate::generate_c_code(
             &ir::Context {
                 node: Node::Block(BlockNode { body: vec![], return_type: TypeId(0) })
             }).unwrap();
 
-        println!("{}", code);
+        build::build(file.file_name().unwrap().to_str().unwrap().replace(".ec", "").as_str(), &code).unwrap();
         return;
     }
 

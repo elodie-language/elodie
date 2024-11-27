@@ -17,9 +17,6 @@ use crate::run::value::{IntrinsicFunctionValue, ObjectValue, Value};
 use crate::run::value::Value::IntrinsicFunction;
 
 pub fn test_files(files: Vec<PathBuf>, print_colors: bool, fails_at_the_end: bool) {
-    let _ = fs::remove_dir("/tmp/elodie");
-    fs::create_dir("/tmp/elodie").expect("Failed to create test directory");
-
     test_file(files.first().unwrap(), print_colors, fails_at_the_end);
 }
 
