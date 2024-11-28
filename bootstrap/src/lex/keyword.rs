@@ -11,7 +11,7 @@ impl Lexer<'_> {
             'b' => look_ahead == "break",
             'c' => matches!(look_ahead.as_str(), "const" | "continue"),
             'd' => look_ahead == "define",
-            'e' => matches!(look_ahead.as_str(), "else" | "export"),
+            'e' => matches!(look_ahead.as_str(), "else" | "export" | "extern_c"),
             'f' => matches!(look_ahead.as_str(), "from" | "for" | "fun"),
             'i' => matches!(look_ahead.as_str(), "if" | "import" | "in"),
             'l' => matches!(look_ahead.as_str(), "let" | "loop"),
@@ -49,6 +49,7 @@ impl Lexer<'_> {
         keywords.insert("define", KeywordToken::Define);
         keywords.insert("else", KeywordToken::Else);
         keywords.insert("export", KeywordToken::Export);
+        keywords.insert("extern_c", KeywordToken::ExternC);
         keywords.insert("from", KeywordToken::From);
         keywords.insert("for", KeywordToken::For);
         keywords.insert("fun", KeywordToken::Function);
@@ -168,7 +169,7 @@ mod test {
         let result = lexer.advance().unwrap();
         assert_eq!(result.kind, identifier());
         assert_eq!(result.span.start, (1, 1, 0));
-        assert_eq!(result.span.end, (1,8, 7));
+        assert_eq!(result.span.end, (1, 8, 7));
         assert_eq!(ctx.get_str(result.value()), "defined");
     }
 
@@ -195,6 +196,30 @@ mod test {
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 10, 9));
         assert_eq!(ctx.get_str(result.value()), "elsewhere");
+    }
+
+    #[test]
+    fn extern_c() {
+        let text = "extern_c";
+        let mut ctx = Context::new();
+        let mut lexer = Lexer::new(&mut ctx, text);
+        let result = lexer.advance().unwrap();
+        assert!(result.is_keyword(ExternC));
+        assert_eq!(result.span.start, (1, 1, 0));
+        assert_eq!(result.span.end, (1, 9, 8));
+        assert_eq!(ctx.get_str(result.value()), "extern_c");
+    }
+
+    #[test]
+    fn not_extern_c() {
+        let text = "extern_cu";
+        let mut ctx = Context::new();
+        let mut lexer = Lexer::new(&mut ctx, text);
+        let result = lexer.advance().unwrap();
+        assert!(result.is_identifier());
+        assert_eq!(result.span.start, (1, 1, 0));
+        assert_eq!(result.span.end, (1, 10, 9));
+        assert_eq!(ctx.get_str(result.value()), "extern_cu");
     }
 
     #[test]

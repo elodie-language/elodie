@@ -4,6 +4,12 @@ use std::rc::Rc;
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
 pub struct StringCacheIdx(pub usize);
 
+impl AsRef<StringCacheIdx> for StringCacheIdx {
+    fn as_ref(&self) -> &StringCacheIdx {
+        &self
+    }
+}
+
 #[derive(Debug, Clone)]
 pub struct StringCache {
     indexes: HashMap<Rc<str>, StringCacheIdx>,
@@ -29,8 +35,8 @@ impl StringCache {
         }
     }
 
-    pub fn get(&self, idx: StringCacheIdx) -> &str {
-        &self.values.get(idx.0).expect("StringIdx out of bounds")
+    pub fn get(&self, idx: impl AsRef<StringCacheIdx>) -> &str {
+        &self.values.get(idx.as_ref().0).expect("StringIdx out of bounds")
     }
 }
 

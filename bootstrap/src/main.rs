@@ -4,8 +4,8 @@ use std::io::Read;
 use std::path::PathBuf;
 use std::process::exit;
 
-use crate::ir::{BlockNode, Node};
-use crate::r#type::TypeId;
+use crate::common::Context;
+use crate::compile::compile_str;
 use crate::run::run_file;
 use crate::test::test_files;
 
@@ -31,12 +31,29 @@ fn main() {
     if args.get(1).unwrap() == "build" {
         let file = PathBuf::from(args.get(2).unwrap());
 
+        fn load_text_from_file(path: &str) -> io::Result<String> {
+            let mut file = File::open(path)?;
+            let mut contents = String::new();
+            file.read_to_string(&mut contents)?;
+            Ok(contents)
+        }
+
+        let mut ctx = Context::new();
+
+        let mut path = PathBuf::from(file.clone());
+        let content = load_text_from_file(path.to_str().unwrap()).unwrap();
+        let source_file = compile_str(&mut ctx, content.as_str()).unwrap();
+
         let code = generate::generate_c_code(
             &ir::Context {
-                node: Node::Block(BlockNode { body: vec![], return_type: TypeId(0) })
+                file: source_file,
+                string_cache: ctx.string_cache,
             }).unwrap();
 
+        println!("{}",code);
+
         build::build(file.file_name().unwrap().to_str().unwrap().replace(".ec", "").as_str(), &code).unwrap();
+
         return;
     }
 

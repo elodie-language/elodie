@@ -1,8 +1,10 @@
+pub use package::PackagePath;
 pub use strings::{StringCache, StringCacheIdx};
 pub use util::*;
 
 mod util;
 mod strings;
+mod package;
 
 
 pub struct Context {

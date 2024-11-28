@@ -1,6 +1,6 @@
-use std::{fs, io};
 use std::collections::HashMap;
 use std::fs::File;
+use std::io;
 use std::io::Read;
 use std::path::PathBuf;
 use std::process::exit;
@@ -28,6 +28,23 @@ fn test_file(file: &PathBuf, print_colors: bool, fails_at_the_end: bool) {
     let (tx, rx) = mpsc::channel();
 
     let print_colors = print_colors.clone();
+    let print_colors_2 = print_colors.clone();
+
+    root_values.insert(ctx.string_cache.insert("ec_io_print"), IntrinsicFunction(IntrinsicFunctionValue(Rc::new(move |args: &[Value]| {
+        for arg in args {
+            if arg.to_string() == "\\n" {
+                println!();
+            } else {
+                if print_colors_2 {
+                    print!("{} ", arg.to_string().replace("\\x1b", "\x1b"));
+                } else {
+                    print!("{} ", arg.to_string());
+                }
+            }
+        }
+        Ok(Value::Unit)
+    }))));
+
     let mut intrinsics = ObjectValue::new();
     intrinsics.set_property(
         ctx.string_cache.insert("print"),

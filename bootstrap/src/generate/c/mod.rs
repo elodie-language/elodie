@@ -29,6 +29,7 @@ impl From<emitter::Error> for Error {
 type Result<T> = core::result::Result<T, Error>;
 
 pub fn generate_c_code(ctx: &ir::Context) -> Result<String> {
+    dbg!(&ctx);
     let node = generate(ctx)?;
-    Ok(emit(&node)?)
+    Ok(emit(&node))
 }

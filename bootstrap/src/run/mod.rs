@@ -59,6 +59,17 @@ pub fn run_file(file: &String) {
     let mut root_values = HashMap::new();
     let mut root_types = HashMap::new();
 
+    root_values.insert(ctx.string_cache.insert("ec_io_print"), IntrinsicFunction(IntrinsicFunctionValue(Rc::new(|args: &[Value]| {
+        for arg in args {
+            if arg.to_string() == "\\n" {
+                println!();
+            } else {
+                print!("{} ", arg.to_string().replace("\\x1b", "\x1b"));
+            }
+        }
+        Ok(Value::Unit)
+    }))));
+
     let mut intrinsics = ObjectValue::new();
     intrinsics.set_property(
         ctx.string_cache.insert("print"),
@@ -265,16 +276,15 @@ impl<'a> Runner<'a> {
                 let mut args = HashMap::with_capacity(arguments.len());
 
                 let mut packages = packages.clone();
+                let root = packages.first().unwrap();
 
-
-                let root = packages.pop().unwrap();
-                let Value::Package(root_package) = self.scope.get_value(&root.0).unwrap().clone() else { panic!() };
-
+                let Value::Package(root_package) = self.scope.get_value(&root).unwrap().clone() else { panic!() };
 
                 let mut target_package = root_package;
                 loop {
-                    if let Some(p) = packages.pop() {
-                        target_package = target_package.packages.get(&p.0).unwrap().clone()
+                    packages = packages.pop();
+                    if let Some(p) = packages.first() {
+                        target_package = target_package.packages.get(&p).unwrap().clone();
                     } else {
                         break;
                     }

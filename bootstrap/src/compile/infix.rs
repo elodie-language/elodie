@@ -2,6 +2,7 @@ use std::ops::Deref;
 use std::rc::Rc;
 
 use crate::{ir, parse};
+use crate::common::PackagePath;
 use crate::compile::Compiler;
 use crate::ir::{CalculateNode, CalculationOperator, CallFunctionNode, CallFunctionOfObjectNode, CallFunctionOfPackageNode, CallFunctionWithLambdaNode, CompareNode, CompareOperator, Identifier, InstantiateTypeNode, LoadValueFromObjectNode, LoadValueFromSelfNode, NamedArgumentNode};
 use crate::parse::{InfixNode, InfixOperator, Node, TypeNode};
@@ -66,7 +67,7 @@ impl<'a> Compiler<'a> {
             let function_identifier = left.as_infix().right.as_identifier();
 
             return Ok(ir::Node::CallFunctionOfPackage(CallFunctionOfPackageNode {
-                package: paths,
+                package: PackagePath::from(paths.into_iter().map(|p|p.0).collect::<Vec<_>>()),
                 function: Identifier(function_identifier.value()),
                 arguments,
             }));
@@ -229,6 +230,7 @@ impl<'a> Compiler<'a> {
             }
 
             if !left.is_infix() {
+                paths.reverse();
                 return paths;
             }
 

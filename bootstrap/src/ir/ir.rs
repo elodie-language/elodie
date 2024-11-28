@@ -1,6 +1,6 @@
 use std::rc::Rc;
 
-use crate::common::StringCacheIdx;
+use crate::common::{PackagePath, StringCacheIdx};
 use crate::ir::modifier::Modifiers;
 use crate::parse;
 use crate::parse::IdentifierNode;
@@ -65,7 +65,7 @@ pub struct CallFunctionOfObjectNode {
 
 #[derive(Debug)]
 pub struct CallFunctionOfPackageNode {
-    pub package: Vec<Identifier>, // [std, io]
+    pub package: PackagePath,
     pub function: Identifier,
     pub arguments: Vec<Node>,
 }

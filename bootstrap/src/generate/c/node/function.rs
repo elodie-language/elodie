@@ -1,10 +1,10 @@
-use crate::generate::c::{BlockStatement, Expression, Indent, Node};
+use crate::generate::c::{BlockStatement, Expression, Indent};
 
 #[derive(Debug)]
 pub struct CallFunctionExpression {
     pub indent: Indent,
     pub identifier: String,
-    pub arguments: Box<[Node]>,
+    pub arguments: Box<[Expression]>,
 }
 
 #[derive(Debug)]
