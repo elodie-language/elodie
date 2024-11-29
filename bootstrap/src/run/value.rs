@@ -10,6 +10,7 @@ use crate::ir::{BlockNode, FunctionArgumentNode, Identifier};
 pub enum Value {
     Bool(bool),
     Function(FunctionValue),
+    #[deprecated]
     IntrinsicFunction(IntrinsicFunctionValue),
     List(ListValue),
     Number(f64),
@@ -26,7 +27,7 @@ impl Value {
     pub fn to_string(&self) -> String {
         match self {
             Value::Bool(v) => v.to_string(),
-            Value::IntrinsicFunction(_) => "[HostFunction]".to_string(),
+            Value::IntrinsicFunction(_) => "[IntrinsicFunction]".to_string(),
             Value::Function(_) => "[Function]".to_string(),
             Value::Number(v) => v.to_string(),
             Value::F64(v) => v.to_string(),
@@ -41,11 +42,12 @@ impl Value {
 }
 
 #[derive(Clone)]
+#[deprecated]
 pub struct IntrinsicFunctionValue(pub Rc<dyn Fn(&[Value]) -> crate::run::Result<Value>>);
 
 impl Debug for IntrinsicFunctionValue {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        write!(f, "[HostFunction]")
+        write!(f, "[IntrinsicFunction]")
     }
 }
 
@@ -71,7 +73,7 @@ impl PackageValue {
         self.functions.get(&identifier)
     }
 
-    pub fn get_external_function(&self, identifier: StringCacheIdx) -> Option<&IntrinsicFunctionValue> {
+    pub fn get_intrinsic_function(&self, identifier: StringCacheIdx) -> Option<&IntrinsicFunctionValue> {
         self.external_functions.get(&identifier)
     }
 }
@@ -96,7 +98,7 @@ impl ObjectValue {
         self.properties.get(key)
     }
 
-    // FIXME intrinsics could be treated as something static
+    #[deprecated]
     pub fn get_property_host_function(&self, identifier: impl AsRef<Identifier>) -> Option<&IntrinsicFunctionValue> {
         let identifier = identifier.as_ref();
         if let Some(Value::IntrinsicFunction(result)) = &self.properties.get(&identifier.0) {

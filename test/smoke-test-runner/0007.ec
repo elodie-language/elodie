@@ -15,15 +15,15 @@ test('passing and failing assertion'){
     }
 }
 
-// out:Test: passing and failing assertion
-// out:  Describe: One
-// out:    \x1b[0;32mPass\x1b[0m - should a passing assertion
-// out:    \x1b[0;31mFail\x1b[0m - should a failing assertion
-// out:  Describe: Two
-// out:    \x1b[0;32mPass\x1b[0m - should a passing assertion
-// out:    \x1b[0;32mPass\x1b[0m - should a passing assertion
-// out:    \x1b[0;32mPass\x1b[0m - should a passing assertion
-// out:  Describe: Three
-// out:    \x1b[0;31mFail\x1b[0m - should a failing assertion
-// out:    \x1b[0;31mFail\x1b[0m - should a failing assertion
-// out:    \x1b[0;31mFail\x1b[0m - should a failing assertion
+// out: passing and failing assertion
+// out:   One
+// out:    \x1b[0;32mPass\x1b[0m - a passing assertion
+// out:    \x1b[0;31mFail\x1b[0m - a failing assertion
+// out:   Two
+// out:    \x1b[0;32mPass\x1b[0m - a passing assertion
+// out:    \x1b[0;32mPass\x1b[0m - a passing assertion
+// out:    \x1b[0;32mPass\x1b[0m - a passing assertion
+// out:   Three
+// out:    \x1b[0;31mFail\x1b[0m - a failing assertion
+// out:    \x1b[0;31mFail\x1b[0m - a failing assertion
+// out:    \x1b[0;31mFail\x1b[0m - a failing assertion

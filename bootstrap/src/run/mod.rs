@@ -300,7 +300,7 @@ impl<'a> Runner<'a> {
                     }
                 }
 
-                if let Some(IntrinsicFunctionValue(func)) = target_package.get_external_function(function.0){
+                if let Some(IntrinsicFunctionValue(func)) = target_package.get_intrinsic_function(function.0){
                     let mut args = Vec::with_capacity(arguments.len());
                     for arg in arguments {
                         if let Node::LoadValue(load_varialbe_node) = arg {

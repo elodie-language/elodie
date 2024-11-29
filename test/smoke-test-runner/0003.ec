@@ -5,8 +5,8 @@ test('A test can contain multiple descriptions'){
     describe('Hi, I am cription - des cription too too too'){ }
 }
 
-// out:Test: A test can contain multiple descriptions
-// out:  Describe: Hi, I am cription - des cription
-// out:  Describe: Hi, I am cription - des cription too
-// out:  Describe: Hi, I am cription - des cription too too
-// out:  Describe: Hi, I am cription - des cription too too too
+// out: A test can contain multiple descriptions
+// out:   Hi, I am cription - des cription
+// out:   Hi, I am cription - des cription too
+// out:   Hi, I am cription - des cription too too
+// out:   Hi, I am cription - des cription too too too

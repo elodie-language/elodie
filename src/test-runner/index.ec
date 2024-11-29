@@ -32,7 +32,7 @@ type It_Result (
 let results = std::collection::list::empty()
 
 fun test(name: String, body: fun()) {
-    print_line('Test: ' + name)
+    print_line(' ' + name)
     let test_result = Test_Result(name = name, passed = false, describe_results = std::collection::list::empty() )
     results.append( test_result )
     body()
@@ -40,7 +40,7 @@ fun test(name: String, body: fun()) {
 }
 
 fun describe(description: String, body: fun()) {
-    print_line('  Describe: ' + description)
+    print_line('  ' + description)
 
 
     let describe_result = Describe_Result( passed = false, it_results = std::collection::list::empty() )
@@ -73,7 +73,6 @@ fun should(description: String, body: fun() -> Bool){
         intrinsics.report_test_failure()
     }
 
-    std::io::print('should')
     std::io::print_line(description)
     // took - xyz ms
 //
