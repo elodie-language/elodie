@@ -37,6 +37,7 @@ pub struct Runner<'a> {
     scope: Scope,
     pub interrupt: Option<Interrupt>,
     type_definitions: TypeDefinitions,
+    pub print_colors: bool
 }
 
 
@@ -47,7 +48,7 @@ pub enum Interrupt {
     Return(Value),
 }
 
-pub fn run_file(file: &String) {
+pub fn run_file(file: &String, print_colors: bool) {
     fn load_text_from_file(path: &str) -> io::Result<String> {
         let mut file = File::open(path)?;
         let mut contents = String::new();
@@ -59,16 +60,16 @@ pub fn run_file(file: &String) {
     let mut root_values = HashMap::new();
     let mut root_types = HashMap::new();
 
-    root_values.insert(ctx.string_cache.insert("ec_io_print"), IntrinsicFunction(IntrinsicFunctionValue(Rc::new(|args: &[Value]| {
-        for arg in args {
-            if arg.to_string() == "\\n" {
-                println!();
-            } else {
-                print!("{} ", arg.to_string().replace("\\x1b", "\x1b"));
-            }
-        }
-        Ok(Value::Unit)
-    }))));
+    // root_values.insert(ctx.string_cache.insert("ec_io_print"), IntrinsicFunction(IntrinsicFunctionValue(Rc::new(|args: &[Value]| {
+    //     for arg in args {
+    //         if arg.to_string() == "\\n" {
+    //             println!();
+    //         } else {
+    //             print!("{} ", arg.to_string().replace("\\x1b", "\x1b"));
+    //         }
+    //     }
+    //     Ok(Value::Unit)
+    // }))));
 
     let mut intrinsics = ObjectValue::new();
     intrinsics.set_property(
@@ -132,35 +133,36 @@ pub fn run_file(file: &String) {
     let (scope, definitions) = {
         let std_content = load_library_file("core/index.ec").unwrap();
         let std_file = compile_str(&mut ctx, std_content.as_str()).unwrap();
-        run(&mut ctx, scope, TypeDefinitions { definitions: Default::default() }, std_file).unwrap()
+        run(&mut ctx, scope, TypeDefinitions { definitions: Default::default() }, std_file, true).unwrap()
     };
 
     let (scope, definitions) = {
         let std_content = load_library_file("std/index.ec").unwrap();
         let std_file = compile_str(&mut ctx, std_content.as_str()).unwrap();
-        run(&mut ctx, scope, definitions, std_file).unwrap()
+        run(&mut ctx, scope, definitions, std_file, true).unwrap()
     };
 
     let mut path = PathBuf::from(file);
     let content = load_text_from_file(path.to_str().unwrap()).unwrap();
     let source_file = compile_str(&mut ctx, content.as_str()).unwrap();
 
-    run(&mut ctx, scope, definitions, source_file).unwrap();
+    run(&mut ctx, scope, definitions, source_file,true).unwrap();
 }
 
-pub fn run(ctx: &mut Context, scope: Scope, definitions: TypeDefinitions, file: SourceFile) -> Result<(Scope, TypeDefinitions)> {
-    let mut runner = Runner::new(ctx, scope, definitions);
+pub fn run(ctx: &mut Context, scope: Scope, definitions: TypeDefinitions, file: SourceFile, print_colors: bool) -> Result<(Scope, TypeDefinitions)> {
+    let mut runner = Runner::new(ctx, scope, definitions, print_colors);
     runner.run(file)?;
     Ok((runner.scope, runner.type_definitions))
 }
 
 impl<'a> Runner<'a> {
-    pub(crate) fn new(ctx: &'a mut Context, scope: Scope, definitions: TypeDefinitions) -> Self {
+    pub(crate) fn new(ctx: &'a mut Context, scope: Scope, definitions: TypeDefinitions, print_colors: bool) -> Self {
         Self {
             ctx,
             scope,
             interrupt: None,
             type_definitions: definitions,
+            print_colors
         }
     }
 

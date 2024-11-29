@@ -1,3 +1,5 @@
+use std::ops::Deref;
+
 use crate::generate::c;
 use crate::generate::c::{BlockStatement, CallFunctionExpression, DeclareArrayStatement, DeclareVariableStatement, DefineFunctionNode, IncludeLocalDirectiveNode, IncludeSystemDirectiveNode, Indent, LiteralDoubleExpression, LiteralExpression, LiteralIntExpression, LiteralStringExpression, ReturnFromFunctionStatement, Statement, VariableExpression};
 use crate::generate::c::DirectiveNode::{IncludeLocalDirective, IncludeSystemDirective};
@@ -6,6 +8,7 @@ use crate::generate::c::Node::{DefineFunction, Directive};
 use crate::generate::c::Statement::ReturnFromFunction;
 use crate::ir;
 use crate::ir::{CallFunctionNode, CallFunctionOfPackageNode, DeclareVariableNode, LoadValueNode, Node};
+use crate::ir::Node::CallFunctionOfPackage;
 
 pub enum Error {}
 
@@ -23,6 +26,8 @@ impl Generator {
         let mut statements = vec![];
 
         for node in &ctx.file.body {
+            dbg!(node);
+
             match node {
                 Node::Block(_) => {}
                 Node::BreakLoop(_) => {}
@@ -142,22 +147,53 @@ impl Generator {
                 Node::ValueUnit => {}
 
                 Node::DeclareVariable(DeclareVariableNode { identifier, value, value_type }) => {
-                    statements.push(Statement::DeclareVariable(DeclareVariableStatement {
-                        indent: Indent::none(),
-                        identifier: "result".to_string(),
-                        r#type: "double".to_string(),
-                        expression:
-                        CallFunction(CallFunctionExpression {
-                            indent: Indent::none(),
-                            identifier: "cos".to_string(),
-                            arguments: Box::new([
-                                Literal(LiteralExpression::Double(LiteralDoubleExpression {
+                    if let CallFunctionOfPackage(CallFunctionOfPackageNode { package, function, arguments }) = value.deref() {
+                        if package.segments.len() == 3 {
+                            // HACK for core::intrinsics::math
+                            let core = ctx.string_cache.get(package.segments[0]);
+                            let intrinsics = ctx.string_cache.get(package.segments[1]);
+                            let math = ctx.string_cache.get(package.segments[2]);
+                            let func = ctx.string_cache.get(function.0);
+
+                            let ir::Node::ValueNumber(f) = arguments.get(0).unwrap() else { panic!() };
+
+                            statements.push(Statement::DeclareVariable(DeclareVariableStatement {
+                                indent: Indent::none(),
+                                identifier: "result".to_string(),
+                                r#type: "double".to_string(),
+                                expression:
+                                CallFunction(CallFunctionExpression {
                                     indent: Indent::none(),
-                                    value: 0.0f64,
-                                }))
-                            ]),
-                        }),
-                    }))
+                                    identifier: format!("{}_{}_{}_{}", core, intrinsics, math, func),
+                                    arguments: Box::new([
+                                        Literal(LiteralExpression::Double(LiteralDoubleExpression {
+                                            indent: Indent::none(),
+                                            value: *f,
+                                        }))
+                                    ]),
+                                }),
+                            }))
+                        }
+                    } else {
+
+                        // statements.push(Statement::DeclareVariable(DeclareVariableStatement {
+                        //     indent: Indent::none(),
+                        //     identifier: "result".to_string(),
+                        //     r#type: "double".to_string(),
+                        //     expression:
+                        //     CallFunction(CallFunctionExpression {
+                        //         indent: Indent::none(),
+                        //         identifier: "cos".to_string(),
+                        //         arguments: Box::new([
+                        //             Literal(LiteralExpression::Double(LiteralDoubleExpression {
+                        //                 indent: Indent::none(),
+                        //                 value: 0.0f64,
+                        //             }))
+                        //         ]),
+                        //     }),
+                        // }))
+                        unimplemented!()
+                    }
                 }
 
                 Node::DeclareFunction(_) => {}
@@ -177,13 +213,17 @@ impl Generator {
                     indent: Indent::none(),
                     path: "stdio.h".to_string(),
                 })),
-                Directive(IncludeSystemDirective(IncludeSystemDirectiveNode {
+                Directive(IncludeLocalDirective(IncludeLocalDirectiveNode {
                     indent: Indent::none(),
-                    path: "math.h".to_string(),
+                    path: "core_intrinsics_io.h".to_string(),
                 })),
                 Directive(IncludeLocalDirective(IncludeLocalDirectiveNode {
                     indent: Indent::none(),
                     path: "std_io.h".to_string(),
+                })),
+                Directive(IncludeLocalDirective(IncludeLocalDirectiveNode {
+                    indent: Indent::none(),
+                    path: "core_intrinsics_math.h".to_string(),
                 })),
                 DefineFunction(DefineFunctionNode {
                     indent: Indent::none(),

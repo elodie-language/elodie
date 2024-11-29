@@ -27,49 +27,7 @@ fn test_file(file: &PathBuf, print_colors: bool, fails_at_the_end: bool) {
 
     let (tx, rx) = mpsc::channel();
 
-    let print_colors = print_colors.clone();
-    let print_colors_2 = print_colors.clone();
-
-    root_values.insert(ctx.string_cache.insert("ec_io_print"), IntrinsicFunction(IntrinsicFunctionValue(Rc::new(move |args: &[Value]| {
-        for arg in args {
-            if arg.to_string() == "\\n" {
-                println!();
-            } else {
-                if print_colors_2 {
-                    print!("{} ", arg.to_string().replace("\\x1b", "\x1b"));
-                } else {
-                    print!("{} ", arg.to_string());
-                }
-            }
-        }
-        Ok(Value::Unit)
-    }))));
-
-    // root_values.insert(ctx.string_cache.insert("cos_f64"), IntrinsicFunction(IntrinsicFunctionValue(Rc::new(move |args: &[Value]| {
-    //     let Value::Number(arg) = args.get(0).cloned().unwrap() else {panic!()};
-    //
-    //     Ok(Value::Number(arg.cos()))
-    // }))));
-
     let mut intrinsics = ObjectValue::new();
-    intrinsics.set_property(
-        ctx.string_cache.insert("print"),
-        IntrinsicFunction(IntrinsicFunctionValue(Rc::new(move |args: &[Value]| {
-            for arg in args {
-                if arg.to_string() == "\\n" {
-                    println!();
-                } else {
-                    if print_colors {
-                        print!("{} ", arg.to_string().replace("\\x1b", "\x1b"));
-                    } else {
-                        print!("{} ", arg.to_string());
-                    }
-                }
-            }
-            Ok(Value::Unit)
-        }))),
-    );
-
     intrinsics.set_property(
         ctx.string_cache.insert("list_length"),
         IntrinsicFunction(IntrinsicFunctionValue(Rc::new(|args| {
@@ -125,28 +83,28 @@ fn test_file(file: &PathBuf, print_colors: bool, fails_at_the_end: bool) {
     let (scope, definitions) = {
         let std_content = load_library_file("core/index.ec").unwrap();
         let std_file = compile_str(&mut ctx, std_content.as_str()).unwrap();
-        run(&mut ctx, scope, TypeDefinitions { definitions: Default::default() }, std_file).unwrap()
+        run(&mut ctx, scope, TypeDefinitions { definitions: Default::default() }, std_file, print_colors).unwrap()
     };
 
 // load std
     let (scope, definitions) = {
         let std_content = load_library_file("std/index.ec").unwrap();
         let std_file = compile_str(&mut ctx, std_content.as_str()).unwrap();
-        run(&mut ctx, scope, definitions, std_file).unwrap()
+        run(&mut ctx, scope, definitions, std_file, print_colors).unwrap()
     };
 
 // load test runner
     let (scope, definitions) = {
         let std_content = load_test_runner().unwrap();
         let std_file = compile_str(&mut ctx, std_content.as_str()).unwrap();
-        run(&mut ctx, scope, definitions, std_file).unwrap()
+        run(&mut ctx, scope, definitions, std_file, print_colors).unwrap()
     };
 
     let mut path = PathBuf::from(file);
     let content = load_text_from_file(path.to_str().unwrap()).unwrap();
     let source_file = compile_str(&mut ctx, content.as_str()).unwrap();
 
-    run(&mut ctx, scope, definitions, source_file).unwrap();
+    run(&mut ctx, scope, definitions, source_file, print_colors).unwrap();
 
     if fails_at_the_end {
         match rx.try_recv() {

@@ -34,6 +34,7 @@ impl<'a> Compiler<'a> {
                             "collection" => packages.extend(self.load_declared_packages("std/collection/index.ec")),
                             "list" => packages.extend(self.load_declared_packages("std/collection/list/index.ec")),
                             "math" => packages.extend(self.load_declared_packages("std/math/index.ec")),
+                            "process" => packages.extend(self.load_declared_packages("std/process/index.ec")),
                             "intrinsics" => packages.extend(self.load_declared_packages("core/intrinsics/index.ec")),
                             _ => unimplemented!()
                         }

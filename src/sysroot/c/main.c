@@ -1,8 +1,8 @@
 #include <stdio.h>
-#include <math.h>
-//#include "std_io.h"
+#include "core_intrinsics_math.h"
+
 int main(void) {
-    double result = cos(0);
+    double result = core_intrinsics_math_cos_f64(0);
     char str[20];
     snprintf(str, 20, "%.1f", result);
     printf("%s",str);

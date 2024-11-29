@@ -5,13 +5,15 @@ use std::path::{Path, PathBuf};
 use std::process::{Command, Stdio};
 
 const EC_FILES: [&str; 4] = [
-    "ec.h",
-    "ec_io.c",
-    "ec_io.h",
-    "ec_types.h"
+    "core_intrinsics_io.h",
+    "core_intrinsics_io.c",
+    "core_intrinsics_math.h",
+    "core_intrinsics_math.c",
 ];
 
 pub fn build(name: &str, c_code: &str) -> io::Result<()> {
+    // FIXME needs context so that it know whichs core / std or lib to include
+
     let dir = PathBuf::from(format!("/tmp/elodie/{name}").as_str());
 
     let _ = fs::remove_dir_all(dir.clone());
@@ -40,6 +42,8 @@ pub fn build(name: &str, c_code: &str) -> io::Result<()> {
         .arg(c_file_path.to_str().unwrap())
         .args(c_files)
         .arg(dir.join("std_io.c"))
+        // .arg(dir.join("core_intrinsics_math.c"))
+        .arg("-lm")
         .arg("-o")
         .arg(binary_path.to_str().unwrap())
         .stderr(Stdio::from(gcc_err_file))
@@ -59,7 +63,7 @@ fn build_std(dir: PathBuf){
 #ifndef STD_IO_H
 #define STD_IO_H
 
-#include "ec_io.h"
+#include "core_intrinsics_io.h"
 
 void std_io_print(char const * message);
 void std_io_print_line(char const * message);
@@ -68,17 +72,19 @@ void std_io_print_line(char const * message);
     "#.as_bytes()).unwrap();
     drop(file);
 
+
     let mut file = File::create(&dir.join(PathBuf::from("std_io.c"))).unwrap();
     file.write_all(r#"
 #include "std_io.h"
+#include "core_intrinsics_io.h"
 
 void std_io_print(char const * message) {
-    ec_io_print(message);
+    core_intrinsics_io_print(message);
 }
 
 void std_io_print_line(char const * message) {
-    ec_io_print(message);
-    ec_io_print("\n");
+    std_io_print(message);
+    std_io_print("\n");
 }
 
     "#.as_bytes()).unwrap();

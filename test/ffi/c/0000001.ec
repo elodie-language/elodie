@@ -4,7 +4,7 @@
 // ffi::c::math::cos()
 // std::math::cos
 
-let result = cos(0)
+let result = core::intrinsics::math::cos_f64(1)
 std::io::print_line(result)
 
 // out: 1

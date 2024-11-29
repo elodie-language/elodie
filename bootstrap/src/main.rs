@@ -1,4 +1,5 @@
 use std::{env, io};
+use std::collections::HashMap;
 use std::fs::File;
 use std::io::Read;
 use std::path::PathBuf;
@@ -6,7 +7,9 @@ use std::process::exit;
 
 use crate::common::Context;
 use crate::compile::compile_str;
-use crate::run::run_file;
+use crate::run::{run, run_file};
+use crate::run::scope::Scope;
+use crate::run::type_definitions::TypeDefinitions;
 use crate::test::test_files;
 
 mod common;
@@ -38,21 +41,33 @@ fn main() {
             Ok(contents)
         }
 
+        let scope = Scope::new(HashMap::new(), HashMap::new());
         let mut ctx = Context::new();
+
+        let (scope, definitions) = {
+            let std_content = load_library_file("core/index.ec").unwrap();
+            let std_file = compile_str(&mut ctx, std_content.as_str()).unwrap();
+            run(&mut ctx, scope, TypeDefinitions { definitions: Default::default() }, std_file, true).unwrap()
+        };
 
         let mut path = PathBuf::from(file.clone());
         let content = load_text_from_file(path.to_str().unwrap()).unwrap();
+
         let source_file = compile_str(&mut ctx, content.as_str()).unwrap();
 
         let code = generate::generate_c_code(
             &ir::Context {
                 file: source_file,
+                core_scope: scope,
                 string_cache: ctx.string_cache,
             }).unwrap();
 
         // println!("{}",code);
 
-        build::build(file.file_name().unwrap().to_str().unwrap().replace(".ec", "").as_str(), &code).unwrap();
+        build::build(
+            file.file_name().unwrap().to_str().unwrap().replace(".ec", "").as_str(),
+            &code,
+        ).unwrap();
 
         return;
     }
@@ -64,7 +79,7 @@ fn main() {
             args.get(4).unwrap_or(&"false".to_string()) == "true",
         );
     } else {
-        run_file(args.get(1).unwrap());
+        run_file(args.get(1).unwrap(), true);
     }
 }
 

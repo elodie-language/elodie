@@ -81,6 +81,8 @@ impl<'a> Runner<'a> {
 
             let fun = self.ctx.get_str(node.identifier.0);
 // FIXME load
+
+            let print_colors = self.print_colors.clone();
             match fun {
              "cos_f64" => {
                  external_functions.insert(node.identifier.0, IntrinsicFunctionValue(Rc::new(move |args: &[Value]| {
@@ -89,6 +91,22 @@ impl<'a> Runner<'a> {
                      Ok(Value::Number(arg.cos()))
                  })));
              },
+                "print" => {
+                    external_functions.insert(node.identifier.0, IntrinsicFunctionValue(Rc::new(move |args: &[Value]| {
+                        for arg in args {
+                            if arg.to_string() == "\\n" {
+                                println!();
+                            } else {
+                                if print_colors{
+                                print!("{} ", arg.to_string().replace("\\x1b", "\x1b"));
+                                }else{
+                                    print!("{} ", arg.to_string())
+                                }
+                            }
+                        }
+                        Ok(Value::Unit)
+                    })));
+                },
               _ => unimplemented!("{fun}")
              }
         }
