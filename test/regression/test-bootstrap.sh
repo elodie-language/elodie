@@ -14,7 +14,7 @@ ERR_COUNT=0
 shopt -s globstar
 
 # Loop through all test files in the TEST_DIR recursively
-for FILE in "$TEST_DIR"/**/*.ec; do
+for FILE in $(find "$TEST_DIR" -type f -name "*.ec" ! -name "*.test.ec"); do
     if [[ ! -f "$FILE" ]]; then
         echo "No test files found in directory $TEST_DIR"
         exit 1
@@ -35,7 +35,21 @@ done
 
 # Summary
 echo "----------------------"
-echo -e "bootstrap::regression - Passed:\e[32m $OK_COUNT" "\e[0mFailed:\e[31m $ERR_COUNT\e[0m"
+echo -e "bootstrap::run::regression - Passed:\e[32m $OK_COUNT" "\e[0mFailed:\e[31m $ERR_COUNT\e[0m"
 echo "----------------------"
+echo -e "bootstrap::run::regression - self hosted tests"
+
+
+for FILE in "$TEST_DIR"/**/*.test.ec; do
+    if [[ ! -f "$FILE" ]]; then
+        echo "No test files found in directory $TEST_DIR"
+        exit 1
+    fi
+    echo "----------------------"
+    echo -e "$FILE"
+    if ! ${BIN} test "$FILE" true true; then
+        EXIT_CODE=-1
+    fi
+done
 
 exit $EXIT_CODE
