@@ -35,6 +35,7 @@ pub enum Node {
     Call(CallNode),
     Continue(ContinueNode),
     From(FromNode),
+    ExternalFunctionDeclaration(ExternalFunctionDeclarationNode),
     FunctionDeclaration(FunctionDeclarationNode),
     DefineDeclaration(DefineDeclarationNode),
     Identifier(IdentifierNode),
@@ -71,6 +72,11 @@ impl Node {
 
     pub fn is_from(&self) -> bool { matches!(self, Node::From(_)) }
     pub fn as_from(&self) -> &FromNode { if let Node::From(result) = self { result } else { panic!("not from") } }
+
+    pub fn is_external_function_declaration(&self) -> bool { matches!(self, Node::ExternalFunctionDeclaration(_)) }
+    pub fn as_external_function_declaration(&self) -> &ExternalFunctionDeclarationNode {
+        if let Node::ExternalFunctionDeclaration(result) = self { result } else { panic!("not external function declaration") }
+    }
 
     pub fn is_function_declaration(&self) -> bool { matches!(self, Node::FunctionDeclaration(_)) }
     pub fn as_function_declaration(&self) -> &FunctionDeclarationNode {
@@ -175,6 +181,16 @@ pub struct CallArgument {
 pub struct ContinueNode {
     pub token: Token,
 }
+
+#[derive(Debug, PartialEq)]
+pub struct ExternalFunctionDeclarationNode {
+    pub token: Token,
+    pub identifier: IdentifierNode,
+    pub arguments: Vec<FunctionDeclarationArgumentNode>,
+    pub return_type: Option<Box<TypeNode>>,
+    pub modifiers: Modifiers,
+}
+
 
 #[derive(Debug, PartialEq)]
 pub struct FromExportNode {
@@ -365,7 +381,6 @@ pub struct DefineDeclarationNode {
     pub block: BlockNode,
     pub modifiers: Modifiers,
 }
-
 
 #[derive(Debug, PartialEq)]
 pub struct PrefixNode {

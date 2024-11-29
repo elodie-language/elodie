@@ -69,7 +69,7 @@ pub enum KeywordToken {
     Continue,
     Else,
     Export,
-    ExternC,
+    External,
     From,
     For,
     Function,

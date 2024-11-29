@@ -29,13 +29,15 @@ pub enum Expression {
     CallFunction(CallFunctionExpression),
     Literal(LiteralExpression),
     Unary(UnaryExpression),
+    Variable(VariableExpression),
 }
 
 
 #[derive(Debug)]
 pub enum Statement {
-    AssignVariable(AssignVariableStatement),
     Block(BlockStatement),
+    DeclareArray(DeclareArrayStatement),
+    DeclareVariable(DeclareVariableStatement),
     Expression(Expression),
     ReturnFromFunction(ReturnFromFunctionStatement),
 }

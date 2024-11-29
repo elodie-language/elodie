@@ -1,0 +1,17 @@
+use crate::generate::c;
+use crate::generate::c::{LiteralDoubleExpression, LiteralExpression, LiteralIntExpression, LiteralStringExpression};
+use crate::generate::c::emitter::Emitter;
+
+impl Emitter {
+    pub(crate) fn emit_literal(&mut self, node: &c::LiteralExpression) {
+        match node {
+            LiteralExpression::Double(LiteralDoubleExpression { indent, value }) => self.emit_str(value.to_string().as_str()),
+            LiteralExpression::Int(LiteralIntExpression { indent, value }) => self.emit_str(value.to_string().as_str()),
+            LiteralExpression::String(LiteralStringExpression { indent, value }) => {
+                self.emit_str("\"");
+                self.emit_str(value);
+                self.emit_str("\"");
+            }
+        }
+    }
+}

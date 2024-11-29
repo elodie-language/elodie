@@ -61,8 +61,8 @@ fn build_std(dir: PathBuf){
 
 #include "ec_io.h"
 
-void std_io_print(const char* message);
-void std_io_print_line(const char* message);
+void std_io_print(char const * message);
+void std_io_print_line(char const * message);
 
 #endif
     "#.as_bytes()).unwrap();
@@ -72,11 +72,11 @@ void std_io_print_line(const char* message);
     file.write_all(r#"
 #include "std_io.h"
 
-void std_io_print(const char* message) {
+void std_io_print(char const * message) {
     ec_io_print(message);
 }
 
-void std_io_print_line(const char* message) {
+void std_io_print_line(char const * message) {
     ec_io_print(message);
     ec_io_print("\n");
 }

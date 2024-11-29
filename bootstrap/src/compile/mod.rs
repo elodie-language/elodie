@@ -20,6 +20,7 @@ mod package;
 mod from;
 mod r#type;
 mod define;
+mod external;
 
 #[derive(Debug)]
 pub enum Error {
@@ -91,6 +92,7 @@ impl<'a> Compiler<'a> {
             parse::Node::Continue(continue_node) => Ok(self.compile_continue(continue_node)?),
             parse::Node::DefineDeclaration(node) => Ok(self.compile_define(node)?),
             parse::Node::From(from_node) => Ok(self.compile_from(from_node)?),
+            parse::Node::ExternalFunctionDeclaration(node) => self.compile_declare_external_function(node),
             parse::Node::FunctionDeclaration(declaration_node) => Ok(self.compile_declare_function(declaration_node)?),
             parse::Node::PackageDeclaration(declaration_node) => Ok(self.compile_declare_package(declaration_node)?),
             parse::Node::Identifier(identifier_node) => Ok(self.compile_identifier(identifier_node)?),

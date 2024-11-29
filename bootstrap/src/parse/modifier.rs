@@ -2,10 +2,11 @@ use KeywordToken::Export;
 
 use crate::ir::{Modifier, Modifiers};
 use crate::lex::token::KeywordToken;
-use crate::lex::token::KeywordToken::{Define, Function, Package, Type};
+use crate::lex::token::KeywordToken::{Define, External, Function, Package, Type};
 use crate::parse::{Node, Parser};
 
 impl<'a> Parser<'a> {
+
     pub(crate) fn parse_export(&mut self) -> crate::parse::Result<Node> {
         let token = self.consume_keyword(Export)?;
         let modifier = Modifier::Export(token.clone());
@@ -26,6 +27,10 @@ impl<'a> Parser<'a> {
 
         if current.is_keyword(Define) {
             return Ok(Node::DefineDeclaration(self.parse_define_with_modifiers(Modifiers(vec![modifier]))?));
+        }
+
+        if current.is_keyword(External) {
+            return Ok(Node::ExternalFunctionDeclaration(self.parse_external_with_modifiers(Modifiers(vec![modifier]))?));
         }
 
         unimplemented!();

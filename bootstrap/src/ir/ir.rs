@@ -136,6 +136,7 @@ pub enum Node {
 
     DeclareVariable(DeclareVariableNode),
     DeclareFunction(DeclareFunctionNode),
+    DeclareExternalFunction(DeclareExternalFunctionNode),
     DeclarePackage(DeclarePackageNode),
     DeclareType(DeclareTypeNode),
 
@@ -196,6 +197,13 @@ pub struct DeclareFunctionNode {
 }
 
 #[derive(Debug)]
+pub struct DeclareExternalFunctionNode {
+    pub identifier: Identifier,
+    pub arguments: Vec<Rc<FunctionArgumentNode>>,
+    pub return_type: TypeId,
+}
+
+#[derive(Debug)]
 pub struct FunctionArgumentNode {
     pub identifier: Identifier,
     pub type_id: TypeId,
@@ -210,6 +218,7 @@ pub struct TypedNode {
 pub struct DeclarePackageNode {
     pub identifier: Identifier,
     pub modifiers: Modifiers,
+    pub external_functions: Vec<DeclareExternalFunctionNode>,
     pub functions: Vec<DeclareFunctionNode>,
     pub packages: Vec<DeclarePackageNode>,
     pub definitions: Vec<DefineTypeNode>,

@@ -50,7 +50,7 @@ fn main() {
                 string_cache: ctx.string_cache,
             }).unwrap();
 
-        println!("{}",code);
+        // println!("{}",code);
 
         build::build(file.file_name().unwrap().to_str().unwrap().replace(".ec", "").as_str(), &code).unwrap();
 

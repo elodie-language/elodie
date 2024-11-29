@@ -2,6 +2,7 @@ use crate::generate::c::Indent;
 
 #[derive(Debug)]
 pub enum LiteralExpression {
+    Double(LiteralDoubleExpression),
     Int(LiteralIntExpression),
     String(LiteralStringExpression),
 }
@@ -16,4 +17,10 @@ pub struct LiteralStringExpression {
 pub struct LiteralIntExpression {
     pub indent: Indent,
     pub value: i32,
+}
+
+#[derive(Debug)]
+pub struct LiteralDoubleExpression {
+    pub indent: Indent,
+    pub value: f64,
 }

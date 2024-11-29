@@ -13,6 +13,7 @@ pub enum Value {
     IntrinsicFunction(IntrinsicFunctionValue),
     List(ListValue),
     Number(f64),
+    F64(f64),
     Object(ObjectValue),
     Package(PackageValue),
     String(String),
@@ -28,6 +29,7 @@ impl Value {
             Value::IntrinsicFunction(_) => "[HostFunction]".to_string(),
             Value::Function(_) => "[Function]".to_string(),
             Value::Number(v) => v.to_string(),
+            Value::F64(v) => v.to_string(),
             Value::Object(_) => "[Object]".to_string(),
             Value::Package(_) => "[Package]".to_string(),
             Value::List(_) => "[List]".to_string(),
@@ -57,6 +59,7 @@ pub struct FunctionValue {
 pub struct PackageValue {
     pub identifier: StringCacheIdx,
     pub functions: HashMap<StringCacheIdx, FunctionValue>,
+    pub external_functions: HashMap<StringCacheIdx, IntrinsicFunctionValue>,
     pub packages: HashMap<StringCacheIdx, PackageValue>,
 }
 
@@ -66,6 +69,10 @@ pub struct ListValue(pub Rc<RefCell<Vec<Value>>>);
 impl PackageValue {
     pub fn get_function(&self, identifier: StringCacheIdx) -> Option<&FunctionValue> {
         self.functions.get(&identifier)
+    }
+
+    pub fn get_external_function(&self, identifier: StringCacheIdx) -> Option<&IntrinsicFunctionValue> {
+        self.external_functions.get(&identifier)
     }
 }
 

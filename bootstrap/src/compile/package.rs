@@ -15,6 +15,7 @@ impl<'a> Compiler<'a> {
             compiled_body.push(self.compile_node(node)?);
         }
 
+        let mut external_functions = vec![];
         let mut functions = vec![];
         let mut definitions = vec![];
         let mut packages = vec![];
@@ -32,6 +33,8 @@ impl<'a> Compiler<'a> {
                             "io" => packages.extend(self.load_declared_packages("std/io/index.ec")),
                             "collection" => packages.extend(self.load_declared_packages("std/collection/index.ec")),
                             "list" => packages.extend(self.load_declared_packages("std/collection/list/index.ec")),
+                            "math" => packages.extend(self.load_declared_packages("std/math/index.ec")),
+                            "intrinsics" => packages.extend(self.load_declared_packages("core/intrinsics/index.ec")),
                             _ => unimplemented!()
                         }
                     } else if let ir::Node::DeclareFunction(declare_function) = node {
@@ -40,10 +43,16 @@ impl<'a> Compiler<'a> {
                         definitions.push(define_type);
                     }
                 }
-            }else if let ir::Node::DeclareFunction(declare_function) = node {
+            } else if let ir::Node::DeclareFunction(declare_function) = node {
                 functions.push(declare_function)
             } else if let ir::Node::DefineType(define_type) = node {
                 definitions.push(define_type);
+            } else if let ir::Node::DeclarePackage(package) = node {
+                packages.push(package);
+            } else if let ir::Node::DeclareExternalFunction(external) = node {
+                external_functions.push(external);
+            } else {
+                // unimplemented!("{:?}", node)
             }
         }
 
@@ -53,6 +62,7 @@ impl<'a> Compiler<'a> {
             functions,
             packages,
             definitions,
+            external_functions,
         }))
     }
 

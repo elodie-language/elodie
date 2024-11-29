@@ -5,7 +5,8 @@ use crate::generate::c::Statement;
 impl Emitter {
     pub(crate) fn emit_statement(&mut self, statement: &c::Statement) {
         match statement {
-            Statement::AssignVariable(_) => unimplemented!(),
+            Statement::DeclareArray(statement) => self.emit_declare_array(statement),
+            Statement::DeclareVariable(statement) => self.emit_declare_variable(statement),
             Statement::Block(statement) => self.emit_block_statement(statement),
             Statement::Expression(expression) => {
                 self.emit_expression(expression);

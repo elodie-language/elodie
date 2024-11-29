@@ -4,6 +4,8 @@ use crate::generate::c::{Expression, Indent, Node};
 mod directive;
 mod function;
 mod statement;
+mod literal;
+mod variable;
 
 pub enum Error {}
 
@@ -40,8 +42,9 @@ impl Emitter {
     pub(crate) fn emit_expression(&mut self, expression: &c::Expression) {
         match expression {
             Expression::CallFunction(expression) => self.emit_call_function(expression),
-            Expression::Literal(_) => unimplemented!(),
+            Expression::Literal(expression) => self.emit_literal(expression),
             Expression::Unary(_) => unimplemented!(),
+            Expression::Variable(expression) => self.emit_variable(expression),
         }
     }
 

@@ -45,6 +45,12 @@ fn test_file(file: &PathBuf, print_colors: bool, fails_at_the_end: bool) {
         Ok(Value::Unit)
     }))));
 
+    // root_values.insert(ctx.string_cache.insert("cos_f64"), IntrinsicFunction(IntrinsicFunctionValue(Rc::new(move |args: &[Value]| {
+    //     let Value::Number(arg) = args.get(0).cloned().unwrap() else {panic!()};
+    //
+    //     Ok(Value::Number(arg.cos()))
+    // }))));
+
     let mut intrinsics = ObjectValue::new();
     intrinsics.set_property(
         ctx.string_cache.insert("print"),
@@ -115,11 +121,18 @@ fn test_file(file: &PathBuf, print_colors: bool, fails_at_the_end: bool) {
         root_types,
     );
 
+// load core
+    let (scope, definitions) = {
+        let std_content = load_library_file("core/index.ec").unwrap();
+        let std_file = compile_str(&mut ctx, std_content.as_str()).unwrap();
+        run(&mut ctx, scope, TypeDefinitions { definitions: Default::default() }, std_file).unwrap()
+    };
+
 // load std
     let (scope, definitions) = {
         let std_content = load_library_file("std/index.ec").unwrap();
         let std_file = compile_str(&mut ctx, std_content.as_str()).unwrap();
-        run(&mut ctx, scope, TypeDefinitions { definitions: Default::default() }, std_file).unwrap()
+        run(&mut ctx, scope, definitions, std_file).unwrap()
     };
 
 // load test runner

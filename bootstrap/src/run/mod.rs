@@ -15,7 +15,7 @@ use crate::load_library_file;
 use crate::r#type::{Property, Type, TypeId, TypeName};
 use crate::run::scope::Scope;
 use crate::run::type_definitions::TypeDefinitions;
-use crate::run::value::{IntrinsicFunctionValue, ListValue, ObjectValue, Value};
+use crate::run::value::{IntrinsicFunctionValue, ListValue, ObjectValue, PackageValue, Value};
 use crate::run::value::Value::IntrinsicFunction;
 
 pub mod scope;
@@ -129,11 +129,16 @@ pub fn run_file(file: &String) {
         root_types,
     );
 
+    let (scope, definitions) = {
+        let std_content = load_library_file("core/index.ec").unwrap();
+        let std_file = compile_str(&mut ctx, std_content.as_str()).unwrap();
+        run(&mut ctx, scope, TypeDefinitions { definitions: Default::default() }, std_file).unwrap()
+    };
 
     let (scope, definitions) = {
         let std_content = load_library_file("std/index.ec").unwrap();
         let std_file = compile_str(&mut ctx, std_content.as_str()).unwrap();
-        run(&mut ctx, scope, TypeDefinitions { definitions: Default::default() }, std_file).unwrap()
+        run(&mut ctx, scope, definitions, std_file).unwrap()
     };
 
     let mut path = PathBuf::from(file);
@@ -276,18 +281,41 @@ impl<'a> Runner<'a> {
                 let mut args = HashMap::with_capacity(arguments.len());
 
                 let mut packages = packages.clone();
-                let root = packages.first().unwrap();
-
+                let mut root = packages.first().unwrap();
                 let Value::Package(root_package) = self.scope.get_value(&root).unwrap().clone() else { panic!() };
 
                 let mut target_package = root_package;
                 loop {
                     packages = packages.pop();
                     if let Some(p) = packages.first() {
-                        target_package = target_package.packages.get(&p).unwrap().clone();
+                        target_package = match target_package.packages.get(&p){
+                            None => {
+                                panic!("package {} not found in {}", self.ctx.get_str(p), self.ctx.get_str(root))
+                            }
+                            Some(p) => p.clone()
+                        };
+                        root = p;
                     } else {
                         break;
                     }
+                }
+
+                if let Some(IntrinsicFunctionValue(func)) = target_package.get_external_function(function.0){
+                    let mut args = Vec::with_capacity(arguments.len());
+                    for arg in arguments {
+                        if let Node::LoadValue(load_varialbe_node) = arg {
+                            let value = self.scope.get_value(&load_varialbe_node.identifier.0).unwrap().clone();
+                            args.push(value);
+                        } else if let Node::ValueString(arg_1) = arg {
+                            args.push(Value::String(arg_1.to_string()));
+                        } else if let Node::ValueNumber(arg_1) = arg {
+                            args.push(Value::Number(arg_1.clone()))
+                        } else {
+                            unimplemented!("{:#?}", arg);
+                        }
+                    }
+
+                    return func(args.as_slice());
                 }
 
                 //FIXME recursively get package

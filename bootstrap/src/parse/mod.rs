@@ -27,6 +27,7 @@ mod modifier;
 mod from;
 mod type_declaration;
 mod define;
+mod external;
 
 #[derive(Debug, PartialEq)]
 pub enum Error {
