@@ -126,9 +126,7 @@ pub enum Node {
     LoadValueFromSelf(LoadValueFromSelfNode),
     Loop(LoopNode),
 
-    LiteralNumber(LiteralNumberNode),
-    LiteralString(LiteralStringNode),
-    LiteralBoolean(LiteralBoolNode),
+    Literal(LiteralNode),
     Unit,
 
     DeclareVariable(DeclareVariableNode),

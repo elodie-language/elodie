@@ -1,27 +1,27 @@
 use crate::compile::Compiler;
-use crate::ir;
-use crate::ir::{LiteralBoolNode, LiteralNumberNode, LiteralStringNode};
-use crate::parse::LiteralNode;
+use crate::{ir, parse};
+use crate::ir::{LiteralBoolNode, LiteralNode, LiteralNumberNode, LiteralStringNode};
+
 use crate::r#type::DefaultTypeIds;
 
 impl<'a> Compiler<'a> {
     pub(crate) fn compile_literal(
         &mut self,
-        node: &LiteralNode,
+        node: &parse::LiteralNode,
     ) -> crate::compile::Result<ir::Node> {
         match node {
-            LiteralNode::Number(v) => Ok(ir::Node::LiteralNumber(LiteralNumberNode {
-                value: v.value(),
+            parse::LiteralNode::Number(v) => Ok(ir::Node::Literal(LiteralNode::Number(LiteralNumberNode {
+                value: v.value().clone(),
                 type_id: DefaultTypeIds::never(),
-            })),
-            LiteralNode::String(v) => Ok(ir::Node::LiteralString(LiteralStringNode {
-                value: v.value(),
+            }))),
+            parse::LiteralNode::String(v) => Ok(ir::Node::Literal(LiteralNode::String(LiteralStringNode {
+                value: v.value().clone(),
                 type_id: DefaultTypeIds::never(),
-            })),
-            LiteralNode::Boolean(v) => Ok(ir::Node::LiteralBoolean(LiteralBoolNode {
-                value: v.value(),
+            }))),
+            parse::LiteralNode::Boolean(v) => Ok(ir::Node::Literal(LiteralNode::Bool(LiteralBoolNode {
+                value: v.value().clone(),
                 type_id: DefaultTypeIds::never(),
-            })),
+            }))),
         }
     }
 }
