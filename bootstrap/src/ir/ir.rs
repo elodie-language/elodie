@@ -10,7 +10,6 @@ use crate::r#type::TypeId;
 pub struct SourceFile {
     // imports
     // exports
-
     pub body: Vec<Node>,
 }
 
@@ -102,7 +101,6 @@ pub struct LoopNode {
     pub return_type: TypeId,
 }
 
-
 #[derive(Debug)]
 pub enum Node {
     Block(BlockNode),
@@ -123,16 +121,15 @@ pub enum Node {
 
     If(IfNode),
     // Itself(ItselfNode),
-
     LoadValue(LoadValueNode),
     LoadValueFromObject(LoadValueFromObjectNode),
     LoadValueFromSelf(LoadValueFromSelfNode),
     Loop(LoopNode),
 
-    ValueNumber(f64),
-    ValueString(String),
-    ValueBoolean(bool),
-    ValueUnit,
+    LiteralNumber(LiteralNumberNode),
+    LiteralString(LiteralStringNode),
+    LiteralBoolean(LiteralBoolNode),
+    Unit,
 
     DeclareVariable(DeclareVariableNode),
     DeclareFunction(DeclareFunctionNode),
@@ -145,11 +142,35 @@ pub enum Node {
 }
 
 #[derive(Debug)]
+pub enum LiteralNode {
+    Bool(LiteralBoolNode),
+    Number(LiteralNumberNode),
+    String(LiteralStringNode),
+}
+
+#[derive(Debug)]
+pub struct LiteralBoolNode {
+    pub value: bool,
+    pub type_id: TypeId,
+}
+
+#[derive(Debug)]
+pub struct LiteralNumberNode {
+    pub value: StringCacheIdx,
+    pub type_id: TypeId,
+}
+
+#[derive(Debug)]
+pub struct LiteralStringNode {
+    pub value: StringCacheIdx,
+    pub type_id: TypeId,
+}
+
+#[derive(Debug)]
 pub struct ReturnFromFunctionNode {
     pub node: Box<Node>,
     pub return_type_id: TypeId,
 }
-
 
 #[derive(Debug)]
 pub struct LoadValueNode {
@@ -246,7 +267,7 @@ pub struct DefineTypeNode {
 
 #[derive(Debug)]
 pub enum Source {
-    LocalFile(SourceLocalFileNode)
+    LocalFile(SourceLocalFileNode),
 }
 
 #[derive(Debug)]

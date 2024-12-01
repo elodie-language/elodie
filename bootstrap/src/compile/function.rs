@@ -38,7 +38,7 @@ impl<'a> Compiler<'a> {
         let result = if let Some(ref node) = node.result {
             self.compile_node(node.deref())?
         } else {
-            Node::ValueUnit
+            Node::Unit
         };
 
         Ok(ReturnFromFunction(ReturnFromFunctionNode {

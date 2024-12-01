@@ -56,7 +56,7 @@ fn main() {
         let source_file = compile_str(&mut ctx, content.as_str()).unwrap();
 
         let code = generate::generate_c_code(
-            &ir::Context {
+            ir::Context {
                 file: source_file,
                 core_scope: scope,
                 string_cache: ctx.string_cache,

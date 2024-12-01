@@ -1,3 +1,5 @@
+mod literal;
+
 use std::ops::Deref;
 
 use crate::generate::c;
@@ -14,18 +16,20 @@ pub enum Error {}
 
 type Result<T> = core::result::Result<T, Error>;
 
-pub(crate) fn generate(ctx: &ir::Context) -> Result<Vec<c::Node>> {
-    let mut generator = Generator {};
-    generator.generate(ctx)
+pub(crate) fn generate(ctx: ir::Context) -> Result<Vec<c::Node>> {
+    let mut generator = Generator {ctx};
+    generator.generate()
 }
 
-pub(crate) struct Generator {}
+pub(crate) struct Generator {
+    ctx: ir::Context
+}
 
 impl Generator {
-    pub(crate) fn generate(&mut self, ctx: &ir::Context) -> Result<Vec<c::Node>> {
+    pub(crate) fn generate(&mut self) -> Result<Vec<c::Node>> {
         let mut statements = vec![];
 
-        for node in &ctx.file.body {
+        for node in &self.ctx.file.body {
             dbg!(node);
 
             match node {
@@ -34,31 +38,31 @@ impl Generator {
                 Node::Calculate(_) => {}
                 Node::CallFunctionOfObject(_) => {}
                 Node::CallFunctionOfPackage(CallFunctionOfPackageNode { package, function, arguments }) => {
-                    let std = ctx.string_cache.get(package.segments[0]);
-                    let io = ctx.string_cache.get(package.segments[1]);
-                    let function = ctx.string_cache.get(function.0);
+                    let std = self.ctx.string_cache.get(package.segments[0]);
+                    let io = self.ctx.string_cache.get(package.segments[1]);
+                    let function = self.ctx.string_cache.get(function.0);
 
-                    if let ir::Node::ValueString(s) = arguments.get(0).unwrap() {
+                    if let ir::Node::LiteralString(s) = arguments.get(0).unwrap() {
                         statements.push(Statement::Expression(CallFunction(CallFunctionExpression {
                             indent: Indent::none(),
                             identifier: format!("{std}_{io}_{function}"),
                             arguments: Box::new([
                                 Literal(LiteralExpression::String(LiteralStringExpression {
                                     indent: Indent::none(),
-                                    value: s.to_string(),
+                                    value: self.ctx.string_cache.get(s.value).to_string(),
                                 }))
                             ]),
                         })));
                     }
 
-                    if let ir::Node::ValueNumber(f) = arguments.get(0).unwrap() {
+                    if let ir::Node::LiteralNumber(f) = arguments.get(0).unwrap() {
                         statements.push(Statement::Expression(CallFunction(CallFunctionExpression {
                             indent: Indent::none(),
                             identifier: format!("{std}_{io}_{function}"),
                             arguments: Box::new([
                                 Literal(LiteralExpression::Double(LiteralDoubleExpression {
                                     indent: Indent::none(),
-                                    value: *f,
+                                    value: self.ctx.string_cache.get(f.value).parse().unwrap(),
                                 }))
                             ]),
                         })));
@@ -92,7 +96,7 @@ impl Generator {
                                 })),
                                 Variable(VariableExpression {
                                     indent: Indent::none(),
-                                    identifier: ctx.string_cache.get(identifier.0).to_string(),
+                                    identifier: self.ctx.string_cache.get(identifier.0).to_string(),
                                 }),
                             ]),
                         })));
@@ -115,17 +119,17 @@ impl Generator {
                     }));
                 }
                 Node::CallFunction(CallFunctionNode { function, arguments }) => {
-                    let function = ctx.string_cache.get(function.0);
+                    let function = self.ctx.string_cache.get(function.0);
 
 
-                    if let ir::Node::ValueNumber(f) = arguments.get(0).unwrap() {
+                    if let ir::Node::LiteralNumber(f) = arguments.get(0).unwrap() {
                         statements.push(Statement::Expression(CallFunction(CallFunctionExpression {
                             indent: Indent::none(),
                             identifier: function.to_string(),
                             arguments: Box::new([
                                 Literal(LiteralExpression::Double(LiteralDoubleExpression {
                                     indent: Indent::none(),
-                                    value: *f,
+                                    value: self.ctx.string_cache.get(f.value).parse().unwrap(),
                                 }))
                             ]),
                         })));
@@ -141,21 +145,21 @@ impl Generator {
                 Node::LoadValueFromObject(_) => {}
                 Node::LoadValueFromSelf(_) => {}
                 Node::Loop(_) => {}
-                Node::ValueNumber(_) => {}
-                Node::ValueString(_) => {}
-                Node::ValueBoolean(_) => {}
-                Node::ValueUnit => {}
+                Node::LiteralNumber(_) => {}
+                Node::LiteralString(_) => {}
+                Node::LiteralBoolean(_) => {}
+                Node::Unit => {}
 
                 Node::DeclareVariable(DeclareVariableNode { identifier, value, value_type }) => {
                     if let CallFunctionOfPackage(CallFunctionOfPackageNode { package, function, arguments }) = value.deref() {
                         if package.segments.len() == 3 {
                             // HACK for core::intrinsics::math
-                            let core = ctx.string_cache.get(package.segments[0]);
-                            let intrinsics = ctx.string_cache.get(package.segments[1]);
-                            let math = ctx.string_cache.get(package.segments[2]);
-                            let func = ctx.string_cache.get(function.0);
+                            let core = self.ctx.string_cache.get(package.segments[0]);
+                            let intrinsics = self.ctx.string_cache.get(package.segments[1]);
+                            let math = self.ctx.string_cache.get(package.segments[2]);
+                            let func = self.ctx.string_cache.get(function.0);
 
-                            let ir::Node::ValueNumber(f) = arguments.get(0).unwrap() else { panic!() };
+                            let ir::Node::LiteralNumber(f) = arguments.get(0).unwrap() else { panic!() };
 
                             statements.push(Statement::DeclareVariable(DeclareVariableStatement {
                                 indent: Indent::none(),
@@ -168,7 +172,7 @@ impl Generator {
                                     arguments: Box::new([
                                         Literal(LiteralExpression::Double(LiteralDoubleExpression {
                                             indent: Indent::none(),
-                                            value: *f,
+                                            value: self.ctx.string_cache.get(f.value).parse().unwrap(),
                                         }))
                                     ]),
                                 }),

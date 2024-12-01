@@ -254,10 +254,10 @@ impl<'a> Runner<'a> {
                         if let Node::LoadValue(load_varialbe_node) = arg {
                             let value = self.scope.get_value(&load_varialbe_node.identifier.0).unwrap().clone();
                             args.push(value);
-                        } else if let Node::ValueString(arg_1) = arg {
-                            args.push(Value::String(arg_1.to_string()));
-                        } else if let Node::ValueNumber(arg_1) = arg {
-                            args.push(Value::Number(arg_1.clone()))
+                        } else if let Node::LiteralString(arg_1) = arg {
+                            args.push(Value::String(self.ctx.get_str(arg_1.value).to_string()));
+                        } else if let Node::LiteralNumber(arg_1) = arg {
+                            args.push(Value::Number(self.ctx.get_str(arg_1.value).parse().unwrap()));
                         } else {
                             unimplemented!("{:#?}", arg);
                         }
@@ -308,10 +308,10 @@ impl<'a> Runner<'a> {
                         if let Node::LoadValue(load_varialbe_node) = arg {
                             let value = self.scope.get_value(&load_varialbe_node.identifier.0).unwrap().clone();
                             args.push(value);
-                        } else if let Node::ValueString(arg_1) = arg {
-                            args.push(Value::String(arg_1.to_string()));
-                        } else if let Node::ValueNumber(arg_1) = arg {
-                            args.push(Value::Number(arg_1.clone()))
+                        } else if let Node::LiteralString(arg_1) = arg {
+                            args.push(Value::String(self.ctx.get_str(arg_1.value).to_string()));
+                        } else if let Node::LiteralNumber(arg_1) = arg {
+                            args.push(Value::Number(self.ctx.get_str(arg_1.value).parse().unwrap()));
                         } else {
                             unimplemented!("{:#?}", arg);
                         }
@@ -362,9 +362,9 @@ impl<'a> Runner<'a> {
                 Ok(value)
             }
 
-            Node::ValueString(value) => Ok(Value::String(value.to_string())),
-            Node::ValueNumber(value) => Ok(Value::Number(value.clone())),
-            Node::ValueBoolean(value) => Ok(Value::Bool(value.clone())),
+            Node::LiteralString(value) => Ok(Value::String(self.ctx.get_str(value.value).to_string())),
+            Node::LiteralNumber(value) => Ok(Value::Number(self.ctx.get_str(value.value).parse().unwrap())),
+            Node::LiteralBoolean(value) => Ok(Value::Bool(value.value)),
             Node::Loop(loop_node) => self.run_loop(loop_node),
             Node::If(if_node) => self.run_if(if_node),
 
