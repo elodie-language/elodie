@@ -32,7 +32,6 @@ impl Generator {
         let mut statements = vec![];
 
         for node in &nodes {
-            // dbg!(node);
 
             match node {
                 Node::Block(_) => {}
@@ -97,11 +96,6 @@ impl Generator {
                             ]),
                         })));
                     }
-
-                    statements.push(ReturnFromFunction(ReturnFromFunctionStatement {
-                        indent: Indent::none(),
-                        node: Some(Literal(LiteralExpression::Int(LiteralIntExpression { indent: Indent::none(), value: 0 }))),
-                    }));
                 }
                 Node::CallFunction(CallFunctionNode { function, arguments }) => {
                     let function = self.string_cache.get(function.0);
@@ -186,8 +180,6 @@ impl Generator {
                 _ => {}
             }
         }
-
-        dbg!(&statements);
 
         Ok(
             vec![

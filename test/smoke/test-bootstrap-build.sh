@@ -12,7 +12,7 @@ ERR_COUNT=0
 
 shopt -s globstar
 
-for FILE in "$TEST_DIR"/**/hello_world.ec; do
+for FILE in "$TEST_DIR"/**/*.ec; do
 
     if [[ ! -f "$FILE" ]]; then
         echo "No test files found in directory $TEST_DIR"
