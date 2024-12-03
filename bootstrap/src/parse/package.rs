@@ -43,7 +43,7 @@ mod tests {
     #[test]
     fn package_with_exported_function() {
         let mut ctx = Context::new();
-        let tokens = lex(&mut ctx, "package magic { export fun some_fn() {} }").unwrap();
+        let tokens = lex(&mut ctx, "package magic { export function some_fn() {} }").unwrap();
         let result = parse(&mut ctx, tokens).unwrap();
         assert_eq!(result.len(), 1);
 
@@ -60,7 +60,7 @@ mod tests {
     #[test]
     fn exported_package_with_exported_function() {
         let mut ctx = Context::new();
-        let tokens = lex(&mut ctx, "export package magic{ export fun some_fn() {} }").unwrap();
+        let tokens = lex(&mut ctx, "export package magic{ export function some_fn() {} }").unwrap();
         let result = parse(&mut ctx, tokens).unwrap();
         assert_eq!(result.len(), 1);
 

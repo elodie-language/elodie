@@ -1,5 +1,5 @@
 package my_package {
-    export fun hello() {
+    export function hello() {
         std::io::print_line('Hello, hellO')
     }
 }

@@ -1,8 +1,8 @@
-fun print_line(message: String) {
+function print_line(message: String) {
     std::io::print_line(message)
 }
 
-fun print(message: String) {
+function print(message: String) {
     std::io::print(message)
 }
 
@@ -13,7 +13,7 @@ type Test_Result (
 )
 
 define Test_Result {
-    fun summarize(){
+    function summarize(){
 //        print_line('All in all...')
     }
 }
@@ -31,7 +31,7 @@ type It_Result (
 
 let results = std::collection::list::empty()
 
-fun test(name: String, body: fun()) {
+function test(name: String, body: function()) {
     print_line(' ' + name)
     let test_result = Test_Result(name = name, passed = false, describe_results = std::collection::list::empty() )
     results.append( test_result )
@@ -39,7 +39,7 @@ fun test(name: String, body: fun()) {
     test_result.summarize()
 }
 
-fun describe(description: String, body: fun()) {
+function describe(description: String, body: function()) {
     print_line('  ' + description)
 
 
@@ -56,7 +56,7 @@ fun describe(description: String, body: fun()) {
 }
 
 
-fun should(description: String, body: fun() -> Bool){
+function should(description: String, body: function() -> Bool){
     let test_result = results.get(1)
     let temp = test_result.describe_results
     let describe_result = temp.get(1)

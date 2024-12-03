@@ -3,6 +3,6 @@ export package c {
     type char = String
 
     export package stdio{
-        export external fun printf(c: char) -> int
+        export external function printf(c: char) -> int
     }
 }

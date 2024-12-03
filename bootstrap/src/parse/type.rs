@@ -10,14 +10,14 @@ impl<'a> Parser<'a> {
     pub(crate) fn parse_type(&mut self) -> crate::parse::Result<TypeNode> {
         let token = self.advance()?;
         let value = self.ctx.get_str(token.value());
-        if !(is_pascal_snake_case(value) || value == "fun") {
+        if !(is_pascal_snake_case(value) || value == "function") {
             return Err(InvalidType(token));
         }
         match value {
             "Bool" => Ok(TypeNode::Fundamental(TypeFundamentalNode::Boolean(token))),
             "Number" => Ok(TypeNode::Fundamental(TypeFundamentalNode::Number(token))),
             "String" => Ok(TypeNode::Fundamental(TypeFundamentalNode::String(token))),
-            "fun" => Ok(TypeNode::Function(self.parse_function_type()?)),
+            "function" => Ok(TypeNode::Function(self.parse_function_type()?)),
             _ => Ok(TypeNode::Custom(TypeCustomNode { token }))
         }
     }
@@ -121,7 +121,7 @@ mod tests {
     #[test]
     fn type_function_without_args_and_without_result() {
         let mut ctx = Context::new();
-        let tokens = lex(&mut ctx, "fun()").unwrap();
+        let tokens = lex(&mut ctx, "function()").unwrap();
         let mut parser = Parser::new(&mut ctx, tokens);
         let result = parser.parse_type().unwrap();
 
@@ -133,7 +133,7 @@ mod tests {
     #[test]
     fn type_function_without_args_and_with_result() {
         let mut ctx = Context::new();
-        let tokens = lex(&mut ctx, "fun() -> Number").unwrap();
+        let tokens = lex(&mut ctx, "function() -> Number").unwrap();
         let mut parser = Parser::new(&mut ctx, tokens);
         let result = parser.parse_type().unwrap();
 
@@ -147,7 +147,7 @@ mod tests {
     #[test]
     fn type_function_single_named_arg_and_with_result() {
         let mut ctx = Context::new();
-        let tokens = lex(&mut ctx, "fun(arg_1: Bool) -> Number").unwrap();
+        let tokens = lex(&mut ctx, "function(arg_1: Bool) -> Number").unwrap();
         let mut parser = Parser::new(&mut ctx, tokens);
         let result = parser.parse_type().unwrap();
 
@@ -168,7 +168,7 @@ mod tests {
     #[test]
     fn type_function_single_arg_and_with_result() {
         let mut ctx = Context::new();
-        let tokens = lex(&mut ctx, "fun(Bool) -> Number").unwrap();
+        let tokens = lex(&mut ctx, "function(Bool) -> Number").unwrap();
         let mut parser = Parser::new(&mut ctx, tokens);
         let result = parser.parse_type().unwrap();
 

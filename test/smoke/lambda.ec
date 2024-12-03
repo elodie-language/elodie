@@ -1,4 +1,4 @@
-fun receiver(fn: fun()){
+function receiver(fn: function()){
     fn()
 }
 

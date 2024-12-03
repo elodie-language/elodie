@@ -2,21 +2,21 @@ export package list {
 
     export type List()
 
-    export fun empty() -> List {
+    export function empty() -> List {
         return List()
     }
 
    export define List {
 
-        fun append(value) {
+        function append(value) {
              intrinsics.list_append(self, value)
         }
 
-        fun get(idx) {
+        function get(idx) {
             return intrinsics.list_get(self, idx)
         }
 
-        fun length() -> Number {
+        function length() -> Number {
             return intrinsics.list_length(self)
         }
 

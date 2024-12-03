@@ -45,7 +45,7 @@ mod tests {
     #[test]
     fn define_with_fun() {
         let mut ctx = Context::new();
-        let tokens = lex(&mut ctx, "define Magic { export fun some_fn() {} }").unwrap();
+        let tokens = lex(&mut ctx, "define Magic { export function some_fn() {} }").unwrap();
         let result = parse(&mut ctx, tokens).unwrap();
         assert_eq!(result.len(), 1);
 
@@ -62,7 +62,7 @@ mod tests {
     #[test]
     fn exported_definition_with_exported_function() {
         let mut ctx = Context::new();
-        let tokens = lex(&mut ctx, "export define Magic { export fun some_fn() {} }").unwrap();
+        let tokens = lex(&mut ctx, "export define Magic { export function some_fn() {} }").unwrap();
         let result = parse(&mut ctx, tokens).unwrap();
         assert_eq!(result.len(), 1);
 

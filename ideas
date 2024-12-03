@@ -169,7 +169,7 @@ point == Point --> false
 point.y = 20
 point == Point --> true
 
-fun return_object() -> (x: Number, y: Number){...}
+function return_object() -> (x: Number, y: Number){...}
 return_object() == Point --> true
 
 Parameterized tests

@@ -12,7 +12,7 @@ impl Lexer<'_> {
             'c' => matches!(look_ahead.as_str(), "const" | "continue"),
             'd' => look_ahead == "define",
             'e' => matches!(look_ahead.as_str(), "else" | "export" | "external"),
-            'f' => matches!(look_ahead.as_str(), "from" | "for" | "fun"),
+            'f' => matches!(look_ahead.as_str(), "from" | "for" | "function"),
             'i' => matches!(look_ahead.as_str(), "if" | "import" | "in"),
             'l' => matches!(look_ahead.as_str(), "let" | "loop"),
             'p' => look_ahead == "package",
@@ -52,7 +52,7 @@ impl Lexer<'_> {
         keywords.insert("external", KeywordToken::External);
         keywords.insert("from", KeywordToken::From);
         keywords.insert("for", KeywordToken::For);
-        keywords.insert("fun", KeywordToken::Function);
+        keywords.insert("function", KeywordToken::Function);
         keywords.insert("if", KeywordToken::If);
         keywords.insert("import", KeywordToken::Import);
         keywords.insert("in", KeywordToken::In);
@@ -296,26 +296,26 @@ mod test {
 
     #[test]
     fn r#function() {
-        let text = "fun";
+        let text = "function";
         let mut ctx = Context::new();
         let mut lexer = Lexer::new(&mut ctx, text);
         let result = lexer.advance().unwrap();
         assert!(result.is_keyword(Function));
         assert_eq!(result.span.start, (1, 1, 0));
-        assert_eq!(result.span.end, (1, 4, 3));
-        assert_eq!(ctx.get_str(result.value()), "fun");
+        assert_eq!(result.span.end, (1, 9, 8));
+        assert_eq!(ctx.get_str(result.value()), "function");
     }
 
     #[test]
     fn not_function() {
-        let text = "func";
+        let text = "functionio";
         let mut ctx = Context::new();
         let mut lexer = Lexer::new(&mut ctx, text);
         let result = lexer.advance().unwrap();
         assert_eq!(result.kind, identifier());
         assert_eq!(result.span.start, (1, 1, 0));
-        assert_eq!(result.span.end, (1, 5, 4));
-        assert_eq!(ctx.get_str(result.value()), "func");
+        assert_eq!(result.span.end, (1, 11, 10));
+        assert_eq!(ctx.get_str(result.value()), "functionio");
     }
 
     #[test]

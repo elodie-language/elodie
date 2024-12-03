@@ -1,7 +1,7 @@
 type Person (name: String)
 
 define Person {
-    fun say_name(){
+    function say_name(){
         std::io::print_line('Hi, I am ' + self.name)
     }
 }

@@ -1,4 +1,4 @@
-fun some_function() -> Bool {
+function some_function() -> Bool {
     return true
 }
 
@@ -6,7 +6,7 @@ if some_function() {
     std::io::print_line('true')
 }
 
-fun early_exit() -> Number {
+function early_exit() -> Number {
     return 2
     return 4
     return 8
@@ -14,8 +14,8 @@ fun early_exit() -> Number {
 
 std::io::print_line(early_exit())
 
-fun nested() -> Number {
-    fun inner() -> Number {
+function nested() -> Number {
+    function inner() -> Number {
         return 1
     }
 
