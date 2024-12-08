@@ -14,11 +14,11 @@ impl Generator {
             LiteralNode::Bool(_) => unimplemented!(),
             LiteralNode::Number(n) => LiteralExpression::Double(LiteralDoubleExpression {
                 indent: Indent::none(),
-                value: self.string_cache.get(n.value).parse().unwrap(),
+                value: self.string_table.get(n.value).parse().unwrap(),
             }),
             LiteralNode::String(s) => LiteralExpression::String(LiteralStringExpression {
                 indent: Indent::none(),
-                value: self.string_cache.get(s.value).to_string(),
+                value: self.string_table.get(s.value).to_string(),
             }),
         })
     }

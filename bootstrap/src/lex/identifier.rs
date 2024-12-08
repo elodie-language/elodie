@@ -11,7 +11,7 @@ impl Lexer<'_> {
 
         Ok(Token {
             kind: TokenKind::Identifier,
-            span: TextSpan { start, end: self.position(), value: self.ctx.string_cache.insert(text.as_str()) },
+            span: TextSpan { start, end: self.position(), value: self.ctx.string_table.insert(text.as_str()) },
         })
     }
 }

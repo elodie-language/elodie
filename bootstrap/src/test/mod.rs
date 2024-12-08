@@ -29,7 +29,7 @@ fn test_file(file: &PathBuf, print_colors: bool, fails_at_the_end: bool) {
 
     let mut intrinsics = ObjectValue::new();
     intrinsics.set_property(
-        ctx.string_cache.insert("list_length"),
+        ctx.string_table.insert("list_length"),
         IntrinsicFunction(IntrinsicFunctionValue(Rc::new(|args| {
             let Value::List(list) = args.get(0).unwrap() else { panic!("not list") };
             let len: u32 = list.0.borrow().len() as u32;
@@ -38,7 +38,7 @@ fn test_file(file: &PathBuf, print_colors: bool, fails_at_the_end: bool) {
     );
 
     intrinsics.set_property(
-        ctx.string_cache.insert("list_append"),
+        ctx.string_table.insert("list_append"),
         IntrinsicFunction(IntrinsicFunctionValue(Rc::new(|args| {
             let Value::List(list) = args.get(0).unwrap() else { panic!("not list") };
             let arg = args.get(1).cloned().unwrap();
@@ -48,7 +48,7 @@ fn test_file(file: &PathBuf, print_colors: bool, fails_at_the_end: bool) {
     );
 
     intrinsics.set_property(
-        ctx.string_cache.insert("list_get"),
+        ctx.string_table.insert("list_get"),
         IntrinsicFunction(IntrinsicFunctionValue(Rc::new(|args| {
             let Value::List(list) = args.get(0).unwrap() else { panic!("not list") };
             let Value::Number(arg) = args.get(1).cloned().unwrap() else { panic!("not a number") };
@@ -57,7 +57,7 @@ fn test_file(file: &PathBuf, print_colors: bool, fails_at_the_end: bool) {
     );
 
     intrinsics.set_property(
-        ctx.string_cache.insert("exit"),
+        ctx.string_table.insert("exit"),
         IntrinsicFunction(IntrinsicFunctionValue(Rc::new(|args| {
             let Value::Number(code) = args.get(0).cloned().unwrap() else { panic!("not a number") };
             exit(code as i32)
@@ -66,14 +66,14 @@ fn test_file(file: &PathBuf, print_colors: bool, fails_at_the_end: bool) {
 
     // FIXME collect test results - should be possible to collect std out etc.... as everything is just an intrinsics
     intrinsics.set_property(
-        ctx.string_cache.insert("report_test_failure"),
+        ctx.string_table.insert("report_test_failure"),
         IntrinsicFunction(IntrinsicFunctionValue(Rc::new(move |args| {
             tx.send(false).unwrap();
             Ok(Value::Unit)
         }))),
     );
 
-    root_values.insert(ctx.string_cache.insert("intrinsics"), Value::Object(intrinsics));
+    root_values.insert(ctx.string_table.insert("intrinsics"), Value::Object(intrinsics));
     let scope = Scope::new(
         root_values,
         root_types,

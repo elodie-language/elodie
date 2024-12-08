@@ -32,7 +32,7 @@ impl Lexer<'_> {
 
                 return Ok(Token {
                     kind: TokenKind::Keyword(keyword_enum),
-                    span: TextSpan { start, end: self.position(), value: self.ctx.string_cache.insert(text.as_str()) },
+                    span: TextSpan { start, end: self.position(), value: self.ctx.string_table.insert(text.as_str()) },
                 });
             }
         }

@@ -4,7 +4,9 @@ use std::io::{self, Write};
 use std::path::{Path, PathBuf};
 use std::process::{Command, Stdio};
 
-const EC_FILES: [&str; 4] = [
+const EC_FILES: [&str; 6] = [
+    "core_bool.h",
+    "core_bool.c",
     "core_intrinsics_io.h",
     "core_intrinsics_io.c",
     "core_intrinsics_math.h",
@@ -42,7 +44,6 @@ pub fn build(name: &str, c_code: &str) -> io::Result<()> {
         .arg(c_file_path.to_str().unwrap())
         .args(c_files)
         .arg(dir.join("std_io.c"))
-        // .arg(dir.join("core_intrinsics_math.c"))
         .arg("-lm")
         .arg("-o")
         .arg(binary_path.to_str().unwrap())

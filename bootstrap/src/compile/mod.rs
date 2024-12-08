@@ -1,12 +1,11 @@
 use crate::{compile, ir, lex, parse};
 use crate::common::Context;
-use crate::compile::symbol::SymbolTable;
+use crate::compile::scope::Scope;
 use crate::ir::SourceFile;
 use crate::lex::lex;
 use crate::parse::{parse, RootNode};
 
 mod r#let;
-mod symbol;
 mod validate;
 mod collect;
 mod infix;
@@ -22,6 +21,7 @@ mod r#type;
 mod define;
 mod external;
 mod string;
+mod scope;
 
 #[derive(Debug)]
 pub enum Error {
@@ -58,19 +58,22 @@ pub(crate) fn from(ctx: &mut Context, node: RootNode) -> Result<SourceFile> {
 
 pub(crate) struct Compiler<'a> {
     ctx: &'a mut Context,
-    symbol_table: SymbolTable,
+    scope: Scope,
 }
 
 impl<'a> Compiler<'a> {
     fn new(ctx: &'a mut Context) -> Self {
+        let mut scope = Scope::new();
+
         Self {
             ctx,
-            symbol_table: Default::default(),
+            scope,
         }
     }
 }
 
 impl<'a> Compiler<'a> {
+
     pub(crate) fn compile(&mut self, node: RootNode) -> Result<SourceFile> {
         // 2 pass
         // populate symbol table

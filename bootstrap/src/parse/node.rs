@@ -1,6 +1,6 @@
 use std::ops::Index;
 
-use crate::common::StringCacheIdx;
+use crate::common::StringTableId;
 use crate::ir::Modifiers;
 use crate::lex::token::{LiteralToken, Token, TokenKind};
 
@@ -235,7 +235,7 @@ impl FunctionDeclarationArgumentNode {
 pub struct IdentifierNode(pub Token);
 
 impl IdentifierNode {
-    pub fn value(&self) -> StringCacheIdx {
+    pub fn value(&self) -> StringTableId {
         self.0.span.value
     }
 }
@@ -244,7 +244,7 @@ impl IdentifierNode {
 pub struct ItselfNode(pub Token);
 
 impl ItselfNode {
-    pub fn value(&self) -> StringCacheIdx {
+    pub fn value(&self) -> StringTableId {
         self.0.span.value
     }
 }
@@ -337,7 +337,7 @@ pub enum LiteralNode {
 pub struct LiteralNumberNode(pub Token);
 
 impl LiteralNumberNode {
-    pub fn value(&self) -> StringCacheIdx {
+    pub fn value(&self) -> StringTableId {
         self.0.value()
     }
 }
@@ -346,7 +346,7 @@ impl LiteralNumberNode {
 pub struct LiteralStringNode(pub Token);
 
 impl LiteralStringNode {
-    pub fn value(&self) -> StringCacheIdx {
+    pub fn value(&self) -> StringTableId {
         self.0.value()
     }
 }

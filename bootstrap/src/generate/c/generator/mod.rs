@@ -1,6 +1,6 @@
 use std::ops::Deref;
 
-use crate::common::StringCache;
+use crate::common::StringTable;
 use crate::generate::c;
 use crate::generate::c::{BlockStatement, DefineFunctionNode, IncludeLocalDirectiveNode, IncludeSystemDirectiveNode, Indent};
 use crate::generate::c::DirectiveNode::{IncludeLocalDirective, IncludeSystemDirective};
@@ -8,6 +8,7 @@ use crate::generate::c::generator::scope::Scope;
 use crate::generate::c::Node::{DefineFunction, Directive};
 use crate::ir;
 use crate::ir::Node;
+use crate::r#type::TypeTable;
 
 mod literal;
 mod call;
@@ -20,14 +21,16 @@ type Result<T> = core::result::Result<T, Error>;
 
 pub(crate) fn generate(ctx: ir::Context) -> Result<Vec<c::Node>> {
     let mut generator = Generator {
-        string_cache: ctx.string_cache,
+        string_table: ctx.string_table,
+        type_table: ctx.type_table,
         scope: Scope::new(),
     };
     generator.generate(ctx.file.body)
 }
 
 pub(crate) struct Generator {
-    string_cache: StringCache,
+    string_table: StringTable,
+    type_table: TypeTable,
     scope: Scope,
 }
 
@@ -42,9 +45,9 @@ impl Generator {
             //         Node::Calculate(_) => {}
             //         Node::CallFunctionOfObject(_) => {}
             //         Node::CallFunctionOfPackage(CallFunctionOfPackageNode { package, function, arguments }) => {
-            //             let std = self.string_cache.get(package.segments[0]).to_string();
-            //             let io = self.string_cache.get(package.segments[1]).to_string();
-            //             let function = self.string_cache.get(function.0).to_string();
+            //             let std = self.string_table.get(package.segments[0]).to_string();
+            //             let io = self.string_table.get(package.segments[1]).to_string();
+            //             let function = self.string_table.get(function.0).to_string();
             //
             //             if let ir::Node::Literal(n) = arguments.get(0).unwrap() {
             //                 statements.push(Statement::Expression(CallFunction(CallFunctionExpression {
@@ -83,7 +86,7 @@ impl Generator {
             //                         })),
             //                         Variable(VariableExpression {
             //                             indent: Indent::none(),
-            //                             identifier: self.string_cache.get(identifier.0).to_string(),
+            //                             identifier: self.string_table.get(identifier.0).to_string(),
             //                         }),
             //                     ]),
             //                 })));
@@ -118,10 +121,10 @@ impl Generator {
             //             if let CallFunctionOfPackage(CallFunctionOfPackageNode { package, function, arguments }) = value.deref() {
             //                 if package.segments.len() == 3 {
             //                     // HACK for core::intrinsics::math
-            //                     let core = self.string_cache.get(package.segments[0]);
-            //                     let intrinsics = self.string_cache.get(package.segments[1]);
-            //                     let math = self.string_cache.get(package.segments[2]);
-            //                     let func = self.string_cache.get(function.0);
+            //                     let core = self.string_table.get(package.segments[0]);
+            //                     let intrinsics = self.string_table.get(package.segments[1]);
+            //                     let math = self.string_table.get(package.segments[2]);
+            //                     let func = self.string_table.get(function.0);
             //
             //                     let ir::Node::Literal(n) = arguments.get(0).unwrap() else { panic!() };
             //
@@ -194,6 +197,10 @@ impl Generator {
                 Directive(IncludeLocalDirective(IncludeLocalDirectiveNode {
                     indent: Indent::none(),
                     path: "core_intrinsics_math.h".to_string(),
+                })),
+                Directive(IncludeLocalDirective(IncludeLocalDirectiveNode {
+                    indent: Indent::none(),
+                    path: "core_bool.h".to_string(),
                 })),
                 DefineFunction(DefineFunctionNode {
                     indent: Indent::none(),

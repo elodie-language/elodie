@@ -2,12 +2,17 @@ use crate::generate::c;
 use crate::generate::c::emitter::Emitter;
 
 impl Emitter {
-
     pub(crate) fn emit_call_function(&mut self, node: &c::CallFunctionStatement) {
+        if let Some(result) = &node.result {
+            self.emit_token(result.r#type.as_str());
+            self.emit_token(result.identifier.as_str());
+            self.emit_token("=");
+        }
+
         self.emit_str(node.identifier.as_str());
         self.emit_str("(");
 
-        for (idx,arg) in node.arguments.iter().enumerate() {
+        for (idx, arg) in node.arguments.iter().enumerate() {
             if idx > 0 {
                 self.emit_token(",");
             }

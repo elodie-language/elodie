@@ -1,6 +1,6 @@
 use std::rc::Rc;
 
-use crate::common::{PackagePath, StringCacheIdx};
+use crate::common::{PackagePath, StringTableId};
 use crate::ir::modifier::Modifiers;
 use crate::parse;
 use crate::parse::IdentifierNode;
@@ -148,6 +148,16 @@ pub enum LiteralNode {
     String(LiteralStringNode),
 }
 
+impl LiteralNode {
+    pub fn ty(&self) -> TypeId {
+        match self {
+            LiteralNode::Bool(n) => n.ty,
+            LiteralNode::Number(n) => n.ty,
+            LiteralNode::String(n) => n.ty
+        }
+    }
+}
+
 #[derive(Debug)]
 pub struct LiteralBoolNode {
     pub value: bool,
@@ -156,13 +166,13 @@ pub struct LiteralBoolNode {
 
 #[derive(Debug)]
 pub struct LiteralNumberNode {
-    pub value: StringCacheIdx,
+    pub value: StringTableId,
     pub ty: TypeId,
 }
 
 #[derive(Debug)]
 pub struct LiteralStringNode {
-    pub value: StringCacheIdx,
+    pub value: StringTableId,
     pub ty: TypeId,
 }
 
@@ -182,7 +192,7 @@ pub struct LoadValueNode {
 pub struct ItselfNode();
 
 #[derive(Clone, Debug, Hash, Eq, PartialEq)]
-pub struct Identifier(pub StringCacheIdx);
+pub struct Identifier(pub StringTableId);
 
 impl From<parse::IdentifierNode> for Identifier {
     fn from(value: IdentifierNode) -> Self {

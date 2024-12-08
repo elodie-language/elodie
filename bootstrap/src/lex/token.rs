@@ -1,4 +1,4 @@
-use crate::common::{Context, StringCacheIdx};
+use crate::common::{Context, StringTableId};
 use crate::lex::token::TokenKind::{EOF, Identifier};
 
 #[derive(Debug, Clone, PartialEq)]
@@ -14,7 +14,7 @@ impl Token {
     pub fn is_separator(&self, separator: SeparatorToken) -> bool { self.kind == TokenKind::Separator(separator) }
     pub fn is_keyword(&self, keyword: KeywordToken) -> bool { self.kind == TokenKind::Keyword(keyword) }
     pub fn is_operator(&self, operator: OperatorToken) -> bool { self.kind == TokenKind::Operator(operator) }
-    pub fn value(&self) -> StringCacheIdx { return self.span.value; }
+    pub fn value(&self) -> StringTableId { return self.span.value; }
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
@@ -46,7 +46,7 @@ pub fn test_token(ctx: &mut Context, kind: TokenKind, value: &str) -> Token {
         span: TextSpan {
             start: Position::new(Row(1), Column(1), Index(0)),
             end: Position::new(Row(1), Column(1 + value.len()), Index(value.len())),
-            value: ctx.string_cache.insert(value),
+            value: ctx.string_table.insert(value),
         },
     }
 }
@@ -57,7 +57,7 @@ pub fn test_token_with_offset(ctx: &mut Context, kind: TokenKind, value: &str, o
         span: TextSpan {
             start: Position::new(Row(1), Column(offset + 1), Index(offset)),
             end: Position::new(Row(1), Column(offset + 1 + value.len()), Index(offset + value.len())),
-            value: ctx.string_cache.insert(value),
+            value: ctx.string_table.insert(value),
         },
     }
 }
@@ -142,11 +142,11 @@ pub enum SeparatorToken {
 pub struct TextSpan {
     pub start: Position,
     pub end: Position,
-    pub value: StringCacheIdx,
+    pub value: StringTableId,
 }
 
 impl TextSpan {
-    pub fn new(start: Position, end: Position, value: StringCacheIdx) -> Self {
+    pub fn new(start: Position, end: Position, value: StringTableId) -> Self {
         Self {
             start,
             end,

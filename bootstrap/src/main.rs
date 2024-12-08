@@ -59,7 +59,8 @@ fn main() {
             ir::Context {
                 file: source_file,
                 core_scope: scope,
-                string_cache: ctx.string_cache,
+                string_table: ctx.string_table,
+                type_table: ctx.type_table
             }).unwrap();
 
         // println!("{}",code);

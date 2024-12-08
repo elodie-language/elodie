@@ -49,7 +49,7 @@ impl Lexer<'_> {
 
         Ok(Token {
             kind: TokenKind::Literal(LiteralToken::String),
-            span: TextSpan { start, end: self.position(), value: self.ctx.string_cache.insert(text.as_str()) },
+            span: TextSpan { start, end: self.position(), value: self.ctx.string_table.insert(text.as_str()) },
         })
     }
 
@@ -103,7 +103,7 @@ impl Lexer<'_> {
 
         Ok(Token {
             kind: TokenKind::Literal(Number),
-            span: TextSpan { start, end: self.position(), value: self.ctx.string_cache.insert(text.as_str()) },
+            span: TextSpan { start, end: self.position(), value: self.ctx.string_table.insert(text.as_str()) },
         })
     }
 
@@ -122,7 +122,7 @@ impl Lexer<'_> {
             self.consume_if("rue").unwrap();
             return Ok(Token {
                 kind: TokenKind::Literal(True),
-                span: TextSpan { start, end: self.position(), value: self.ctx.string_cache.insert("true") },
+                span: TextSpan { start, end: self.position(), value: self.ctx.string_table.insert("true") },
             });
         }
 
@@ -130,7 +130,7 @@ impl Lexer<'_> {
         self.consume_if("alse").unwrap();
         Ok(Token {
             kind: TokenKind::Literal(False),
-            span: TextSpan { start, end: self.position(), value: self.ctx.string_cache.insert("false") },
+            span: TextSpan { start, end: self.position(), value: self.ctx.string_table.insert("false") },
         })
     }
 }

@@ -3,7 +3,7 @@ use std::collections::HashMap;
 use std::fmt::{Debug, Formatter};
 use std::rc::Rc;
 
-use crate::common::StringCacheIdx;
+use crate::common::StringTableId;
 use crate::ir::{BlockNode, FunctionArgumentNode, Identifier};
 
 #[derive(Debug, Clone)]
@@ -59,28 +59,28 @@ pub struct FunctionValue {
 
 #[derive(Debug, Clone)]
 pub struct PackageValue {
-    pub identifier: StringCacheIdx,
-    pub functions: HashMap<StringCacheIdx, FunctionValue>,
-    pub external_functions: HashMap<StringCacheIdx, IntrinsicFunctionValue>,
-    pub packages: HashMap<StringCacheIdx, PackageValue>,
+    pub identifier: StringTableId,
+    pub functions: HashMap<StringTableId, FunctionValue>,
+    pub external_functions: HashMap<StringTableId, IntrinsicFunctionValue>,
+    pub packages: HashMap<StringTableId, PackageValue>,
 }
 
 #[derive(Clone, Debug)]
 pub struct ListValue(pub Rc<RefCell<Vec<Value>>>);
 
 impl PackageValue {
-    pub fn get_function(&self, identifier: StringCacheIdx) -> Option<&FunctionValue> {
+    pub fn get_function(&self, identifier: StringTableId) -> Option<&FunctionValue> {
         self.functions.get(&identifier)
     }
 
-    pub fn get_intrinsic_function(&self, identifier: StringCacheIdx) -> Option<&IntrinsicFunctionValue> {
+    pub fn get_intrinsic_function(&self, identifier: StringTableId) -> Option<&IntrinsicFunctionValue> {
         self.external_functions.get(&identifier)
     }
 }
 
 #[derive(Debug, Clone)]
 pub struct ObjectValue {
-    pub properties: HashMap<StringCacheIdx, Value>,
+    pub properties: HashMap<StringTableId, Value>,
 }
 
 impl ObjectValue {
@@ -90,11 +90,11 @@ impl ObjectValue {
         }
     }
 
-    pub fn set_property(&mut self, key: StringCacheIdx, value: Value) {
+    pub fn set_property(&mut self, key: StringTableId, value: Value) {
         self.properties.insert(key, value);
     }
 
-    pub fn get_property(&self, key: &StringCacheIdx) -> Option<&Value> {
+    pub fn get_property(&self, key: &StringTableId) -> Option<&Value> {
         self.properties.get(key)
     }
 

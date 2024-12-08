@@ -1,13 +1,13 @@
 use std::ops::Deref;
-use crate::common::{StringCache, StringCacheIdx};
+use crate::common::{StringTable, StringTableId};
 
 #[derive(Clone, Debug)]
 pub struct PackagePath {
-    pub segments: Box<[StringCacheIdx]>,
+    pub segments: Box<[StringTableId]>,
 }
 
-impl From<Vec<StringCacheIdx>> for PackagePath {
-    fn from(value: Vec<StringCacheIdx>) -> Self {
+impl From<Vec<StringTableId>> for PackagePath {
+    fn from(value: Vec<StringTableId>) -> Self {
         Self {
             segments: value.into_boxed_slice()
         }
@@ -15,7 +15,7 @@ impl From<Vec<StringCacheIdx>> for PackagePath {
 }
 
 impl PackagePath {
-    pub fn first(&self) -> Option<StringCacheIdx> {
+    pub fn first(&self) -> Option<StringTableId> {
         self.segments.first().cloned()
     }
 
@@ -30,7 +30,7 @@ impl PackagePath {
         }
     }
 
-    pub fn to_strs<'a>(&self, cache: &'a StringCache) -> Box<[&'a str]>{
+    pub fn to_strs<'a>(&self, cache: &'a StringTable) -> Box<[&'a str]>{
         self.segments.deref().into_iter().map(|s| cache.get(s)).collect()
     }
 }

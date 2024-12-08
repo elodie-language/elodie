@@ -2,32 +2,32 @@ use std::collections::HashMap;
 use std::rc::Rc;
 
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
-pub struct StringCacheIdx(pub usize);
+pub struct StringTableId(pub usize);
 
-impl AsRef<StringCacheIdx> for StringCacheIdx {
-    fn as_ref(&self) -> &StringCacheIdx {
+impl AsRef<StringTableId> for StringTableId {
+    fn as_ref(&self) -> &StringTableId {
         &self
     }
 }
 
 #[derive(Debug, Clone)]
-pub struct StringCache {
-    indexes: HashMap<Rc<str>, StringCacheIdx>,
+pub struct StringTable {
+    indexes: HashMap<Rc<str>, StringTableId>,
     values: Vec<Rc<str>>,
 }
 
-impl StringCache {
-    pub fn new() -> StringCache {
-        StringCache { indexes: HashMap::new(), values: Vec::new() }
+impl StringTable {
+    pub fn new() -> StringTable {
+        StringTable { indexes: HashMap::new(), values: Vec::new() }
     }
 
-    pub fn insert(&mut self, string: &str) -> StringCacheIdx {
+    pub fn insert(&mut self, string: &str) -> StringTableId {
         match self.indexes.entry(string.into()) {
             std::collections::hash_map::Entry::Occupied(entry) => {
                 *entry.get()
             }
             std::collections::hash_map::Entry::Vacant(entry) => {
-                let idx = StringCacheIdx(self.values.len());
+                let idx = StringTableId(self.values.len());
                 self.values.push(entry.key().clone());
                 entry.insert(idx);
                 idx
@@ -35,7 +35,7 @@ impl StringCache {
         }
     }
 
-    pub fn get(&self, idx: impl AsRef<StringCacheIdx>) -> &str {
+    pub fn get(&self, idx: impl AsRef<StringTableId>) -> &str {
         &self.values.get(idx.as_ref().0).expect("StringIdx out of bounds")
     }
 }
@@ -46,7 +46,7 @@ mod tests {
 
     #[test]
     fn insert_and_get() {
-        let mut map = StringCache::new();
+        let mut map = StringTable::new();
         let idx1 = map.insert("hello");
         let idx2 = map.insert("world");
         let idx3 = map.insert("hello");
@@ -61,7 +61,7 @@ mod tests {
     #[test]
     #[should_panic(expected = "StringIdx out of bounds")]
     fn get_out_of_bounds() {
-        let map = StringCache::new();
-        map.get(StringCacheIdx(0));
+        let map = StringTable::new();
+        map.get(StringTableId(0));
     }
 }

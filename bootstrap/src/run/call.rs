@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 
-use crate::common::StringCacheIdx;
+use crate::common::StringTableId;
 use crate::ir::{CallFunctionNode, CallFunctionWithLambdaNode};
 use crate::run::Runner;
 use crate::run::value::{FunctionValue, Value};
@@ -97,7 +97,7 @@ impl<'a> Runner<'a> {
         result
     }
 
-    pub(crate) fn run_node_call(&mut self, function_value: FunctionValue, arguments: HashMap<StringCacheIdx, Value>) -> crate::run::Result<Value> {
+    pub(crate) fn run_node_call(&mut self, function_value: FunctionValue, arguments: HashMap<StringTableId, Value>) -> crate::run::Result<Value> {
         self.reset_interrupt();
 
         self.scope.enter();
