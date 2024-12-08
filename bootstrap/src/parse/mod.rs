@@ -28,6 +28,7 @@ mod from;
 mod type_declaration;
 mod define;
 mod external;
+mod string;
 
 #[derive(Debug, PartialEq)]
 pub enum Error {
@@ -109,7 +110,7 @@ impl<'a> Parser<'a> {
             if self.is_eof() { break; }
             nodes.push(self.parse_node(Precedence::None)?);
             if !self.is_eof() {
-                self.consume_separator(SeparatorToken::NewLine)?;
+                self.consume_if(TokenKind::Separator(NewLine))?;
             }
         }
         Ok(nodes.into())

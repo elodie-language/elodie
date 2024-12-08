@@ -1,15 +1,10 @@
 use std::str::FromStr;
 
 use crate::lex::token::LiteralToken;
-use crate::parse::node::{LiteralBooleanNode, LiteralNode, LiteralNumberNode, LiteralStringNode};
+use crate::parse::node::{LiteralBooleanNode, LiteralNode, LiteralNumberNode};
 use crate::parse::Parser;
 
 impl<'a> Parser<'a> {
-    pub(crate) fn parse_literal_string(&mut self) -> crate::parse::Result<LiteralNode> {
-        let token = self.consume_literal(LiteralToken::String)?;
-        return Ok(LiteralNode::String(LiteralStringNode(token)));
-    }
-
     pub(crate) fn parse_literal_number(&mut self) -> crate::parse::Result<LiteralNode> {
         let token = self.consume_literal(LiteralToken::Number)?;
         return Ok(LiteralNode::Number(LiteralNumberNode(token)));
@@ -33,17 +28,6 @@ mod tests {
     use crate::parse::node::LiteralNode;
     use crate::parse::node::Node::Literal;
     use crate::parse::parse;
-
-    #[test]
-    fn string() {
-        let mut ctx = Context::new();
-        let tokens = lex(&mut ctx, "'Elodie'").unwrap();
-        let result = parse(&mut ctx, tokens).unwrap();
-        assert_eq!(result.len(), 1);
-
-        let Literal(LiteralNode::String(node)) = &result[0] else { panic!() };
-        assert_eq!(ctx.get_str(node.value()), "Elodie");
-    }
 
     #[test]
     fn number_42() {

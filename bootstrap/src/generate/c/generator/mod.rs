@@ -236,6 +236,7 @@ impl Generator {
             Node::DeclareType(_) => unimplemented!(),
             Node::InstantiateType(_) => unimplemented!(),
             Node::DefineType(_) => unimplemented!(),
+            Node::InterpolateString(_) => unimplemented!()
         }
     }
 

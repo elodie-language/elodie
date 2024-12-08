@@ -30,7 +30,7 @@ impl<'a> Compiler<'a> {
     pub(crate) fn compile_declare_function_argument(&mut self, node: &parse::FunctionDeclarationArgumentNode) -> crate::compile::Result<ir::FunctionArgumentNode> {
         Ok(FunctionArgumentNode {
             identifier: Identifier::from(&node.identifier),
-            type_id: DefaultTypeIds::never(),
+            ty: DefaultTypeIds::never(),
         })
     }
 

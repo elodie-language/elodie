@@ -18,8 +18,8 @@ use crate::load_library_file;
 use crate::r#type::{Property, Type, TypeId, TypeName};
 use crate::run::scope::Scope;
 use crate::run::type_definitions::TypeDefinitions;
-use crate::run::value::Value::IntrinsicFunction;
 use crate::run::value::{IntrinsicFunctionValue, ListValue, ObjectValue, Value};
+use crate::run::value::Value::IntrinsicFunction;
 
 mod block;
 mod call;
@@ -340,9 +340,9 @@ impl<'a> Runner<'a> {
                 let mut packages = packages.clone();
                 let mut root = packages.first().unwrap();
                 let Value::Package(root_package) = self.scope.get_value(&root).unwrap().clone()
-                else {
-                    panic!()
-                };
+                    else {
+                        panic!()
+                    };
 
                 let mut target_package = root_package;
                 loop {
@@ -575,6 +575,13 @@ impl<'a> Runner<'a> {
                     .get_property(&load_variable.property.0)
                     .cloned()
                     .unwrap())
+            }
+            Node::InterpolateString(node) => {
+                let mut result = String::new();
+                for node in &node.nodes{
+                    result += self.run_node(node)?.to_string().as_str()
+                }
+                Ok(Value::String(result))
             }
             _ => unimplemented!("{:?}", node),
         }

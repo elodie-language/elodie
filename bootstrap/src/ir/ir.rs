@@ -137,6 +137,8 @@ pub enum Node {
 
     InstantiateType(InstantiateTypeNode),
     DefineType(DefineTypeNode),
+
+    InterpolateString(InterpolateStringNode),
 }
 
 #[derive(Debug)]
@@ -149,19 +151,19 @@ pub enum LiteralNode {
 #[derive(Debug)]
 pub struct LiteralBoolNode {
     pub value: bool,
-    pub type_id: TypeId,
+    pub ty: TypeId,
 }
 
 #[derive(Debug)]
 pub struct LiteralNumberNode {
     pub value: StringCacheIdx,
-    pub type_id: TypeId,
+    pub ty: TypeId,
 }
 
 #[derive(Debug)]
 pub struct LiteralStringNode {
     pub value: StringCacheIdx,
-    pub type_id: TypeId,
+    pub ty: TypeId,
 }
 
 #[derive(Debug)]
@@ -173,7 +175,7 @@ pub struct ReturnFromFunctionNode {
 #[derive(Debug)]
 pub struct LoadValueNode {
     pub identifier: Identifier,
-    pub type_id: TypeId,
+    pub ty: TypeId,
 }
 
 #[derive(Clone, Debug)]
@@ -225,11 +227,11 @@ pub struct DeclareExternalFunctionNode {
 #[derive(Debug)]
 pub struct FunctionArgumentNode {
     pub identifier: Identifier,
-    pub type_id: TypeId,
+    pub ty: TypeId,
 }
 
 pub struct TypedNode {
-    pub type_id: TypeId,
+    pub ty: TypeId,
     pub node: Node,
 }
 
@@ -271,6 +273,11 @@ pub enum Source {
 #[derive(Debug)]
 pub struct SourceLocalFileNode {
     pub path: String,
+}
+
+#[derive(Debug)]
+pub struct InterpolateStringNode {
+    pub nodes: Vec<Node>,
 }
 
 #[derive(Debug)]

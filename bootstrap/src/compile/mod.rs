@@ -21,6 +21,7 @@ mod from;
 mod r#type;
 mod define;
 mod external;
+mod string;
 
 #[derive(Debug)]
 pub enum Error {
@@ -99,6 +100,7 @@ impl<'a> Compiler<'a> {
             parse::Node::Let(let_node) => Ok(self.compile_let(let_node)?),
             parse::Node::If(if_node) => Ok(self.compile_if(if_node)?),
             parse::Node::Infix(infix_node) => Ok(self.compile_infix(infix_node)?),
+            parse::Node::StringInterpolation(node) => self.compile_interpolate_string(node),
             parse::Node::Itself(node) => Ok(self.compile_self(node)?),
             parse::Node::Literal(literal_node) => Ok(self.compile_literal(literal_node)?),
             parse::Node::Loop(loop_node) => Ok(self.compile_loop(loop_node)?),

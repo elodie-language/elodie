@@ -8,14 +8,14 @@ impl<'a> Compiler<'a> {
     pub(crate) fn compile_identifier(&mut self, node: &parse::IdentifierNode) -> crate::compile::Result<ir::Node> {
         return Ok(LoadValue(LoadValueNode {
             identifier: Identifier::from(node),
-            type_id: DefaultTypeIds::never(),
+            ty: DefaultTypeIds::never(),
         }));
     }
 
     pub(crate) fn compile_self(&mut self, node: &parse::ItselfNode) -> crate::compile::Result<ir::Node> {
         return Ok(LoadValue(LoadValueNode {
             identifier: Identifier(node.0.value()),
-            type_id: DefaultTypeIds::never(),
+            ty: DefaultTypeIds::never(),
         }));
     }
 }

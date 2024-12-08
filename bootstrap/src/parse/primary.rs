@@ -64,7 +64,7 @@ impl<'a> Parser<'a> {
                 _ if current.is_literal(Number) => Ok(Node::Literal(self.parse_literal_number()?)),
                 _ if current.is_literal(True) => Ok(Node::Literal(self.parse_literal_true()?)),
                 _ if current.is_literal(False) => Ok(Node::Literal(self.parse_literal_false()?)),
-                _ if current.is_literal(String) => Ok(Node::Literal(self.parse_literal_string()?)),
+                _ if current.is_literal(String) => Ok(self.parse_string()?),
                 _ if current.is_identifier() => {
                     if is_snake_case(self.ctx.get_str(current.value())) {
                         Ok(Node::Identifier(self.parse_identifier()?))

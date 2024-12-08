@@ -12,15 +12,15 @@ impl<'a> Compiler<'a> {
         match node {
             parse::LiteralNode::Number(v) => Ok(ir::Node::Literal(LiteralNode::Number(LiteralNumberNode {
                 value: v.value().clone(),
-                type_id: DefaultTypeIds::never(),
+                ty: DefaultTypeIds::never(),
             }))),
             parse::LiteralNode::String(v) => Ok(ir::Node::Literal(LiteralNode::String(LiteralStringNode {
                 value: v.value().clone(),
-                type_id: DefaultTypeIds::never(),
+                ty: DefaultTypeIds::never(),
             }))),
             parse::LiteralNode::Boolean(v) => Ok(ir::Node::Literal(LiteralNode::Bool(LiteralBoolNode {
                 value: v.value().clone(),
-                type_id: DefaultTypeIds::never(),
+                ty: DefaultTypeIds::never(),
             }))),
         }
     }

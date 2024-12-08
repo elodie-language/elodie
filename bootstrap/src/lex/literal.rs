@@ -21,6 +21,25 @@ impl Lexer<'_> {
                     continue;
                 }
             }
+
+            if next == '$' && self.peek_if("{").is_some() {
+                text.push('$');
+                text.push('{');
+
+                self.consume_next()?; // Consume '{'
+
+                loop {
+                    let next = self.consume_next()?;
+                    if next == '}' {
+                        text.push('}');
+                        break;
+                    }
+                    text.push(next);
+                }
+
+                continue;
+            }
+
             if next == '\'' {
                 break;
             }
@@ -146,6 +165,18 @@ mod test {
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 15, 14));
         assert_eq!(ctx.get_str(result.value()), "Hello Elodie");
+    }
+
+    #[test]
+    fn string_with_interpolation() {
+        let text = "'${'test'}'";
+        let mut ctx = Context::new();
+        let mut lexer = Lexer::new(&mut ctx, text);
+        let result = lexer.advance().unwrap();
+        assert_eq!(result.kind, TokenKind::Literal(String));
+        assert_eq!(result.span.start, (1, 1, 0));
+        assert_eq!(result.span.end, (1, 12, 11));
+        assert_eq!(ctx.get_str(result.value()), "${'test'}");
     }
 
     #[test]

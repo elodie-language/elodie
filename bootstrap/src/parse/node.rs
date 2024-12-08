@@ -49,6 +49,7 @@ pub enum Node {
     PackageDeclaration(PackageDeclarationNode),
     Prefix(PrefixNode),
     Return(ReturnNode),
+    StringInterpolation(StringInterpolationNode),
     Tuple(TupleNode),
     Type(TypeNode),
     TypeDeclaration(TypeDeclarationNode),
@@ -403,6 +404,12 @@ pub enum PrefixOperator {
     Plus(Token),
     Negate(Token),
     Not(Token),
+}
+
+#[derive(Debug, PartialEq)]
+pub struct StringInterpolationNode {
+    pub token: Token,
+    pub nodes: Vec<Node>,
 }
 
 #[derive(Debug, PartialEq)]
