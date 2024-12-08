@@ -66,7 +66,7 @@ fn build_std(dir: PathBuf){
 #include "core_intrinsics_io.h"
 
 void std_io_print(char const * message);
-void std_io_print_line(char const * message);
+void std_io_println(char const * message);
 
 #endif
     "#.as_bytes()).unwrap();
@@ -82,7 +82,7 @@ void std_io_print(char const * message) {
     core_intrinsics_io_print(message);
 }
 
-void std_io_print_line(char const * message) {
+void std_io_println(char const * message) {
     std_io_print(message);
     std_io_print("\n");
 }

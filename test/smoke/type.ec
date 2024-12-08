@@ -4,8 +4,8 @@ type Point (
 )
 
 let point = Point( x = 1, y = 2 )
-std::io::print_line( point.x )
-std::io::print_line( point.y )
+std::io::println( point.x )
+std::io::println( point.y )
 
 // out:1
 // out:2

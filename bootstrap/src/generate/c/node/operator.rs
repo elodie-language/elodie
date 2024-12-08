@@ -1,7 +1,7 @@
 use crate::generate::c::Expression;
 
 #[derive(Debug)]
-pub enum UnaryOperator {
+pub enum BinaryOperator {
     Add,       // +
     Subtract,  // -
     Multiply,  // *
@@ -17,8 +17,8 @@ pub enum UnaryOperator {
 }
 
 #[derive(Debug)]
-pub struct UnaryExpression {
+pub struct BinaryExpression {
     pub left: Box<Expression>,
-    pub operator: UnaryOperator,
+    pub operator: BinaryOperator,
     pub right: Box<Expression>,
 }

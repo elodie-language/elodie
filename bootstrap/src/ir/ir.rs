@@ -179,7 +179,7 @@ pub struct LoadValueNode {
 #[derive(Clone, Debug)]
 pub struct ItselfNode();
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Hash, Eq, PartialEq)]
 pub struct Identifier(pub StringCacheIdx);
 
 impl From<parse::IdentifierNode> for Identifier {

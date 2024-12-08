@@ -381,7 +381,7 @@ mod tests {
     #[test]
     fn call_nested_package_function() {
         let mut ctx = Context::new();
-        let tokens = lex(&mut ctx, "std::io::print_line('Elodie')").unwrap();
+        let tokens = lex(&mut ctx, "std::io::println('Elodie')").unwrap();
         let result = parse(&mut ctx, tokens).unwrap();
         assert_eq!(result.len(), 1);
 
@@ -402,7 +402,7 @@ mod tests {
             assert!(matches!(operator, InfixOperator::AccessPackage(_)));
 
             let function = right.as_identifier();
-            assert_eq!(ctx.get_str(function.value()), "print_line");
+            assert_eq!(ctx.get_str(function.value()), "println");
         }
 
         assert!(matches!(operator, InfixOperator::Call(_)));

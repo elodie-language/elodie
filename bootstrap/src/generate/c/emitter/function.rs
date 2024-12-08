@@ -2,7 +2,8 @@ use crate::generate::c;
 use crate::generate::c::emitter::Emitter;
 
 impl Emitter {
-    pub(crate) fn emit_call_function(&mut self, node: &c::CallFunctionExpression) {
+
+    pub(crate) fn emit_call_function(&mut self, node: &c::CallFunctionStatement) {
         self.emit_str(node.identifier.as_str());
         self.emit_str("(");
 
@@ -12,7 +13,7 @@ impl Emitter {
             }
             self.emit_expression(arg)
         }
-        self.emit_str(")");
+        self.emit_line(");");
     }
 
     pub(crate) fn emit_declare_function(&mut self, node: &c::DeclareFunctionNode) {

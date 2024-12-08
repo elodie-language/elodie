@@ -3,7 +3,7 @@ function some_function() -> Bool {
 }
 
 if some_function() {
-    std::io::print_line('true')
+    std::io::println('true')
 }
 
 function early_exit() -> Number {
@@ -12,7 +12,7 @@ function early_exit() -> Number {
     return 8
 }
 
-std::io::print_line(early_exit())
+std::io::println(early_exit())
 
 function nested() -> Number {
     function inner() -> Number {
@@ -22,7 +22,7 @@ function nested() -> Number {
     return inner() + inner () + inner()
 }
 
-std::io::print_line(nested())
+std::io::println(nested())
 
 // out:true
 // out:2

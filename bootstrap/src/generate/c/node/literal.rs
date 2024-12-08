@@ -2,15 +2,22 @@ use crate::generate::c::Indent;
 
 #[derive(Debug)]
 pub enum LiteralExpression {
+    Bool(LiteralBooleanExpression),
     Double(LiteralDoubleExpression),
     Int(LiteralIntExpression),
     String(LiteralStringExpression),
 }
 
 #[derive(Debug)]
-pub struct LiteralStringExpression {
+pub struct LiteralBooleanExpression {
     pub indent: Indent,
-    pub value: String,
+    pub value: bool,
+}
+
+#[derive(Debug)]
+pub struct LiteralDoubleExpression {
+    pub indent: Indent,
+    pub value: f64,
 }
 
 #[derive(Debug)]
@@ -20,7 +27,7 @@ pub struct LiteralIntExpression {
 }
 
 #[derive(Debug)]
-pub struct LiteralDoubleExpression {
+pub struct LiteralStringExpression {
     pub indent: Indent,
-    pub value: f64,
+    pub value: String,
 }

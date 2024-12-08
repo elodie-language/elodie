@@ -7,6 +7,14 @@ pub struct CallFunctionExpression {
     pub arguments: Box<[Expression]>,
 }
 
+
+#[derive(Debug)]
+pub struct CallFunctionStatement {
+    pub indent: Indent,
+    pub identifier: String,
+    pub arguments: Box<[Expression]>,
+}
+
 #[derive(Debug)]
 pub struct DeclareFunctionNode {
     pub indent: Indent,

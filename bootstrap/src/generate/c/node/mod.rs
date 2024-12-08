@@ -26,9 +26,8 @@ pub enum Node {
 
 #[derive(Debug)]
 pub enum Expression {
-    CallFunction(CallFunctionExpression),
+    Binary(BinaryExpression),
     Literal(LiteralExpression),
-    Unary(UnaryExpression),
     Variable(VariableExpression),
 }
 
@@ -36,6 +35,7 @@ pub enum Expression {
 #[derive(Debug)]
 pub enum Statement {
     Block(BlockStatement),
+    CallFunction(CallFunctionStatement),
     DeclareArray(DeclareArrayStatement),
     DeclareVariable(DeclareVariableStatement),
     Expression(Expression),

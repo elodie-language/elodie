@@ -1,11 +1,11 @@
 export package io {
 
-    export function print(message: String) {
-        core::intrinsics::io::print(message)
+    export function print(s: String) {
+        core::intrinsics::io::print(s)
     }
 
-    export function print_line(message: String) {
-        print(message)
+    export function println(s: String) {
+        print(s)
         print('\n')
     }
 }

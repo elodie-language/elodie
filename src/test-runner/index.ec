@@ -1,5 +1,5 @@
-function print_line(message: String) {
-    std::io::print_line(message)
+function println(message: String) {
+    std::io::println(message)
 }
 
 function print(message: String) {
@@ -14,7 +14,7 @@ type Test_Result (
 
 define Test_Result {
     function summarize(){
-//        print_line('All in all...')
+//        println('All in all...')
     }
 }
 
@@ -32,7 +32,7 @@ type It_Result (
 let results = std::collection::list::empty()
 
 function test(name: String, body: function()) {
-    print_line(' ' + name)
+    println(' ' + name)
     let test_result = Test_Result(name = name, passed = false, describe_results = std::collection::list::empty() )
     results.append( test_result )
     body()
@@ -40,12 +40,12 @@ function test(name: String, body: function()) {
 }
 
 function describe(description: String, body: function()) {
-    print_line('  ' + description)
+    println('  ' + description)
 
 
     let describe_result = Describe_Result( passed = false, it_results = std::collection::list::empty() )
     let test_result = results.get(1)
-//    std::io::print_line(test_result)
+//    std::io::println(test_result)
 
     // FIXME
     // test_result.describe_results.append(describe_result)
@@ -73,15 +73,15 @@ function should(description: String, body: function() -> Bool){
         intrinsics.report_test_failure()
     }
 
-    std::io::print_line(description)
+    std::io::println(description)
     // took - xyz ms
 //
 //    if passwd {
-//        std::io::print_line('Test passed')
+//        std::io::println('Test passed')
 //        let result = It_Result(description = description, passed = true)
 //        temp.append(result)
 //    } else {
-//        std::io::print_line('Test failed')
+//        std::io::println('Test failed')
 //        let result = It_Result(description = description, passed = false)
 //        temp.append(result)
 //    }
