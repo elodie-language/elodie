@@ -1,15 +1,13 @@
 use std::ops::Deref;
 
 use crate::generate::c;
-use crate::generate::c::{DeclareVariableStatement, Indent, Statement, VariableExpression};
+use crate::generate::c::{DeclareVariableStatement, Indent, InitialiseStructExpression, InitialiseStructField, LiteralDoubleExpression, Statement, VariableExpression};
 use crate::generate::c::generator::Generator;
-use crate::generate::c::generator::scope::Variable;
-use crate::ir::{DeclareVariableNode, LiteralNode, LoadValueNode};
+use crate::ir::{DeclareVariableNode, LiteralNode, LoadValueNode, Node};
 use crate::ir::Node::Literal;
 
 impl Generator {
     pub(crate) fn generate_declare_variable(&mut self, node: &DeclareVariableNode) -> crate::generate::c::generator::Result<Vec<Statement>> {
-
         let variable = self.scope.push_variable(&node.identifier);
 
         if let Literal(LiteralNode::String(string)) = &node.value.deref() {
@@ -59,6 +57,40 @@ impl Generator {
                     ),
                 })
             ]);
+        }
+
+        if let Node::InstantiateType(instantiate) = &node.value.deref() {
+            let mut fields = Vec::new();
+
+            let mut statements = vec![];
+
+            for arg in &instantiate.arguments{
+                let (s, expression) = self.generate_expression(&arg.value)?;
+
+                statements.extend(s);
+                fields.push(
+                    InitialiseStructField {
+                        indent: Indent::none(),
+                        identifier: self.string_table.get(arg.identifier.0).to_string(),
+                        expression,
+                    }
+                )
+            }
+
+            statements.push(
+                Statement::DeclareVariable(DeclareVariableStatement {
+                    indent: Indent::none(),
+                    identifier: variable.to_string(&self.string_table),
+                    r#type: "struct Point".to_string(),
+                    expression: c::Expression::StructInitialisation(
+                        InitialiseStructExpression {
+                            fields: fields.into_boxed_slice()
+                        }
+                    ),
+                })
+            );
+
+            return Ok(statements);
         }
 
         unimplemented!("{node:#?}");

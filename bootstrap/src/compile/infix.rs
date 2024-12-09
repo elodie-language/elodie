@@ -7,7 +7,7 @@ use crate::compile::Compiler;
 use crate::ir::{CalculateNode, CalculationOperator, CallFunctionNode, CallFunctionOfObjectNode, CallFunctionOfPackageNode, CallFunctionWithLambdaNode, CompareNode, CompareOperator, Identifier, InstantiateTypeNode, LoadValueFromObjectNode, LoadValueFromSelfNode, NamedArgumentNode};
 use crate::parse::{InfixNode, InfixOperator, Node, TypeNode};
 use crate::parse::Node::Type;
-use crate::r#type::TypeId;
+use crate::r#type::{DefaultTypeIds, TypeId};
 
 impl<'a> Compiler<'a> {
     pub(crate) fn compile_infix(&mut self, node: &parse::InfixNode) -> crate::compile::Result<ir::Node> {
@@ -26,7 +26,7 @@ impl<'a> Compiler<'a> {
 
         // call function of object / self
         if left.is_infix() && matches!(left.as_infix().operator, InfixOperator::AccessProperty(_)) && matches!(operator, InfixOperator::Call(_)) {
-            let ir::Node::LoadValueFromObject(LoadValueFromObjectNode { object, property }) = self.compile_access_property(left.as_infix())? else { panic!() };
+            let ir::Node::LoadValueFromObject(LoadValueFromObjectNode { object, property, ty}) = self.compile_access_property(left.as_infix())? else { panic!() };
 
             let arguments = self.compile_arguments(right.as_tuple())?;
 
@@ -89,6 +89,7 @@ impl<'a> Compiler<'a> {
             return Ok(ir::Node::LoadValueFromObject(LoadValueFromObjectNode {
                 object: ir::Identifier::from(object),
                 property: ir::Identifier::from(property),
+                ty: DefaultTypeIds::never()
             }));
         }
 
@@ -169,6 +170,7 @@ impl<'a> Compiler<'a> {
         return Ok(ir::Node::LoadValueFromObject(LoadValueFromObjectNode {
             object: ir::Identifier::from(object_identifier),
             property: ir::Identifier::from(property),
+            ty: DefaultTypeIds::never()
         }));
     }
 

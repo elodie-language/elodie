@@ -1,4 +1,4 @@
-use crate::generate::c::Indent;
+use crate::generate::c::{Expression, Indent};
 
 #[derive(Debug)]
 pub struct DeclareStructNode {
@@ -18,4 +18,16 @@ pub struct DefineStructFieldNode {
     pub indent: Indent,
     pub identifier: String,
     pub ty: String,
+}
+
+#[derive(Debug)]
+pub struct InitialiseStructExpression {
+    pub fields: Box<[InitialiseStructField]>,
+}
+
+#[derive(Debug)]
+pub struct InitialiseStructField {
+    pub indent: Indent,
+    pub identifier: String,
+    pub expression: Expression,
 }

@@ -30,6 +30,7 @@ pub enum Expression {
     Infix(InfixExpression),
     Literal(LiteralExpression),
     Variable(VariableExpression),
+    StructInitialisation(InitialiseStructExpression)
 }
 
 

@@ -307,6 +307,7 @@ pub struct NamedArgumentNode {
 pub struct LoadValueFromObjectNode {
     pub object: Identifier,
     pub property: Identifier,
+    pub ty: TypeId
 }
 
 #[derive(Debug)]

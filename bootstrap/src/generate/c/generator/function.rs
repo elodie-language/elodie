@@ -1,9 +1,10 @@
+use std::fmt::format;
 use crate::generate::c;
 use crate::generate::c::{CallFunctionStatement, CallFunctionStatementResult, DeclareArrayStatement, DeclareVariableStatement, Expression, Indent, LiteralExpression, LiteralIntExpression, LiteralStringExpression, Statement, VariableExpression};
 use crate::generate::c::Expression::{Literal, Variable};
 use crate::generate::c::generator::Generator;
 use crate::generate::c::Statement::CallFunction;
-use crate::ir::{CallFunctionNode, CallFunctionOfPackageNode, DeclareFunctionNode, InterpolateStringNode, LiteralNode, LoadValueNode, Node};
+use crate::ir::{CallFunctionNode, CallFunctionOfPackageNode, DeclareFunctionNode, InterpolateStringNode, LiteralNode, LoadValueFromObjectNode, LoadValueNode, Node};
 
 impl Generator {
     pub(crate) fn generate_declare_function(&mut self, node: &DeclareFunctionNode) -> c::generator::Result<DeclareFunctionNode> {
@@ -118,6 +119,8 @@ impl Generator {
             // to_string + concatenation
             if let Node::InterpolateString(InterpolateStringNode { nodes }) = arg {
                 for node in nodes {
+
+
                     if let Node::LoadValue(LoadValueNode { identifier, ty }) = &node {
                         if self.type_table.is_number(ty) {
                             statements.push(Statement::DeclareArray(DeclareArrayStatement {
@@ -180,6 +183,45 @@ impl Generator {
                             continue;
                         }
                     }
+
+                    if let Node::LoadValueFromObject(LoadValueFromObjectNode{ object, property, ty }) = &node{
+                            statements.push(Statement::DeclareArray(DeclareArrayStatement {
+                                indent: Indent::none(),
+                                identifier: arg_identifier.to_string(),
+                                r#type: "char".to_string(),
+                                size: 20,
+                            }));
+
+                            statements.push(Statement::CallFunction(
+                                CallFunctionStatement {
+                                    indent: Indent::none(),
+                                    identifier: format!("snprintf"),
+                                    arguments: Box::new([
+                                        Variable(VariableExpression {
+                                            indent: Indent::none(),
+                                            identifier: arg_identifier.to_string(),
+                                        }),
+                                        Literal(LiteralExpression::Int(LiteralIntExpression {
+                                            indent: Indent::none(),
+                                            value: 20,
+                                        })),
+                                        Literal(LiteralExpression::String(LiteralStringExpression {
+                                            indent: Indent::none(),
+                                            value: "%.0f".to_string(),
+                                        })),
+                                        Variable(VariableExpression {
+                                            indent: Indent::none(),
+                                            identifier: format!("{}.{}",self.scope.get_variable(object).unwrap().to_string(&self.string_table), self.string_table.get(property.0)),
+                                        }),
+                                    ]),
+                                    result: None,
+                                })
+                            );
+
+                            arguments.push(c::Expression::Variable(VariableExpression { indent: Indent::none(), identifier: arg_identifier.to_string() }));
+                            continue;
+                    }
+
 
                     if let Node::CallFunction(node) = &node {
                         let temp = self.scope.push_temp();

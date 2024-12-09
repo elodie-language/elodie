@@ -8,6 +8,7 @@ mod literal;
 mod variable;
 mod control;
 mod infix;
+mod r#struct;
 
 pub enum Error {}
 
@@ -32,9 +33,9 @@ impl Emitter {
             match node {
                 Node::Directive(node) => self.emit_directive(node),
                 Node::DeclareFunction(node) => self.emit_declare_function(node),
-                Node::DeclareStruct(_) => unimplemented!(),
+                Node::DeclareStruct(node) => self.emit_declare_struct(node),
                 Node::DefineFunction(node) => self.emit_define_function(node),
-                Node::DefineStruct(_) => unimplemented!(),
+                Node::DefineStruct(node) => self.emit_define_struct(node),
                 Node::DefineGlobalVariable(_) => unimplemented!(),
             }
         }
@@ -46,6 +47,7 @@ impl Emitter {
             Expression::Literal(expression) => self.emit_literal(expression),
             Expression::Infix(expression) => self.emit_infix(expression),
             Expression::Variable(expression) => self.emit_variable(expression),
+            Expression::StructInitialisation(expression)=> self.emit_initialise_struct(expression)
         }
     }
 

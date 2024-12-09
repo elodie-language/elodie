@@ -1,11 +1,10 @@
 use std::ops::Deref;
-use std::{result, vec};
+use std::vec;
 
 use crate::common::StringTable;
 use crate::generate::c;
-use crate::generate::c::{BlockStatement, CallFunctionStatement, CallFunctionStatementResult, DeclareFunctionNode, DefineFunctionNode, DirectiveNode, Expression, IncludeLocalDirectiveNode, IncludeSystemDirectiveNode, Indent, LiteralBooleanExpression, LiteralExpression, ReturnFromFunctionStatement, Statement, VariableExpression};
+use crate::generate::c::{BlockStatement, CallFunctionStatement, CallFunctionStatementResult, DeclareFunctionNode, DeclareStructNode, DefineFunctionNode, DefineStructFieldNode, DefineStructNode, DirectiveNode, Expression, IncludeLocalDirectiveNode, IncludeSystemDirectiveNode, Indent, ReturnFromFunctionStatement, Statement, VariableExpression};
 use crate::generate::c::DirectiveNode::{IncludeLocalDirective, IncludeSystemDirective};
-use crate::generate::c::Expression::Literal;
 use crate::generate::c::generator::scope::Scope;
 use crate::generate::c::Node::DefineFunction;
 use crate::ir;
@@ -33,6 +32,8 @@ pub(crate) fn generate(ctx: ir::Context) -> Result<Vec<c::Node>> {
         function_declarations: Vec::new(),
         function_definitions: Vec::new(),
         main_statements: Vec::new(),
+        struct_definitions: Vec::new(),
+        struct_declarations: Vec::new(),
     };
     generator.generate(ctx.file.body)
 }
@@ -41,12 +42,13 @@ pub(crate) struct Generator {
     string_table: StringTable,
     type_table: TypeTable,
     scope: Scope,
-
     //
     directives: Vec<DirectiveNode>,
     function_declarations: Vec<DeclareFunctionNode>,
     function_definitions: Vec<DefineFunctionNode>,
     main_statements: Vec<Statement>,
+    struct_declarations: Vec<DeclareStructNode>,
+    struct_definitions: Vec<DefineStructNode>,
 }
 
 impl Generator {
@@ -88,6 +90,9 @@ impl Generator {
 
         let mut result = vec![];
         result.extend(self.directives.into_iter().map(|d| c::Node::Directive(d)));
+
+        result.extend(self.struct_declarations.into_iter().map(|ds| c::Node::DeclareStruct(ds)));
+        result.extend(self.struct_definitions.into_iter().map(|ds| c::Node::DefineStruct(ds)));
 
         result.extend(self.function_declarations.into_iter().map(|df| c::Node::DeclareFunction(df)));
 
@@ -131,14 +136,14 @@ impl Generator {
             Node::Block(node) => {
                 let stmts = self.generate_block(node)?;
                 self.main_statements.push(Statement::Block(stmts));
-            },
+            }
             Node::BreakLoop(_) => unimplemented!(),
             Node::Calculate(_) => unimplemented!(),
             Node::CallFunctionOfObject(_) => unimplemented!(),
             Node::CallFunctionOfPackage(node) => {
                 let statements = self.generate_call_function_of_package(node)?;
                 self.main_statements.extend(statements);
-            },
+            }
             Node::CallFunction(node) => unimplemented!(),
             Node::CallFunctionWithLambda(_) => unimplemented!(),
             Node::ExportPackage(_) => unimplemented!(),
@@ -158,8 +163,7 @@ impl Generator {
             Node::DeclareVariable(node) => {
                 let stmts = self.generate_declare_variable(node)?;
                 self.main_statements.extend(stmts);
-
-            },
+            }
             Node::DeclareFunction(node) => {
                 let func_ident = self.string_table.get(node.identifier.0).to_string();
 
@@ -190,7 +194,28 @@ impl Generator {
             }
             Node::DeclareExternalFunction(_) => unimplemented!(),
             Node::DeclarePackage(_) => unimplemented!(),
-            Node::DeclareType(_) => unimplemented!(),
+            Node::DeclareType(node) => {
+                self.struct_declarations.push(DeclareStructNode {
+                    indent: Indent::none(),
+                    identifier: self.string_table.get(node.identifier.0).to_string(),
+                });
+
+
+                let mut fields = Vec::new();
+                for prop in &node.properties {
+                    fields.push(DefineStructFieldNode{
+                        indent: Indent::none(),
+                        identifier: self.string_table.get(prop.identifier.0).to_string(),
+                        ty: "double".to_string(),
+                    })
+                }
+
+                self.struct_definitions.push(DefineStructNode {
+                    indent: Indent::none(),
+                    identifier: self.string_table.get(node.identifier.0).to_string(),
+                    fields: fields.into_boxed_slice(),
+                })
+            }
             Node::InstantiateType(_) => unimplemented!(),
             Node::DefineType(_) => unimplemented!(),
             Node::InterpolateString(_) => unimplemented!()
@@ -259,7 +284,7 @@ impl Generator {
                     statements,
                 });
                 Ok(vec![])
-            },
+            }
             Node::DeclareExternalFunction(_) => unimplemented!(),
             Node::DeclarePackage(_) => unimplemented!(),
             Node::DeclareType(_) => unimplemented!(),
