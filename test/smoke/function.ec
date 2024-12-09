@@ -12,7 +12,7 @@ function early_exit() -> Number {
     return 8
 }
 
-std::io::println(early_exit())
+std::io::println('${early_exit()}')
 
 function nested() -> Number {
     function inner() -> Number {
@@ -22,7 +22,7 @@ function nested() -> Number {
     return inner() + inner () + inner()
 }
 
-std::io::println(nested())
+std::io::println('${nested()}')
 
 // out:true
 // out:2

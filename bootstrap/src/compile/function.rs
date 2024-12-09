@@ -5,9 +5,12 @@ use crate::{ir, parse};
 use crate::ir::{BlockNode, DeclareFunctionNode, FunctionArgumentNode, Identifier, Node, ReturnFromFunctionNode};
 use crate::ir::Node::ReturnFromFunction;
 use crate::compile::Compiler;
-use crate::r#type::DefaultTypeIds;
+use crate::parse::{TypeFundamentalNode, TypeNode};
+use crate::parse::LiteralNode::Boolean;
+use crate::r#type::{BaseType, DefaultTypeIds};
 
 impl<'a> Compiler<'a> {
+
     pub(crate) fn compile_declare_function(&mut self, node: &parse::FunctionDeclarationNode) -> crate::compile::Result<ir::Node> {
         let mut arguments = Vec::with_capacity(node.arguments.len());
         for arg in &node.arguments {
@@ -19,10 +22,26 @@ impl<'a> Compiler<'a> {
             body.push(self.compile_node(node)?)
         }
 
+        let return_type = if let Some(ty) = &node.return_type{
+            match ty.deref(){
+                TypeNode::Fundamental(inner) => {
+                    match inner {
+                        TypeFundamentalNode::Boolean(_) => self.ctx.type_table.get_base_type_id(&BaseType::Boolean),
+                        TypeFundamentalNode::Number(_) => self.ctx.type_table.get_base_type_id(&BaseType::Number),
+                        TypeFundamentalNode::String(_) => self.ctx.type_table.get_base_type_id(&BaseType::String)
+                    }
+                }
+                TypeNode::Function(_) => DefaultTypeIds::never(),
+                TypeNode::Custom(_) => DefaultTypeIds::never(),
+            }
+        }else{
+            DefaultTypeIds::never()
+        };
+
         Ok(ir::Node::DeclareFunction(DeclareFunctionNode {
             identifier: Identifier::from(&node.identifier),
             arguments,
-            return_type: DefaultTypeIds::never(),
+            return_type,
             body: Rc::new(BlockNode { body, return_type: DefaultTypeIds::never() }),
         }))
     }

@@ -6,6 +6,7 @@ use crate::ir::Identifier;
 pub(crate) struct Scope {
     pub variables: Vec<HashMap<Identifier, Variable>>,
     pub next_arguments: Vec<Argument>,
+    pub next_temps: Vec<Temp>,
 }
 
 #[derive(Clone, Debug)]
@@ -31,11 +32,23 @@ impl Argument {
     }
 }
 
+#[derive(Clone, Debug)]
+pub struct Temp {
+    pub id: u64,
+}
+
+impl Temp {
+    pub fn to_string(&self) -> String {
+        format!("temp_{}", self.id)
+    }
+}
+
 impl Scope {
     pub(crate) fn new() -> Self {
         let mut result = Self {
             variables: vec![],
             next_arguments: vec![],
+            next_temps: vec![],
         };
         result.enter();
         result
@@ -43,12 +56,14 @@ impl Scope {
 
     pub(crate) fn enter(&mut self) {
         self.variables.push(HashMap::new());
-        self.next_arguments.push(Argument { id: 1 })
+        self.next_arguments.push(Argument { id: 1 });
+        self.next_temps.push(Temp { id: 1 });
     }
 
     pub(crate) fn leave(&mut self) {
         self.variables.pop().unwrap();
         self.next_arguments.pop().unwrap();
+        self.next_temps.pop().unwrap();
     }
 
     pub(crate) fn get_variable(&self, identifier: &Identifier) -> Option<&Variable> {
@@ -79,6 +94,15 @@ impl Scope {
         let result = next_arg.clone();
 
         next_arg.id += 1;
+
+        result
+    }
+
+    pub(crate) fn push_temp(&mut self) -> Temp {
+        let next_temp = self.next_temps.last_mut().unwrap();
+        let result = next_temp.clone();
+
+        next_temp.id += 1;
 
         result
     }

@@ -5,7 +5,7 @@ impl Emitter {
     pub(crate) fn emit_infix(&mut self, expression: &InfixExpression) {
         self.emit_expression(&expression.left);
         match expression.operator {
-            InfixOperator::Add => unimplemented!(),
+            InfixOperator::Add => self.emit_token("+"),
             InfixOperator::Subtract => unimplemented!(),
             InfixOperator::Multiply => unimplemented!(),
             InfixOperator::Divide => unimplemented!(),
