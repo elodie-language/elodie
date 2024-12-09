@@ -6,6 +6,8 @@ mod function;
 mod statement;
 mod literal;
 mod variable;
+mod control;
+mod infix;
 
 pub enum Error {}
 
@@ -42,7 +44,7 @@ impl Emitter {
     pub(crate) fn emit_expression(&mut self, expression: &c::Expression) {
         match expression {
             Expression::Literal(expression) => self.emit_literal(expression),
-            Expression::Binary(_) => unimplemented!(),
+            Expression::Infix(expression) => self.emit_infix(expression),
             Expression::Variable(expression) => self.emit_variable(expression),
         }
     }

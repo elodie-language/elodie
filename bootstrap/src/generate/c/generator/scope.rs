@@ -48,6 +48,7 @@ impl Scope {
 
     pub(crate) fn leave(&mut self) {
         self.variables.pop().unwrap();
+        self.next_arguments.pop().unwrap();
     }
 
     pub(crate) fn get_variable(&self, identifier: &Identifier) -> Option<&Variable> {

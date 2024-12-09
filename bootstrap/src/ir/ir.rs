@@ -91,7 +91,7 @@ pub struct ExportPackageNode {
 pub struct IfNode {
     pub condition: Box<Node>,
     pub then: BlockNode,
-    pub otherwise: BlockNode,
+    pub otherwise: Option<BlockNode>,
     pub return_type: TypeId,
 }
 

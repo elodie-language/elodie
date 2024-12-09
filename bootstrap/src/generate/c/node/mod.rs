@@ -1,3 +1,4 @@
+pub use control::*;
 pub use directive::*;
 pub use function::*;
 pub use literal::*;
@@ -26,7 +27,7 @@ pub enum Node {
 
 #[derive(Debug)]
 pub enum Expression {
-    Binary(BinaryExpression),
+    Infix(InfixExpression),
     Literal(LiteralExpression),
     Variable(VariableExpression),
 }
@@ -38,7 +39,7 @@ pub enum Statement {
     CallFunction(CallFunctionStatement),
     DeclareArray(DeclareArrayStatement),
     DeclareVariable(DeclareVariableStatement),
-    Expression(Expression),
+    If(IfStatement),
     ReturnFromFunction(ReturnFromFunctionStatement),
 }
 

@@ -11,12 +11,14 @@ impl Generator {
 
         let mut result = vec![];
 
-        let arguments = self.generate_call_arguments(&node.arguments)?.into_boxed_slice();
+        let (statements, arguments) = self.generate_call_arguments(&node.arguments)?;
+        result.extend(statements);
+
         result.push(
             CallFunction(CallFunctionStatement {
                 indent: Indent::none(),
                 identifier: function,
-                arguments,
+                arguments: arguments.into(),
                 result: None,
             })
         );
@@ -31,14 +33,31 @@ impl Generator {
         let io = self.string_table.get(node.package.segments[1]).to_string();
         let function = self.string_table.get(node.function.0).to_string();
 
+        let (statements, arguments) = self.generate_call_arguments(&node.arguments)?;
+        result.extend(statements);
+
+        result.push(
+            CallFunction(CallFunctionStatement {
+                indent: Indent::none(),
+                identifier: format!("{std}_{io}_{function}"),
+                arguments: arguments.into(),
+                result: None,
+            })
+        );
+
+        return Ok(result);
+    }
+
+    fn generate_call_arguments(&mut self, args: &[Node]) -> c::generator::Result<(Vec<Statement>, Vec<Expression>)> {
+        let mut statements = vec![];
         let mut arguments = vec![];
 
-        for arg in &node.arguments {
+        for arg in args {
             let arg_identifier = self.scope.push_argument();
 
             if let Node::LoadValue(LoadValueNode { identifier, ty }) = arg {
                 if self.type_table.is_string(ty) {
-                    result.push(Statement::DeclareVariable(DeclareVariableStatement {
+                    statements.push(Statement::DeclareVariable(DeclareVariableStatement {
                         indent: Indent::none(),
                         identifier: arg_identifier.to_string(),
                         r#type: "const char *".to_string(),
@@ -51,7 +70,7 @@ impl Generator {
             }
 
             if let Node::Literal(LiteralNode::String(str)) = arg {
-                result.push(Statement::DeclareVariable(DeclareVariableStatement {
+                statements.push(Statement::DeclareVariable(DeclareVariableStatement {
                     indent: Indent::none(),
                     identifier: arg_identifier.to_string(),
                     r#type: "const char *".to_string(),
@@ -67,16 +86,16 @@ impl Generator {
             // to_string + concatenation
             if let Node::InterpolateString(InterpolateStringNode { nodes }) = arg {
                 for node in nodes {
-                    if let Node::LoadValue(LoadValueNode { identifier, ty }) = node {
+                    if let Node::LoadValue(LoadValueNode { identifier, ty }) = &node {
                         if self.type_table.is_number(ty) {
-                            result.push(Statement::DeclareArray(DeclareArrayStatement {
+                            statements.push(Statement::DeclareArray(DeclareArrayStatement {
                                 indent: Indent::none(),
                                 identifier: arg_identifier.to_string(),
                                 r#type: "char".to_string(),
                                 size: 20,
                             }));
 
-                            result.push(Statement::CallFunction(
+                            statements.push(Statement::CallFunction(
                                 CallFunctionStatement {
                                     indent: Indent::none(),
                                     identifier: format!("snprintf"),
@@ -106,7 +125,7 @@ impl Generator {
                         }
 
                         if self.type_table.is_boolean(ty) {
-                            result.push(Statement::CallFunction(
+                            statements.push(Statement::CallFunction(
                                 CallFunctionStatement {
                                     indent: Indent::none(),
                                     identifier: "core_bool_to_string".to_string(),
@@ -131,28 +150,6 @@ impl Generator {
             }
         }
 
-
-        // let arguments = self.generate_call_arguments(&node.arguments)?.into_boxed_slice();
-
-        result.push(
-            CallFunction(CallFunctionStatement {
-                indent: Indent::none(),
-                identifier: format!("{std}_{io}_{function}"),
-                arguments: arguments.into(),
-                result: None,
-            })
-        );
-
-        return Ok(result);
-
-        unimplemented!()
-    }
-
-    fn generate_call_arguments(&mut self, nodes: &[Node]) -> c::generator::Result<Vec<Expression>> {
-        let mut result = vec![];
-        for node in nodes {
-            result.push(self.generate_expression(node)?)
-        }
-        Ok(result)
+        Ok((statements, arguments))
     }
 }

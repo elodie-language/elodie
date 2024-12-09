@@ -14,10 +14,14 @@ impl<'a> Runner<'a> {
                     self.scope.leave();
                     Ok(result)
                 } else {
-                    self.scope.enter();
-                    let result = self.run_block(&node.otherwise)?;
-                    self.scope.leave();
-                    Ok(result)
+                    if let Some(otherwise) = &node.otherwise {
+                        self.scope.enter();
+                        let result = self.run_block(otherwise)?;
+                        self.scope.leave();
+                        Ok(result)
+                    } else {
+                        Ok(Value::Unit)
+                    }
                 }
             }
             v => unimplemented!("{v:?}")

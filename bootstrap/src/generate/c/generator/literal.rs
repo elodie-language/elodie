@@ -1,7 +1,5 @@
+use crate::generate::c::{Indent, LiteralBooleanExpression, LiteralDoubleExpression, LiteralExpression, LiteralStringExpression};
 use crate::generate::c::generator::Generator;
-use crate::generate::c::{
-    Indent, LiteralDoubleExpression, LiteralExpression, LiteralStringExpression,
-};
 use crate::ir;
 use crate::ir::LiteralNode;
 
@@ -11,7 +9,10 @@ impl Generator {
         node: &ir::LiteralNode,
     ) -> crate::generate::c::generator::Result<LiteralExpression> {
         Ok(match node {
-            LiteralNode::Bool(_) => unimplemented!(),
+            LiteralNode::Bool(b) => LiteralExpression::Bool(LiteralBooleanExpression {
+                indent: Indent::none(),
+                value: b.value,
+            }),
             LiteralNode::Number(n) => LiteralExpression::Double(LiteralDoubleExpression {
                 indent: Indent::none(),
                 value: self.string_table.get(n.value).parse().unwrap(),

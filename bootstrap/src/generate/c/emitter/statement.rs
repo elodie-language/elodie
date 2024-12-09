@@ -9,11 +9,8 @@ impl Emitter {
             Statement::CallFunction(statement) => self.emit_call_function(statement),
             Statement::DeclareArray(statement) => self.emit_declare_array(statement),
             Statement::DeclareVariable(statement) => self.emit_declare_variable(statement),
-            Statement::Expression(expression) => {
-                self.emit_expression(expression);
-                self.emit_line(";");
-            }
-            Statement::ReturnFromFunction(statement) => self.emit_return_from_function(statement)
+            Statement::If(statement) => self.emit_if(statement),
+            Statement::ReturnFromFunction(statement) => self.emit_return_from_function(statement),
         }
     }
 

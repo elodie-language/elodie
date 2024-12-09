@@ -1,24 +1,22 @@
 use crate::generate::c::Expression;
 
 #[derive(Debug)]
-pub enum BinaryOperator {
+pub enum InfixOperator {
     Add,       // +
     Subtract,  // -
     Multiply,  // *
     Divide,    // /
     Modulo,    // %
-    Equals,    // ==
-    NotEquals, // !=
+    Equal,    // ==
+    NotEqual, // !=
     LessThan,  // <
     GreaterThan, // >
-    And,       // &&
-    Or,        // ||
     Assign,    // =
 }
 
 #[derive(Debug)]
-pub struct BinaryExpression {
+pub struct InfixExpression {
     pub left: Box<Expression>,
-    pub operator: BinaryOperator,
+    pub operator: InfixOperator,
     pub right: Box<Expression>,
 }

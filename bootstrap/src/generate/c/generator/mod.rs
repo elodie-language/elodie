@@ -1,8 +1,9 @@
 use std::ops::Deref;
+use std::vec;
 
 use crate::common::StringTable;
 use crate::generate::c;
-use crate::generate::c::{BlockStatement, DefineFunctionNode, IncludeLocalDirectiveNode, IncludeSystemDirectiveNode, Indent};
+use crate::generate::c::{BlockStatement, DefineFunctionNode, Expression, IncludeLocalDirectiveNode, IncludeSystemDirectiveNode, Indent, Statement};
 use crate::generate::c::DirectiveNode::{IncludeLocalDirective, IncludeSystemDirective};
 use crate::generate::c::generator::scope::Scope;
 use crate::generate::c::Node::{DefineFunction, Directive};
@@ -14,6 +15,9 @@ mod literal;
 mod call;
 mod variable;
 mod scope;
+mod block;
+mod control;
+mod infix;
 
 pub enum Error {}
 
@@ -218,7 +222,7 @@ impl Generator {
 
     pub(crate) fn generate_statements(&mut self, node: &Node) -> Result<Vec<c::Statement>> {
         match node {
-            Node::Block(_) => unimplemented!(),
+            Node::Block(node) => Ok(vec![Statement::Block(self.generate_block(node)?)]),
             Node::BreakLoop(_) => unimplemented!(),
             Node::Calculate(_) => unimplemented!(),
             Node::CallFunctionOfObject(_) => unimplemented!(),
@@ -229,7 +233,7 @@ impl Generator {
             Node::ReturnFromFunction(_) => unimplemented!(),
             Node::ContinueLoop(_) => unimplemented!(),
             Node::Compare(_) => unimplemented!(),
-            Node::If(_) => unimplemented!(),
+            Node::If(node) => self.generate_if(node),
             Node::LoadValue(_) => unimplemented!(),
             Node::LoadValueFromObject(_) => unimplemented!(),
             Node::LoadValueFromSelf(_) => unimplemented!(),
@@ -247,10 +251,14 @@ impl Generator {
         }
     }
 
-    pub(crate) fn generate_expression(&mut self, node: &Node) -> Result<c::Expression> {
+    pub(crate) fn generate_expression(&mut self, node: &Node) -> Result<(Vec<c::Statement>, c::Expression)> {
         match node {
-            Node::Literal(node) => Ok(c::Expression::Literal(self.generate_literal(node)?)),
-            Node::LoadValue(node) => self.generate_load_value(node),
+            Node::Literal(node) => Ok((vec![], c::Expression::Literal(self.generate_literal(node)?))),
+            Node::LoadValue(node) => Ok((vec![], self.generate_load_value(node)?)),
+            Node::Compare(node) => {
+                let (statements, expression) = self.generate_compare(node)?;
+                Ok((statements, Expression::Infix(expression)))
+            }
             _ => unimplemented!("{:#?}", node)
         }
     }
