@@ -81,7 +81,7 @@ impl Generator {
                 Statement::DeclareVariable(DeclareVariableStatement {
                     indent: Indent::none(),
                     identifier: variable.to_string(&self.string_table),
-                    r#type: "struct Point".to_string(),
+                    r#type: format!("struct {}", self.string_table.get(instantiate.type_name.0)),
                     expression: c::Expression::StructInitialisation(
                         InitialiseStructExpression {
                             fields: fields.into_boxed_slice()

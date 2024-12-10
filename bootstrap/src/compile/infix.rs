@@ -30,6 +30,7 @@ impl<'a> Compiler<'a> {
 
             let arguments = self.compile_arguments(right.as_tuple())?;
 
+            // FIXME add type information
             return Ok(ir::Node::CallFunctionOfObject(CallFunctionOfObjectNode {
                 object: ir::Identifier::from(object),
                 function: ir::Identifier::from(property),
@@ -183,7 +184,7 @@ impl<'a> Compiler<'a> {
         let mut arguments = self.compile_named_arguments(arguments_node)?;
 
         return Ok(ir::Node::InstantiateType(InstantiateTypeNode {
-            type_id: TypeId(23),
+            type_id: DefaultTypeIds::never(),
             type_name: Identifier(type_node.token.value()),
             arguments,
         }));

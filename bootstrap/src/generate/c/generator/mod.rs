@@ -140,7 +140,22 @@ impl Generator {
             }
             Node::BreakLoop(_) => unimplemented!(),
             Node::Calculate(_) => unimplemented!(),
-            Node::CallFunctionOfObject(_) => unimplemented!(),
+            Node::CallFunctionOfObject(node) => {
+                // FIXME use object tid to resolve type name
+
+                self.main_statements.push(Statement::CallFunction(CallFunctionStatement {
+                    indent: Indent::none(),
+                    identifier: format!("{}_{}", "person", self.string_table.get(node.function.0)),
+                    arguments: Box::new([
+                        Expression::Variable(VariableExpression {
+                            indent: Indent::none(),
+                            identifier: format!("&{}", self.scope.get_variable(&node.object).unwrap().to_string(&self.string_table)),
+                        })
+                    ]),
+                    result: None,
+                }))
+
+            }
             Node::CallFunctionOfPackage(node) => {
                 let statements = self.generate_call_function_of_package(node)?;
                 self.main_statements.extend(statements);
@@ -232,12 +247,12 @@ impl Generator {
                 for function in functions {
                     self.function_declarations.push(DeclareFunctionNode {
                         indent: Indent::none(),
-                        identifier: "person_say_name".to_string(),
+                        identifier: format!("{}_{}", self.string_table.get(identifier.0).to_lowercase(), self.string_table.get(function.identifier.0) ),
                         arguments: Box::new([
                             DeclareFunctionArgumentNode {
                                 indent: Indent::none(),
                                 identifier: "self".to_string(),
-                                ty: "struct Person *".to_string(),
+                                ty: format!("struct {} *", self.string_table.get(identifier.0)),
                             }
                         ]),
                         ty: "void".to_string(),
@@ -252,7 +267,7 @@ impl Generator {
                             DefineFunctionArgumentNode {
                                 indent: Indent::none(),
                                 identifier: "self".to_string(),
-                                ty: "struct Person *".to_string(),
+                                ty: format!("struct {} *", self.string_table.get(identifier.0)),
                             }
                         ]),
                         ty: "void".to_string(),

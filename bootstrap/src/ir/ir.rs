@@ -58,7 +58,9 @@ pub struct ContinueLoopNode {}
 #[derive(Debug)]
 pub struct CallFunctionOfObjectNode {
     pub object: Identifier,
+    // FIXME object_tid : TypeId
     pub function: Identifier,
+    // FIXME function_tid: TypeId
     pub arguments: Vec<Node>,
 }
 
