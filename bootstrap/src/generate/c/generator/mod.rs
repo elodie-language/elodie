@@ -3,12 +3,12 @@ use std::vec;
 
 use crate::common::StringTable;
 use crate::generate::c;
-use crate::generate::c::{BlockStatement, CallFunctionStatement, CallFunctionStatementResult, DeclareFunctionNode, DeclareStructNode, DefineFunctionNode, DefineStructFieldNode, DefineStructNode, DirectiveNode, Expression, IncludeLocalDirectiveNode, IncludeSystemDirectiveNode, Indent, ReturnFromFunctionStatement, Statement, VariableExpression};
+use crate::generate::c::{BlockStatement, CallFunctionStatement, CallFunctionStatementResult, DeclareFunctionArgumentNode, DeclareFunctionNode, DeclareStructNode, DefineFunctionArgumentNode, DefineFunctionNode, DefineStructFieldNode, DefineStructNode, DirectiveNode, Expression, IncludeLocalDirectiveNode, IncludeSystemDirectiveNode, Indent, ReturnFromFunctionStatement, Statement, VariableExpression};
 use crate::generate::c::DirectiveNode::{IncludeLocalDirective, IncludeSystemDirective};
 use crate::generate::c::generator::scope::Scope;
 use crate::generate::c::Node::DefineFunction;
 use crate::ir;
-use crate::ir::Node;
+use crate::ir::{DefineTypeNode, Node};
 use crate::r#type::TypeTable;
 
 mod literal;
@@ -18,6 +18,7 @@ mod scope;
 mod block;
 mod control;
 mod infix;
+mod string;
 
 pub enum Error {}
 
@@ -203,10 +204,20 @@ impl Generator {
 
                 let mut fields = Vec::new();
                 for prop in &node.properties {
-                    fields.push(DefineStructFieldNode{
+                    let ty = if self.type_table.is_number(&prop.r#type) {
+                        "double".to_string()
+                    } else if self.type_table.is_boolean(&prop.r#type) {
+                        "_Bool".to_string()
+                    } else if self.type_table.is_string(&prop.r#type) {
+                        "const char *".to_string()
+                    } else {
+                        panic!()
+                    };
+
+                    fields.push(DefineStructFieldNode {
                         indent: Indent::none(),
                         identifier: self.string_table.get(prop.identifier.0).to_string(),
-                        ty: "double".to_string(),
+                        ty,
                     })
                 }
 
@@ -217,7 +228,38 @@ impl Generator {
                 })
             }
             Node::InstantiateType(_) => unimplemented!(),
-            Node::DefineType(_) => unimplemented!(),
+            Node::DefineType(DefineTypeNode { identifier, modifiers, functions }) => {
+                for function in functions {
+                    self.function_declarations.push(DeclareFunctionNode {
+                        indent: Indent::none(),
+                        identifier: "person_say_name".to_string(),
+                        arguments: Box::new([
+                            DeclareFunctionArgumentNode {
+                                indent: Indent::none(),
+                                identifier: "self".to_string(),
+                                ty: "struct Person *".to_string(),
+                            }
+                        ]),
+                        ty: "void".to_string(),
+                    });
+
+                    let statements = self.generate_block(function.body.as_ref())?;
+
+                    self.function_definitions.push(DefineFunctionNode {
+                        indent: Indent::none(),
+                        identifier: "person_say_name".to_string(),
+                        arguments: Box::new([
+                            DefineFunctionArgumentNode {
+                                indent: Indent::none(),
+                                identifier: "self".to_string(),
+                                ty: "struct Person *".to_string(),
+                            }
+                        ]),
+                        ty: "void".to_string(),
+                        statements,
+                    })
+                }
+            }
             Node::InterpolateString(_) => unimplemented!()
         };
         Ok(())
@@ -298,6 +340,7 @@ impl Generator {
         match node {
             Node::Literal(node) => Ok((vec![], c::Expression::Literal(self.generate_literal(node)?))),
             Node::LoadValue(node) => Ok((vec![], self.generate_load_value(node)?)),
+            Node::LoadValueFromSelf(node) => Ok((vec![], self.generate_load_self_value(node)?)),
             Node::Compare(node) => {
                 let (statements, expression) = self.generate_compare(node)?;
                 Ok((statements, Expression::Infix(expression)))

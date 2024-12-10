@@ -3,7 +3,7 @@ use std::ops::Deref;
 use crate::generate::c;
 use crate::generate::c::{DeclareVariableStatement, Indent, InitialiseStructExpression, InitialiseStructField, LiteralDoubleExpression, Statement, VariableExpression};
 use crate::generate::c::generator::Generator;
-use crate::ir::{DeclareVariableNode, LiteralNode, LoadValueNode, Node};
+use crate::ir::{DeclareVariableNode, LiteralNode, LoadValueFromSelfNode, LoadValueNode, Node};
 use crate::ir::Node::Literal;
 
 impl Generator {
@@ -98,5 +98,9 @@ impl Generator {
 
     pub(crate) fn generate_load_value(&mut self, node: &LoadValueNode) -> c::generator::Result<c::Expression> {
         Ok(c::Expression::Variable(VariableExpression { indent: Indent::none(), identifier: self.scope.get_variable(&node.identifier).unwrap().to_string(&self.string_table) }))
+    }
+
+    pub(crate) fn generate_load_self_value(&mut self, node: &LoadValueFromSelfNode) -> c::generator::Result<c::Expression> {
+        Ok(c::Expression::Variable(VariableExpression { indent: Indent::none(), identifier: format!("self.{}", self.string_table.get(node.property.0) ) }))
     }
 }

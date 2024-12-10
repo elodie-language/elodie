@@ -3,7 +3,8 @@ use crate::common::Context;
 use crate::compile::scope::Scope;
 use crate::ir::SourceFile;
 use crate::lex::lex;
-use crate::parse::{parse, RootNode};
+use crate::parse::{parse, RootNode, TypeFundamentalNode, TypeNode};
+use crate::r#type::{BaseType, TypeId};
 
 mod r#let;
 mod validate;
@@ -110,6 +111,21 @@ impl<'a> Compiler<'a> {
             parse::Node::Return(return_node) => Ok(self.compile_function_return(return_node)?),
             parse::Node::TypeDeclaration(node) => Ok(self.compile_declare_type(node)?),
             _ => unimplemented!("{:?}", node)
+        }
+    }
+
+    // FIXME temp hack until type node uses type ids from type table
+    pub(crate) fn get_type_id(&mut self, type_node: &TypeNode) -> TypeId{
+        match type_node {
+            TypeNode::Fundamental(n) => {
+                match n {
+                    TypeFundamentalNode::Boolean(_) => self.ctx.type_table.get_base_type_id(&BaseType::Boolean),
+                    TypeFundamentalNode::Number(_) => self.ctx.type_table.get_base_type_id(&BaseType::Number),
+                    TypeFundamentalNode::String(_) => self.ctx.type_table.get_base_type_id(&BaseType::String)
+                }
+            }
+            TypeNode::Function(_) => unimplemented!(),
+            TypeNode::Custom(_) => unimplemented!()
         }
     }
 }

@@ -285,6 +285,7 @@ pub struct SourceLocalFileNode {
     pub path: String,
 }
 
+// FIXME compiler should give a hint whether the interpolated string will be used locally only and whether it is small enough to be allocated on the stack only
 #[derive(Debug)]
 pub struct InterpolateStringNode {
     pub nodes: Vec<Node>,

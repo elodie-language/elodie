@@ -15,11 +15,11 @@ impl<'a> Compiler<'a> {
             let parse::Node::Infix(InfixNode { left, right, operator }) = node else { panic!() };
             assert!(matches!(operator, InfixOperator::TypeAscription(_)));
             let identifier = left.deref().as_identifier();
-            let r#type = right.deref().as_type();
+            let r#type = self.get_type_id(right.deref().as_type());
             properties.push(
                 DeclarePropertyNode {
                     identifier: Identifier::from(identifier),
-                    r#type: DefaultTypeIds::never(),
+                    r#type,
                 }
             )
         }

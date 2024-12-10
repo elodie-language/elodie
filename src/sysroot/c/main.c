@@ -2,18 +2,19 @@
 #include "core_intrinsics_math.h"
 #include <stdbool.h>
 
-const char *core_boolean_to_string(_Bool value) {
-    if (value == true) {
-        return "true";
-    } else {
-        return "false";
-    }
-}
+struct Person;
+
+struct Person {
+    const char *name;
+};
+
+void person_say_name(struct Person *self);
 
 int main(void) {
-//    double result = core_intrinsics_math_cos_f64(0);
-//    char str[20];
-//    snprintf(str, 20, "%.1f", result);
-    printf("%s", core_boolean_to_string(true));
-    return 0;
+    struct Person p = {.name = "Elodie"};
+    person_say_name(&p);
+}
+
+void person_say_name(struct Person *self) {
+    printf("Hello, %s!", self->name);
 }
