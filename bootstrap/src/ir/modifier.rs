@@ -1,4 +1,4 @@
-use crate::lex::token::Token;
+use crate::frontend::lex::token::Token;
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct Modifiers(pub(crate) Vec<Modifier>);

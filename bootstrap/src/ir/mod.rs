@@ -1,12 +1,13 @@
 pub use ir::*;
 pub use modifier::*;
 
+use crate::backend::run::scope::Scope;
 use crate::common::StringTable;
-use crate::r#type::TypeTable;
-use crate::run::scope::Scope;
+use crate::common::TypeTable;
 
 mod ir;
 mod modifier;
+pub mod compile;
 
 #[derive(Debug)]
 pub struct Context {

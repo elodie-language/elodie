@@ -1,12 +1,12 @@
 pub use package::PackagePath;
-pub use strings::{StringTable, StringTableId};
+pub use r#type::{BaseType, DefaultTypeIds, Property, Type, TypeId, TypeName, TypeTable};
+pub use string::{StringTable, StringTableId};
 pub use util::*;
 
-use crate::r#type::TypeTable;
-
 mod util;
-mod strings;
+mod string;
 mod package;
+mod r#type;
 
 
 pub struct Context {

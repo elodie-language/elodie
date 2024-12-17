@@ -5,24 +5,19 @@ use std::io::Read;
 use std::path::PathBuf;
 use std::process::exit;
 
+use crate::backend::{build, generate};
+use crate::backend::run::{run, run_file};
+use crate::backend::run::scope::Scope;
+use crate::backend::run::type_definitions::TypeDefinitions;
+use crate::backend::test::test_files;
 use crate::common::Context;
-use crate::compile::compile_str;
-use crate::run::{run, run_file};
-use crate::run::scope::Scope;
-use crate::run::type_definitions::TypeDefinitions;
-use crate::test::test_files;
+use crate::ir::compile::compile_str;
 
 mod common;
 mod cli;
 mod ir;
-mod compile;
-mod run;
-mod lex;
-mod parse;
-mod r#type;
-mod test;
-mod generate;
-mod build;
+mod frontend;
+mod backend;
 
 fn main() {
     let args: Vec<String> = env::args().collect();
@@ -60,7 +55,7 @@ fn main() {
                 file: source_file,
                 core_scope: scope,
                 string_table: ctx.string_table,
-                type_table: ctx.type_table
+                type_table: ctx.type_table,
             }).unwrap();
 
         // println!("{}",code);

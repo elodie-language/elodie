@@ -2,9 +2,9 @@ use std::rc::Rc;
 
 use crate::common::{PackagePath, StringTableId};
 use crate::ir::modifier::Modifiers;
-use crate::parse;
-use crate::parse::IdentifierNode;
-use crate::r#type::TypeId;
+use crate::frontend::parse;
+use crate::frontend::parse::IdentifierNode;
+use crate::common::TypeId;
 
 #[derive(Debug)]
 pub struct SourceFile {
