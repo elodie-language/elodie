@@ -1,10 +1,11 @@
 use std::rc::Rc;
+
 use crate::common::StringTableId;
 use crate::frontend::lex::token::{LiteralToken, Token, TokenKind};
 use crate::ir::Modifiers;
 
 #[derive(Debug, PartialEq)]
-pub enum Node {
+pub(crate) enum Node {
     Block(BlockNode),
     Break(BreakNode),
     Call(CallNode),
@@ -31,223 +32,223 @@ pub enum Node {
 }
 
 impl Node {
-    pub fn is_block(&self) -> bool { matches!(self, Node::Block(_)) }
-    pub fn as_block(&self) -> &BlockNode { if let Node::Block(result) = self { result } else { panic!("not block") } }
+    pub(crate) fn is_block(&self) -> bool { matches!(self, Node::Block(_)) }
+    pub(crate) fn as_block(&self) -> &BlockNode { if let Node::Block(result) = self { result } else { panic!("not block") } }
 
-    pub fn is_break(&self) -> bool { matches!(self, Node::Break(_)) }
-    pub fn as_break(&self) -> &BreakNode { if let Node::Break(result) = self { result } else { panic!("not break") } }
+    pub(crate) fn is_break(&self) -> bool { matches!(self, Node::Break(_)) }
+    pub(crate) fn as_break(&self) -> &BreakNode { if let Node::Break(result) = self { result } else { panic!("not break") } }
 
-    pub fn is_call(&self) -> bool { matches!(self, Node::Call(_)) }
-    pub fn as_call(&self) -> &CallNode { if let Node::Call(result) = self { result } else { panic!("not call") } }
+    pub(crate) fn is_call(&self) -> bool { matches!(self, Node::Call(_)) }
+    pub(crate) fn as_call(&self) -> &CallNode { if let Node::Call(result) = self { result } else { panic!("not call") } }
 
-    pub fn is_continue(&self) -> bool { matches!(self, Node::Continue(_)) }
-    pub fn as_continue(&self) -> &ContinueNode { if let Node::Continue(result) = self { result } else { panic!("not continue") } }
+    pub(crate) fn is_continue(&self) -> bool { matches!(self, Node::Continue(_)) }
+    pub(crate) fn as_continue(&self) -> &ContinueNode { if let Node::Continue(result) = self { result } else { panic!("not continue") } }
 
-    pub fn is_define_declaration(&self) -> bool { matches!(self, Node::DefineDeclaration(_)) }
-    pub fn as_define_declaration(&self) -> &DefineDeclarationNode { if let Node::DefineDeclaration(result) = self { result } else { panic!("not define declaration") } }
+    pub(crate) fn is_define_declaration(&self) -> bool { matches!(self, Node::DefineDeclaration(_)) }
+    pub(crate) fn as_define_declaration(&self) -> &DefineDeclarationNode { if let Node::DefineDeclaration(result) = self { result } else { panic!("not define declaration") } }
 
-    pub fn is_from(&self) -> bool { matches!(self, Node::From(_)) }
-    pub fn as_from(&self) -> &FromNode { if let Node::From(result) = self { result } else { panic!("not from") } }
+    pub(crate) fn is_from(&self) -> bool { matches!(self, Node::From(_)) }
+    pub(crate) fn as_from(&self) -> &FromNode { if let Node::From(result) = self { result } else { panic!("not from") } }
 
-    pub fn is_external_function_declaration(&self) -> bool { matches!(self, Node::ExternalFunctionDeclaration(_)) }
-    pub fn as_external_function_declaration(&self) -> &ExternalFunctionDeclarationNode {
+    pub(crate) fn is_external_function_declaration(&self) -> bool { matches!(self, Node::ExternalFunctionDeclaration(_)) }
+    pub(crate) fn as_external_function_declaration(&self) -> &ExternalFunctionDeclarationNode {
         if let Node::ExternalFunctionDeclaration(result) = self { result } else { panic!("not external function declaration") }
     }
 
-    pub fn is_function_declaration(&self) -> bool { matches!(self, Node::FunctionDeclaration(_)) }
-    pub fn as_function_declaration(&self) -> &FunctionDeclarationNode {
+    pub(crate) fn is_function_declaration(&self) -> bool { matches!(self, Node::FunctionDeclaration(_)) }
+    pub(crate) fn as_function_declaration(&self) -> &FunctionDeclarationNode {
         if let Node::FunctionDeclaration(result) = self { result } else { panic!("not function declaration") }
     }
 
-    pub fn is_identifier(&self) -> bool { matches!(self, Node::Identifier(_)) }
-    pub fn as_identifier(&self) -> &IdentifierNode {
+    pub(crate) fn is_identifier(&self) -> bool { matches!(self, Node::Identifier(_)) }
+    pub(crate) fn as_identifier(&self) -> &IdentifierNode {
         if let Node::Identifier(result) = self { result } else { panic!("not identifier") }
     }
 
-    pub fn is_if(&self) -> bool { matches!(self, Node::If(_)) }
-    pub fn as_if(&self) -> &IfNode {
+    pub(crate) fn is_if(&self) -> bool { matches!(self, Node::If(_)) }
+    pub(crate) fn as_if(&self) -> &IfNode {
         if let Node::If(result) = self { result } else { panic!("not if") }
     }
 
-    pub fn is_infix(&self) -> bool { matches!(self, Node::Infix(_)) }
-    pub fn as_infix(&self) -> &InfixNode {
+    pub(crate) fn is_infix(&self) -> bool { matches!(self, Node::Infix(_)) }
+    pub(crate) fn as_infix(&self) -> &InfixNode {
         if let Node::Infix(result) = self { result } else { panic!("not infix") }
     }
 
-    pub fn is_declare_variable(&self) -> bool { matches!(self, Node::VariableDeclaration(_)) }
-    pub fn as_declare_variable(&self) -> &VariableDeclarationNode {
+    pub(crate) fn is_declare_variable(&self) -> bool { matches!(self, Node::VariableDeclaration(_)) }
+    pub(crate) fn as_declare_variable(&self) -> &VariableDeclarationNode {
         if let Node::VariableDeclaration(result) = self { result } else { panic!("not let") }
     }
 
-    pub fn is_literal(&self) -> bool { matches!(self, Node::Literal(_)) }
-    pub fn as_literal(&self) -> &LiteralNode {
+    pub(crate) fn is_literal(&self) -> bool { matches!(self, Node::Literal(_)) }
+    pub(crate) fn as_literal(&self) -> &LiteralNode {
         if let Node::Literal(result) = self { result } else { panic!("not literal") }
     }
 
-    pub fn is_loop(&self) -> bool { matches!(self, Node::Loop(_)) }
-    pub fn as_loop(&self) -> &LoopNode {
+    pub(crate) fn is_loop(&self) -> bool { matches!(self, Node::Loop(_)) }
+    pub(crate) fn as_loop(&self) -> &LoopNode {
         if let Node::Loop(result) = self { result } else { panic!("not loop") }
     }
 
-    pub fn is_package_declaration(&self) -> bool { matches!(self, Node::PackageDeclaration(_)) }
-    pub fn as_package_declaration(&self) -> &PackageDeclarationNode {
+    pub(crate) fn is_package_declaration(&self) -> bool { matches!(self, Node::PackageDeclaration(_)) }
+    pub(crate) fn as_package_declaration(&self) -> &PackageDeclarationNode {
         if let Node::PackageDeclaration(result) = self { result } else { panic!("not package declaration") }
     }
 
-    pub fn is_prefix(&self) -> bool { matches!(self, Node::Prefix(_)) }
-    pub fn as_prefix(&self) -> &PrefixNode {
+    pub(crate) fn is_prefix(&self) -> bool { matches!(self, Node::Prefix(_)) }
+    pub(crate) fn as_prefix(&self) -> &PrefixNode {
         if let Node::Prefix(result) = self { result } else { panic!("not prefix") }
     }
 
-    pub fn is_return(&self) -> bool { matches!(self, Node::Return(_)) }
-    pub fn as_return(&self) -> &ReturnNode {
+    pub(crate) fn is_return(&self) -> bool { matches!(self, Node::Return(_)) }
+    pub(crate) fn as_return(&self) -> &ReturnNode {
         if let Node::Return(result) = self { result } else { panic!("not return") }
     }
 
-    pub fn is_itself(&self) -> bool { matches!(self, Node::Itself(_)) }
-    pub fn as_itself(&self) -> &ItselfNode {
+    pub(crate) fn is_itself(&self) -> bool { matches!(self, Node::Itself(_)) }
+    pub(crate) fn as_itself(&self) -> &ItselfNode {
         if let Node::Itself(result) = self { result } else { panic!("not itself") }
     }
 
-    pub fn is_tuple(&self) -> bool { matches!(self, Node::Tuple(_)) }
-    pub fn as_tuple(&self) -> &TupleNode {
+    pub(crate) fn is_tuple(&self) -> bool { matches!(self, Node::Tuple(_)) }
+    pub(crate) fn as_tuple(&self) -> &TupleNode {
         if let Node::Tuple(result) = self { result } else { panic!("not tuple") }
     }
 
-    pub fn is_type(&self) -> bool { matches!(self, Node::Type(_)) }
-    pub fn as_type(&self) -> &TypeNode {
+    pub(crate) fn is_type(&self) -> bool { matches!(self, Node::Type(_)) }
+    pub(crate) fn as_type(&self) -> &TypeNode {
         if let Node::Type(result) = self { result } else { panic!("not type") }
     }
 
-    pub fn is_type_declaration(&self) -> bool { matches!(self, Node::TypeDeclaration(_)) }
-    pub fn as_type_declaration(&self) -> &TypeDeclarationNode {
+    pub(crate) fn is_type_declaration(&self) -> bool { matches!(self, Node::TypeDeclaration(_)) }
+    pub(crate) fn as_type_declaration(&self) -> &TypeDeclarationNode {
         if let Node::TypeDeclaration(result) = self { result } else { panic!("not type declaration") }
     }
 }
 
 #[derive(Debug, PartialEq)]
-pub struct BlockNode {
-    pub nodes: Vec<Node>,
+pub(crate) struct BlockNode {
+    pub(crate) nodes: Vec<Node>,
 }
 
 #[derive(Debug, PartialEq)]
-pub struct BreakNode {
-    pub token: Token,
-    pub result: Option<Box<Node>>,
+pub(crate) struct BreakNode {
+    pub(crate) token: Token,
+    pub(crate) result: Option<Box<Node>>,
 }
 
 impl BreakNode {
-    pub fn as_result(&self) -> &Node { if let Some(ref node) = self.result { node } else { panic!() } }
+    pub(crate) fn as_result(&self) -> &Node { if let Some(ref node) = self.result { node } else { panic!() } }
 }
 
 
 #[derive(Debug, PartialEq)]
-pub struct CallNode {
-    pub callee: Box<Node>,
-    pub arguments: Vec<CallArgument>,
+pub(crate) struct CallNode {
+    pub(crate) callee: Box<Node>,
+    pub(crate) arguments: Vec<CallArgument>,
 }
 
 #[derive(Debug, PartialEq)]
-pub struct CallArgument {
-    pub identifier: Option<IdentifierNode>,
-    pub node: Box<Node>,
+pub(crate) struct CallArgument {
+    pub(crate) identifier: Option<IdentifierNode>,
+    pub(crate) node: Box<Node>,
 }
 
 #[derive(Debug, PartialEq)]
-pub struct ContinueNode {
-    pub token: Token,
+pub(crate) struct ContinueNode {
+    pub(crate) token: Token,
 }
 
 #[derive(Debug, PartialEq)]
-pub struct ExternalFunctionDeclarationNode {
-    pub token: Token,
-    pub identifier: IdentifierNode,
-    pub arguments: Vec<FunctionDeclarationArgumentNode>,
-    pub return_type: Option<Box<TypeNode>>,
-    pub modifiers: Modifiers,
-}
-
-
-#[derive(Debug, PartialEq)]
-pub struct FromExportNode {
-    pub token: Token,
-    pub from_node: Box<Node>,
-    pub what_node: Box<Node>,
+pub(crate) struct ExternalFunctionDeclarationNode {
+    pub(crate) token: Token,
+    pub(crate) identifier: IdentifierNode,
+    pub(crate) arguments: Vec<FunctionDeclarationArgumentNode>,
+    pub(crate) return_type: Option<Box<TypeNode>>,
+    pub(crate) modifiers: Modifiers,
 }
 
 
 #[derive(Debug, PartialEq)]
-pub enum FromNode {
+pub(crate) struct FromExportNode {
+    pub(crate) token: Token,
+    pub(crate) from_node: Box<Node>,
+    pub(crate) what_node: Box<Node>,
+}
+
+
+#[derive(Debug, PartialEq)]
+pub(crate) enum FromNode {
     Export(FromExportNode)
 }
 
 #[derive(Debug, PartialEq)]
-pub struct FunctionDeclarationNode {
-    pub token: Token,
-    pub identifier: IdentifierNode,
-    pub arguments: Vec<FunctionDeclarationArgumentNode>,
-    pub return_type: Option<Box<TypeNode>>,
-    pub block: BlockNode,
-    pub modifiers: Modifiers,
+pub(crate) struct FunctionDeclarationNode {
+    pub(crate) token: Token,
+    pub(crate) identifier: IdentifierNode,
+    pub(crate) arguments: Vec<FunctionDeclarationArgumentNode>,
+    pub(crate) return_type: Option<Box<TypeNode>>,
+    pub(crate) block: BlockNode,
+    pub(crate) modifiers: Modifiers,
 }
 
 impl FunctionDeclarationNode {
-    pub fn as_return_type(&self) -> &TypeNode { if let Some(ref node) = self.return_type { node } else { panic!() } }
+    pub(crate) fn as_return_type(&self) -> &TypeNode { if let Some(ref node) = self.return_type { node } else { panic!() } }
 }
 
 
 #[derive(Debug, PartialEq)]
-pub struct FunctionDeclarationArgumentNode {
-    pub identifier: IdentifierNode,
-    pub r#type: Option<Box<TypeNode>>,
+pub(crate) struct FunctionDeclarationArgumentNode {
+    pub(crate) identifier: IdentifierNode,
+    pub(crate) r#type: Option<Box<TypeNode>>,
 }
 
 impl FunctionDeclarationArgumentNode {
-    pub fn as_type(&self) -> &TypeNode { if let Some(ref node) = self.r#type { node } else { panic!() } }
+    pub(crate) fn as_type(&self) -> &TypeNode { if let Some(ref node) = self.r#type { node } else { panic!() } }
 }
 
 #[derive(Debug, PartialEq)]
-pub struct IdentifierNode(pub Token);
+pub(crate) struct IdentifierNode(pub(crate) Token);
 
 impl IdentifierNode {
-    pub fn value(&self) -> StringTableId {
+    pub(crate) fn value(&self) -> StringTableId {
         self.0.span.value
     }
 }
 
 #[derive(Debug, PartialEq)]
-pub struct ItselfNode(pub Token);
+pub(crate) struct ItselfNode(pub(crate) Token);
 
 impl ItselfNode {
-    pub fn value(&self) -> StringTableId {
+    pub(crate) fn value(&self) -> StringTableId {
         self.0.span.value
     }
 }
 
 
 #[derive(Debug, PartialEq)]
-pub struct IfNode {
-    pub token: Token,
-    pub condition: Box<Node>,
-    pub then: BlockNode,
-    pub otherwise: Option<ElseNode>,
+pub(crate) struct IfNode {
+    pub(crate) token: Token,
+    pub(crate) condition: Box<Node>,
+    pub(crate) then: BlockNode,
+    pub(crate) otherwise: Option<ElseNode>,
 }
 
 #[derive(Debug, PartialEq)]
-pub struct ElseNode {
-    pub token: Token,
-    pub block: BlockNode,
+pub(crate) struct ElseNode {
+    pub(crate) token: Token,
+    pub(crate) block: BlockNode,
 }
 
 #[derive(Debug, PartialEq)]
-pub struct InfixNode {
-    pub left: Box<Node>,
-    pub operator: InfixOperator,
-    pub right: Box<Node>,
+pub(crate) struct InfixNode {
+    pub(crate) left: Box<Node>,
+    pub(crate) operator: InfixOperator,
+    pub(crate) right: Box<Node>,
 }
 
 #[derive(Debug, PartialEq)]
-pub enum InfixOperator {
+pub(crate) enum InfixOperator {
     Add(Token),
     Arrow(Token),
     AccessPackage(Token),
@@ -269,7 +270,7 @@ pub enum InfixOperator {
 }
 
 impl InfixOperator {
-    pub fn token(&self) -> Token {
+    pub(crate) fn token(&self) -> Token {
         match self {
             InfixOperator::Add(t) => t.clone(),
             InfixOperator::Arrow(t) => t.clone(),
@@ -294,107 +295,107 @@ impl InfixOperator {
 }
 
 #[derive(Debug, PartialEq)]
-pub struct VariableDeclarationNode {
-    pub token: Token,
-    pub identifier: IdentifierNode,
-    pub node: Rc<Node>,
-    pub r#type: Option<TypeNode>,
+pub(crate) struct VariableDeclarationNode {
+    pub(crate) token: Token,
+    pub(crate) identifier: IdentifierNode,
+    pub(crate) node: Rc<Node>,
+    pub(crate) r#type: Option<TypeNode>,
 }
 
 #[derive(Debug, PartialEq)]
-pub enum LiteralNode {
+pub(crate) enum LiteralNode {
     Number(LiteralNumberNode),
     String(LiteralStringNode),
     Boolean(LiteralBooleanNode),
 }
 
 #[derive(Debug, PartialEq)]
-pub struct LiteralNumberNode(pub Token);
+pub(crate) struct LiteralNumberNode(pub(crate) Token);
 
 impl LiteralNumberNode {
-    pub fn value(&self) -> StringTableId {
+    pub(crate) fn value(&self) -> StringTableId {
         self.0.value()
     }
 }
 
 #[derive(Debug, PartialEq)]
-pub struct LiteralStringNode(pub Token);
+pub(crate) struct LiteralStringNode(pub(crate) Token);
 
 impl LiteralStringNode {
-    pub fn value(&self) -> StringTableId {
+    pub(crate) fn value(&self) -> StringTableId {
         self.0.value()
     }
 }
 
 #[derive(Debug, PartialEq)]
-pub struct LiteralBooleanNode(pub Token);
+pub(crate) struct LiteralBooleanNode(pub(crate) Token);
 
 impl LiteralBooleanNode {
-    pub fn value(&self) -> bool {
+    pub(crate) fn value(&self) -> bool {
         self.0.kind == TokenKind::Literal(LiteralToken::True)
     }
 }
 
 #[derive(Debug, PartialEq)]
-pub struct LoopNode {
-    pub token: Token,
-    pub block: BlockNode,
+pub(crate) struct LoopNode {
+    pub(crate) token: Token,
+    pub(crate) block: BlockNode,
 }
 
 #[derive(Debug, PartialEq)]
-pub struct PackageDeclarationNode {
-    pub token: Token,
-    pub identifier: IdentifierNode,
-    pub block: BlockNode,
-    pub modifiers: Modifiers,
+pub(crate) struct PackageDeclarationNode {
+    pub(crate) token: Token,
+    pub(crate) identifier: IdentifierNode,
+    pub(crate) block: BlockNode,
+    pub(crate) modifiers: Modifiers,
 }
 
 
 #[derive(Debug, PartialEq)]
-pub struct DefineDeclarationNode {
-    pub token: Token,
-    pub identifier: IdentifierNode,
-    pub block: BlockNode,
-    pub modifiers: Modifiers,
+pub(crate) struct DefineDeclarationNode {
+    pub(crate) token: Token,
+    pub(crate) identifier: IdentifierNode,
+    pub(crate) block: BlockNode,
+    pub(crate) modifiers: Modifiers,
 }
 
 #[derive(Debug, PartialEq)]
-pub struct PrefixNode {
-    pub operator: PrefixOperator,
-    pub node: Box<Node>,
+pub(crate) struct PrefixNode {
+    pub(crate) operator: PrefixOperator,
+    pub(crate) node: Box<Node>,
 }
 
 #[derive(Debug, PartialEq)]
-pub struct ReturnNode {
-    pub token: Token,
-    pub result: Option<Box<Node>>,
+pub(crate) struct ReturnNode {
+    pub(crate) token: Token,
+    pub(crate) result: Option<Box<Node>>,
 }
 
 impl ReturnNode {
-    pub fn as_result(&self) -> &Node { if let Some(ref node) = self.result { node } else { panic!() } }
+    pub(crate) fn as_result(&self) -> &Node { if let Some(ref node) = self.result { node } else { panic!() } }
 }
 
 #[derive(Debug, PartialEq)]
-pub enum PrefixOperator {
+pub(crate) enum PrefixOperator {
     Plus(Token),
     Negate(Token),
     Not(Token),
 }
 
 #[derive(Debug, PartialEq)]
-pub struct StringInterpolationNode {
-    pub token: Token,
-    pub nodes: Vec<Node>,
+pub(crate) struct StringInterpolationNode {
+    pub(crate) token: Token,
+    pub(crate) nodes: Vec<Node>,
 }
 
 #[derive(Debug, PartialEq)]
-pub struct TupleNode {
-    pub token: Token,
-    pub nodes: Vec<Node>,
+pub(crate) struct TupleNode {
+    pub(crate) token: Token,
+    pub(crate) nodes: Vec<Node>,
 }
 
 #[derive(Debug, PartialEq)]
-pub enum TypeNode {
+pub(crate) enum TypeNode {
     Boolean(Token),
     Custom(CustomTypeNode),
     Number(Token),
@@ -403,31 +404,31 @@ pub enum TypeNode {
 }
 
 #[derive(Debug, PartialEq)]
-pub struct CustomTypeNode {
-    pub token: Token,
+pub(crate) struct CustomTypeNode {
+    pub(crate) token: Token,
 }
 
 #[derive(Debug, PartialEq)]
-pub struct TypeFunctionNode {
-    pub arguments: Vec<TypeFunctionArgumentNode>,
-    pub return_type: Option<Box<TypeNode>>,
+pub(crate) struct TypeFunctionNode {
+    pub(crate) arguments: Vec<TypeFunctionArgumentNode>,
+    pub(crate) return_type: Option<Box<TypeNode>>,
 }
 
 impl TypeFunctionNode {
-    pub fn as_return_type(&self) -> &TypeNode { if let Some(ref node) = self.return_type { node } else { panic!() } }
+    pub(crate) fn as_return_type(&self) -> &TypeNode { if let Some(ref node) = self.return_type { node } else { panic!() } }
 }
 
 #[derive(Debug, PartialEq)]
-pub struct TypeFunctionArgumentNode {
-    pub identifier: Option<IdentifierNode>,
-    pub r#type: Box<TypeNode>,
+pub(crate) struct TypeFunctionArgumentNode {
+    pub(crate) identifier: Option<IdentifierNode>,
+    pub(crate) r#type: Box<TypeNode>,
 }
 
 #[derive(Debug, PartialEq)]
-pub struct TypeDeclarationNode {
-    pub token: Token,
-    pub identifier: IdentifierNode,
-    pub properties: TupleNode,
-    pub modifiers: Modifiers,
+pub(crate) struct TypeDeclarationNode {
+    pub(crate) token: Token,
+    pub(crate) identifier: IdentifierNode,
+    pub(crate) properties: TupleNode,
+    pub(crate) modifiers: Modifiers,
 }
 
