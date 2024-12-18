@@ -10,7 +10,7 @@ impl AsRef<StringTableId> for StringTableId {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct StringTable {
     indexes: HashMap<Rc<str>, StringTableId>,
     values: Vec<Rc<str>>,

@@ -36,9 +36,9 @@ impl DefaultTypeIds {
 
 #[derive(Debug)]
 pub struct TypeTable {
-    pub next_id: usize,
-    pub types: HashMap<TypeId, Type>,
-    pub base_type_ids: HashMap<BaseType, TypeId>,
+    next_id: usize,
+    types: HashMap<TypeId, Type>,
+    base_type_ids: HashMap<BaseType, TypeId>,
 }
 
 #[derive(Debug, Eq, PartialEq, Hash)]

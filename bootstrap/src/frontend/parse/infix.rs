@@ -68,7 +68,7 @@ mod tests {
     use crate::common::Context;
     use crate::frontend::lex::lex;
     use crate::frontend::lex::token::OperatorToken::*;
-    use crate::frontend::parse::{Node, parse, TypeFundamentalNode, TypeNode};
+    use crate::frontend::parse::{Node, parse, TypeNode};
     use crate::frontend::parse::node::{InfixNode, InfixOperator, LiteralNode, TupleNode};
     use crate::frontend::parse::Node::{Infix, Type};
     use crate::frontend::parse::node::Node::{Identifier, Literal};
@@ -87,7 +87,7 @@ mod tests {
         assert_eq!(ctx.get_str(identifier.value()), "u");
 
         let Type(type_node) = right.as_ref() else { panic!() };
-        let TypeNode::Fundamental(TypeFundamentalNode::Boolean(_)) = type_node else { panic!() };
+        let TypeNode::Boolean(_) = type_node else { panic!() };
     }
 
     #[test]

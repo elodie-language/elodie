@@ -38,7 +38,7 @@ mod tests {
         let result = parse(&mut ctx, tokens).unwrap();
         assert_eq!(result.len(), 1);
 
-        let FromNode::Export(node) = result.nodes[0].as_from();
+        let FromNode::Export(node) = result[0].as_from();
 
         let LiteralNode::String(literal) = &node.from_node.as_literal() else { panic!("not string literal") };
         assert_eq!(ctx.get_str(literal.value()), "./io");

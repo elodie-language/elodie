@@ -56,7 +56,7 @@ mod tests {
         let result = parse(&mut ctx, tokens).unwrap();
         assert_eq!(result.len(), 1);
 
-        let block = result.nodes[0].as_block();
+        let block = result[0].as_block();
         let InfixNode { left, operator, right } = &block.nodes[0].as_infix();
         let TupleNode { nodes, .. } = left.as_tuple();
         assert_eq!(*nodes, vec![]);
@@ -74,7 +74,7 @@ mod tests {
         let result = parse(&mut ctx, tokens).unwrap();
         assert_eq!(result.len(), 1);
 
-        let block = result.nodes[0].as_block();
+        let block = result[0].as_block();
         let InfixNode { left, operator, right } = &block.nodes[0].as_infix();
         let TupleNode { nodes, .. } = left.as_tuple();
         assert_eq!(nodes.len(), 1);

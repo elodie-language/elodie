@@ -1,32 +1,9 @@
 use std::ops::Index;
 
 use crate::common::StringTableId;
-use crate::ir::Modifiers;
 use crate::frontend::lex::token::{LiteralToken, Token, TokenKind};
+use crate::ir::Modifiers;
 
-#[derive(Debug)]
-pub struct RootNode {
-    pub nodes: Vec<Node>,
-}
-
-impl Index<usize> for RootNode {
-    type Output = Node;
-    fn index(&self, index: usize) -> &Self::Output {
-        self.nodes.index(index)
-    }
-}
-
-impl From<Vec<Node>> for RootNode {
-    fn from(value: Vec<Node>) -> Self {
-        Self { nodes: value }
-    }
-}
-
-impl RootNode {
-    pub fn len(&self) -> usize {
-        self.nodes.len()
-    }
-}
 
 #[derive(Debug, PartialEq)]
 pub enum Node {
@@ -420,20 +397,15 @@ pub struct TupleNode {
 
 #[derive(Debug, PartialEq)]
 pub enum TypeNode {
-    Fundamental(TypeFundamentalNode),
-    Function(TypeFunctionNode),
-    Custom(TypeCustomNode),
-}
-
-#[derive(Debug, PartialEq)]
-pub enum TypeFundamentalNode {
     Boolean(Token),
+    Custom(CustomTypeNode),
     Number(Token),
     String(Token),
+    Function(TypeFunctionNode),
 }
 
 #[derive(Debug, PartialEq)]
-pub struct TypeCustomNode {
+pub struct CustomTypeNode {
     pub token: Token,
 }
 

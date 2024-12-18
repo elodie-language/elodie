@@ -35,7 +35,7 @@ mod tests {
     use crate::common::Context;
     use crate::frontend::lex::lex;
     use crate::frontend::parse::{InfixOperator, LiteralNode, parse};
-    use crate::frontend::parse::node::{InfixNode, TypeFundamentalNode, TypeNode};
+    use crate::frontend::parse::node::{InfixNode, TypeNode};
     use crate::frontend::parse::node::LiteralNode::Number;
     use crate::frontend::parse::node::Node::{Identifier, Infix, Literal, Type};
 
@@ -115,7 +115,7 @@ mod tests {
         let identifier = &left.as_identifier();
         assert_eq!(ctx.get_str(identifier.value()), "u");
 
-        let Type(TypeNode::Fundamental(TypeFundamentalNode::Boolean(_))) = right.as_ref() else { panic!() };
+        let Type(TypeNode::Boolean(_)) = right.as_ref() else { panic!() };
     }
 
     #[test]
@@ -147,13 +147,13 @@ mod tests {
         let Infix(InfixNode { left, operator, right }) = &u_node else { panic!() };
         let Identifier(identifier) = &left.as_ref() else { panic!() };
         assert_eq!(ctx.get_str(identifier.value()), "u");
-        let Type(TypeNode::Fundamental(TypeFundamentalNode::Boolean(_))) = right.as_ref() else { panic!() };
+        let Type(TypeNode::Boolean(_)) = right.as_ref() else { panic!() };
 
         let Some(v_node) = node.nodes.last() else { panic!() };
         let Infix(InfixNode { left, operator, right }) = &v_node else { panic!() };
         let Identifier(identifier) = &left.as_ref() else { panic!() };
         assert_eq!(ctx.get_str(identifier.value()), "v");
-        let Type(TypeNode::Fundamental(TypeFundamentalNode::String(_))) = right.as_ref() else { panic!() };
+        let Type(TypeNode::String(_)) = right.as_ref() else { panic!() };
     }
 
     #[test]
@@ -198,12 +198,12 @@ mod tests {
         let Infix(InfixNode { left, operator, right }) = &u_node else { panic!() };
         let Identifier(identifier) = &left.as_ref() else { panic!() };
         assert_eq!(ctx.get_str(identifier.value()), "u");
-        let Type(TypeNode::Fundamental(TypeFundamentalNode::Boolean(_))) = right.as_ref() else { panic!() };
+        let Type(TypeNode::Boolean(_)) = right.as_ref() else { panic!() };
 
         let Some(v_node) = node.nodes.last() else { panic!() };
         let Infix(InfixNode { left, operator, right }) = &v_node else { panic!() };
         let Identifier(identifier) = &left.as_ref() else { panic!() };
         assert_eq!(ctx.get_str(identifier.value()), "v");
-        let Type(TypeNode::Fundamental(TypeFundamentalNode::String(_))) = right.as_ref() else { panic!() };
+        let Type(TypeNode::String(_)) = right.as_ref() else { panic!() };
     }
 }

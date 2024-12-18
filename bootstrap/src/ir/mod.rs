@@ -1,17 +1,20 @@
-pub use ir::*;
+pub use node::*;
 pub use modifier::*;
 
 use crate::backend::run::scope::Scope;
 use crate::common::StringTable;
 use crate::common::TypeTable;
 
-mod ir;
+mod node;
 mod modifier;
 pub mod compile;
+mod infer;
+mod check;
+mod unify;
 
 #[derive(Debug)]
 pub struct Context {
-    pub file: ir::SourceFile,
+    pub file: node::SourceFile,
     pub string_table: StringTable,
     pub type_table: TypeTable,
 

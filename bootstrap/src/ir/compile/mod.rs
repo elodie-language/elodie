@@ -1,14 +1,12 @@
-use crate::common::Context;
-use crate::ir::compile::scope::Scope;
-use crate::ir::{compile, ir, SourceFile};
-use crate::frontend::lex::lex;
-use crate::frontend::parse::{parse, RootNode, TypeFundamentalNode, TypeNode};
 use crate::common::{BaseType, TypeId};
-use crate::frontend::{lex, parse};
+use crate::common::Context;
+use crate::frontend;
+use crate::frontend::{parse, Parsed};
+use crate::frontend::parse::TypeNode;
+use crate::ir::{compile, node, SourceFile};
+use crate::ir::compile::scope::Scope;
 
 mod r#let;
-mod validate;
-mod collect;
 mod infix;
 mod literal;
 mod r#loop;
@@ -26,35 +24,27 @@ mod scope;
 
 #[derive(Debug)]
 pub enum Error {
-    Lexer(lex::Error),
-    Parser(parse::Error),
+    Frontend(frontend::Error),
 }
 
-impl From<lex::Error> for Error {
-    fn from(value: lex::Error) -> Self {
-        Self::Lexer(value)
-    }
-}
-
-impl From<parse::Error> for Error {
-    fn from(value: parse::Error) -> Self {
-        Self::Parser(value)
+impl From<frontend::Error> for Error {
+    fn from(value: frontend::Error) -> Self {
+        Self::Frontend(value)
     }
 }
 
 pub(crate) type Result<T, E = Error> = core::result::Result<T, E>;
 
 pub fn compile_str(ctx: &mut Context, str: &str) -> Result<SourceFile> {
-    let tokens = lex(ctx, str)?;
-    let root = parse(ctx, tokens)?;
-    let result = compile::from(ctx, root)?;
+    let parsed = frontend::parse_str(ctx, str)?;
+    let result = compile::from(ctx, parsed)?;
     Ok(result)
 }
 
 
-pub(crate) fn from(ctx: &mut Context, node: RootNode) -> Result<SourceFile> {
+pub(crate) fn from(ctx: &mut Context, parsed: Parsed) -> Result<SourceFile> {
     let mut compiler = Compiler::new(ctx);
-    compiler.compile(node)
+    compiler.compile(parsed)
 }
 
 pub(crate) struct Compiler<'a> {
@@ -74,8 +64,7 @@ impl<'a> Compiler<'a> {
 }
 
 impl<'a> Compiler<'a> {
-
-    pub(crate) fn compile(&mut self, node: RootNode) -> Result<SourceFile> {
+    pub(crate) fn compile(&mut self, node: Parsed) -> Result<SourceFile> {
         // 2 pass
         // populate symbol table
         // create ir
@@ -90,7 +79,7 @@ impl<'a> Compiler<'a> {
         Ok(SourceFile { body: result })
     }
 
-    pub(crate) fn compile_node(&mut self, node: &parse::Node) -> Result<ir::Node> {
+    pub(crate) fn compile_node(&mut self, node: &parse::Node) -> Result<node::Node> {
         match node {
             parse::Node::Block(block_node) => Ok(self.compile_block(block_node)?),
             parse::Node::Break(break_node) => Ok(self.compile_break(break_node)?),
@@ -115,17 +104,13 @@ impl<'a> Compiler<'a> {
     }
 
     // FIXME temp hack until type node uses type ids from type table
-    pub(crate) fn get_type_id(&mut self, type_node: &TypeNode) -> TypeId{
+    pub(crate) fn get_type_id(&mut self, type_node: &TypeNode) -> TypeId {
         match type_node {
-            TypeNode::Fundamental(n) => {
-                match n {
-                    TypeFundamentalNode::Boolean(_) => self.ctx.type_table.get_base_type_id(&BaseType::Boolean),
-                    TypeFundamentalNode::Number(_) => self.ctx.type_table.get_base_type_id(&BaseType::Number),
-                    TypeFundamentalNode::String(_) => self.ctx.type_table.get_base_type_id(&BaseType::String)
-                }
-            }
-            TypeNode::Function(_) => unimplemented!(),
-            TypeNode::Custom(_) => unimplemented!()
+            parse::TypeNode::Boolean(_) => self.ctx.type_table.get_base_type_id(&BaseType::Boolean),
+            parse::TypeNode::Number(_) => self.ctx.type_table.get_base_type_id(&BaseType::Number),
+            parse::TypeNode::String(_) => self.ctx.type_table.get_base_type_id(&BaseType::String),
+            parse::TypeNode::Function(_) => unimplemented!(),
+            parse::TypeNode::Custom(_) => unimplemented!()
         }
     }
 }

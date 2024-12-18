@@ -1,17 +1,14 @@
 use std::ops::Deref;
 use std::rc::Rc;
 
-use crate::{ir};
-use crate::ir::{BlockNode, DeclareFunctionNode, FunctionArgumentNode, Identifier, Node, ReturnFromFunctionNode};
-use crate::ir::Node::ReturnFromFunction;
-use crate::ir::compile::Compiler;
-use crate::frontend::parse::{TypeFundamentalNode, TypeNode};
-use crate::frontend::parse::LiteralNode::Boolean;
 use crate::common::{BaseType, DefaultTypeIds};
 use crate::frontend::parse;
+use crate::ir;
+use crate::ir::{BlockNode, DeclareFunctionNode, FunctionArgumentNode, Identifier, Node, ReturnFromFunctionNode};
+use crate::ir::compile::Compiler;
+use crate::ir::Node::ReturnFromFunction;
 
 impl<'a> Compiler<'a> {
-
     pub(crate) fn compile_declare_function(&mut self, node: &parse::FunctionDeclarationNode) -> crate::ir::compile::Result<ir::Node> {
         let mut arguments = Vec::with_capacity(node.arguments.len());
         for arg in &node.arguments {
@@ -23,19 +20,15 @@ impl<'a> Compiler<'a> {
             body.push(self.compile_node(node)?)
         }
 
-        let return_type = if let Some(ty) = &node.return_type{
-            match ty.deref(){
-                TypeNode::Fundamental(inner) => {
-                    match inner {
-                        TypeFundamentalNode::Boolean(_) => self.ctx.type_table.get_base_type_id(&BaseType::Boolean),
-                        TypeFundamentalNode::Number(_) => self.ctx.type_table.get_base_type_id(&BaseType::Number),
-                        TypeFundamentalNode::String(_) => self.ctx.type_table.get_base_type_id(&BaseType::String)
-                    }
-                }
-                TypeNode::Function(_) => DefaultTypeIds::never(),
-                TypeNode::Custom(_) => DefaultTypeIds::never(),
+        let return_type = if let Some(ty) = &node.return_type {
+            match ty.deref() {
+                parse::TypeNode::Boolean(_) => self.ctx.type_table.get_base_type_id(&BaseType::Boolean),
+                parse::TypeNode::Number(_) => self.ctx.type_table.get_base_type_id(&BaseType::Number),
+                parse::TypeNode::String(_) => self.ctx.type_table.get_base_type_id(&BaseType::String),
+                parse::TypeNode::Function(_) => DefaultTypeIds::never(),
+                parse::TypeNode::Custom(_) => DefaultTypeIds::never(),
             }
-        }else{
+        } else {
             DefaultTypeIds::never()
         };
 

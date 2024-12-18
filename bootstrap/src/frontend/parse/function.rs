@@ -78,7 +78,7 @@ impl<'a> Parser<'a> {
 mod tests {
     use crate::common::Context;
     use crate::frontend::lex::lex;
-    use crate::frontend::parse::node::{LiteralNode, TypeFundamentalNode, TypeNode};
+    use crate::frontend::parse::node::{LiteralNode, TypeNode};
     use crate::frontend::parse::node::Node::Literal;
     use crate::frontend::parse::parse;
 
@@ -89,7 +89,7 @@ mod tests {
         let result = parse(&mut ctx, tokens).unwrap();
         assert_eq!(result.len(), 1);
 
-        let node = &result.nodes[0].as_return();
+        let node = &result[0].as_return();
         assert_eq!(node.result, None);
     }
 
@@ -100,7 +100,7 @@ mod tests {
         let result = parse(&mut ctx, tokens).unwrap();
         assert_eq!(result.len(), 1);
 
-        let node = result.nodes[0].as_return().as_result();
+        let node = result[0].as_return().as_result();
         let Literal(LiteralNode::Number(node)) = node else { panic!() };
         assert_eq!(ctx.get_str(node.value()), "9924");
     }
@@ -112,7 +112,7 @@ mod tests {
         let result = parse(&mut ctx, tokens).unwrap();
         assert_eq!(result.len(), 1);
 
-        let node = result.nodes[0].as_function_declaration();
+        let node = result[0].as_function_declaration();
         assert_eq!(ctx.get_str(node.identifier.value()), "magic");
         assert!(node.modifiers.is_exported());
         assert_eq!(node.block.nodes, vec![]);
@@ -127,7 +127,7 @@ mod tests {
         let result = parse(&mut ctx, tokens).unwrap();
         assert_eq!(result.len(), 1);
 
-        let node = result.nodes[0].as_function_declaration();
+        let node = result[0].as_function_declaration();
         assert_eq!(ctx.get_str(node.identifier.value()), "magic");
         assert_eq!(node.block.nodes, vec![]);
         assert_eq!(node.arguments, vec![]);
@@ -142,14 +142,14 @@ mod tests {
         let result = parse(&mut ctx, tokens).unwrap();
         assert_eq!(result.len(), 1);
 
-        let node = result.nodes[0].as_function_declaration();
+        let node = result[0].as_function_declaration();
         assert_eq!(ctx.get_str(node.identifier.value()), "magic");
         assert_eq!(node.block.nodes, vec![]);
         assert_eq!(node.arguments, vec![]);
         assert!(!node.modifiers.is_exported());
 
         let type_node = node.as_return_type();
-        let TypeNode::Fundamental(TypeFundamentalNode::Boolean(_)) = type_node else { panic!("not bool") };
+        let TypeNode::Boolean(_) = type_node else { panic!("not bool") };
     }
 
 
@@ -160,7 +160,7 @@ mod tests {
         let result = parse(&mut ctx, tokens).unwrap();
         assert_eq!(result.len(), 1);
 
-        let node = result.nodes[0].as_function_declaration();
+        let node = result[0].as_function_declaration();
         assert_eq!(ctx.get_str(node.identifier.value()), "magic");
         assert_eq!(node.block.nodes, vec![]);
         assert!(!node.modifiers.is_exported());
@@ -169,7 +169,7 @@ mod tests {
         let arg = &node.arguments[0];
         assert_eq!(ctx.get_str(arg.identifier.value()), "arg_1");
 
-        let TypeNode::Fundamental(TypeFundamentalNode::String(_)) = arg.as_type() else { panic!("not string") };
+        let TypeNode::String(_) = arg.as_type() else { panic!("not string") };
         assert_eq!(node.return_type, None);
     }
 
@@ -180,7 +180,7 @@ mod tests {
         let result = parse(&mut ctx, tokens).unwrap();
         assert_eq!(result.len(), 1);
 
-        let node = result.nodes[0].as_function_declaration();
+        let node = result[0].as_function_declaration();
         assert_eq!(ctx.get_str(node.identifier.value()), "magic");
         assert_eq!(node.block.nodes, vec![]);
         assert!(!node.modifiers.is_exported());
@@ -189,12 +189,12 @@ mod tests {
         let arg_1 = &node.arguments[0];
         assert_eq!(ctx.get_str(arg_1.identifier.value()), "arg_1");
 
-        let TypeNode::Fundamental(TypeFundamentalNode::String(_)) = arg_1.as_type() else { panic!("not string") };
+        let TypeNode::String(_) = arg_1.as_type() else { panic!("not string") };
 
         let arg_2 = node.arguments.last().unwrap();
         assert_eq!(ctx.get_str(arg_2.identifier.value()), "arg_2");
 
-        let TypeNode::Fundamental(TypeFundamentalNode::Number(_)) = arg_2.as_type() else { panic!("not number") };
+        let TypeNode::Number(_) = arg_2.as_type() else { panic!("not number") };
 
         assert_eq!(node.return_type, None);
     }
@@ -206,7 +206,7 @@ mod tests {
         let result = parse(&mut ctx, tokens).unwrap();
         assert_eq!(result.len(), 1);
 
-        let node = result.nodes[0].as_function_declaration();
+        let node = result[0].as_function_declaration();
         assert_eq!(ctx.get_str(node.identifier.value()), "magic");
         assert_eq!(node.block.nodes, vec![]);
         assert!(!node.modifiers.is_exported());
@@ -219,6 +219,6 @@ mod tests {
         let TypeNode::Function(function_node) = arg_1.as_type() else { panic!("not function") };
         assert_eq!(function_node.arguments, vec![]);
 
-        let TypeNode::Fundamental(TypeFundamentalNode::Boolean(_)) = function_node.as_return_type() else { panic!("not bool") };
+        let TypeNode::Boolean(_) = function_node.as_return_type() else { panic!("not bool") };
     }
 }

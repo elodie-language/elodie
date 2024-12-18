@@ -36,7 +36,7 @@ mod tests {
 
     use crate::common::Context;
     use crate::frontend::lex::lex;
-    use crate::frontend::parse::node::{LiteralNode, TypeFundamentalNode, TypeNode};
+    use crate::frontend::parse::node::{LiteralNode, TypeNode};
     use crate::frontend::parse::node::Node::Literal;
     use crate::frontend::parse::parse;
 
@@ -66,7 +66,7 @@ mod tests {
         let node = result[0].as_let();
         assert_eq!(ctx.get_str(node.identifier.value()), "value");
 
-        let Some(TypeNode::Fundamental(TypeFundamentalNode::String(_))) = node.r#type else { panic!() };
+        let Some(TypeNode::String(_)) = node.r#type else { panic!() };
 
         let Literal(LiteralNode::String(result)) = &node.node.deref() else { panic!() };
         assert_eq!(ctx.get_str(result.value()), "Elodie");

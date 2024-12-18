@@ -24,7 +24,7 @@ impl<'a> Parser<'a> {
 mod tests {
     use crate::common::Context;
     use crate::frontend::lex::lex;
-    use crate::frontend::parse::{Error, InfixOperator, parse, TypeFundamentalNode, TypeNode};
+    use crate::frontend::parse::{Error, InfixOperator, parse, TypeNode};
 
     #[test]
     fn parse_empty_type_declaration() {
@@ -63,7 +63,7 @@ mod tests {
         let prop_ident = prop.left.as_identifier();
         assert_eq!(ctx.get_str(prop_ident.value()), "p_1");
         assert!(matches!(prop.operator, InfixOperator::TypeAscription(_)));
-        assert!(matches!(prop.right.as_type(), TypeNode::Fundamental(TypeFundamentalNode::Number(_))));
+        assert!(matches!(prop.right.as_type(), TypeNode::Number(_)));
 
         assert!(!decl.modifiers.is_exported());
     }
@@ -83,13 +83,13 @@ mod tests {
         let prop_ident = prop.left.as_identifier();
         assert_eq!(ctx.get_str(prop_ident.value()), "p_1");
         assert!(matches!(prop.operator, InfixOperator::TypeAscription(_)));
-        assert!(matches!(prop.right.as_type(), TypeNode::Fundamental(TypeFundamentalNode::Number(_))));
+        assert!(matches!(prop.right.as_type(), TypeNode::Number(_)));
 
         let prop = decl.properties.nodes.get(1).unwrap().as_infix();
         let prop_ident = prop.left.as_identifier();
         assert_eq!(ctx.get_str(prop_ident.value()), "p_2");
         assert!(matches!(prop.operator, InfixOperator::TypeAscription(_)));
-        assert!(matches!(prop.right.as_type(), TypeNode::Fundamental(TypeFundamentalNode::Boolean(_))));
+        assert!(matches!(prop.right.as_type(), TypeNode::Boolean(_)));
 
         assert!(decl.modifiers.is_exported());
     }
@@ -112,13 +112,13 @@ mod tests {
         let prop_ident = prop.left.as_identifier();
         assert_eq!(ctx.get_str(prop_ident.value()), "p_1");
         assert!(matches!(prop.operator, InfixOperator::TypeAscription(_)));
-        assert!(matches!(prop.right.as_type(), TypeNode::Fundamental(TypeFundamentalNode::Number(_))));
+        assert!(matches!(prop.right.as_type(), TypeNode::Number(_)));
 
         let prop = decl.properties.nodes.get(1).unwrap().as_infix();
         let prop_ident = prop.left.as_identifier();
         assert_eq!(ctx.get_str(prop_ident.value()), "p_2");
         assert!(matches!(prop.operator, InfixOperator::TypeAscription(_)));
-        assert!(matches!(prop.right.as_type(), TypeNode::Fundamental(TypeFundamentalNode::Boolean(_))));
+        assert!(matches!(prop.right.as_type(), TypeNode::Boolean(_)));
 
         assert!(decl.modifiers.is_exported());
     }

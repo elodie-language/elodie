@@ -17,7 +17,7 @@ impl<'a> Parser<'a> {
                     let interest = &part[2..part.len() - 1];
                     let lexed = lex(self.ctx, interest).unwrap();
                     let parsed = parse(self.ctx, lexed)?;
-                    nodes.extend(parsed.nodes);
+                    nodes.extend(parsed);
                 } else {
                     let token = Token {
                         kind: TokenKind::Literal(LiteralToken::String),

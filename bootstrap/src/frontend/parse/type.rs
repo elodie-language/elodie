@@ -2,7 +2,7 @@ use crate::common::is_pascal_snake_case;
 use crate::frontend::lex::token::OperatorToken::{Arrow, CloseParen, Colon, OpenParen};
 use crate::frontend::lex::token::SeparatorToken::Comma;
 use crate::frontend::lex::token::TokenKind::{Operator, Separator};
-use crate::frontend::parse::{Parser, TypeCustomNode, TypeFundamentalNode};
+use crate::frontend::parse::{Parser, CustomTypeNode};
 use crate::frontend::parse::Error::InvalidType;
 use crate::frontend::parse::node::{TypeFunctionArgumentNode, TypeFunctionNode, TypeNode};
 
@@ -14,11 +14,11 @@ impl<'a> Parser<'a> {
             return Err(InvalidType(token));
         }
         match value {
-            "Bool" => Ok(TypeNode::Fundamental(TypeFundamentalNode::Boolean(token))),
-            "Number" => Ok(TypeNode::Fundamental(TypeFundamentalNode::Number(token))),
-            "String" => Ok(TypeNode::Fundamental(TypeFundamentalNode::String(token))),
+            "Bool" => Ok(TypeNode::Boolean(token)),
+            "Number" => Ok(TypeNode::Number(token)),
+            "String" => Ok(TypeNode::String(token)),
             "function" => Ok(TypeNode::Function(self.parse_function_type()?)),
-            _ => Ok(TypeNode::Custom(TypeCustomNode { token }))
+            _ => Ok(TypeNode::Custom(CustomTypeNode { token }))
         }
     }
 
@@ -68,9 +68,9 @@ impl<'a> Parser<'a> {
 mod tests {
     use crate::common::Context;
     use crate::frontend::lex::lex;
-    use crate::frontend::parse::{Parser, TypeCustomNode};
+    use crate::frontend::parse::{Parser, CustomTypeNode};
     use crate::frontend::parse::Error::InvalidType;
-    use crate::frontend::parse::node::{TypeFunctionArgumentNode, TypeFundamentalNode, TypeNode};
+    use crate::frontend::parse::node::{TypeFunctionArgumentNode, TypeNode};
 
     #[test]
     fn not_a_type() {
@@ -87,7 +87,7 @@ mod tests {
         let tokens = lex(&mut ctx, "Point").unwrap();
         let mut parser = Parser::new(&mut ctx, tokens);
         let result = parser.parse_type().unwrap();
-        let TypeNode::Custom(TypeCustomNode { token }) = result else { panic!() };
+        let TypeNode::Custom(CustomTypeNode { token }) = result else { panic!() };
         assert_eq!(ctx.get_str(token.value()), "Point");
     }
 
@@ -97,7 +97,7 @@ mod tests {
         let tokens = lex(&mut ctx, "Bool").unwrap();
         let mut parser = Parser::new(&mut ctx, tokens);
         let result = parser.parse_type().unwrap();
-        let TypeNode::Fundamental(TypeFundamentalNode::Boolean(_)) = result else { panic!() };
+        let TypeNode::Boolean(_) = result else { panic!() };
     }
 
     #[test]
@@ -106,7 +106,7 @@ mod tests {
         let tokens = lex(&mut ctx, "Number").unwrap();
         let mut parser = Parser::new(&mut ctx, tokens);
         let result = parser.parse_type().unwrap();
-        let TypeNode::Fundamental(TypeFundamentalNode::Number(_)) = result else { panic!() };
+        let TypeNode::Number(_) = result else { panic!() };
     }
 
     #[test]
@@ -115,7 +115,7 @@ mod tests {
         let tokens = lex(&mut ctx, "String").unwrap();
         let mut parser = Parser::new(&mut ctx, tokens);
         let result = parser.parse_type().unwrap();
-        let TypeNode::Fundamental(TypeFundamentalNode::String(_)) = result else { panic!() };
+        let TypeNode::String(_) = result else { panic!() };
     }
 
     #[test]
@@ -141,7 +141,7 @@ mod tests {
         assert_eq!(node.arguments, vec![]);
 
         let Some(result_node) = node.return_type.as_deref() else { panic!() };
-        let TypeNode::Fundamental(TypeFundamentalNode::Number(_)) = result_node else { panic!() };
+        let TypeNode::Number(_) = result_node else { panic!() };
     }
 
     #[test]
@@ -159,10 +159,10 @@ mod tests {
         assert_eq!(ctx.get_str(identifier.value()), "arg_1");
 
         let arg_type = r#type.as_ref();
-        let TypeNode::Fundamental(TypeFundamentalNode::Boolean(_)) = arg_type else { panic!() };
+        let TypeNode::Boolean(_) = arg_type else { panic!() };
 
         let Some(result_node) = node.return_type.as_deref() else { panic!() };
-        let TypeNode::Fundamental(TypeFundamentalNode::Number(_)) = result_node else { panic!() };
+        let TypeNode::Number(_) = result_node else { panic!() };
     }
 
     #[test]
@@ -179,9 +179,9 @@ mod tests {
         assert_eq!(*identifier, None);
 
         let arg_type = r#type.as_ref();
-        let TypeNode::Fundamental(TypeFundamentalNode::Boolean(_)) = arg_type else { panic!() };
+        let TypeNode::Boolean(_) = arg_type else { panic!() };
 
         let Some(result_node) = node.return_type.as_deref() else { panic!() };
-        let TypeNode::Fundamental(TypeFundamentalNode::Number(_)) = result_node else { panic!() };
+        let TypeNode::Number(_) = result_node else { panic!() };
     }
 }

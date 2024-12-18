@@ -30,6 +30,17 @@ mod tests {
     use crate::frontend::parse::parse;
 
     #[test]
+    fn string() {
+        let mut ctx = Context::new();
+        let tokens = lex(&mut ctx, "'ElodiE'").unwrap();
+        let result = parse(&mut ctx, tokens).unwrap();
+        assert_eq!(result.len(), 1);
+
+        let Literal(LiteralNode::String(node)) = &result[0] else { panic!() };
+        assert_eq!(ctx.get_str(node.value()), "ElodiE");
+    }
+
+    #[test]
     fn number_42() {
         let mut ctx = Context::new();
         let tokens = lex(&mut ctx, "42").unwrap();

@@ -36,7 +36,7 @@ mod tests {
         let result = parse(&mut ctx, tokens).unwrap();
         assert_eq!(result.len(), 1);
 
-        let node = result.nodes[0].as_define_declaration();
+        let node = result[0].as_define_declaration();
         assert_eq!(ctx.get_str(node.identifier.value()), "Magic");
         assert_eq!(node.block.nodes, vec![]);
         assert!(!node.modifiers.is_exported());
@@ -49,7 +49,7 @@ mod tests {
         let result = parse(&mut ctx, tokens).unwrap();
         assert_eq!(result.len(), 1);
 
-        let node = result.nodes[0].as_define_declaration();
+        let node = result[0].as_define_declaration();
         assert_eq!(ctx.get_str(node.identifier.value()), "Magic");
         assert_eq!(node.block.nodes.len(), 1);
         assert!(!node.modifiers.is_exported());
@@ -66,7 +66,7 @@ mod tests {
         let result = parse(&mut ctx, tokens).unwrap();
         assert_eq!(result.len(), 1);
 
-        let node = result.nodes[0].as_define_declaration();
+        let node = result[0].as_define_declaration();
         assert_eq!(ctx.get_str(node.identifier.value()), "Magic");
         assert_eq!(node.block.nodes.len(), 1);
         assert!(node.modifiers.is_exported());

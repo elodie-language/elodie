@@ -52,7 +52,7 @@ impl Error {
 
 pub(crate) type Result<T, E = Error> = core::result::Result<T, E>;
 
-pub(crate) fn parse(ctx: &mut Context, tokens: Vec<Token>) -> Result<RootNode> {
+pub(crate) fn parse(ctx: &mut Context, tokens: Vec<Token>) -> Result<Vec<Node>> {
     Parser::new(ctx, tokens).parse()
 }
 
@@ -104,7 +104,7 @@ impl<'a> Parser<'a> {
         }
     }
 
-    fn parse(&mut self) -> Result<RootNode> {
+    fn parse(&mut self) -> Result<Vec<Node>> {
         let mut nodes = vec![];
         loop {
             if self.is_eof() { break; }
@@ -113,7 +113,7 @@ impl<'a> Parser<'a> {
                 self.consume_if(TokenKind::Separator(NewLine))?;
             }
         }
-        Ok(nodes.into())
+        Ok(nodes)
     }
 
     pub(crate) fn parse_node(&mut self, precedence: Precedence) -> Result<Node> {
