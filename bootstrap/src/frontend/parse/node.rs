@@ -1,9 +1,7 @@
-use std::ops::Index;
-
+use std::rc::Rc;
 use crate::common::StringTableId;
 use crate::frontend::lex::token::{LiteralToken, Token, TokenKind};
 use crate::ir::Modifiers;
-
 
 #[derive(Debug, PartialEq)]
 pub enum Node {
@@ -19,7 +17,7 @@ pub enum Node {
     If(IfNode),
     Infix(InfixNode),
     Itself(ItselfNode),
-    Let(LetNode),
+    DeclareVariable(DeclareVariableNode),
     Literal(LiteralNode),
     Loop(LoopNode),
     Nop,
@@ -76,9 +74,9 @@ impl Node {
         if let Node::Infix(result) = self { result } else { panic!("not infix") }
     }
 
-    pub fn is_let(&self) -> bool { matches!(self, Node::Let(_)) }
-    pub fn as_let(&self) -> &LetNode {
-        if let Node::Let(result) = self { result } else { panic!("not let") }
+    pub fn is_declare_variable(&self) -> bool { matches!(self, Node::DeclareVariable(_)) }
+    pub fn as_declare_variable(&self) -> &DeclareVariableNode {
+        if let Node::DeclareVariable(result) = self { result } else { panic!("not let") }
     }
 
     pub fn is_literal(&self) -> bool { matches!(self, Node::Literal(_)) }
@@ -296,10 +294,10 @@ impl InfixOperator {
 }
 
 #[derive(Debug, PartialEq)]
-pub struct LetNode {
+pub struct DeclareVariableNode {
     pub token: Token,
     pub identifier: IdentifierNode,
-    pub node: Box<Node>,
+    pub node: Rc<Node>,
     pub r#type: Option<TypeNode>,
 }
 

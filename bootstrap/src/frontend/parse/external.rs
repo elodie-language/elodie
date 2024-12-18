@@ -1,11 +1,11 @@
 use KeywordToken::{External, Function};
 
-use crate::ir::Modifiers;
 use crate::frontend::lex::token::KeywordToken;
 use crate::frontend::lex::token::OperatorToken::{Arrow, CloseParen, OpenParen};
 use crate::frontend::lex::token::SeparatorToken::Comma;
 use crate::frontend::lex::token::TokenKind::{Operator, Separator};
 use crate::frontend::parse::{ExternalFunctionDeclarationNode, Parser};
+use crate::ir::Modifiers;
 
 impl<'a> Parser<'a> {
     pub(crate) fn parse_external(&mut self) -> crate::frontend::parse::Result<ExternalFunctionDeclarationNode> {
@@ -48,7 +48,6 @@ impl<'a> Parser<'a> {
 
 #[cfg(test)]
 mod tests {
-    use std::ops::Deref;
     use crate::common::Context;
     use crate::frontend::lex::lex;
     use crate::frontend::parse::{parse, TypeNode};
@@ -135,6 +134,5 @@ mod tests {
 
         let type_node = node.return_type.as_deref().unwrap();
         let TypeNode::Boolean(_) = type_node else { panic!("not bool") };
-
     }
 }

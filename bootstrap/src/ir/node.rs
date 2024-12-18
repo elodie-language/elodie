@@ -202,6 +202,13 @@ impl From<parse::IdentifierNode> for Identifier {
     }
 }
 
+impl From<Rc<parse::IdentifierNode>> for Identifier {
+    fn from(value: Rc<IdentifierNode>) -> Self {
+        Identifier(value.0.span.value)
+    }
+}
+
+
 impl From<&parse::IdentifierNode> for Identifier {
     fn from(value: &IdentifierNode) -> Self {
         Identifier(value.0.value())

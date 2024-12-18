@@ -1,12 +1,14 @@
+use std::rc::Rc;
 use KeywordToken::Let;
 
 use crate::frontend::lex::token::{KeywordToken, OperatorToken};
-use crate::frontend::parse::node::LetNode;
+use crate::frontend::parse::node::DeclareVariableNode;
 use crate::frontend::parse::Parser;
 use crate::frontend::parse::precedence::Precedence;
 
 impl<'a> Parser<'a> {
-    pub(crate) fn parse_let(&mut self) -> crate::frontend::parse::Result<LetNode> {
+
+    pub(crate) fn parse_variable_declaration(&mut self) -> crate::frontend::parse::Result<DeclareVariableNode> {
         let token = self.consume_keyword(Let)?;
         let identifier = self.parse_identifier()?;
 
@@ -18,9 +20,9 @@ impl<'a> Parser<'a> {
         };
 
         self.consume_operator(OperatorToken::Equal)?;
-        let value = Box::new(self.parse_node(Precedence::None)?);
+        let value = Rc::new(self.parse_node(Precedence::None)?);
 
-        Ok(LetNode {
+        Ok(DeclareVariableNode {
             token,
             identifier,
             node: value,
@@ -47,7 +49,7 @@ mod tests {
         let result = parse(&mut ctx, tokens).unwrap();
         assert_eq!(result.len(), 1);
 
-        let node = result[0].as_let();
+        let node = result[0].as_declare_variable();
         assert_eq!(ctx.get_str(node.identifier.value()), "value");
 
         assert_eq!(node.r#type, None);
@@ -63,7 +65,7 @@ mod tests {
         let result = parse(&mut ctx, tokens).unwrap();
         assert_eq!(result.len(), 1);
 
-        let node = result[0].as_let();
+        let node = result[0].as_declare_variable();
         assert_eq!(ctx.get_str(node.identifier.value()), "value");
 
         let Some(TypeNode::String(_)) = node.r#type else { panic!() };
@@ -79,7 +81,7 @@ mod tests {
         let result = parse(&mut ctx, tokens).unwrap();
         assert_eq!(result.len(), 1);
 
-        let node = result[0].as_let();
+        let node = result[0].as_declare_variable();
         assert_eq!(ctx.get_str(node.identifier.value()), "value");
 
         assert_eq!(node.r#type, None);
@@ -95,7 +97,7 @@ mod tests {
         let result = parse(&mut ctx, tokens).unwrap();
         assert_eq!(result.len(), 1);
 
-        let node = &result[0].as_let();
+        let node = &result[0].as_declare_variable();
         assert_eq!(ctx.get_str(node.identifier.value()), "value");
         assert_eq!(node.r#type, None);
 

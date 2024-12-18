@@ -18,7 +18,7 @@ mod identifier;
 mod block;
 mod r#loop;
 mod r#if;
-mod r#let;
+mod variable;
 mod r#type;
 mod function;
 mod tuple;
