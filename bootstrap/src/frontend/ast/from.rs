@@ -1,20 +1,20 @@
 use std::ops::Deref;
 
 use crate::frontend::{ast, parse};
-use crate::frontend::ast::Compiler;
+use crate::frontend::ast::Generator;
 use crate::frontend::ast::node::{BlockNode, ExportPackageNode, Node, Source, SourceLocalFileNode};
 use crate::frontend::parse::LiteralNode;
 
-impl<'a> Compiler<'a> {
-    pub(crate) fn compile_from(&mut self, node: &parse::FromNode) -> ast::Result<ast::Node> {
+impl<'a> Generator<'a> {
+    pub(crate) fn generator_from(&mut self, node: &parse::FromNode) -> ast::Result<ast::Node> {
         if let parse::FromNode::Export(export_node) = node {
-            return self.compile_from_export(export_node);
+            return self.generator_from_export(export_node);
         }
 
         unimplemented!();
     }
 
-    pub(crate) fn compile_from_export(&mut self, node: &parse::FromExportNode) -> ast::Result<ast::Node> {
+    pub(crate) fn generator_from_export(&mut self, node: &parse::FromExportNode) -> ast::Result<ast::Node> {
         let source = if let parse::Node::Literal(LiteralNode::String(from)) = &node.from_node.deref() {
             Source::LocalFile(SourceLocalFileNode { path: self.ctx.get_str(from.value()).to_string() })
         } else {

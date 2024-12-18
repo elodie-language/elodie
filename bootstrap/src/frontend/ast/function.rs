@@ -2,20 +2,20 @@ use std::ops::Deref;
 use std::rc::Rc;
 
 use crate::frontend::{ast, parse};
-use crate::frontend::ast::{Compiler, FunctionArgumentNode};
+use crate::frontend::ast::{Generator, FunctionArgumentNode};
 use crate::frontend::ast::node::{BlockNode, DeclareFunctionNode, Identifier, Node, ReturnFromFunctionNode};
 use crate::frontend::ast::node::Node::ReturnFromFunction;
 
-impl<'a> Compiler<'a> {
-    pub(crate) fn compile_declare_function(&mut self, node: &parse::FunctionDeclarationNode) -> ast::Result<ast::Node> {
+impl<'a> Generator<'a> {
+    pub(crate) fn generator_declare_function(&mut self, node: &parse::FunctionDeclarationNode) -> ast::Result<ast::Node> {
         let mut arguments = Vec::with_capacity(node.arguments.len());
         for arg in &node.arguments {
-            arguments.push(Rc::new(self.compile_declare_function_argument(arg)?))
+            arguments.push(Rc::new(self.generator_declare_function_argument(arg)?))
         }
 
         let mut body = vec![];
         for node in &node.block.nodes {
-            body.push(self.compile_node(node)?)
+            body.push(self.generator_node(node)?)
         }
 
         let return_type = if let Some(type_node) = node.return_type.as_deref() {
@@ -32,7 +32,7 @@ impl<'a> Compiler<'a> {
         }))
     }
 
-    pub(crate) fn compile_declare_function_argument(&mut self, node: &parse::FunctionDeclarationArgumentNode) -> ast::Result<ast::FunctionArgumentNode> {
+    pub(crate) fn generator_declare_function_argument(&mut self, node: &parse::FunctionDeclarationArgumentNode) -> ast::Result<ast::FunctionArgumentNode> {
         let ty = if let Some(type_node) = node.r#type.as_deref() {
             Some(self.handle_type_node(type_node)?)
         } else {
@@ -45,9 +45,9 @@ impl<'a> Compiler<'a> {
         })
     }
 
-    pub(crate) fn compile_function_return(&mut self, node: &parse::ReturnNode) -> ast::Result<ast::Node> {
+    pub(crate) fn generator_function_return(&mut self, node: &parse::ReturnNode) -> ast::Result<ast::Node> {
         let result = if let Some(ref node) = node.result {
-            self.compile_node(node.deref())?
+            self.generator_node(node.deref())?
         } else {
             Node::Unit
         };

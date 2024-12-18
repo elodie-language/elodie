@@ -1,9 +1,9 @@
 use crate::frontend::{ast, parse};
-use crate::frontend::ast::{Compiler, LiteralBooleanNode};
+use crate::frontend::ast::{Generator, LiteralBooleanNode};
 use crate::frontend::ast::node::{LiteralNode, LiteralNumberNode, LiteralStringNode};
 
-impl<'a> Compiler<'a> {
-    pub(crate) fn compile_literal(
+impl<'a> Generator<'a> {
+    pub(crate) fn generator_literal(
         &mut self,
         node: &parse::LiteralNode,
     ) -> ast::Result<ast::Node> {

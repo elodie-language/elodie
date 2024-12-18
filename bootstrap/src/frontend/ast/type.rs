@@ -1,12 +1,12 @@
 use std::ops::Deref;
 
 use crate::frontend::{ast, parse};
-use crate::frontend::ast::{Compiler, CustomTypeNode, TypeFunctionNode};
+use crate::frontend::ast::{Generator, CustomTypeNode, TypeFunctionNode};
 use crate::frontend::ast::node::{DeclarePropertyNode, DeclareTypeNode, Identifier};
 use crate::frontend::ast::node::Node::DeclareType;
 use crate::frontend::parse::{InfixNode, InfixOperator, TypeNode};
 
-impl<'a> Compiler<'a> {
+impl<'a> Generator<'a> {
     pub(crate) fn declare_type(&mut self, node: &parse::TypeDeclarationNode) -> crate::frontend::ast::Result<ast::Node> {
         let mut properties = Vec::with_capacity(node.properties.nodes.len());
 
