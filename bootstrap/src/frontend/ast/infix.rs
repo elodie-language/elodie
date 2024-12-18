@@ -9,25 +9,25 @@ use crate::frontend::parse::{InfixNode, InfixOperator, Node, TypeNode};
 use crate::frontend::parse::Node::Type;
 
 impl<'a> Generator<'a> {
-    pub(crate) fn generator_infix(&mut self, node: &parse::InfixNode) -> ast::Result<ast::Node> {
+    pub(crate) fn generate_infix(&mut self, node: &parse::InfixNode) -> ast::Result<ast::Node> {
         let InfixNode { left, operator, right } = node;
 
         if left.is_type() && matches!(operator, InfixOperator::Call(_)) && right.is_tuple() {
-            return self.generator_type_instantiation(node);
+            return self.generate_type_instantiation(node);
         }
 
         // function call
         if left.is_identifier() && matches!(operator, InfixOperator::Call(_)) && right.is_tuple() {
             let Node::Identifier(function_identifier) = left.deref() else { todo!() };
-            let arguments = self.generator_arguments(right.as_tuple())?;
+            let arguments = self.generate_arguments(right.as_tuple())?;
             return Ok(ast::Node::CallFunction(CallFunctionNode { function: Identifier(function_identifier.value()), arguments }));
         }
 
         // call function of object / self
         if left.is_infix() && matches!(left.as_infix().operator, InfixOperator::AccessProperty(_)) && matches!(operator, InfixOperator::Call(_)) {
-            let ast::Node::LoadValueFromObject(LoadValueFromObjectNode { object, property }) = self.generator_access_property(left.as_infix())? else { panic!() };
+            let ast::Node::LoadValueFromObject(LoadValueFromObjectNode { object, property }) = self.generate_access_property(left.as_infix())? else { panic!() };
 
-            let arguments = self.generator_arguments(right.as_tuple())?;
+            let arguments = self.generate_arguments(right.as_tuple())?;
 
             // FIXME add type information
             return Ok(ast::Node::CallFunctionOfObject(CallFunctionOfObjectNode {
@@ -39,8 +39,8 @@ impl<'a> Generator<'a> {
 
         // lambda call
         if let InfixOperator::LambdaCall(_) = operator {
-            let left = self.generator_node(left.deref())?;
-            let right = self.generator_node(right.deref())?;
+            let left = self.generate_node(left.deref())?;
+            let right = self.generate_node(right.deref())?;
 
             let ast::Node::CallFunction(call_function) = left else { panic!() };
             let ast::Node::Block(lambda) = right else { panic!() };
@@ -53,7 +53,7 @@ impl<'a> Generator<'a> {
 
         // call function of package
         if left.is_infix() && matches!(left.as_infix().operator, InfixOperator::AccessPackage(_)) && matches!(operator, InfixOperator::Call(_)) {
-            let arguments = self.generator_arguments(node.right.as_tuple())?;
+            let arguments = self.generate_arguments(node.right.as_tuple())?;
 
             // FIXME
             let paths = {
@@ -96,8 +96,8 @@ impl<'a> Generator<'a> {
 
 
         if let InfixOperator::Add(_) = operator {
-            let left = Box::new(self.generator_node(left.deref())?);
-            let right = Box::new(self.generator_node(right.deref())?);
+            let left = Box::new(self.generate_node(left.deref())?);
+            let right = Box::new(self.generate_node(right.deref())?);
             return Ok(ast::Node::Calculate(CalculateNode {
                 left,
                 operator: CalculationOperator::Add,
@@ -106,8 +106,8 @@ impl<'a> Generator<'a> {
         }
 
         if let InfixOperator::Equal(_) = operator {
-            let left = Box::new(self.generator_node(left.deref())?);
-            let right = Box::new(self.generator_node(right.deref())?);
+            let left = Box::new(self.generate_node(left.deref())?);
+            let right = Box::new(self.generate_node(right.deref())?);
 
             return Ok(ast::Node::Compare(CompareNode {
                 left,
@@ -117,8 +117,8 @@ impl<'a> Generator<'a> {
         }
 
         if let InfixOperator::NotEqual(_) = operator {
-            let left = Box::new(self.generator_node(left.deref())?);
-            let right = Box::new(self.generator_node(right.deref())?);
+            let left = Box::new(self.generate_node(left.deref())?);
+            let right = Box::new(self.generate_node(right.deref())?);
 
             return Ok(ast::Node::Compare(CompareNode {
                 left,
@@ -128,8 +128,8 @@ impl<'a> Generator<'a> {
         }
 
         if let InfixOperator::GreaterThan(_) = operator {
-            let left = Box::new(self.generator_node(left.deref())?);
-            let right = Box::new(self.generator_node(right.deref())?);
+            let left = Box::new(self.generate_node(left.deref())?);
+            let right = Box::new(self.generate_node(right.deref())?);
 
             return Ok(ast::Node::Compare(CompareNode {
                 left,
@@ -139,8 +139,8 @@ impl<'a> Generator<'a> {
         }
 
         if let InfixOperator::Multiply(_) = operator {
-            let left = Box::new(self.generator_node(left.deref())?);
-            let right = Box::new(self.generator_node(right.deref())?);
+            let left = Box::new(self.generate_node(left.deref())?);
+            let right = Box::new(self.generate_node(right.deref())?);
 
             return Ok(ast::Node::Calculate(CalculateNode {
                 left,
@@ -153,7 +153,7 @@ impl<'a> Generator<'a> {
     }
 
 
-    fn generator_access_property(&mut self, node: &parse::InfixNode) -> ast::Result<ast::Node> {
+    fn generate_access_property(&mut self, node: &parse::InfixNode) -> ast::Result<ast::Node> {
         let InfixNode { left, operator, right } = node;
 
         if let Node::Itself(_) = left.deref() {
@@ -174,13 +174,13 @@ impl<'a> Generator<'a> {
         }));
     }
 
-    fn generator_type_instantiation(&mut self, node: &parse::InfixNode) -> ast::Result<ast::Node> {
+    fn generate_type_instantiation(&mut self, node: &parse::InfixNode) -> ast::Result<ast::Node> {
         let InfixNode { left, operator, right } = node;
 
         let Type(TypeNode::Custom(type_node)) = left.deref() else { panic!() };
         let Node::Tuple(arguments_node) = right.deref() else { panic!() };
 
-        let mut arguments = self.generator_named_arguments(arguments_node)?;
+        let mut arguments = self.generate_named_arguments(arguments_node)?;
 
         return Ok(ast::Node::InstantiateType(ast::InstantiateTypeNode {
             type_name: Identifier(type_node.token.value()),
@@ -188,22 +188,22 @@ impl<'a> Generator<'a> {
         }));
     }
 
-    fn generator_arguments(&mut self, node: &parse::TupleNode) -> ast::Result<Vec<ast::Node>> {
+    fn generate_arguments(&mut self, node: &parse::TupleNode) -> ast::Result<Vec<ast::Node>> {
         let mut result = Vec::with_capacity(node.nodes.len());
         for node in &node.nodes {
-            result.push(self.generator_node(node)?)
+            result.push(self.generate_node(node)?)
         }
         Ok(result)
     }
 
-    fn generator_named_arguments(&mut self, node: &parse::TupleNode) -> ast::Result<Vec<NamedArgumentNode>> {
+    fn generate_named_arguments(&mut self, node: &parse::TupleNode) -> ast::Result<Vec<NamedArgumentNode>> {
         let mut result = Vec::with_capacity(node.nodes.len());
 
         for node in &node.nodes {
             let Node::Infix(InfixNode { left, operator, right }) = node else { panic!() };
             assert!(matches!(operator, InfixOperator::Assign(_)));
             let Node::Identifier(identifier) = left.deref() else { panic!() };
-            let right = self.generator_node(right)?;
+            let right = self.generate_node(right)?;
             result.push(NamedArgumentNode {
                 identifier: Identifier::from(identifier),
                 value: right,

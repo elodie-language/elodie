@@ -3,11 +3,11 @@ use crate::frontend::ast::Generator;
 use crate::frontend::ast::node::{DefineTypeNode, Identifier};
 
 impl<'a> Generator<'a> {
-    pub(crate) fn generator_define(&mut self, node: &parse::DefineDeclarationNode) -> ast::Result<ast::Node> {
+    pub(crate) fn generate_define(&mut self, node: &parse::DefineDeclarationNode) -> ast::Result<ast::Node> {
         let mut compiled_body = vec![];
 
         for node in &node.block.nodes {
-            compiled_body.push(self.generator_node(node)?);
+            compiled_body.push(self.generate_node(node)?);
         }
 
         Ok(ast::Node::DefineType(DefineTypeNode {

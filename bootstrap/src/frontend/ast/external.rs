@@ -5,10 +5,10 @@ use crate::frontend::ast::Generator;
 use crate::frontend::ast::node::{DeclareExternalFunctionNode, Identifier};
 
 impl<'a> Generator<'a> {
-    pub(crate) fn generator_declare_external_function(&mut self, node: &parse::ExternalFunctionDeclarationNode) -> ast::Result<ast::Node> {
+    pub(crate) fn generate_declare_external_function(&mut self, node: &parse::ExternalFunctionDeclarationNode) -> ast::Result<ast::Node> {
         let mut arguments = Vec::with_capacity(node.arguments.len());
         for arg in &node.arguments {
-            arguments.push(Rc::new(self.generator_declare_function_argument(arg)?))
+            arguments.push(Rc::new(self.generate_declare_function_argument(arg)?))
         }
 
         Ok(ast::Node::DeclareExternalFunction(DeclareExternalFunctionNode {

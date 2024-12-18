@@ -8,11 +8,11 @@ use crate::frontend::ast::Generator;
 use crate::frontend::ast::node::{DeclarePackageNode, ExportPackageNode, Identifier};
 
 impl<'a> Generator<'a> {
-    pub(crate) fn generator_declare_package(&mut self, node: &parse::PackageDeclarationNode) -> crate::frontend::ast::Result<ast::Node> {
+    pub(crate) fn generate_declare_package(&mut self, node: &parse::PackageDeclarationNode) -> crate::frontend::ast::Result<ast::Node> {
         let mut compiled_body = vec![];
 
         for node in &node.block.nodes {
-            compiled_body.push(self.generator_node(node)?);
+            compiled_body.push(self.generate_node(node)?);
         }
 
         let mut external_functions = vec![];

@@ -3,7 +3,7 @@ use crate::frontend::ast::{Generator, LiteralBooleanNode};
 use crate::frontend::ast::node::{LiteralNode, LiteralNumberNode, LiteralStringNode};
 
 impl<'a> Generator<'a> {
-    pub(crate) fn generator_literal(
+    pub(crate) fn generate_literal(
         &mut self,
         node: &parse::LiteralNode,
     ) -> ast::Result<ast::Node> {

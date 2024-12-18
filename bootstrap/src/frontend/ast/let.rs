@@ -5,9 +5,9 @@ use crate::frontend::ast::Generator;
 use crate::frontend::ast::node::{DeclareVariableNode, Identifier, Node};
 
 impl<'a> Generator<'a> {
-    pub(crate) fn generator_let(&mut self, node: &parse::VariableDeclarationNode) -> ast::Result<ast::Node> {
+    pub(crate) fn generate_let(&mut self, node: &parse::VariableDeclarationNode) -> ast::Result<ast::Node> {
         let identifier = Identifier::from(&node.identifier);
-        let value = self.generator_node(node.node.deref())?;
+        let value = self.generate_node(node.node.deref())?;
 
         // self.scope.insert_identifier(identifier.clone());
 
