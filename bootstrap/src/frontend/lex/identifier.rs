@@ -1,17 +1,19 @@
-use crate::frontend::lex::Lexer;
 use crate::frontend::lex::token::{TextSpan, Token, TokenKind};
+use crate::frontend::lex::Lexer;
 
 impl Lexer<'_> {
     pub(crate) fn consume_identifier(&mut self) -> crate::frontend::lex::Result<Token> {
         let start = self.position();
 
-        let mut text = self.consume_while(|c| {
-            c.is_alphanumeric() || c == '_'
-        })?;
+        let mut text = self.consume_while(|c| c.is_alphanumeric() || c == '_')?;
 
         Ok(Token {
             kind: TokenKind::Identifier,
-            span: TextSpan { start, end: self.position(), value: self.ctx.string_table.insert(text.as_str()) },
+            span: TextSpan {
+                start,
+                end: self.position(),
+                value: self.ctx.string_table.insert(text.as_str()),
+            },
         })
     }
 }
@@ -19,8 +21,8 @@ impl Lexer<'_> {
 #[cfg(test)]
 mod test {
     use crate::common::Context;
-    use crate::frontend::lex::Lexer;
     use crate::frontend::lex::token::{LiteralToken, OperatorToken, TokenKind};
+    use crate::frontend::lex::Lexer;
 
     #[test]
     fn some_var() {
@@ -75,7 +77,10 @@ mod test {
         assert_eq!(token_three.span.end, (1, 12, 11));
         assert_eq!(ctx.get_str(token_three.value()), "log");
 
-        assert_eq!(token_four.kind, TokenKind::Operator(OperatorToken::OpenParen));
+        assert_eq!(
+            token_four.kind,
+            TokenKind::Operator(OperatorToken::OpenParen)
+        );
         assert_eq!(token_four.span.start, (1, 12, 11));
         assert_eq!(token_four.span.end, (1, 13, 12));
         assert_eq!(ctx.get_str(token_four.value()), "(");
@@ -85,7 +90,10 @@ mod test {
         assert_eq!(token_five.span.end, (1, 19, 18));
         assert_eq!(ctx.get_str(token_five.value()), "test");
 
-        assert_eq!(token_six.kind, TokenKind::Operator(OperatorToken::CloseParen));
+        assert_eq!(
+            token_six.kind,
+            TokenKind::Operator(OperatorToken::CloseParen)
+        );
         assert_eq!(token_six.span.start, (1, 19, 18));
         assert_eq!(token_six.span.end, (1, 20, 19));
         assert_eq!(ctx.get_str(token_six.value()), ")");

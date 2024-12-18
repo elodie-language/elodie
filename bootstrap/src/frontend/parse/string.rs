@@ -2,7 +2,9 @@ use regex::Regex;
 
 use crate::frontend::lex::lex;
 use crate::frontend::lex::token::{LiteralToken, TextSpan, Token, TokenKind};
-use crate::frontend::parse::{LiteralNode, LiteralStringNode, Node, parse, Parser, StringInterpolationNode};
+use crate::frontend::parse::{
+    parse, LiteralNode, LiteralStringNode, Node, Parser, StringInterpolationNode,
+};
 
 impl<'a> Parser<'a> {
     pub(crate) fn parse_string(&mut self) -> crate::frontend::parse::Result<Node> {
@@ -32,7 +34,10 @@ impl<'a> Parser<'a> {
                 }
             }
 
-            return Ok(Node::StringInterpolation(StringInterpolationNode { token, nodes }));
+            return Ok(Node::StringInterpolation(StringInterpolationNode {
+                token,
+                nodes,
+            }));
         }
         return Ok(Node::Literal(LiteralNode::String(LiteralStringNode(token))));
     }
@@ -65,10 +70,12 @@ impl<'a> Parser<'a> {
 mod tests {
     use crate::common::Context;
     use crate::frontend::lex::lex;
-    use crate::frontend::parse::{InfixNode, InfixOperator, parse, StringInterpolationNode, TupleNode};
     use crate::frontend::parse::node::LiteralNode;
     use crate::frontend::parse::node::Node::Literal;
     use crate::frontend::parse::Node::StringInterpolation;
+    use crate::frontend::parse::{
+        parse, InfixNode, InfixOperator, StringInterpolationNode, TupleNode,
+    };
 
     #[test]
     fn string_literal() {
@@ -77,7 +84,9 @@ mod tests {
         let result = parse(&mut ctx, tokens).unwrap();
         assert_eq!(result.len(), 1);
 
-        let Literal(LiteralNode::String(node)) = &result[0] else { panic!() };
+        let Literal(LiteralNode::String(node)) = &result[0] else {
+            panic!()
+        };
         assert_eq!(ctx.get_str(node.value()), "Elodie");
     }
 
@@ -88,10 +97,14 @@ mod tests {
         let result = parse(&mut ctx, tokens).unwrap();
         assert_eq!(result.len(), 1);
 
-        let StringInterpolation(StringInterpolationNode { nodes, .. }) = &result[0] else { panic!() };
+        let StringInterpolation(StringInterpolationNode { nodes, .. }) = &result[0] else {
+            panic!()
+        };
         assert_eq!(nodes.len(), 2);
 
-        let Literal(LiteralNode::String(node)) = &nodes[0] else { panic!() };
+        let Literal(LiteralNode::String(node)) = &nodes[0] else {
+            panic!()
+        };
         assert_eq!(ctx.get_str(node.value()), "The value is: ");
 
         let node = nodes[1].as_identifier();
@@ -105,13 +118,19 @@ mod tests {
         let result = parse(&mut ctx, tokens).unwrap();
         assert_eq!(result.len(), 1);
 
-        let StringInterpolation(StringInterpolationNode { nodes, .. }) = &result[0] else { panic!() };
+        let StringInterpolation(StringInterpolationNode { nodes, .. }) = &result[0] else {
+            panic!()
+        };
         assert_eq!(nodes.len(), 2);
 
-        let Literal(LiteralNode::String(node)) = &nodes[0] else { panic!() };
+        let Literal(LiteralNode::String(node)) = &nodes[0] else {
+            panic!()
+        };
         assert_eq!(ctx.get_str(node.value()), "The value is: ");
 
-        let Literal(LiteralNode::Number(node)) = &nodes[1] else { panic!() };
+        let Literal(LiteralNode::Number(node)) = &nodes[1] else {
+            panic!()
+        };
         assert_eq!(ctx.get_str(node.value()), "9924");
     }
 
@@ -122,13 +141,19 @@ mod tests {
         let result = parse(&mut ctx, tokens).unwrap();
         assert_eq!(result.len(), 1);
 
-        let StringInterpolation(StringInterpolationNode { nodes, .. }) = &result[0] else { panic!() };
+        let StringInterpolation(StringInterpolationNode { nodes, .. }) = &result[0] else {
+            panic!()
+        };
         assert_eq!(nodes.len(), 2);
 
-        let Literal(LiteralNode::String(node)) = &nodes[0] else { panic!() };
+        let Literal(LiteralNode::String(node)) = &nodes[0] else {
+            panic!()
+        };
         assert_eq!(ctx.get_str(node.value()), "The value is: ");
 
-        let Literal(LiteralNode::Boolean(node)) = &nodes[1] else { panic!() };
+        let Literal(LiteralNode::Boolean(node)) = &nodes[1] else {
+            panic!()
+        };
         assert_eq!(node.value(), true);
     }
 
@@ -139,22 +164,35 @@ mod tests {
         let result = parse(&mut ctx, tokens).unwrap();
         assert_eq!(result.len(), 1);
 
-        let StringInterpolation(StringInterpolationNode { nodes, .. }) = &result[0] else { panic!() };
+        let StringInterpolation(StringInterpolationNode { nodes, .. }) = &result[0] else {
+            panic!()
+        };
         assert_eq!(nodes.len(), 2);
 
-        let Literal(LiteralNode::String(node)) = &nodes[0] else { panic!() };
+        let Literal(LiteralNode::String(node)) = &nodes[0] else {
+            panic!()
+        };
         assert_eq!(ctx.get_str(node.value()), "The value is: ");
 
-        let InfixNode { left, operator, right } = &nodes[1].as_infix();
+        let InfixNode {
+            left,
+            operator,
+            right,
+            ..
+        } = &nodes[1].as_infix();
         let identifier = left.as_identifier();
         assert_eq!(ctx.get_str(identifier.value()), "some_function");
 
-        let InfixOperator::Call(_) = operator else { panic!() };
+        let InfixOperator::Call(_) = operator else {
+            panic!()
+        };
 
         let TupleNode { nodes, .. } = right.as_tuple();
         assert_eq!(nodes.len(), 1);
 
-        let Some(Literal(LiteralNode::String(arg_1))) = &nodes.first() else { panic!() };
+        let Some(Literal(LiteralNode::String(arg_1))) = &nodes.first() else {
+            panic!()
+        };
         assert_eq!(ctx.get_str(arg_1.value()), "elodie");
     }
 }

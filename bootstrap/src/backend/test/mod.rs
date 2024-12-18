@@ -7,14 +7,14 @@ use std::process::exit;
 use std::rc::Rc;
 use std::sync::mpsc;
 
-use crate::{load_library_file, load_test_runner};
-use crate::common::Context;
 use crate::backend::run::run;
 use crate::backend::run::scope::Scope;
 use crate::backend::run::type_definitions::TypeDefinitions;
-use crate::backend::run::value::{IntrinsicFunctionValue, ObjectValue, Value};
 use crate::backend::run::value::Value::IntrinsicFunction;
+use crate::backend::run::value::{IntrinsicFunctionValue, ObjectValue, Value};
+use crate::common::Context;
 use crate::frontend::ast_from_str;
+use crate::{load_library_file, load_test_runner};
 
 pub fn test_files(files: Vec<PathBuf>, print_colors: bool, fails_at_the_end: bool) {
     test_file(files.first().unwrap(), print_colors, fails_at_the_end);
@@ -31,7 +31,9 @@ fn test_file(file: &PathBuf, print_colors: bool, fails_at_the_end: bool) {
     intrinsics.set_property(
         ctx.string_table.insert("list_length"),
         IntrinsicFunction(IntrinsicFunctionValue(Rc::new(|args| {
-            let Value::List(list) = args.get(0).unwrap() else { panic!("not list") };
+            let Value::List(list) = args.get(0).unwrap() else {
+                panic!("not list")
+            };
             let len: u32 = list.0.borrow().len() as u32;
             Ok(Value::Number(len.into()))
         }))),
@@ -40,7 +42,9 @@ fn test_file(file: &PathBuf, print_colors: bool, fails_at_the_end: bool) {
     intrinsics.set_property(
         ctx.string_table.insert("list_append"),
         IntrinsicFunction(IntrinsicFunctionValue(Rc::new(|args| {
-            let Value::List(list) = args.get(0).unwrap() else { panic!("not list") };
+            let Value::List(list) = args.get(0).unwrap() else {
+                panic!("not list")
+            };
             let arg = args.get(1).cloned().unwrap();
             list.0.borrow_mut().push(arg);
             Ok(Value::Unit)
@@ -50,8 +54,12 @@ fn test_file(file: &PathBuf, print_colors: bool, fails_at_the_end: bool) {
     intrinsics.set_property(
         ctx.string_table.insert("list_get"),
         IntrinsicFunction(IntrinsicFunctionValue(Rc::new(|args| {
-            let Value::List(list) = args.get(0).unwrap() else { panic!("not list") };
-            let Value::Number(arg) = args.get(1).cloned().unwrap() else { panic!("not a number") };
+            let Value::List(list) = args.get(0).unwrap() else {
+                panic!("not list")
+            };
+            let Value::Number(arg) = args.get(1).cloned().unwrap() else {
+                panic!("not a number")
+            };
             Ok(list.0.borrow().get(arg as usize - 1).cloned().unwrap())
         }))),
     );
@@ -59,7 +67,9 @@ fn test_file(file: &PathBuf, print_colors: bool, fails_at_the_end: bool) {
     intrinsics.set_property(
         ctx.string_table.insert("exit"),
         IntrinsicFunction(IntrinsicFunctionValue(Rc::new(|args| {
-            let Value::Number(code) = args.get(0).cloned().unwrap() else { panic!("not a number") };
+            let Value::Number(code) = args.get(0).cloned().unwrap() else {
+                panic!("not a number")
+            };
             exit(code as i32)
         }))),
     );
@@ -73,27 +83,36 @@ fn test_file(file: &PathBuf, print_colors: bool, fails_at_the_end: bool) {
         }))),
     );
 
-    root_values.insert(ctx.string_table.insert("intrinsics"), Value::Object(intrinsics));
-    let scope = Scope::new(
-        root_values,
-        root_types,
+    root_values.insert(
+        ctx.string_table.insert("intrinsics"),
+        Value::Object(intrinsics),
     );
+    let scope = Scope::new(root_values, root_types);
 
-// load core
+    // load core
     let (scope, definitions) = {
         let std_content = load_library_file("core/index.ec").unwrap();
         let std_file = ast_from_str(&mut ctx, std_content.as_str()).unwrap();
-        run(&mut ctx, scope, TypeDefinitions { definitions: Default::default() }, std_file, print_colors).unwrap()
+        run(
+            &mut ctx,
+            scope,
+            TypeDefinitions {
+                definitions: Default::default(),
+            },
+            std_file,
+            print_colors,
+        )
+        .unwrap()
     };
 
-// load std
+    // load std
     let (scope, definitions) = {
         let std_content = load_library_file("std/index.ec").unwrap();
         let std_file = ast_from_str(&mut ctx, std_content.as_str()).unwrap();
         run(&mut ctx, scope, definitions, std_file, print_colors).unwrap()
     };
 
-// load test runner
+    // load test runner
     let (scope, definitions) = {
         let std_content = load_test_runner().unwrap();
         let std_file = ast_from_str(&mut ctx, std_content.as_str()).unwrap();
@@ -108,9 +127,7 @@ fn test_file(file: &PathBuf, print_colors: bool, fails_at_the_end: bool) {
 
     if fails_at_the_end {
         match rx.try_recv() {
-            Ok(_) => {
-                exit(-1)
-            }
+            Ok(_) => exit(-1),
             Err(_) => {}
         }
     }

@@ -34,11 +34,11 @@ pub fn build(name: &str, c_code: &str) -> io::Result<()> {
 
     let gcc_err_file = File::create(&gcc_err_path)?;
 
-    let c_files: Vec<_> = EC_FILES.into_iter()
+    let c_files: Vec<_> = EC_FILES
+        .into_iter()
         .filter(|f| f.ends_with(".c"))
         .map(|f| dir.join(f))
         .collect();
-
 
     let gcc_output = Command::new("gcc")
         .arg(c_file_path.to_str().unwrap())
@@ -52,15 +52,19 @@ pub fn build(name: &str, c_code: &str) -> io::Result<()> {
 
     if !gcc_output.status.success() {
         eprintln!("gcc failed with status: {}\n", gcc_output.status);
-        return Err(io::Error::new(io::ErrorKind::Other, "gcc compilation failed"));
+        return Err(io::Error::new(
+            io::ErrorKind::Other,
+            "gcc compilation failed",
+        ));
     }
 
     Ok(())
 }
 
-fn build_std(dir: PathBuf){
+fn build_std(dir: PathBuf) {
     let mut file = File::create(&dir.join(PathBuf::from("std_io.h"))).unwrap();
-    file.write_all(r#"
+    file.write_all(
+        r#"
 #ifndef STD_IO_H
 #define STD_IO_H
 
@@ -70,12 +74,15 @@ void std_io_print(char const * message);
 void std_io_println(char const * message);
 
 #endif
-    "#.as_bytes()).unwrap();
+    "#
+        .as_bytes(),
+    )
+    .unwrap();
     drop(file);
 
-
     let mut file = File::create(&dir.join(PathBuf::from("std_io.c"))).unwrap();
-    file.write_all(r#"
+    file.write_all(
+        r#"
 #include "std_io.h"
 #include "core_intrinsics_io.h"
 
@@ -88,7 +95,10 @@ void std_io_println(char const * message) {
     std_io_print("\n");
 }
 
-    "#.as_bytes()).unwrap();
+    "#
+        .as_bytes(),
+    )
+    .unwrap();
     drop(file);
 }
 

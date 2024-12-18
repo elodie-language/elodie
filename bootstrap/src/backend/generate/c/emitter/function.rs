@@ -39,7 +39,6 @@ impl Emitter {
             self.emit_str(")");
         }
 
-
         self.emit_line(";");
     }
 

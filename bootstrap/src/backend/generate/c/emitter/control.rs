@@ -8,7 +8,7 @@ impl Emitter {
         self.emit_expression(&statement.condition);
         self.emit_token(")");
         self.emit_block_statement(&statement.then);
-        if let Some(otherwise) = &statement.otherwise{
+        if let Some(otherwise) = &statement.otherwise {
             self.emit_token("else");
             self.emit_block_statement(otherwise);
         }

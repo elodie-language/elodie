@@ -3,12 +3,13 @@ use KeywordToken::Let;
 
 use crate::frontend::lex::token::{KeywordToken, OperatorToken};
 use crate::frontend::parse::node::VariableDeclarationNode;
-use crate::frontend::parse::Parser;
 use crate::frontend::parse::precedence::Precedence;
+use crate::frontend::parse::Parser;
 
 impl<'a> Parser<'a> {
-
-    pub(crate) fn parse_variable_declaration(&mut self) -> crate::frontend::parse::Result<VariableDeclarationNode> {
+    pub(crate) fn parse_variable_declaration(
+        &mut self,
+    ) -> crate::frontend::parse::Result<VariableDeclarationNode> {
         let token = self.consume_keyword(Let)?;
         let identifier = self.parse_identifier()?;
 
@@ -31,15 +32,14 @@ impl<'a> Parser<'a> {
     }
 }
 
-
 #[cfg(test)]
 mod tests {
     use std::ops::Deref;
 
     use crate::common::Context;
     use crate::frontend::lex::lex;
-    use crate::frontend::parse::node::{LiteralNode, TypeNode};
     use crate::frontend::parse::node::Node::Literal;
+    use crate::frontend::parse::node::{LiteralNode, TypeNode};
     use crate::frontend::parse::parse;
 
     #[test]
@@ -54,7 +54,9 @@ mod tests {
 
         assert_eq!(node.r#type, None);
 
-        let Literal(LiteralNode::String(result)) = &node.node.deref() else { panic!() };
+        let Literal(LiteralNode::String(result)) = &node.node.deref() else {
+            panic!()
+        };
         assert_eq!(ctx.get_str(result.value()), "Elodie");
     }
 
@@ -68,9 +70,13 @@ mod tests {
         let node = result[0].as_declare_variable();
         assert_eq!(ctx.get_str(node.identifier.value()), "value");
 
-        let Some(TypeNode::String(_)) = node.r#type else { panic!() };
+        let Some(TypeNode::String(_)) = node.r#type else {
+            panic!()
+        };
 
-        let Literal(LiteralNode::String(result)) = &node.node.deref() else { panic!() };
+        let Literal(LiteralNode::String(result)) = &node.node.deref() else {
+            panic!()
+        };
         assert_eq!(ctx.get_str(result.value()), "Elodie");
     }
 
@@ -86,7 +92,9 @@ mod tests {
 
         assert_eq!(node.r#type, None);
 
-        let Literal(LiteralNode::Number(result)) = &node.node.deref() else { panic!() };
+        let Literal(LiteralNode::Number(result)) = &node.node.deref() else {
+            panic!()
+        };
         assert_eq!(ctx.get_str(result.value()), "9924");
     }
 
@@ -101,7 +109,9 @@ mod tests {
         assert_eq!(ctx.get_str(node.identifier.value()), "value");
         assert_eq!(node.r#type, None);
 
-        let Literal(LiteralNode::Boolean(result)) = &node.node.deref() else { panic!() };
+        let Literal(LiteralNode::Boolean(result)) = &node.node.deref() else {
+            panic!()
+        };
         assert_eq!(result.value(), false);
     }
 }

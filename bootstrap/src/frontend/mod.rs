@@ -34,7 +34,6 @@ impl From<ast::Error> for Error {
     }
 }
 
-
 pub type Result<T, E = Error> = core::result::Result<T, E>;
 
 #[derive(Debug)]

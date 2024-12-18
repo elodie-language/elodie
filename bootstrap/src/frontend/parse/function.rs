@@ -3,19 +3,26 @@ use OperatorToken::OpenParen;
 use SeparatorToken::Comma;
 use TokenKind::{Operator, Separator};
 
-use crate::ir::Modifiers;
-use crate::frontend::lex::token::{KeywordToken, OperatorToken, SeparatorToken, TokenKind};
 use crate::frontend::lex::token::OperatorToken::{Arrow, CloseParen};
-use crate::frontend::parse::node::{FunctionDeclarationArgumentNode, FunctionDeclarationNode, ReturnNode};
-use crate::frontend::parse::Parser;
+use crate::frontend::lex::token::{KeywordToken, OperatorToken, SeparatorToken, TokenKind};
+use crate::frontend::parse::node::{
+    FunctionDeclarationArgumentNode, FunctionDeclarationNode, ReturnNode,
+};
 use crate::frontend::parse::precedence::Precedence;
+use crate::frontend::parse::Parser;
+use crate::ir::Modifiers;
 
 impl<'a> Parser<'a> {
-    pub(crate) fn parse_function_declaration(&mut self) -> crate::frontend::parse::Result<FunctionDeclarationNode> {
+    pub(crate) fn parse_function_declaration(
+        &mut self,
+    ) -> crate::frontend::parse::Result<FunctionDeclarationNode> {
         self.parse_function_declaration_with_modifiers(Modifiers(vec![]))
     }
 
-    pub(crate) fn parse_function_declaration_with_modifiers(&mut self, modifiers: Modifiers) -> crate::frontend::parse::Result<FunctionDeclarationNode> {
+    pub(crate) fn parse_function_declaration_with_modifiers(
+        &mut self,
+        modifiers: Modifiers,
+    ) -> crate::frontend::parse::Result<FunctionDeclarationNode> {
         let fun_token = self.consume_keyword(KeywordToken::Function)?;
         let identifier = self.parse_identifier()?;
         self.consume_operator(OpenParen)?;
@@ -49,7 +56,9 @@ impl<'a> Parser<'a> {
         })
     }
 
-    pub(crate) fn parse_function_declaration_argument(&mut self) -> crate::frontend::parse::Result<FunctionDeclarationArgumentNode> {
+    pub(crate) fn parse_function_declaration_argument(
+        &mut self,
+    ) -> crate::frontend::parse::Result<FunctionDeclarationArgumentNode> {
         let identifier = self.parse_identifier()?;
         let r#type = if self.current()?.is_operator(OperatorToken::Colon) {
             self.advance()?;
@@ -73,13 +82,12 @@ impl<'a> Parser<'a> {
     }
 }
 
-
 #[cfg(test)]
 mod tests {
     use crate::common::Context;
     use crate::frontend::lex::lex;
-    use crate::frontend::parse::node::{LiteralNode, TypeNode};
     use crate::frontend::parse::node::Node::Literal;
+    use crate::frontend::parse::node::{LiteralNode, TypeNode};
     use crate::frontend::parse::parse;
 
     #[test]
@@ -101,7 +109,9 @@ mod tests {
         assert_eq!(result.len(), 1);
 
         let node = result[0].as_return().as_result();
-        let Literal(LiteralNode::Number(node)) = node else { panic!() };
+        let Literal(LiteralNode::Number(node)) = node else {
+            panic!()
+        };
         assert_eq!(ctx.get_str(node.value()), "9924");
     }
 
@@ -149,9 +159,10 @@ mod tests {
         assert!(!node.modifiers.is_exported());
 
         let type_node = node.as_return_type();
-        let TypeNode::Boolean(_) = type_node else { panic!("not bool") };
+        let TypeNode::Boolean(_) = type_node else {
+            panic!("not bool")
+        };
     }
-
 
     #[test]
     fn function_with_single_arg() {
@@ -169,7 +180,9 @@ mod tests {
         let arg = &node.arguments[0];
         assert_eq!(ctx.get_str(arg.identifier.value()), "arg_1");
 
-        let TypeNode::String(_) = arg.as_type() else { panic!("not string") };
+        let TypeNode::String(_) = arg.as_type() else {
+            panic!("not string")
+        };
         assert_eq!(node.return_type, None);
     }
 
@@ -189,12 +202,16 @@ mod tests {
         let arg_1 = &node.arguments[0];
         assert_eq!(ctx.get_str(arg_1.identifier.value()), "arg_1");
 
-        let TypeNode::String(_) = arg_1.as_type() else { panic!("not string") };
+        let TypeNode::String(_) = arg_1.as_type() else {
+            panic!("not string")
+        };
 
         let arg_2 = node.arguments.last().unwrap();
         assert_eq!(ctx.get_str(arg_2.identifier.value()), "arg_2");
 
-        let TypeNode::Number(_) = arg_2.as_type() else { panic!("not number") };
+        let TypeNode::Number(_) = arg_2.as_type() else {
+            panic!("not number")
+        };
 
         assert_eq!(node.return_type, None);
     }
@@ -213,12 +230,15 @@ mod tests {
         assert_eq!(node.arguments.len(), 1);
         assert_eq!(node.return_type, None);
 
-
         let arg_1 = &node.arguments[0];
         assert_eq!(ctx.get_str(arg_1.identifier.value()), "test_case");
-        let TypeNode::Function(function_node) = arg_1.as_type() else { panic!("not function") };
+        let TypeNode::Function(function_node) = arg_1.as_type() else {
+            panic!("not function")
+        };
         assert_eq!(function_node.arguments, vec![]);
 
-        let TypeNode::Boolean(_) = function_node.as_return_type() else { panic!("not bool") };
+        let TypeNode::Boolean(_) = function_node.as_return_type() else {
+            panic!("not bool")
+        };
     }
 }

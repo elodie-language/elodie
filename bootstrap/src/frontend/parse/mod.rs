@@ -2,52 +2,57 @@ use std::cmp::PartialOrd;
 use std::collections::HashMap;
 
 use crate::common::Context;
-use crate::frontend::lex::token::{KeywordToken, LiteralToken, OperatorToken, SeparatorToken, Token, TokenKind};
 use crate::frontend::lex::token::SeparatorToken::NewLine;
 use crate::frontend::lex::token::TokenKind::{Keyword, Literal, Operator, Separator};
-use crate::frontend::parse::Error::UnexpectedEndOfFile;
+use crate::frontend::lex::token::{
+    KeywordToken, LiteralToken, OperatorToken, SeparatorToken, Token, TokenKind,
+};
 pub use crate::frontend::parse::node::*;
 use crate::frontend::parse::precedence::Precedence;
+use crate::frontend::parse::Error::UnexpectedEndOfFile;
 
-pub(crate) mod precedence;
-mod node;
-mod infix;
-mod literal;
-mod primary;
-mod identifier;
 mod block;
-mod r#loop;
-mod r#if;
-mod variable;
-mod r#type;
-mod function;
-mod tuple;
-mod package;
-mod modifier;
-mod from;
-mod type_declaration;
 mod define;
 mod external;
+mod from;
+mod function;
+mod identifier;
+mod r#if;
+mod infix;
+mod literal;
+mod r#loop;
+mod modifier;
+mod node;
+mod package;
+pub(crate) mod precedence;
+mod primary;
 mod string;
+mod tuple;
+mod r#type;
+mod type_declaration;
+mod variable;
 
 #[derive(Debug, PartialEq)]
 pub enum Error {
     InvalidIdentifier(Token),
     InvalidType(Token),
     UnexpectedEndOfFile,
-    UnexpectedToken {
-        expected: TokenKind,
-        got: Token,
-    },
+    UnexpectedToken { expected: TokenKind, got: Token },
     UnsupportedNumber(String),
     UnsupportedToken(Token),
     UnknownType(Token),
 }
 
 impl Error {
-    pub(crate) fn eof() -> Self { Self::UnexpectedEndOfFile }
-    pub(crate) fn unexpected(expected: TokenKind, got: Token) -> Self { Self::UnexpectedToken { expected, got } }
-    pub(crate) fn unsupported(token: Token) -> Self { Self::UnsupportedToken(token) }
+    pub(crate) fn eof() -> Self {
+        Self::UnexpectedEndOfFile
+    }
+    pub(crate) fn unexpected(expected: TokenKind, got: Token) -> Self {
+        Self::UnexpectedToken { expected, got }
+    }
+    pub(crate) fn unsupported(token: Token) -> Self {
+        Self::UnsupportedToken(token)
+    }
 }
 
 pub(crate) type Result<T, E = Error> = core::result::Result<T, E>;
@@ -62,7 +67,6 @@ struct Parser<'a> {
     precedence_map: HashMap<TokenKind, Precedence>,
 }
 
-
 impl<'a> Parser<'a> {
     fn new(ctx: &'a mut Context, tokens: Vec<Token>) -> Self {
         let mut precedence_map = HashMap::new();
@@ -72,9 +76,15 @@ impl<'a> Parser<'a> {
         precedence_map.insert(Operator(OperatorToken::BangEqual), Precedence::Comparison);
 
         precedence_map.insert(Operator(OperatorToken::LeftAngle), Precedence::Comparison);
-        precedence_map.insert(Operator(OperatorToken::LeftAngleEqual), Precedence::Comparison);
+        precedence_map.insert(
+            Operator(OperatorToken::LeftAngleEqual),
+            Precedence::Comparison,
+        );
         precedence_map.insert(Operator(OperatorToken::RightAngle), Precedence::Comparison);
-        precedence_map.insert(Operator(OperatorToken::RightAngleEqual), Precedence::Comparison);
+        precedence_map.insert(
+            Operator(OperatorToken::RightAngleEqual),
+            Precedence::Comparison,
+        );
 
         precedence_map.insert(Operator(OperatorToken::Plus), Precedence::Term);
         precedence_map.insert(Operator(OperatorToken::Minus), Precedence::Term);
@@ -92,7 +102,6 @@ impl<'a> Parser<'a> {
         precedence_map.insert(Operator(OperatorToken::Arrow), Precedence::Primary);
         precedence_map.insert(Operator(OperatorToken::Colon), Precedence::Primary);
 
-
         let mut tokens = tokens;
         tokens.pop();
         tokens.reverse();
@@ -107,7 +116,9 @@ impl<'a> Parser<'a> {
     fn parse(&mut self) -> Result<Vec<Node>> {
         let mut nodes = vec![];
         loop {
-            if self.is_eof() { break; }
+            if self.is_eof() {
+                break;
+            }
             nodes.push(self.parse_node(Precedence::None)?);
             if !self.is_eof() {
                 self.consume_if(TokenKind::Separator(NewLine))?;
@@ -171,7 +182,6 @@ impl<'a> Parser<'a> {
         self.advance()
     }
 
-
     pub(crate) fn current(&self) -> Result<&Token> {
         self.tokens.last().ok_or(UnexpectedEndOfFile)
     }
@@ -202,7 +212,9 @@ impl<'a> Parser<'a> {
     }
 
     pub(crate) fn current_precedence(&self) -> Result<Precedence> {
-        if self.is_eof() { return Ok(Precedence::None); };
+        if self.is_eof() {
+            return Ok(Precedence::None);
+        };
 
         let current = self.current()?;
         let precedence = self.precedence_map.get(&current.kind).cloned();
@@ -242,12 +254,12 @@ mod tests {
 
     use crate::common::Context;
     use crate::frontend::lex::lex;
-    use crate::frontend::lex::token::{literal, LiteralToken, OperatorToken, separator};
     use crate::frontend::lex::token::LiteralToken::{Number, True};
     use crate::frontend::lex::token::SeparatorToken::Semicolon;
-    use crate::frontend::parse::{Error, Parser};
+    use crate::frontend::lex::token::{literal, separator, LiteralToken, OperatorToken};
     use crate::frontend::parse::precedence::Precedence;
     use crate::frontend::parse::precedence::Precedence::Term;
+    use crate::frontend::parse::{Error, Parser};
 
     #[test]
     fn advance_but_eof() {
@@ -267,7 +279,6 @@ mod tests {
         let token_one = parser.advance().unwrap();
         let token_two = parser.advance().unwrap();
         let token_three = parser.advance().unwrap();
-
 
         assert_eq!(ctx.get_str(token_one.value()), "1");
         assert!(token_one.is_literal(Number));

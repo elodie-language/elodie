@@ -1,6 +1,6 @@
-use crate::frontend::lex::Lexer;
-use crate::frontend::lex::token::{LiteralToken, TextSpan, Token, TokenKind};
 use crate::frontend::lex::token::LiteralToken::{False, Number, True};
+use crate::frontend::lex::token::{LiteralToken, TextSpan, Token, TokenKind};
+use crate::frontend::lex::Lexer;
 
 impl Lexer<'_> {
     pub(crate) fn is_string(&self, c: char) -> bool {
@@ -49,7 +49,11 @@ impl Lexer<'_> {
 
         Ok(Token {
             kind: TokenKind::Literal(LiteralToken::String),
-            span: TextSpan { start, end: self.position(), value: self.ctx.string_table.insert(text.as_str()) },
+            span: TextSpan {
+                start,
+                end: self.position(),
+                value: self.ctx.string_table.insert(text.as_str()),
+            },
         })
     }
 
@@ -103,7 +107,11 @@ impl Lexer<'_> {
 
         Ok(Token {
             kind: TokenKind::Literal(Number),
-            span: TextSpan { start, end: self.position(), value: self.ctx.string_table.insert(text.as_str()) },
+            span: TextSpan {
+                start,
+                end: self.position(),
+                value: self.ctx.string_table.insert(text.as_str()),
+            },
         })
     }
 
@@ -122,7 +130,11 @@ impl Lexer<'_> {
             self.consume_if("rue").unwrap();
             return Ok(Token {
                 kind: TokenKind::Literal(True),
-                span: TextSpan { start, end: self.position(), value: self.ctx.string_table.insert("true") },
+                span: TextSpan {
+                    start,
+                    end: self.position(),
+                    value: self.ctx.string_table.insert("true"),
+                },
             });
         }
 
@@ -130,18 +142,21 @@ impl Lexer<'_> {
         self.consume_if("alse").unwrap();
         Ok(Token {
             kind: TokenKind::Literal(False),
-            span: TextSpan { start, end: self.position(), value: self.ctx.string_table.insert("false") },
+            span: TextSpan {
+                start,
+                end: self.position(),
+                value: self.ctx.string_table.insert("false"),
+            },
         })
     }
 }
 
-
 #[cfg(test)]
 mod test {
     use crate::common::Context;
-    use crate::frontend::lex::Lexer;
     use crate::frontend::lex::token::LiteralToken::{False, Number, String, True};
     use crate::frontend::lex::token::TokenKind;
+    use crate::frontend::lex::Lexer;
 
     #[test]
     fn empty_string() {
@@ -202,7 +217,6 @@ mod test {
         assert_eq!(result.span.end, (1, 3, 2));
         assert_eq!(ctx.get_str(result.value()), "42");
     }
-
 
     #[test]
     fn float() {

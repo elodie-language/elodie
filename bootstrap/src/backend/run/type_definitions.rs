@@ -1,8 +1,8 @@
 use std::collections::HashMap;
 
+use crate::backend::run::value::FunctionValue;
 use crate::common::StringTableId;
 use crate::common::TypeId;
-use crate::backend::run::value::FunctionValue;
 
 #[derive(Debug)]
 pub struct TypeDefinitions {
@@ -10,12 +10,13 @@ pub struct TypeDefinitions {
 }
 
 impl TypeDefinitions {
-
     pub fn add_function(&mut self, type_id: TypeId, fn_id: StringTableId, value: FunctionValue) {
         if let Some(type_def) = self.definitions.get_mut(&type_id) {
             type_def.functions.insert(fn_id, value);
         } else {
-            let mut new_type_def = TypeDefinition { functions: HashMap::new(), };
+            let mut new_type_def = TypeDefinition {
+                functions: HashMap::new(),
+            };
             new_type_def.functions.insert(fn_id, value);
             self.definitions.insert(type_id, new_type_def);
         }
@@ -28,12 +29,21 @@ pub struct TypeDefinition {
 }
 
 impl TypeDefinitions {
-
-    pub fn insert_function(&mut self, type_id: TypeId, idx: StringTableId, value :FunctionValue){
-        self.definitions.get_mut(&type_id).unwrap().functions.insert(idx, value);
+    pub fn insert_function(&mut self, type_id: TypeId, idx: StringTableId, value: FunctionValue) {
+        self.definitions
+            .get_mut(&type_id)
+            .unwrap()
+            .functions
+            .insert(idx, value);
     }
 
     pub fn get_function(&self, type_id: &TypeId, idx: &StringTableId) -> FunctionValue {
-        self.definitions.get(type_id).unwrap().functions.get(idx).cloned().unwrap()
+        self.definitions
+            .get(type_id)
+            .unwrap()
+            .functions
+            .get(idx)
+            .cloned()
+            .unwrap()
     }
 }

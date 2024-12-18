@@ -1,5 +1,5 @@
-use crate::backend::run::Runner;
 use crate::backend::run::value::Value;
+use crate::backend::run::Runner;
 use crate::frontend::ast;
 
 impl<'a> Runner<'a> {
@@ -24,7 +24,7 @@ impl<'a> Runner<'a> {
                     }
                 }
             }
-            v => unimplemented!("{v:?}")
+            v => unimplemented!("{v:?}"),
         }
     }
 }

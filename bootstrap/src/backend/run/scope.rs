@@ -1,8 +1,8 @@
 use std::collections::HashMap;
 
+use crate::backend::run::value::Value;
 use crate::common::StringTableId;
 use crate::common::Type;
-use crate::backend::run::value::Value;
 
 #[derive(Debug)]
 pub struct Scope {
@@ -57,4 +57,3 @@ impl Scope {
         self.types.pop().unwrap();
     }
 }
-

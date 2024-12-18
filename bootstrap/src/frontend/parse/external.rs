@@ -8,11 +8,16 @@ use crate::frontend::parse::{ExternalFunctionDeclarationNode, Parser};
 use crate::ir::Modifiers;
 
 impl<'a> Parser<'a> {
-    pub(crate) fn parse_external(&mut self) -> crate::frontend::parse::Result<ExternalFunctionDeclarationNode> {
+    pub(crate) fn parse_external(
+        &mut self,
+    ) -> crate::frontend::parse::Result<ExternalFunctionDeclarationNode> {
         self.parse_external_with_modifiers(Modifiers(vec![]))
     }
 
-    pub(crate) fn parse_external_with_modifiers(&mut self, modifiers: Modifiers) -> crate::frontend::parse::Result<ExternalFunctionDeclarationNode> {
+    pub(crate) fn parse_external_with_modifiers(
+        &mut self,
+        modifiers: Modifiers,
+    ) -> crate::frontend::parse::Result<ExternalFunctionDeclarationNode> {
         let external = self.consume_keyword(External)?;
         let _ = self.consume_keyword(Function)?;
         let identifier = self.parse_identifier()?;
@@ -34,7 +39,6 @@ impl<'a> Parser<'a> {
         } else {
             None
         };
-
 
         Ok(ExternalFunctionDeclarationNode {
             token: external,
@@ -81,14 +85,20 @@ mod tests {
         let arg = &node.arguments[0];
         assert_eq!(ctx.get_str(arg.identifier.value()), "arg_1");
 
-        let TypeNode::String(_) = arg.as_type() else { panic!("not string") };
+        let TypeNode::String(_) = arg.as_type() else {
+            panic!("not string")
+        };
         assert_eq!(node.return_type, None);
     }
 
     #[test]
     fn external_function_with_multiple_args() {
         let mut ctx = Context::new();
-        let tokens = lex(&mut ctx, "external function magic(arg_1: String, arg_2: Number)").unwrap();
+        let tokens = lex(
+            &mut ctx,
+            "external function magic(arg_1: String, arg_2: Number)",
+        )
+        .unwrap();
         let result = parse(&mut ctx, tokens).unwrap();
         assert_eq!(result.len(), 1);
 
@@ -100,12 +110,16 @@ mod tests {
         let arg_1 = &node.arguments[0];
         assert_eq!(ctx.get_str(arg_1.identifier.value()), "arg_1");
 
-        let TypeNode::String(_) = arg_1.as_type() else { panic!("not string") };
+        let TypeNode::String(_) = arg_1.as_type() else {
+            panic!("not string")
+        };
 
         let arg_2 = node.arguments.last().unwrap();
         assert_eq!(ctx.get_str(arg_2.identifier.value()), "arg_2");
 
-        let TypeNode::Number(_) = arg_2.as_type() else { panic!("not number") };
+        let TypeNode::Number(_) = arg_2.as_type() else {
+            panic!("not number")
+        };
 
         assert_eq!(node.return_type, None);
     }
@@ -113,7 +127,11 @@ mod tests {
     #[test]
     fn exported_external_function() {
         let mut ctx = Context::new();
-        let tokens = lex(&mut ctx, "export external function magic(arg_1: String, arg_2: Number) -> Bool").unwrap();
+        let tokens = lex(
+            &mut ctx,
+            "export external function magic(arg_1: String, arg_2: Number) -> Bool",
+        )
+        .unwrap();
         let result = parse(&mut ctx, tokens).unwrap();
         assert_eq!(result.len(), 1);
 
@@ -125,14 +143,20 @@ mod tests {
         let arg_1 = &node.arguments[0];
         assert_eq!(ctx.get_str(arg_1.identifier.value()), "arg_1");
 
-        let TypeNode::String(_) = arg_1.as_type() else { panic!("not string") };
+        let TypeNode::String(_) = arg_1.as_type() else {
+            panic!("not string")
+        };
 
         let arg_2 = node.arguments.last().unwrap();
         assert_eq!(ctx.get_str(arg_2.identifier.value()), "arg_2");
 
-        let TypeNode::Number(_) = arg_2.as_type() else { panic!("not number") };
+        let TypeNode::Number(_) = arg_2.as_type() else {
+            panic!("not number")
+        };
 
         let type_node = node.return_type.as_deref().unwrap();
-        let TypeNode::Boolean(_) = type_node else { panic!("not bool") };
+        let TypeNode::Boolean(_) = type_node else {
+            panic!("not bool")
+        };
     }
 }

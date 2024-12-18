@@ -6,14 +6,14 @@ pub use operator::*;
 pub use r#struct::*;
 pub use variable::*;
 
-mod directive;
-mod modifier;
-mod r#struct;
-mod function;
 mod control;
+mod directive;
+mod function;
 mod literal;
-mod variable;
+mod modifier;
 mod operator;
+mod r#struct;
+mod variable;
 
 #[derive(Debug)]
 pub enum Node {
@@ -30,9 +30,8 @@ pub enum Expression {
     Infix(InfixExpression),
     Literal(LiteralExpression),
     Variable(VariableExpression),
-    StructInitialisation(InitialiseStructExpression)
+    StructInitialisation(InitialiseStructExpression),
 }
-
 
 #[derive(Debug)]
 pub enum Statement {

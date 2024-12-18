@@ -2,9 +2,9 @@ use crate::common::is_pascal_snake_case;
 use crate::frontend::lex::token::OperatorToken::{Arrow, CloseParen, Colon, OpenParen};
 use crate::frontend::lex::token::SeparatorToken::Comma;
 use crate::frontend::lex::token::TokenKind::{Operator, Separator};
-use crate::frontend::parse::{Parser, CustomTypeNode};
-use crate::frontend::parse::Error::InvalidType;
 use crate::frontend::parse::node::{TypeFunctionArgumentNode, TypeFunctionNode, TypeNode};
+use crate::frontend::parse::Error::InvalidType;
+use crate::frontend::parse::{CustomTypeNode, Parser};
 
 impl<'a> Parser<'a> {
     pub(crate) fn parse_type(&mut self) -> crate::frontend::parse::Result<TypeNode> {
@@ -18,12 +18,14 @@ impl<'a> Parser<'a> {
             "Number" => Ok(TypeNode::Number(token)),
             "String" => Ok(TypeNode::String(token)),
             "function" => Ok(TypeNode::Function(self.parse_function_type()?)),
-            _ => Ok(TypeNode::Custom(CustomTypeNode { token }))
+            _ => Ok(TypeNode::Custom(CustomTypeNode { token })),
         }
     }
 
-    pub(crate) fn parse_function_type(&mut self) -> crate::frontend::parse::Result<TypeFunctionNode> {
-        self.consume_operator(OpenParen)?;
+    pub(crate) fn parse_function_type(
+        &mut self,
+    ) -> crate::frontend::parse::Result<TypeFunctionNode> {
+        let token = self.consume_operator(OpenParen)?;
 
         let mut arguments = vec![];
         loop {
@@ -42,15 +44,16 @@ impl<'a> Parser<'a> {
             None
         };
 
-        Ok(
-            TypeFunctionNode {
-                arguments,
-                return_type,
-            }
-        )
+        Ok(TypeFunctionNode {
+            token,
+            arguments,
+            return_type,
+        })
     }
 
-    pub(crate) fn parse_function_type_argument(&mut self) -> crate::frontend::parse::Result<TypeFunctionArgumentNode> {
+    pub(crate) fn parse_function_type_argument(
+        &mut self,
+    ) -> crate::frontend::parse::Result<TypeFunctionArgumentNode> {
         let identifier = if self.peek()?.is_operator(Colon) {
             Some(self.parse_identifier()?)
         } else {
@@ -68,9 +71,9 @@ impl<'a> Parser<'a> {
 mod tests {
     use crate::common::Context;
     use crate::frontend::lex::lex;
-    use crate::frontend::parse::{Parser, CustomTypeNode};
-    use crate::frontend::parse::Error::InvalidType;
     use crate::frontend::parse::node::{TypeFunctionArgumentNode, TypeNode};
+    use crate::frontend::parse::Error::InvalidType;
+    use crate::frontend::parse::{CustomTypeNode, Parser};
 
     #[test]
     fn not_a_type() {
@@ -78,7 +81,9 @@ mod tests {
         let tokens = lex(&mut ctx, "something_different").unwrap();
         let mut parser = Parser::new(&mut ctx, tokens);
         let result = parser.parse_type();
-        let Err(InvalidType(_)) = result else { panic!() };
+        let Err(InvalidType(_)) = result else {
+            panic!()
+        };
     }
 
     #[test]
@@ -87,7 +92,9 @@ mod tests {
         let tokens = lex(&mut ctx, "Point").unwrap();
         let mut parser = Parser::new(&mut ctx, tokens);
         let result = parser.parse_type().unwrap();
-        let TypeNode::Custom(CustomTypeNode { token }) = result else { panic!() };
+        let TypeNode::Custom(CustomTypeNode { token }) = result else {
+            panic!()
+        };
         assert_eq!(ctx.get_str(token.value()), "Point");
     }
 
@@ -97,7 +104,9 @@ mod tests {
         let tokens = lex(&mut ctx, "Bool").unwrap();
         let mut parser = Parser::new(&mut ctx, tokens);
         let result = parser.parse_type().unwrap();
-        let TypeNode::Boolean(_) = result else { panic!() };
+        let TypeNode::Boolean(_) = result else {
+            panic!()
+        };
     }
 
     #[test]
@@ -106,7 +115,9 @@ mod tests {
         let tokens = lex(&mut ctx, "Number").unwrap();
         let mut parser = Parser::new(&mut ctx, tokens);
         let result = parser.parse_type().unwrap();
-        let TypeNode::Number(_) = result else { panic!() };
+        let TypeNode::Number(_) = result else {
+            panic!()
+        };
     }
 
     #[test]
@@ -115,7 +126,9 @@ mod tests {
         let tokens = lex(&mut ctx, "String").unwrap();
         let mut parser = Parser::new(&mut ctx, tokens);
         let result = parser.parse_type().unwrap();
-        let TypeNode::String(_) = result else { panic!() };
+        let TypeNode::String(_) = result else {
+            panic!()
+        };
     }
 
     #[test]
@@ -125,7 +138,9 @@ mod tests {
         let mut parser = Parser::new(&mut ctx, tokens);
         let result = parser.parse_type().unwrap();
 
-        let TypeNode::Function(node) = result else { panic!() };
+        let TypeNode::Function(node) = result else {
+            panic!()
+        };
         assert_eq!(node.arguments, vec![]);
         assert_eq!(node.return_type, None);
     }
@@ -137,11 +152,17 @@ mod tests {
         let mut parser = Parser::new(&mut ctx, tokens);
         let result = parser.parse_type().unwrap();
 
-        let TypeNode::Function(node) = result else { panic!() };
+        let TypeNode::Function(node) = result else {
+            panic!()
+        };
         assert_eq!(node.arguments, vec![]);
 
-        let Some(result_node) = node.return_type.as_deref() else { panic!() };
-        let TypeNode::Number(_) = result_node else { panic!() };
+        let Some(result_node) = node.return_type.as_deref() else {
+            panic!()
+        };
+        let TypeNode::Number(_) = result_node else {
+            panic!()
+        };
     }
 
     #[test]
@@ -151,18 +172,30 @@ mod tests {
         let mut parser = Parser::new(&mut ctx, tokens);
         let result = parser.parse_type().unwrap();
 
-        let TypeNode::Function(node) = result else { panic!() };
+        let TypeNode::Function(node) = result else {
+            panic!()
+        };
         assert_eq!(node.arguments.len(), 1);
 
-        let Some(TypeFunctionArgumentNode { identifier, r#type }) = &node.arguments.first() else { panic!() };
-        let Some(identifier) = identifier else { panic!() };
+        let Some(TypeFunctionArgumentNode { identifier, r#type }) = &node.arguments.first() else {
+            panic!()
+        };
+        let Some(identifier) = identifier else {
+            panic!()
+        };
         assert_eq!(ctx.get_str(identifier.value()), "arg_1");
 
         let arg_type = r#type.as_ref();
-        let TypeNode::Boolean(_) = arg_type else { panic!() };
+        let TypeNode::Boolean(_) = arg_type else {
+            panic!()
+        };
 
-        let Some(result_node) = node.return_type.as_deref() else { panic!() };
-        let TypeNode::Number(_) = result_node else { panic!() };
+        let Some(result_node) = node.return_type.as_deref() else {
+            panic!()
+        };
+        let TypeNode::Number(_) = result_node else {
+            panic!()
+        };
     }
 
     #[test]
@@ -172,16 +205,26 @@ mod tests {
         let mut parser = Parser::new(&mut ctx, tokens);
         let result = parser.parse_type().unwrap();
 
-        let TypeNode::Function(node) = result else { panic!() };
+        let TypeNode::Function(node) = result else {
+            panic!()
+        };
         assert_eq!(node.arguments.len(), 1);
 
-        let Some(TypeFunctionArgumentNode { identifier, r#type }) = &node.arguments.first() else { panic!() };
+        let Some(TypeFunctionArgumentNode { identifier, r#type }) = &node.arguments.first() else {
+            panic!()
+        };
         assert_eq!(*identifier, None);
 
         let arg_type = r#type.as_ref();
-        let TypeNode::Boolean(_) = arg_type else { panic!() };
+        let TypeNode::Boolean(_) = arg_type else {
+            panic!()
+        };
 
-        let Some(result_node) = node.return_type.as_deref() else { panic!() };
-        let TypeNode::Number(_) = result_node else { panic!() };
+        let Some(result_node) = node.return_type.as_deref() else {
+            panic!()
+        };
+        let TypeNode::Number(_) = result_node else {
+            panic!()
+        };
     }
 }

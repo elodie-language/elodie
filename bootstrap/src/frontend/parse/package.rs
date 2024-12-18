@@ -1,13 +1,18 @@
-use crate::ir::Modifiers;
 use crate::frontend::lex::token::KeywordToken;
 use crate::frontend::parse::{PackageDeclarationNode, Parser};
+use crate::ir::Modifiers;
 
 impl<'a> Parser<'a> {
-    pub(crate) fn parse_package_declaration(&mut self) -> crate::frontend::parse::Result<PackageDeclarationNode> {
+    pub(crate) fn parse_package_declaration(
+        &mut self,
+    ) -> crate::frontend::parse::Result<PackageDeclarationNode> {
         self.parse_package_declaration_with_modifiers(Modifiers(vec![]))
     }
 
-    pub(crate) fn parse_package_declaration_with_modifiers(&mut self, modifiers: Modifiers) -> crate::frontend::parse::Result<PackageDeclarationNode> {
+    pub(crate) fn parse_package_declaration_with_modifiers(
+        &mut self,
+        modifiers: Modifiers,
+    ) -> crate::frontend::parse::Result<PackageDeclarationNode> {
         let token = self.consume_keyword(KeywordToken::Package)?;
         let identifier = self.parse_identifier()?;
         let block = self.parse_block()?;
@@ -60,7 +65,11 @@ mod tests {
     #[test]
     fn exported_package_with_exported_function() {
         let mut ctx = Context::new();
-        let tokens = lex(&mut ctx, "export package magic{ export function some_fn() {} }").unwrap();
+        let tokens = lex(
+            &mut ctx,
+            "export package magic{ export function some_fn() {} }",
+        )
+        .unwrap();
         let result = parse(&mut ctx, tokens).unwrap();
         assert_eq!(result.len(), 1);
 

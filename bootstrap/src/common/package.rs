@@ -1,5 +1,5 @@
-use std::ops::Deref;
 use crate::common::{StringTable, StringTableId};
+use std::ops::Deref;
 
 #[derive(Clone, Debug)]
 pub struct PackagePath {
@@ -9,7 +9,7 @@ pub struct PackagePath {
 impl From<Vec<StringTableId>> for PackagePath {
     fn from(value: Vec<StringTableId>) -> Self {
         Self {
-            segments: value.into_boxed_slice()
+            segments: value.into_boxed_slice(),
         }
     }
 }
@@ -30,7 +30,11 @@ impl PackagePath {
         }
     }
 
-    pub fn to_strs<'a>(&self, cache: &'a StringTable) -> Box<[&'a str]>{
-        self.segments.deref().into_iter().map(|s| cache.get(s)).collect()
+    pub fn to_strs<'a>(&self, cache: &'a StringTable) -> Box<[&'a str]> {
+        self.segments
+            .deref()
+            .into_iter()
+            .map(|s| cache.get(s))
+            .collect()
     }
 }

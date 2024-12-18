@@ -1,6 +1,8 @@
 use crate::backend::generate::c;
-use crate::backend::generate::c::{DirectiveNode, IncludeLocalDirectiveNode, IncludeSystemDirectiveNode};
 use crate::backend::generate::c::emitter::Emitter;
+use crate::backend::generate::c::{
+    DirectiveNode, IncludeLocalDirectiveNode, IncludeSystemDirectiveNode,
+};
 
 impl Emitter {
     pub(crate) fn emit_directive(&mut self, node: &c::DirectiveNode) {

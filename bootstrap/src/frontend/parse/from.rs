@@ -1,7 +1,7 @@
 use crate::frontend::lex::token::KeywordToken;
 use crate::frontend::lex::token::KeywordToken::Export;
-use crate::frontend::parse::{FromExportNode, FromNode, Parser};
 use crate::frontend::parse::precedence::Precedence;
+use crate::frontend::parse::{FromExportNode, FromNode, Parser};
 
 impl<'a> Parser<'a> {
     pub(crate) fn parse_from(&mut self) -> crate::frontend::parse::Result<FromNode> {
@@ -29,7 +29,7 @@ impl<'a> Parser<'a> {
 mod tests {
     use crate::common::Context;
     use crate::frontend::lex::lex;
-    use crate::frontend::parse::{FromNode, LiteralNode, parse};
+    use crate::frontend::parse::{parse, FromNode, LiteralNode};
 
     #[test]
     fn export_single_package_from_local_file() {
@@ -40,7 +40,9 @@ mod tests {
 
         let FromNode::Export(node) = result[0].as_from();
 
-        let LiteralNode::String(literal) = &node.from_node.as_literal() else { panic!("not string literal") };
+        let LiteralNode::String(literal) = &node.from_node.as_literal() else {
+            panic!("not string literal")
+        };
         assert_eq!(ctx.get_str(literal.value()), "./io");
 
         let identifier = node.what_node.as_identifier();

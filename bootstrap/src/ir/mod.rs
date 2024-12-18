@@ -4,9 +4,9 @@ use crate::common::StringTable;
 use crate::common::TypeTable;
 use crate::frontend::{ast, Ast};
 
-mod modifier;
-mod infer;
 mod check;
+mod infer;
+mod modifier;
 mod unify;
 
 #[derive(Debug)]

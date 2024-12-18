@@ -1,14 +1,14 @@
 use crate::backend::generate::c;
 use crate::backend::generate::c::{Expression, Indent, Node};
 
+mod control;
 mod directive;
 mod function;
-mod statement;
-mod literal;
-mod variable;
-mod control;
 mod infix;
+mod literal;
+mod statement;
 mod r#struct;
+mod variable;
 
 pub enum Error {}
 
@@ -47,7 +47,7 @@ impl Emitter {
             Expression::Literal(expression) => self.emit_literal(expression),
             Expression::Infix(expression) => self.emit_infix(expression),
             Expression::Variable(expression) => self.emit_variable(expression),
-            Expression::StructInitialisation(expression)=> self.emit_initialise_struct(expression)
+            Expression::StructInitialisation(expression) => self.emit_initialise_struct(expression),
         }
     }
 

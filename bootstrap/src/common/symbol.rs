@@ -16,26 +16,11 @@ pub struct SymbolName(pub StringTableId);
 
 #[derive(Debug, Clone, PartialEq)]
 pub enum Symbol {
-    Argument {
-        id: SymbolId,
-        name: SymbolName,
-    },
-    Function {
-        id: SymbolId,
-        name: SymbolName,
-    },
-    Package {
-        id: SymbolId,
-        name: SymbolName,
-    },
-    Type {
-        id: SymbolId,
-        name: SymbolName,
-    },
-    Variable {
-        id: SymbolId,
-        name: SymbolName,
-    },
+    Argument { id: SymbolId, name: SymbolName },
+    Function { id: SymbolId, name: SymbolName },
+    Package { id: SymbolId, name: SymbolName },
+    Type { id: SymbolId, name: SymbolName },
+    Variable { id: SymbolId, name: SymbolName },
 }
 
 impl Symbol {}
@@ -51,7 +36,6 @@ impl SymbolTable {
         Self {
             next_id: 1,
             symbols: HashMap::new(),
-
         }
     }
 
@@ -59,10 +43,13 @@ impl SymbolTable {
         let new_id = SymbolId(self.next_id);
         self.next_id += 1;
 
-        self.symbols.insert(new_id.clone(), Symbol::Argument {
-            id: new_id.clone(),
-            name,
-        });
+        self.symbols.insert(
+            new_id.clone(),
+            Symbol::Argument {
+                id: new_id.clone(),
+                name,
+            },
+        );
 
         new_id
     }
@@ -71,10 +58,13 @@ impl SymbolTable {
         let new_id = SymbolId(self.next_id);
         self.next_id += 1;
 
-        self.symbols.insert(new_id.clone(), Symbol::Function {
-            id: new_id.clone(),
-            name,
-        });
+        self.symbols.insert(
+            new_id.clone(),
+            Symbol::Function {
+                id: new_id.clone(),
+                name,
+            },
+        );
 
         new_id
     }
@@ -83,10 +73,13 @@ impl SymbolTable {
         let new_id = SymbolId(self.next_id);
         self.next_id += 1;
 
-        self.symbols.insert(new_id.clone(), Symbol::Package {
-            id: new_id.clone(),
-            name,
-        });
+        self.symbols.insert(
+            new_id.clone(),
+            Symbol::Package {
+                id: new_id.clone(),
+                name,
+            },
+        );
 
         new_id
     }
@@ -95,10 +88,13 @@ impl SymbolTable {
         let new_id = SymbolId(self.next_id);
         self.next_id += 1;
 
-        self.symbols.insert(new_id.clone(), Symbol::Type {
-            id: new_id.clone(),
-            name,
-        });
+        self.symbols.insert(
+            new_id.clone(),
+            Symbol::Type {
+                id: new_id.clone(),
+                name,
+            },
+        );
 
         new_id
     }
@@ -107,10 +103,13 @@ impl SymbolTable {
         let new_id = SymbolId(self.next_id);
         self.next_id += 1;
 
-        self.symbols.insert(new_id.clone(), Symbol::Variable {
-            id: new_id.clone(),
-            name,
-        });
+        self.symbols.insert(
+            new_id.clone(),
+            Symbol::Variable {
+                id: new_id.clone(),
+                name,
+            },
+        );
 
         new_id
     }

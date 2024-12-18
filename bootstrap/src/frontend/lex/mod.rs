@@ -1,16 +1,16 @@
 use std::cell::RefCell;
 
 use crate::common::Context;
-use crate::frontend::lex::Error::UnexpectedEndOfFile;
-use crate::frontend::lex::token::{Column, Index, Position, Row, TextSpan, Token};
 use crate::frontend::lex::token::TokenKind::EOF;
+use crate::frontend::lex::token::{Column, Index, Position, Row, TextSpan, Token};
+use crate::frontend::lex::Error::UnexpectedEndOfFile;
 
 mod comment;
-mod separator;
-mod operator;
+mod identifier;
 mod keyword;
 mod literal;
-mod identifier;
+mod operator;
+mod separator;
 pub mod token;
 
 #[derive(Debug)]
@@ -76,7 +76,12 @@ impl<'a> Reader<'a> {
             return None;
         }
 
-        let result: String = self.content.chars().skip(pos).take(sequence.len()).collect();
+        let result: String = self
+            .content
+            .chars()
+            .skip(pos)
+            .take(sequence.len())
+            .collect();
         if result.is_empty() {
             return None;
         }
@@ -96,7 +101,11 @@ impl<'a> Reader<'a> {
             return None;
         }
 
-        self.content.chars().nth(pos).map(|c| Some(c)).unwrap_or(None)
+        self.content
+            .chars()
+            .nth(pos)
+            .map(|c| Some(c))
+            .unwrap_or(None)
     }
 
     pub fn peek_many(&self, window: usize) -> Option<String> {
@@ -119,7 +128,12 @@ impl<'a> Reader<'a> {
             return None;
         }
 
-        let chars: String = self.content.chars().skip(pos).take(sequence.len()).collect();
+        let chars: String = self
+            .content
+            .chars()
+            .skip(pos)
+            .take(sequence.len())
+            .collect();
         if chars.is_empty() {
             return None;
         }
@@ -216,7 +230,7 @@ impl<'a> Lexer<'a> {
                 _ if self.is_string(next) => self.consume_string(),
                 _ if self.is_number(next) => self.consume_number(),
                 _ if self.is_bool(next) => self.consume_bool(),
-                _ => self.consume_identifier()
+                _ => self.consume_identifier(),
             }
         } else {
             return Err(UnexpectedEndOfFile);

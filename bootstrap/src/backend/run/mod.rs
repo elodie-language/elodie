@@ -10,11 +10,11 @@ use std::rc::Rc;
 
 use crate::backend::run::scope::Scope;
 use crate::backend::run::type_definitions::TypeDefinitions;
-use crate::backend::run::value::{IntrinsicFunctionValue, ListValue, ObjectValue, Value};
 use crate::backend::run::value::Value::IntrinsicFunction;
-use crate::common::{Property, Type, TypeId, TypeName};
+use crate::backend::run::value::{IntrinsicFunctionValue, ListValue, ObjectValue, Value};
 use crate::common::Context;
-use crate::frontend::{ast, Ast, ast_from_str};
+use crate::common::{Property, Type, TypeId, TypeName};
+use crate::frontend::{ast, ast_from_str, Ast};
 use crate::load_library_file;
 
 mod block;
@@ -148,7 +148,7 @@ pub fn run_file(file: &String, print_colors: bool) {
             std_file,
             true,
         )
-            .unwrap()
+        .unwrap()
     };
 
     let (scope, definitions) = {
@@ -216,10 +216,11 @@ impl<'a> Runner<'a> {
             }
 
             ast::Node::CallFunctionOfObject(ast::CallFunctionOfObjectNode {
-                                                object,
-                                                function,
-                                                arguments,
-                                            }) => {
+                object,
+                function,
+                arguments,
+                ..
+            }) => {
                 // let some_arg_value = if let Node::CallFunction(arg_1) = &arguments[0] {
                 //     let value = self.run_call_function(arg_1)?.clone();
                 //     Some(value)
@@ -232,14 +233,14 @@ impl<'a> Runner<'a> {
                 //     direct_args.push(self.run_node(arg)?);/
                 // }
 
-                let obj_name = self.ctx.get_str(object.0).to_string();
+                let obj_name = self.ctx.get_str(object.0.value()).to_string();
 
                 let mut args: Vec<Value> = Vec::with_capacity(arguments.len());
                 for arg in arguments {
                     args.push(self.run_node(arg)?); // Now we can mutably borrow `self` without conflict
                 }
 
-                if let Value::List(object) = self.scope.get_value(&object.0).unwrap() {
+                if let Value::List(object) = self.scope.get_value(&object.0.value()).unwrap() {
                     let mut args = HashMap::with_capacity(arguments.len());
                     args.insert(
                         self.ctx.string_table.insert("self"),
@@ -248,17 +249,18 @@ impl<'a> Runner<'a> {
 
                     let mut counter = 0;
 
-                    let func =
-                        if let Some(Value::Function(func)) = self.scope.get_value(&function.0) {
-                            func.clone()
-                        } else {
-                            todo!()
-                        };
+                    let func = if let Some(Value::Function(func)) =
+                        self.scope.get_value(&function.0.value())
+                    {
+                        func.clone()
+                    } else {
+                        todo!()
+                    };
 
                     for arg in arguments {
                         let arg_node = func.arguments.get(counter).unwrap();
 
-                        let name = arg_node.identifier.0.clone();
+                        let name = arg_node.identifier.0.value().clone();
                         // FIXME resolve  name from definition
                         args.insert(name, self.run_node(arg)?);
                         counter += 1;
@@ -268,7 +270,9 @@ impl<'a> Runner<'a> {
 
                     // args.extend(&direct_args);
 
-                    let func = self.type_definitions.get_function(&TypeId(99), &function.0);
+                    let func = self
+                        .type_definitions
+                        .get_function(&TypeId(99), &function.0.value());
                     self.scope.enter();
 
                     let result = self.run_node_call(func.clone(), args);
@@ -278,7 +282,7 @@ impl<'a> Runner<'a> {
                     return result;
                 }
 
-                let Value::Object(object) = self.scope.get_value(&object.0).unwrap() else {
+                let Value::Object(object) = self.scope.get_value(&object.0.value()).unwrap() else {
                     panic!()
                 };
 
@@ -292,15 +296,19 @@ impl<'a> Runner<'a> {
                         if let ast::Node::LoadValue(load_varialbe_node) = arg {
                             let value = self
                                 .scope
-                                .get_value(&load_varialbe_node.identifier.0)
+                                .get_value(&load_varialbe_node.identifier.0.value())
                                 .unwrap()
                                 .clone();
                             args.push(value);
                         } else if let ast::Node::Literal(node) = arg {
                             match node {
                                 ast::LiteralNode::Boolean(_) => unimplemented!(),
-                                ast::LiteralNode::Number(value) => args.push(Value::Number(self.ctx.get_str(value.value()).parse().unwrap())),
-                                ast::LiteralNode::String(value) => args.push(Value::String(self.ctx.get_str(value.value()).to_string()))
+                                ast::LiteralNode::Number(value) => args.push(Value::Number(
+                                    self.ctx.get_str(value.value()).parse().unwrap(),
+                                )),
+                                ast::LiteralNode::String(value) => args.push(Value::String(
+                                    self.ctx.get_str(value.value()).to_string(),
+                                )),
                             }
                         } else {
                             unimplemented!("{:#?}", arg);
@@ -315,7 +323,9 @@ impl<'a> Runner<'a> {
                         Value::Object(object.clone()),
                     );
 
-                    let func = self.type_definitions.get_function(&TypeId(99), &function.0);
+                    let func = self
+                        .type_definitions
+                        .get_function(&TypeId(99), &function.0.value());
                     self.scope.enter();
 
                     let result = self.run_node_call(func.clone(), args);
@@ -327,18 +337,19 @@ impl<'a> Runner<'a> {
             }
 
             ast::Node::CallFunctionOfPackage(ast::CallFunctionOfPackageNode {
-                                                 package: packages,
-                                                 function,
-                                                 arguments,
-                                             }) => {
+                package: packages,
+                function,
+                arguments,
+                ..
+            }) => {
                 let mut args = HashMap::with_capacity(arguments.len());
 
                 let mut packages = packages.clone();
                 let mut root = packages.first().unwrap();
                 let Value::Package(root_package) = self.scope.get_value(&root).unwrap().clone()
-                    else {
-                        panic!()
-                    };
+                else {
+                    panic!()
+                };
 
                 let mut target_package = root_package;
                 loop {
@@ -361,22 +372,26 @@ impl<'a> Runner<'a> {
                 }
 
                 if let Some(IntrinsicFunctionValue(func)) =
-                    target_package.get_intrinsic_function(function.0)
+                    target_package.get_intrinsic_function(function.0.value())
                 {
                     let mut args = Vec::with_capacity(arguments.len());
                     for arg in arguments {
                         if let ast::Node::LoadValue(load_varialbe_node) = arg {
                             let value = self
                                 .scope
-                                .get_value(&load_varialbe_node.identifier.0)
+                                .get_value(&load_varialbe_node.identifier.0.value())
                                 .unwrap()
                                 .clone();
                             args.push(value);
                         } else if let ast::Node::Literal(node) = arg {
                             match node {
                                 ast::LiteralNode::Boolean(_) => unimplemented!(),
-                                ast::LiteralNode::Number(value) => args.push(Value::Number(self.ctx.get_str(value.value()).parse().unwrap())),
-                                ast::LiteralNode::String(value) => args.push(Value::String(self.ctx.get_str(value.value()).to_string()))
+                                ast::LiteralNode::Number(value) => args.push(Value::Number(
+                                    self.ctx.get_str(value.value()).parse().unwrap(),
+                                )),
+                                ast::LiteralNode::String(value) => args.push(Value::String(
+                                    self.ctx.get_str(value.value()).to_string(),
+                                )),
                             }
                         } else {
                             unimplemented!("{:#?}", arg);
@@ -393,7 +408,7 @@ impl<'a> Runner<'a> {
                 //     root_package.packages.get(&package.last().unwrap().0).unwrap()
                 // };
 
-                let func = target_package.get_function(function.0).unwrap();
+                let func = target_package.get_function(function.0.value()).unwrap();
 
                 // makes sure that a package can access its internal functions
                 self.scope.enter();
@@ -405,7 +420,7 @@ impl<'a> Runner<'a> {
                 let mut counter = 0;
                 for arg in arguments {
                     let arg_node = func.arguments.get(counter).unwrap();
-                    let name = arg_node.identifier.0.clone();
+                    let name = arg_node.identifier.0.value().clone();
                     args.insert(name, self.run_node(arg)?);
                     counter += 1;
                 }
@@ -423,7 +438,9 @@ impl<'a> Runner<'a> {
             }
 
             ast::Node::CallFunction(function_node) => self.run_node_call_function(function_node),
-            ast::Node::CallFunctionWithLambda(lambda) => self.run_node_call_function_with_lambda(lambda),
+            ast::Node::CallFunctionWithLambda(lambda) => {
+                self.run_node_call_function_with_lambda(lambda)
+            }
             ast::Node::ReturnFromFunction(node) => {
                 let value = self.run_node(node.node.deref())?;
                 self.interrupt(Interrupt::Return(value.clone()));
@@ -494,18 +511,22 @@ impl<'a> Runner<'a> {
             ast::Node::LoadValue(load_variable) => {
                 let value = self
                     .scope
-                    .get_value(&load_variable.identifier.0)
+                    .get_value(&load_variable.identifier.0.value())
                     .unwrap()
                     .clone();
                 Ok(value)
             }
             ast::Node::LoadValueFromObject(load) => {
-                let value = self.scope.get_value(&load.object.0).unwrap().clone();
+                let value = self
+                    .scope
+                    .get_value(&load.object.0.value())
+                    .unwrap()
+                    .clone();
                 let Value::Object(object_value) = value else {
                     panic!("not object")
                 };
                 Ok(object_value
-                    .get_property(&load.property.0)
+                    .get_property(&load.property.0.value())
                     .cloned()
                     .unwrap())
             }
@@ -513,26 +534,27 @@ impl<'a> Runner<'a> {
                 let mut properties = HashMap::new();
 
                 for prop in &decl.properties {
-                    properties.insert(prop.identifier.0.clone(), Property {});
+                    properties.insert(prop.identifier.0.value().clone(), Property {});
                 }
 
                 let r#type = Type {
                     id: TypeId(0),
-                    name: TypeName(self.ctx.get_str(decl.identifier.0).to_string()),
+                    name: TypeName(self.ctx.get_str(decl.identifier.0.value()).to_string()),
                     properties,
                 };
 
-                self.scope.insert_type(decl.identifier.0.clone(), r#type);
+                self.scope
+                    .insert_type(decl.identifier.0.value().clone(), r#type);
                 Ok(Value::Unit)
             }
             ast::Node::InstantiateType(node) => {
                 let mut properties = HashMap::with_capacity(node.arguments.len());
 
                 for arg in &node.arguments {
-                    properties.insert(arg.identifier.0.clone(), self.run_node(&arg.value)?);
+                    properties.insert(arg.identifier.0.value().clone(), self.run_node(&arg.value)?);
                 }
 
-                let type_name = self.ctx.get_str(node.type_name.0);
+                let type_name = self.ctx.get_str(node.type_name.0.value());
 
                 // FIXME dirty hack to make lists works as quick as possible
                 if type_name == "List" {
@@ -546,7 +568,7 @@ impl<'a> Runner<'a> {
                 Ok(obj)
             }
             ast::Node::DefineType(node) => {
-                let func_ident = node.functions.get(0).unwrap().identifier.0;
+                let func_ident = node.functions.get(0).unwrap().identifier.0.value();
                 let func = node.functions.get(0).unwrap().clone();
                 let value = self.run_function_declaration(func)?;
 
@@ -568,7 +590,7 @@ impl<'a> Runner<'a> {
                     panic!("not object")
                 };
                 Ok(object_value
-                    .get_property(&load_variable.property.0)
+                    .get_property(&load_variable.property.0.value())
                     .cloned()
                     .unwrap())
             }

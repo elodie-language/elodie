@@ -3,12 +3,15 @@ use std::io;
 use std::io::Read;
 use std::path::PathBuf;
 
-use crate::frontend::{ast, ast_from_str, parse};
-use crate::frontend::ast::Generator;
 use crate::frontend::ast::node::{DeclarePackageNode, ExportPackageNode, Identifier};
+use crate::frontend::ast::Generator;
+use crate::frontend::{ast, ast_from_str, parse};
 
 impl<'a> Generator<'a> {
-    pub(crate) fn generate_declare_package(&mut self, node: &parse::PackageDeclarationNode) -> crate::frontend::ast::Result<ast::Node> {
+    pub(crate) fn generate_declare_package(
+        &mut self,
+        node: &parse::PackageDeclarationNode,
+    ) -> crate::frontend::ast::Result<ast::Node> {
         let mut compiled_body = vec![];
 
         for node in &node.block.nodes {
@@ -24,19 +27,27 @@ impl<'a> Generator<'a> {
             if let ast::Node::Block(block) = node {
                 for node in block.body {
                     if let ast::Node::ExportPackage(ExportPackageNode { identifier, .. }) = node {
-                        let package = self.ctx.get_str(identifier.0).to_string();
+                        let package = self.ctx.get_str(identifier.0.value()).to_string();
 
                         // FIXME temporary hack to load std packages
                         // FIXME compiler needs to track scope so that the parent package can easily be determined
 
                         match package.as_str() {
                             "io" => packages.extend(self.load_declared_packages("std/io/index.ec")),
-                            "collection" => packages.extend(self.load_declared_packages("std/collection/index.ec")),
-                            "list" => packages.extend(self.load_declared_packages("std/collection/list/index.ec")),
-                            "math" => packages.extend(self.load_declared_packages("std/math/index.ec")),
-                            "process" => packages.extend(self.load_declared_packages("std/process/index.ec")),
-                            "intrinsics" => packages.extend(self.load_declared_packages("core/intrinsics/index.ec")),
-                            _ => unimplemented!()
+                            "collection" => packages
+                                .extend(self.load_declared_packages("std/collection/index.ec")),
+                            "list" => packages.extend(
+                                self.load_declared_packages("std/collection/list/index.ec"),
+                            ),
+                            "math" => {
+                                packages.extend(self.load_declared_packages("std/math/index.ec"))
+                            }
+                            "process" => {
+                                packages.extend(self.load_declared_packages("std/process/index.ec"))
+                            }
+                            "intrinsics" => packages
+                                .extend(self.load_declared_packages("core/intrinsics/index.ec")),
+                            _ => unimplemented!(),
                         }
                     } else if let ast::Node::DeclareFunction(declare_function) = node {
                         functions.push(declare_function)
@@ -58,6 +69,7 @@ impl<'a> Generator<'a> {
         }
 
         Ok(ast::Node::DeclarePackage(DeclarePackageNode {
+            token: node.token.clone(),
             identifier: Identifier::from(&node.identifier),
             modifiers: node.modifiers.clone(),
             functions,
@@ -66,7 +78,6 @@ impl<'a> Generator<'a> {
             external_functions,
         }))
     }
-
 
     fn load_declared_packages(&mut self, name: &str) -> Vec<DeclarePackageNode> {
         let content = crate::load_library_file(name).unwrap();

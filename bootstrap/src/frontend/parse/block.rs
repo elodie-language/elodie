@@ -1,21 +1,22 @@
 use OperatorToken::{CloseCurly, OpenCurly};
-use TokenKind::Separator;
 
-use crate::frontend::lex::token::{OperatorToken, TokenKind};
-use crate::frontend::lex::token::SeparatorToken::NewLine;
+use crate::frontend::lex::token::{OperatorToken, Token};
 use crate::frontend::parse::node::BlockNode;
-use crate::frontend::parse::Parser;
 use crate::frontend::parse::precedence::Precedence;
+use crate::frontend::parse::Parser;
 
 impl<'a> Parser<'a> {
     pub(crate) fn parse_block(&mut self) -> crate::frontend::parse::Result<BlockNode> {
-        self.consume_operator(OpenCurly)?;
-        let result = self.parse_block_inner()?;
+        let token = self.consume_operator(OpenCurly)?;
+        let result = self.parse_block_inner(token)?;
         self.consume_operator(CloseCurly)?;
         Ok(result)
     }
 
-    pub(crate) fn parse_block_inner(&mut self) -> crate::frontend::parse::Result<BlockNode> {
+    pub(crate) fn parse_block_inner(
+        &mut self,
+        token: Token,
+    ) -> crate::frontend::parse::Result<BlockNode> {
         let mut nodes = Vec::new();
         loop {
             self.skip_new_line()?;
@@ -24,7 +25,7 @@ impl<'a> Parser<'a> {
             }
             nodes.push(self.parse_node(Precedence::None)?);
         }
-        Ok(BlockNode { nodes })
+        Ok(BlockNode { token, nodes })
     }
 }
 
@@ -32,9 +33,11 @@ impl<'a> Parser<'a> {
 mod tests {
     use crate::common::Context;
     use crate::frontend::lex::lex;
-    use crate::frontend::lex::token::{LiteralToken, test_token_with_offset, TokenKind};
-    use crate::frontend::parse::node::{BlockNode, InfixNode, InfixOperator, LiteralBooleanNode, LiteralNode, TupleNode};
-    use crate::frontend::parse::node::Node::{Block, Literal};
+    use crate::frontend::lex::token::{test_token_with_offset, LiteralToken, TokenKind};
+    use crate::frontend::parse::node::Node::Literal;
+    use crate::frontend::parse::node::{
+        InfixNode, InfixOperator, LiteralBooleanNode, LiteralNode, TupleNode,
+    };
     use crate::frontend::parse::parse;
 
     #[test]
@@ -48,7 +51,6 @@ mod tests {
         assert_eq!(block.nodes, vec![]);
     }
 
-
     #[test]
     fn empty_lambda() {
         let mut ctx = Context::new();
@@ -57,11 +59,18 @@ mod tests {
         assert_eq!(result.len(), 1);
 
         let block = result[0].as_block();
-        let InfixNode { left, operator, right } = &block.nodes[0].as_infix();
+        let InfixNode {
+            left,
+            operator,
+            right,
+            ..
+        } = &block.nodes[0].as_infix();
         let TupleNode { nodes, .. } = left.as_tuple();
         assert_eq!(*nodes, vec![]);
 
-        let InfixOperator::Arrow(_) = operator else { panic!() };
+        let InfixOperator::Arrow(_) = operator else {
+            panic!()
+        };
 
         let block = right.as_block();
         assert_eq!(block.nodes, vec![]);
@@ -75,22 +84,30 @@ mod tests {
         assert_eq!(result.len(), 1);
 
         let block = result[0].as_block();
-        let InfixNode { left, operator, right } = &block.nodes[0].as_infix();
+        let InfixNode {
+            left,
+            operator,
+            right,
+            ..
+        } = &block.nodes[0].as_infix();
         let TupleNode { nodes, .. } = left.as_tuple();
         assert_eq!(nodes.len(), 1);
 
         let arg_1 = nodes[0].as_identifier();
         assert_eq!(ctx.get_str(arg_1.value()), "arg_1");
 
-        let InfixOperator::Arrow(_) = operator else { panic!() };
+        let InfixOperator::Arrow(_) = operator else {
+            panic!()
+        };
 
         let block = right.as_block();
         assert_eq!(block.nodes.len(), 1);
 
-        let Literal(LiteralNode::Boolean(boolean_node)) = &block.nodes[0] else { panic!() };
+        let Literal(LiteralNode::Boolean(boolean_node)) = &block.nodes[0] else {
+            panic!()
+        };
         assert!(boolean_node.value())
     }
-
 
     #[test]
     fn block_with_white_spaces() {
@@ -106,10 +123,14 @@ mod tests {
     #[test]
     fn block_with_new_lines() {
         let mut ctx = Context::new();
-        let tokens = lex(&mut ctx, r#"{
+        let tokens = lex(
+            &mut ctx,
+            r#"{
 
 
-        }"#).unwrap();
+        }"#,
+        )
+        .unwrap();
         let result = parse(&mut ctx, tokens).unwrap();
         assert_eq!(result.len(), 1);
 
@@ -120,29 +141,43 @@ mod tests {
     #[test]
     fn block_nested() {
         let mut ctx = Context::new();
-        let tokens = lex(&mut ctx, r#"{
+        let tokens = lex(
+            &mut ctx,
+            r#"{
         {      }
-        }"#).unwrap();
+        }"#,
+        )
+        .unwrap();
         let result = parse(&mut ctx, tokens).unwrap();
         assert_eq!(result.len(), 1);
 
-        let block = &result[0].as_block();
-        assert_eq!(block.nodes, vec![Block(BlockNode { nodes: vec![] })]);
+        let block = result[0].as_block();
+        assert_eq!(block.nodes.len(), 1);
+
+        let block = block.nodes[0].as_block();
+        assert_eq!(block.nodes.len(), 0);
     }
 
     #[test]
     fn block_with_comments() {
         let mut ctx = Context::new();
-        let tokens = lex(&mut ctx, r#"{
+        let tokens = lex(
+            &mut ctx,
+            r#"{
         // before
         {}
         // after
-        }"#).unwrap();
+        }"#,
+        )
+        .unwrap();
         let result = parse(&mut ctx, tokens).unwrap();
         assert_eq!(result.len(), 1);
 
-        let block = &result[0].as_block();
-        assert_eq!(block.nodes, vec![Block(BlockNode { nodes: vec![] })]);
+        let block = result[0].as_block();
+        assert_eq!(block.nodes.len(), 1);
+
+        let block = block.nodes[0].as_block();
+        assert_eq!(block.nodes.len(), 0);
     }
 
     #[test]
@@ -153,18 +188,19 @@ mod tests {
         assert_eq!(result.len(), 1);
 
         let block = result[0].as_block();
-        assert_eq!(block.nodes, vec![
-            Block(BlockNode {
-                nodes: vec![
-                    Block(BlockNode {
-                        nodes: vec![
-                            Literal(LiteralNode::Boolean(
-                                LiteralBooleanNode(test_token_with_offset(&mut ctx, TokenKind::Literal(LiteralToken::True), "true", 8)))
-                            )
-                        ]
-                    })
-                ]
-            })
-        ]);
+        assert_eq!(block.nodes.len(), 1);
+
+        let block = block.nodes[0].as_block();
+        assert_eq!(block.nodes.len(), 1);
+
+        let block = block.nodes[0].as_block();
+        assert_eq!(block.nodes.len(), 1);
+
+        assert_eq!(
+            block.nodes,
+            vec![Literal(LiteralNode::Boolean(LiteralBooleanNode(
+                test_token_with_offset(&mut ctx, TokenKind::Literal(LiteralToken::True), "true", 8)
+            )))]
+        );
     }
 }

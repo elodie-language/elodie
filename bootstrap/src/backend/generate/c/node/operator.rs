@@ -2,16 +2,16 @@ use crate::backend::generate::c::Expression;
 
 #[derive(Debug)]
 pub enum InfixOperator {
-    Add,       // +
-    Subtract,  // -
-    Multiply,  // *
-    Divide,    // /
-    Modulo,    // %
-    Equal,    // ==
-    NotEqual, // !=
-    LessThan,  // <
+    Add,         // +
+    Subtract,    // -
+    Multiply,    // *
+    Divide,      // /
+    Modulo,      // %
+    Equal,       // ==
+    NotEqual,    // !=
+    LessThan,    // <
     GreaterThan, // >
-    Assign,    // =
+    Assign,      // =
 }
 
 #[derive(Debug)]

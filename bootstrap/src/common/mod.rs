@@ -4,9 +4,9 @@ pub use r#type::{BaseType, Property, Type, TypeId, TypeName, TypeTable};
 pub use string::{StringTable, StringTableId};
 pub use util::*;
 
-mod util;
-mod string;
-mod package;
-mod r#type;
-mod symbol;
 mod context;
+mod package;
+mod string;
+mod symbol;
+mod r#type;
+mod util;

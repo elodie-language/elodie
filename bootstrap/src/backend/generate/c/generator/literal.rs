@@ -1,5 +1,8 @@
-use crate::backend::generate::c::{Indent, LiteralBooleanExpression, LiteralDoubleExpression, LiteralExpression, LiteralStringExpression};
 use crate::backend::generate::c::generator::Generator;
+use crate::backend::generate::c::{
+    Indent, LiteralBooleanExpression, LiteralDoubleExpression, LiteralExpression,
+    LiteralStringExpression,
+};
 use crate::frontend::ast;
 use crate::frontend::ast::node::LiteralNode;
 

@@ -73,7 +73,10 @@ impl PackageValue {
         self.functions.get(&identifier)
     }
 
-    pub fn get_intrinsic_function(&self, identifier: StringTableId) -> Option<&IntrinsicFunctionValue> {
+    pub fn get_intrinsic_function(
+        &self,
+        identifier: StringTableId,
+    ) -> Option<&IntrinsicFunctionValue> {
         self.external_functions.get(&identifier)
     }
 }
@@ -86,7 +89,7 @@ pub struct ObjectValue {
 impl ObjectValue {
     pub fn new() -> Self {
         Self {
-            properties: HashMap::new()
+            properties: HashMap::new(),
         }
     }
 
@@ -99,9 +102,13 @@ impl ObjectValue {
     }
 
     #[deprecated]
-    pub fn get_property_host_function(&self, identifier: impl AsRef<Identifier>) -> Option<&IntrinsicFunctionValue> {
+    pub fn get_property_host_function(
+        &self,
+        identifier: impl AsRef<Identifier>,
+    ) -> Option<&IntrinsicFunctionValue> {
         let identifier = identifier.as_ref();
-        if let Some(Value::IntrinsicFunction(result)) = &self.properties.get(&identifier.0) {
+        if let Some(Value::IntrinsicFunction(result)) = &self.properties.get(&identifier.0.value())
+        {
             Some(result)
         } else {
             None

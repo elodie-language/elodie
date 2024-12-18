@@ -1,5 +1,7 @@
-use crate::backend::generate::c::{DeclareArrayStatement, DeclareVariableStatement, VariableExpression};
 use crate::backend::generate::c::emitter::Emitter;
+use crate::backend::generate::c::{
+    DeclareArrayStatement, DeclareVariableStatement, VariableExpression,
+};
 
 impl Emitter {
     pub(crate) fn emit_declare_array(&mut self, statement: &DeclareArrayStatement) {

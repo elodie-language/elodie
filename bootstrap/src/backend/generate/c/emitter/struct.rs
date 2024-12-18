@@ -1,8 +1,9 @@
-use crate::backend::generate::c::{DeclareStructNode, DefineStructNode, InitialiseStructField, InitialiseStructExpression};
 use crate::backend::generate::c::emitter::Emitter;
+use crate::backend::generate::c::{
+    DeclareStructNode, DefineStructNode, InitialiseStructExpression, InitialiseStructField,
+};
 
 impl Emitter {
-
     pub(crate) fn emit_declare_struct(&mut self, node: &DeclareStructNode) {
         self.emit_token("struct");
         self.emit_str(node.identifier.as_str());
@@ -23,10 +24,10 @@ impl Emitter {
         self.emit_line("};");
     }
 
-    pub(crate) fn emit_initialise_struct(&mut self, expression: &InitialiseStructExpression){
+    pub(crate) fn emit_initialise_struct(&mut self, expression: &InitialiseStructExpression) {
         self.emit_str("{");
 
-        for field in &expression.fields{
+        for field in &expression.fields {
             self.emit_str(".");
             self.emit_token(field.identifier.as_str());
             self.emit_token("=");

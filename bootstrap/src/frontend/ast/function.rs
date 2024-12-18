@@ -1,13 +1,18 @@
 use std::ops::Deref;
 use std::rc::Rc;
 
-use crate::frontend::{ast, parse};
-use crate::frontend::ast::{Generator, FunctionArgumentNode};
-use crate::frontend::ast::node::{BlockNode, DeclareFunctionNode, Identifier, Node, ReturnFromFunctionNode};
 use crate::frontend::ast::node::Node::ReturnFromFunction;
+use crate::frontend::ast::node::{
+    BlockNode, DeclareFunctionNode, Identifier, Node, ReturnFromFunctionNode,
+};
+use crate::frontend::ast::{FunctionArgumentNode, Generator};
+use crate::frontend::{ast, parse};
 
 impl<'a> Generator<'a> {
-    pub(crate) fn generate_declare_function(&mut self, node: &parse::FunctionDeclarationNode) -> ast::Result<ast::Node> {
+    pub(crate) fn generate_declare_function(
+        &mut self,
+        node: &parse::FunctionDeclarationNode,
+    ) -> ast::Result<ast::Node> {
         let mut arguments = Vec::with_capacity(node.arguments.len());
         for arg in &node.arguments {
             arguments.push(Rc::new(self.generate_declare_function_argument(arg)?))
@@ -25,6 +30,7 @@ impl<'a> Generator<'a> {
         };
 
         Ok(ast::Node::DeclareFunction(DeclareFunctionNode {
+            token: node.token.clone(),
             identifier: Identifier::from(&node.identifier),
             arguments,
             return_type,
@@ -32,7 +38,10 @@ impl<'a> Generator<'a> {
         }))
     }
 
-    pub(crate) fn generate_declare_function_argument(&mut self, node: &parse::FunctionDeclarationArgumentNode) -> ast::Result<ast::FunctionArgumentNode> {
+    pub(crate) fn generate_declare_function_argument(
+        &mut self,
+        node: &parse::FunctionDeclarationArgumentNode,
+    ) -> ast::Result<ast::FunctionArgumentNode> {
         let ty = if let Some(type_node) = node.r#type.as_deref() {
             Some(self.handle_type_node(type_node)?)
         } else {
@@ -45,7 +54,10 @@ impl<'a> Generator<'a> {
         })
     }
 
-    pub(crate) fn generate_function_return(&mut self, node: &parse::ReturnNode) -> ast::Result<ast::Node> {
+    pub(crate) fn generate_function_return(
+        &mut self,
+        node: &parse::ReturnNode,
+    ) -> ast::Result<ast::Node> {
         let result = if let Some(ref node) = node.result {
             self.generate_node(node.deref())?
         } else {
@@ -53,6 +65,7 @@ impl<'a> Generator<'a> {
         };
 
         Ok(ReturnFromFunction(ReturnFromFunctionNode {
+            token: node.token.clone(),
             node: Box::new(result),
             return_type: None,
         }))

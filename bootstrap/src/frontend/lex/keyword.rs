@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 
-use crate::frontend::lex::Lexer;
 use crate::frontend::lex::token::{KeywordToken, TextSpan, Token, TokenKind};
+use crate::frontend::lex::Lexer;
 
 impl Lexer<'_> {
     pub(crate) fn is_keyword(&self, c: char) -> bool {
@@ -32,14 +32,19 @@ impl Lexer<'_> {
 
                 return Ok(Token {
                     kind: TokenKind::Keyword(keyword_enum),
-                    span: TextSpan { start, end: self.position(), value: self.ctx.string_table.insert(text.as_str()) },
+                    span: TextSpan {
+                        start,
+                        end: self.position(),
+                        value: self.ctx.string_table.insert(text.as_str()),
+                    },
                 });
             }
         }
 
-        Err(crate::frontend::lex::Error::UnknownSeparator("".to_string()))
+        Err(crate::frontend::lex::Error::UnknownSeparator(
+            "".to_string(),
+        ))
     }
-
 
     fn keyword_map() -> HashMap<&'static str, KeywordToken> {
         let mut keywords = HashMap::new();
@@ -73,9 +78,9 @@ mod test {
     use KeywordToken::*;
 
     use crate::common::Context;
-    use crate::frontend::lex::Lexer;
-    use crate::frontend::lex::token::{identifier, keyword, KeywordToken};
     use crate::frontend::lex::token::KeywordToken::If;
+    use crate::frontend::lex::token::{identifier, keyword, KeywordToken};
+    use crate::frontend::lex::Lexer;
 
     #[test]
     fn r#break() {
@@ -172,7 +177,6 @@ mod test {
         assert_eq!(result.span.end, (1, 8, 7));
         assert_eq!(ctx.get_str(result.value()), "defined");
     }
-
 
     #[test]
     fn r#else() {
@@ -497,7 +501,6 @@ mod test {
         assert_eq!(result.span.end, (1, 7, 6));
         assert_eq!(ctx.get_str(result.value()), "return");
     }
-
 
     #[test]
     fn not_return() {

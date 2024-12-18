@@ -36,7 +36,9 @@ mod tests {
         let result = parse(&mut ctx, tokens).unwrap();
         assert_eq!(result.len(), 1);
 
-        let Literal(LiteralNode::String(node)) = &result[0] else { panic!() };
+        let Literal(LiteralNode::String(node)) = &result[0] else {
+            panic!()
+        };
         assert_eq!(ctx.get_str(node.value()), "ElodiE");
     }
 
@@ -47,7 +49,9 @@ mod tests {
         let result = parse(&mut ctx, tokens).unwrap();
         assert_eq!(result.len(), 1);
 
-        let Literal(LiteralNode::Number(node)) = &result[0] else { panic!() };
+        let Literal(LiteralNode::Number(node)) = &result[0] else {
+            panic!()
+        };
         assert_eq!(ctx.get_str(node.value()), "42");
     }
 
@@ -58,7 +62,9 @@ mod tests {
         let result = parse(&mut ctx, tokens).unwrap();
         assert_eq!(result.len(), 1);
 
-        let Literal(LiteralNode::Boolean(node)) = &result[0] else { panic!() };
+        let Literal(LiteralNode::Boolean(node)) = &result[0] else {
+            panic!()
+        };
         assert_eq!(node.value(), true);
     }
 
@@ -69,7 +75,9 @@ mod tests {
         let result = parse(&mut ctx, tokens).unwrap();
         assert_eq!(result.len(), 1);
 
-        let Literal(LiteralNode::Boolean(node)) = &result[0] else { panic!() };
+        let Literal(LiteralNode::Boolean(node)) = &result[0] else {
+            panic!()
+        };
         assert_eq!(node.value(), false);
     }
 }

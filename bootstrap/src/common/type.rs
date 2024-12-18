@@ -8,7 +8,6 @@ pub struct TypeId(pub usize);
 #[derive(Debug)]
 pub struct TypeName(pub String);
 
-
 #[derive(Debug)]
 pub struct Type {
     pub id: TypeId,
@@ -57,7 +56,6 @@ impl TypeTable {
         result
     }
 
-
     pub fn get_type(&self, id: &TypeId) -> &Type {
         self.types.get(id).unwrap()
     }
@@ -78,15 +76,22 @@ impl TypeTable {
         self.base_type_ids.get(&BaseType::String).unwrap() == ty
     }
 
-    pub fn register(&mut self, type_name: TypeName, properties: HashMap<StringTableId, Property>) -> TypeId {
+    pub fn register(
+        &mut self,
+        type_name: TypeName,
+        properties: HashMap<StringTableId, Property>,
+    ) -> TypeId {
         let new_id = TypeId(self.next_id);
         self.next_id += 1;
 
-        self.types.insert(new_id.clone(), Type {
-            id: new_id.clone(),
-            name: type_name,
-            properties,
-        });
+        self.types.insert(
+            new_id.clone(),
+            Type {
+                id: new_id.clone(),
+                name: type_name,
+                properties,
+            },
+        );
 
         new_id
     }

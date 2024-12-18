@@ -1,15 +1,20 @@
-use crate::backend::run::{Interrupt, Runner};
 use crate::backend::run::value::Value;
+use crate::backend::run::{Interrupt, Runner};
 use crate::frontend::ast;
 
 impl<'a> Runner<'a> {
-
-    pub(crate) fn run_continue(&mut self, _node: &ast::ContinueLoopNode) -> crate::backend::run::Result<Value> {
+    pub(crate) fn run_continue(
+        &mut self,
+        _node: &ast::ContinueLoopNode,
+    ) -> crate::backend::run::Result<Value> {
         self.interrupt(Interrupt::Continue);
         Ok(Value::Unit)
     }
 
-    pub(crate) fn run_break(&mut self, node: &ast::BreakLoopNode) -> crate::backend::run::Result<Value> {
+    pub(crate) fn run_break(
+        &mut self,
+        node: &ast::BreakLoopNode,
+    ) -> crate::backend::run::Result<Value> {
         let value = if let Some(result) = node.body.as_ref() {
             self.run_node(result)?
         } else {

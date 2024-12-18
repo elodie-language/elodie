@@ -18,14 +18,15 @@ pub struct StringTable {
 
 impl StringTable {
     pub fn new() -> StringTable {
-        StringTable { indexes: HashMap::new(), values: Vec::new() }
+        StringTable {
+            indexes: HashMap::new(),
+            values: Vec::new(),
+        }
     }
 
     pub fn insert(&mut self, string: &str) -> StringTableId {
         match self.indexes.entry(string.into()) {
-            std::collections::hash_map::Entry::Occupied(entry) => {
-                *entry.get()
-            }
+            std::collections::hash_map::Entry::Occupied(entry) => *entry.get(),
             std::collections::hash_map::Entry::Vacant(entry) => {
                 let idx = StringTableId(self.values.len());
                 self.values.push(entry.key().clone());
@@ -36,7 +37,10 @@ impl StringTable {
     }
 
     pub fn get(&self, idx: impl AsRef<StringTableId>) -> &str {
-        &self.values.get(idx.as_ref().0).expect("StringIdx out of bounds")
+        &self
+            .values
+            .get(idx.as_ref().0)
+            .expect("StringIdx out of bounds")
     }
 }
 

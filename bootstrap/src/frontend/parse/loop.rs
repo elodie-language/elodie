@@ -3,13 +3,16 @@ use SeparatorToken::NewLine;
 
 use crate::frontend::lex::token::{KeywordToken, OperatorToken, SeparatorToken};
 use crate::frontend::parse::node::{BreakNode, ContinueNode, LoopNode};
-use crate::frontend::parse::Parser;
 use crate::frontend::parse::precedence::Precedence;
+use crate::frontend::parse::Parser;
 
 impl<'a> Parser<'a> {
     pub(crate) fn parse_loop(&mut self) -> crate::frontend::parse::Result<LoopNode> {
         let token = self.consume_keyword(KeywordToken::Loop)?;
-        Ok(LoopNode { token, block: self.parse_block()? })
+        Ok(LoopNode {
+            token,
+            block: self.parse_block()?,
+        })
     }
 
     pub(crate) fn parse_continue(&mut self) -> crate::frontend::parse::Result<ContinueNode> {
@@ -23,11 +26,14 @@ impl<'a> Parser<'a> {
         let current = self.current()?;
         let has_result = !current.is_operator(CloseCurly) && !current.is_separator(NewLine);
 
-        let result = if has_result { Some(Box::new(self.parse_node(Precedence::None)?)) } else { None };
+        let result = if has_result {
+            Some(Box::new(self.parse_node(Precedence::None)?))
+        } else {
+            None
+        };
         Ok(BreakNode { token, result })
     }
 }
-
 
 #[cfg(test)]
 mod tests {
@@ -60,7 +66,9 @@ mod tests {
         let node = result[0].as_loop();
         assert_eq!(node.block.nodes.len(), 1);
 
-        let Literal(LiteralNode::Number(number)) = &node.block.nodes[0] else { panic!() };
+        let Literal(LiteralNode::Number(number)) = &node.block.nodes[0] else {
+            panic!()
+        };
         assert_eq!(ctx.get_str(number.value()), "42");
     }
 
@@ -77,7 +85,9 @@ mod tests {
         let inner_loop = &outer_loop.block.nodes[0].as_loop();
         assert_eq!(inner_loop.block.nodes.len(), 1);
 
-        let Literal(LiteralNode::Number(number)) = &inner_loop.block.nodes[0] else { panic!() };
+        let Literal(LiteralNode::Number(number)) = &inner_loop.block.nodes[0] else {
+            panic!()
+        };
         assert_eq!(ctx.get_str(number.value()), "42");
     }
 
@@ -91,7 +101,9 @@ mod tests {
         let node = result[0].as_loop();
         assert_eq!(node.block.nodes.len(), 1);
 
-        let Continue(_) = &node.block.nodes[0] else { panic!("not continue") };
+        let Continue(_) = &node.block.nodes[0] else {
+            panic!("not continue")
+        };
     }
 
     #[test]
@@ -119,9 +131,13 @@ mod tests {
         assert_eq!(node.block.nodes.len(), 1);
 
         let node = node.block.nodes[0].as_break();
-        let Some(ref node) = node.result else { panic!() };
+        let Some(ref node) = node.result else {
+            panic!()
+        };
 
-        let Literal(LiteralNode::Number(node)) = &node.deref() else { panic!() };
+        let Literal(LiteralNode::Number(node)) = &node.deref() else {
+            panic!()
+        };
         assert_eq!(ctx.get_str(node.value()), "9924");
     }
 }

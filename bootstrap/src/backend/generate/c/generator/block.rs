@@ -1,10 +1,13 @@
 use crate::backend::generate::c;
-use crate::backend::generate::c::{BlockStatement, Indent};
 use crate::backend::generate::c::generator::Generator;
+use crate::backend::generate::c::{BlockStatement, Indent};
 use crate::frontend::ast;
 
 impl Generator {
-    pub(crate) fn generate_block(&mut self, node: &ast::BlockNode) -> c::generator::Result<BlockStatement> {
+    pub(crate) fn generate_block(
+        &mut self,
+        node: &ast::BlockNode,
+    ) -> c::generator::Result<BlockStatement> {
         self.scope.enter();
 
         let mut statements = vec![];
@@ -12,7 +15,10 @@ impl Generator {
             statements.extend(self.generate_statements(node)?)
         }
 
-        let result = BlockStatement { indent: Indent::none(), statements };
+        let result = BlockStatement {
+            indent: Indent::none(),
+            statements,
+        };
         self.scope.leave();
         Ok(result)
     }

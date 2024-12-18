@@ -11,5 +11,5 @@ impl Modifiers {
 
 #[derive(Clone, Debug, PartialEq)]
 pub enum Modifier {
-    Export(Token)
+    Export(Token),
 }

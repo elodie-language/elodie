@@ -17,7 +17,7 @@ pub struct Variable {
 
 impl Variable {
     pub fn to_string(&self, cache: &StringTable) -> String {
-        format!("{}_{}", cache.get(self.identifier.0), self.id)
+        format!("{}_{}", cache.get(self.identifier.0.value()), self.id)
     }
 }
 
@@ -76,15 +76,22 @@ impl Scope {
     }
 
     pub(crate) fn push_variable(&mut self, identifier: &Identifier) -> Variable {
-        let result = self.get_variable(&identifier).cloned()
-            .map(|v| {
-                Variable { identifier: identifier.clone(), id: v.id + 1 }
+        let result = self
+            .get_variable(&identifier)
+            .cloned()
+            .map(|v| Variable {
+                identifier: identifier.clone(),
+                id: v.id + 1,
             })
-            .unwrap_or(
-                Variable { identifier: identifier.clone(), id: 1 }
-            );
+            .unwrap_or(Variable {
+                identifier: identifier.clone(),
+                id: 1,
+            });
 
-        self.variables.last_mut().unwrap().insert(result.identifier.clone(), result.clone());
+        self.variables
+            .last_mut()
+            .unwrap()
+            .insert(result.identifier.clone(), result.clone());
 
         result
     }

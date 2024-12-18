@@ -1,24 +1,30 @@
 use std::ops::Deref;
 use std::vec;
 
-use crate::common::StringTable;
 use crate::backend::generate::c;
-use crate::backend::generate::c::{BlockStatement, CallFunctionStatement, CallFunctionStatementResult, DeclareFunctionArgumentNode, DeclareFunctionNode, DeclareStructNode, DefineFunctionArgumentNode, DefineFunctionNode, DefineStructFieldNode, DefineStructNode, DirectiveNode, Expression, IncludeLocalDirectiveNode, IncludeSystemDirectiveNode, Indent, ReturnFromFunctionStatement, Statement, VariableExpression};
-use crate::backend::generate::c::DirectiveNode::{IncludeLocalDirective, IncludeSystemDirective};
 use crate::backend::generate::c::generator::scope::Scope;
+use crate::backend::generate::c::DirectiveNode::{IncludeLocalDirective, IncludeSystemDirective};
 use crate::backend::generate::c::Node::DefineFunction;
+use crate::backend::generate::c::{
+    BlockStatement, CallFunctionStatement, CallFunctionStatementResult,
+    DeclareFunctionArgumentNode, DeclareFunctionNode, DeclareStructNode,
+    DefineFunctionArgumentNode, DefineFunctionNode, DefineStructNode, DirectiveNode, Expression,
+    IncludeLocalDirectiveNode, IncludeSystemDirectiveNode, Indent, ReturnFromFunctionStatement,
+    Statement, VariableExpression,
+};
+use crate::common::StringTable;
 use crate::common::TypeTable;
 use crate::frontend::ast::node::{DefineTypeNode, Node};
 use crate::ir;
 
-mod literal;
-mod function;
-mod variable;
-mod scope;
 mod block;
 mod control;
+mod function;
 mod infix;
+mod literal;
+mod scope;
 mod string;
+mod variable;
 
 pub enum Error {}
 
@@ -92,27 +98,40 @@ impl Generator {
         let mut result = vec![];
         result.extend(self.directives.into_iter().map(|d| c::Node::Directive(d)));
 
-        result.extend(self.struct_declarations.into_iter().map(|ds| c::Node::DeclareStruct(ds)));
-        result.extend(self.struct_definitions.into_iter().map(|ds| c::Node::DefineStruct(ds)));
-
-        result.extend(self.function_declarations.into_iter().map(|df| c::Node::DeclareFunction(df)));
-
-        result.push(
-            DefineFunction(DefineFunctionNode {
-                indent: Indent::none(),
-                identifier: "main".to_string(),
-                arguments: vec![].into_boxed_slice(),
-                ty: "int".to_string(),
-
-                statements: BlockStatement {
-                    indent: Indent::none(),
-                    statements: self.main_statements,
-                },
-            })
+        result.extend(
+            self.struct_declarations
+                .into_iter()
+                .map(|ds| c::Node::DeclareStruct(ds)),
+        );
+        result.extend(
+            self.struct_definitions
+                .into_iter()
+                .map(|ds| c::Node::DefineStruct(ds)),
         );
 
-        result.extend(self.function_definitions.into_iter().map(|df| c::Node::DefineFunction(df)));
+        result.extend(
+            self.function_declarations
+                .into_iter()
+                .map(|df| c::Node::DeclareFunction(df)),
+        );
 
+        result.push(DefineFunction(DefineFunctionNode {
+            indent: Indent::none(),
+            identifier: "main".to_string(),
+            arguments: vec![].into_boxed_slice(),
+            ty: "int".to_string(),
+
+            statements: BlockStatement {
+                indent: Indent::none(),
+                statements: self.main_statements,
+            },
+        }));
+
+        result.extend(
+            self.function_definitions
+                .into_iter()
+                .map(|df| c::Node::DefineFunction(df)),
+        );
 
         // Ok(
         //     vec![
@@ -143,18 +162,26 @@ impl Generator {
             Node::CallFunctionOfObject(node) => {
                 // FIXME use object tid to resolve type name
 
-                self.main_statements.push(Statement::CallFunction(CallFunctionStatement {
-                    indent: Indent::none(),
-                    identifier: format!("{}_{}", "person", self.string_table.get(node.function.0)),
-                    arguments: Box::new([
-                        Expression::Variable(VariableExpression {
+                self.main_statements
+                    .push(Statement::CallFunction(CallFunctionStatement {
+                        indent: Indent::none(),
+                        identifier: format!(
+                            "{}_{}",
+                            "person",
+                            self.string_table.get(node.function.0.value())
+                        ),
+                        arguments: Box::new([Expression::Variable(VariableExpression {
                             indent: Indent::none(),
-                            identifier: format!("&{}", self.scope.get_variable(&node.object).unwrap().to_string(&self.string_table)),
-                        })
-                    ]),
-                    result: None,
-                }))
-
+                            identifier: format!(
+                                "&{}",
+                                self.scope
+                                    .get_variable(&node.object)
+                                    .unwrap()
+                                    .to_string(&self.string_table)
+                            ),
+                        })]),
+                        result: None,
+                    }))
             }
             Node::CallFunctionOfPackage(node) => {
                 let statements = self.generate_call_function_of_package(node)?;
@@ -181,7 +208,7 @@ impl Generator {
                 self.main_statements.extend(stmts);
             }
             Node::DeclareFunction(node) => {
-                let func_ident = self.string_table.get(node.identifier.0).to_string();
+                let func_ident = self.string_table.get(node.identifier.0.value()).to_string();
 
                 // let ty = if self.type_table.is_boolean(&node.return_type) {
                 //     "_Bool"
@@ -213,9 +240,8 @@ impl Generator {
             Node::DeclareType(node) => {
                 self.struct_declarations.push(DeclareStructNode {
                     indent: Indent::none(),
-                    identifier: self.string_table.get(node.identifier.0).to_string(),
+                    identifier: self.string_table.get(node.identifier.0.value()).to_string(),
                 });
-
 
                 let mut fields = Vec::new();
                 for prop in &node.properties {
@@ -238,23 +264,30 @@ impl Generator {
 
                 self.struct_definitions.push(DefineStructNode {
                     indent: Indent::none(),
-                    identifier: self.string_table.get(node.identifier.0).to_string(),
+                    identifier: self.string_table.get(node.identifier.0.value()).to_string(),
                     fields: fields.into_boxed_slice(),
                 })
             }
             Node::InstantiateType(_) => unimplemented!(),
-            Node::DefineType(DefineTypeNode { identifier, modifiers, functions }) => {
+            Node::DefineType(DefineTypeNode {
+                identifier,
+                modifiers,
+                functions,
+                ..
+            }) => {
                 for function in functions {
                     self.function_declarations.push(DeclareFunctionNode {
                         indent: Indent::none(),
-                        identifier: format!("{}_{}", self.string_table.get(identifier.0).to_lowercase(), self.string_table.get(function.identifier.0) ),
-                        arguments: Box::new([
-                            DeclareFunctionArgumentNode {
-                                indent: Indent::none(),
-                                identifier: "self".to_string(),
-                                ty: format!("struct {} *", self.string_table.get(identifier.0)),
-                            }
-                        ]),
+                        identifier: format!(
+                            "{}_{}",
+                            self.string_table.get(identifier.0.value()).to_lowercase(),
+                            self.string_table.get(function.identifier.0.value())
+                        ),
+                        arguments: Box::new([DeclareFunctionArgumentNode {
+                            indent: Indent::none(),
+                            identifier: "self".to_string(),
+                            ty: format!("struct {} *", self.string_table.get(identifier.0.value())),
+                        }]),
                         ty: "void".to_string(),
                     });
 
@@ -263,19 +296,17 @@ impl Generator {
                     self.function_definitions.push(DefineFunctionNode {
                         indent: Indent::none(),
                         identifier: "person_say_name".to_string(),
-                        arguments: Box::new([
-                            DefineFunctionArgumentNode {
-                                indent: Indent::none(),
-                                identifier: "self".to_string(),
-                                ty: format!("struct {} *", self.string_table.get(identifier.0)),
-                            }
-                        ]),
+                        arguments: Box::new([DefineFunctionArgumentNode {
+                            indent: Indent::none(),
+                            identifier: "self".to_string(),
+                            ty: format!("struct {} *", self.string_table.get(identifier.0.value())),
+                        }]),
                         ty: "void".to_string(),
                         statements,
                     })
                 }
             }
-            Node::InterpolateString(_) => unimplemented!()
+            Node::InterpolateString(_) => unimplemented!(),
         };
         Ok(())
     }
@@ -296,10 +327,12 @@ impl Generator {
 
                 result.extend(statements);
 
-                result.push(c::Statement::ReturnFromFunction(ReturnFromFunctionStatement {
-                    indent: Indent::none(),
-                    node: Some(expression),
-                }));
+                result.push(c::Statement::ReturnFromFunction(
+                    ReturnFromFunctionStatement {
+                        indent: Indent::none(),
+                        node: Some(expression),
+                    },
+                ));
 
                 Ok(result)
             }
@@ -314,7 +347,7 @@ impl Generator {
             Node::Unit => unimplemented!(),
             Node::DeclareVariable(node) => self.generate_declare_variable(node),
             Node::DeclareFunction(node) => {
-                let func_ident = self.string_table.get(node.identifier.0).to_string();
+                let func_ident = self.string_table.get(node.identifier.0.value()).to_string();
 
                 // let ty = if self.type_table.is_boolean(&node.return_type) {
                 //     "_Bool"
@@ -348,13 +381,18 @@ impl Generator {
             Node::DeclareType(_) => unimplemented!(),
             Node::InstantiateType(_) => unimplemented!(),
             Node::DefineType(_) => unimplemented!(),
-            Node::InterpolateString(_) => unimplemented!()
+            Node::InterpolateString(_) => unimplemented!(),
         }
     }
 
-    pub(crate) fn generate_expression(&mut self, node: &Node) -> Result<(Vec<c::Statement>, c::Expression)> {
+    pub(crate) fn generate_expression(
+        &mut self,
+        node: &Node,
+    ) -> Result<(Vec<c::Statement>, c::Expression)> {
         match node {
-            Node::Literal(node) => Ok((vec![], c::Expression::Literal(self.generate_literal(node)?))),
+            Node::Literal(node) => {
+                Ok((vec![], c::Expression::Literal(self.generate_literal(node)?)))
+            }
             Node::LoadValue(node) => Ok((vec![], self.generate_load_value(node)?)),
             Node::LoadValueFromSelf(node) => Ok((vec![], self.generate_load_self_value(node)?)),
             Node::Compare(node) => {
@@ -369,22 +407,26 @@ impl Generator {
                 let mut statements = vec![];
                 let arg_identifier = self.scope.push_argument();
 
-                statements.push(Statement::CallFunction(
-                    CallFunctionStatement {
+                statements.push(Statement::CallFunction(CallFunctionStatement {
+                    indent: Indent::none(),
+                    identifier: self.string_table.get(node.function.0.value()).to_string(),
+                    arguments: Box::new([]),
+                    result: Some(CallFunctionStatementResult {
                         indent: Indent::none(),
-                        identifier: self.string_table.get(node.function.0).to_string(),
-                        arguments: Box::new([]),
-                        result: Some(CallFunctionStatementResult {
-                            indent: Indent::none(),
-                            identifier: arg_identifier.to_string(),
-                            r#type: "bool".to_string(),
-                        }),
-                    })
-                );
+                        identifier: arg_identifier.to_string(),
+                        r#type: "bool".to_string(),
+                    }),
+                }));
 
-                Ok((statements, Expression::Variable(VariableExpression { indent: Indent::none(), identifier: arg_identifier.to_string() })))
+                Ok((
+                    statements,
+                    Expression::Variable(VariableExpression {
+                        indent: Indent::none(),
+                        identifier: arg_identifier.to_string(),
+                    }),
+                ))
             }
-            _ => unimplemented!("{:#?}", node)
+            _ => unimplemented!("{:#?}", node),
         }
     }
 }

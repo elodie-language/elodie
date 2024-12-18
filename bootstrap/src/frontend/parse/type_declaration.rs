@@ -1,13 +1,18 @@
-use crate::ir::Modifiers;
 use crate::frontend::lex::token::KeywordToken::Type;
 use crate::frontend::parse::{Parser, TypeDeclarationNode};
+use crate::ir::Modifiers;
 
 impl<'a> Parser<'a> {
-    pub(crate) fn parse_type_declaration(&mut self) -> crate::frontend::parse::Result<TypeDeclarationNode> {
+    pub(crate) fn parse_type_declaration(
+        &mut self,
+    ) -> crate::frontend::parse::Result<TypeDeclarationNode> {
         self.parse_type_declaration_with_modifiers(Modifiers(vec![]))
     }
 
-    pub(crate) fn parse_type_declaration_with_modifiers(&mut self, modifiers: Modifiers) -> crate::frontend::parse::Result<TypeDeclarationNode> {
+    pub(crate) fn parse_type_declaration_with_modifiers(
+        &mut self,
+        modifiers: Modifiers,
+    ) -> crate::frontend::parse::Result<TypeDeclarationNode> {
         let token = self.consume_keyword(Type)?;
         let identifier = self.parse_type_identifier()?;
         let properties = self.parse_tuple()?;
@@ -24,7 +29,7 @@ impl<'a> Parser<'a> {
 mod tests {
     use crate::common::Context;
     use crate::frontend::lex::lex;
-    use crate::frontend::parse::{Error, InfixOperator, parse, TypeNode};
+    use crate::frontend::parse::{parse, Error, InfixOperator, TypeNode};
 
     #[test]
     fn parse_empty_type_declaration() {
@@ -45,7 +50,9 @@ mod tests {
         let tokens = lex(&mut ctx, "type new_type()").unwrap();
         let result = parse(&mut ctx, tokens);
         assert!(result.is_err());
-        let Error::InvalidIdentifier { .. } = result.err().unwrap() else { panic!() };
+        let Error::InvalidIdentifier { .. } = result.err().unwrap() else {
+            panic!()
+        };
     }
 
     #[test]
@@ -97,10 +104,14 @@ mod tests {
     #[test]
     fn parse_multiline_type_declaration() {
         let mut ctx = Context::new();
-        let tokens = lex(&mut ctx, r#"export type New_Type(
+        let tokens = lex(
+            &mut ctx,
+            r#"export type New_Type(
             p_1: Number,
             p_2: Bool
-        )"#).unwrap();
+        )"#,
+        )
+        .unwrap();
         let result = parse(&mut ctx, tokens).unwrap();
         assert_eq!(result.len(), 1);
 

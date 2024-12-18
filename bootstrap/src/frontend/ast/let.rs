@@ -1,11 +1,14 @@
 use std::ops::Deref;
 
-use crate::frontend::{ast, parse};
-use crate::frontend::ast::Generator;
 use crate::frontend::ast::node::{DeclareVariableNode, Identifier, Node};
+use crate::frontend::ast::Generator;
+use crate::frontend::{ast, parse};
 
 impl<'a> Generator<'a> {
-    pub(crate) fn generate_let(&mut self, node: &parse::VariableDeclarationNode) -> ast::Result<ast::Node> {
+    pub(crate) fn generate_let(
+        &mut self,
+        node: &parse::VariableDeclarationNode,
+    ) -> ast::Result<ast::Node> {
         let identifier = Identifier::from(&node.identifier);
         let value = self.generate_node(node.node.deref())?;
 
@@ -18,9 +21,10 @@ impl<'a> Generator<'a> {
         };
 
         Ok(Node::DeclareVariable(DeclareVariableNode {
+            token: node.token.clone(),
             identifier,
             value: Box::new(value),
-            value_type
+            value_type,
         }))
     }
 }

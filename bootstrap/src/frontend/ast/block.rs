@@ -1,6 +1,6 @@
-use crate::frontend::{ast, parse};
-use crate::frontend::ast::Generator;
 use crate::frontend::ast::node::BlockNode;
+use crate::frontend::ast::Generator;
+use crate::frontend::{ast, parse};
 
 impl<'a> Generator<'a> {
     pub(crate) fn generate_block(&mut self, node: &parse::BlockNode) -> ast::Result<ast::Node> {

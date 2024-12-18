@@ -1,5 +1,5 @@
-use crate::common::{StringTable, StringTableId, TypeTable};
 use crate::common::symbol::SymbolTable;
+use crate::common::{StringTable, StringTableId, TypeTable};
 
 #[derive(Debug)]
 pub struct Context {
@@ -9,7 +9,6 @@ pub struct Context {
 }
 
 impl Context {
-
     pub fn new() -> Self {
         Self {
             string_table: StringTable::new(),
@@ -18,5 +17,7 @@ impl Context {
         }
     }
 
-    pub fn get_str(&self, idx: StringTableId) -> &str { self.string_table.get(idx) }
+    pub fn get_str(&self, idx: StringTableId) -> &str {
+        self.string_table.get(idx)
+    }
 }

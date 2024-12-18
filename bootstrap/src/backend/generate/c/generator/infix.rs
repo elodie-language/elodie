@@ -1,11 +1,14 @@
 use crate::backend::generate::c;
-use crate::backend::generate::c::{InfixExpression, InfixOperator, Statement};
 use crate::backend::generate::c::generator::Generator;
+use crate::backend::generate::c::{InfixExpression, InfixOperator, Statement};
 use crate::frontend::ast;
 use crate::frontend::ast::node::{CalculationOperator, CompareOperator};
 
 impl Generator {
-    pub(crate) fn generate_compare(&mut self, node: &ast::CompareNode) -> c::generator::Result<(Vec<Statement>, InfixExpression)> {
+    pub(crate) fn generate_compare(
+        &mut self,
+        node: &ast::CompareNode,
+    ) -> c::generator::Result<(Vec<Statement>, InfixExpression)> {
         let mut statements = vec![];
 
         let (left_statements, left_expression) = self.generate_expression(&node.left)?;
@@ -17,17 +20,23 @@ impl Generator {
         let operator = match node.operator {
             CompareOperator::Equal => InfixOperator::Equal,
             CompareOperator::NotEqual => InfixOperator::NotEqual,
-            CompareOperator::GreaterThan => InfixOperator::GreaterThan
+            CompareOperator::GreaterThan => InfixOperator::GreaterThan,
         };
 
-        return Ok((statements, InfixExpression {
-            left: Box::new(left_expression),
-            operator,
-            right: Box::new(right_expression),
-        }));
+        return Ok((
+            statements,
+            InfixExpression {
+                left: Box::new(left_expression),
+                operator,
+                right: Box::new(right_expression),
+            },
+        ));
     }
 
-    pub(crate) fn generate_calculate(&mut self, node: &ast::CalculateNode) -> c::generator::Result<(Vec<Statement>, InfixExpression)> {
+    pub(crate) fn generate_calculate(
+        &mut self,
+        node: &ast::CalculateNode,
+    ) -> c::generator::Result<(Vec<Statement>, InfixExpression)> {
         let mut statements = vec![];
 
         let (left_statements, left_expression) = self.generate_expression(&node.left)?;
@@ -38,13 +47,16 @@ impl Generator {
 
         let operator = match node.operator {
             CalculationOperator::Add => InfixOperator::Add,
-            CalculationOperator::Multiply => InfixOperator::Multiply
+            CalculationOperator::Multiply => InfixOperator::Multiply,
         };
 
-        return Ok((statements, InfixExpression {
-            left: Box::new(left_expression),
-            operator,
-            right: Box::new(right_expression),
-        }));
+        return Ok((
+            statements,
+            InfixExpression {
+                left: Box::new(left_expression),
+                operator,
+                right: Box::new(right_expression),
+            },
+        ));
     }
 }
