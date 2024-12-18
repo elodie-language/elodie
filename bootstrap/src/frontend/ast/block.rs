@@ -1,4 +1,4 @@
-use crate::common::DefaultTypeIds;
+
 use crate::frontend::{ast, parse};
 use crate::frontend::ast::Compiler;
 use crate::frontend::ast::node::BlockNode;
@@ -11,9 +11,6 @@ impl<'a> Compiler<'a> {
             body.push(self.compile_node(node)?)
         }
 
-        return Ok(ast::Node::Block(BlockNode {
-            body,
-            return_type: DefaultTypeIds::never(),
-        }));
+        return Ok(ast::Node::Block(BlockNode { body }));
     }
 }

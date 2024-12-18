@@ -19,7 +19,7 @@ impl Generator {
                     expression: c::Expression::Literal(
                         c::LiteralExpression::String(c::LiteralStringExpression {
                             indent: Indent::none(),
-                            value: self.string_table.get(string.value).to_string(),
+                            value: self.string_table.get(string.value()).to_string(),
                         })
                     ),
                 })
@@ -36,14 +36,14 @@ impl Generator {
                     expression: c::Expression::Literal(
                         c::LiteralExpression::Double(c::LiteralDoubleExpression {
                             indent: Indent::none(),
-                            value: self.string_table.get(number.value).parse::<f64>().unwrap(),
+                            value: self.string_table.get(number.value()).parse::<f64>().unwrap(),
                         })
                     ),
                 })
             ]);
         }
 
-        if let Literal(LiteralNode::Bool(boolean)) = &node.value.deref() {
+        if let Literal(LiteralNode::Boolean(boolean)) = &node.value.deref() {
             return Ok(vec![
                 Statement::DeclareVariable(DeclareVariableStatement {
                     indent: Indent::none(),
@@ -52,7 +52,7 @@ impl Generator {
                     expression: c::Expression::Literal(
                         c::LiteralExpression::Bool(c::LiteralBooleanExpression {
                             indent: Indent::none(),
-                            value: boolean.value,
+                            value: boolean.value(),
                         })
                     ),
                 })

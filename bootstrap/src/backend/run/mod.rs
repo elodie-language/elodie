@@ -298,9 +298,9 @@ impl<'a> Runner<'a> {
                             args.push(value);
                         } else if let ast::Node::Literal(node) = arg {
                             match node {
-                                ast::LiteralNode::Bool(_) => unimplemented!(),
-                                ast::LiteralNode::Number(value) => args.push(Value::Number(self.ctx.get_str(value.value).parse().unwrap())),
-                                ast::LiteralNode::String(value) => args.push(Value::String(self.ctx.get_str(value.value).to_string()))
+                                ast::LiteralNode::Boolean(_) => unimplemented!(),
+                                ast::LiteralNode::Number(value) => args.push(Value::Number(self.ctx.get_str(value.value()).parse().unwrap())),
+                                ast::LiteralNode::String(value) => args.push(Value::String(self.ctx.get_str(value.value()).to_string()))
                             }
                         } else {
                             unimplemented!("{:#?}", arg);
@@ -374,9 +374,9 @@ impl<'a> Runner<'a> {
                             args.push(value);
                         } else if let ast::Node::Literal(node) = arg {
                             match node {
-                                ast::LiteralNode::Bool(_) => unimplemented!(),
-                                ast::LiteralNode::Number(value) => args.push(Value::Number(self.ctx.get_str(value.value).parse().unwrap())),
-                                ast::LiteralNode::String(value) => args.push(Value::String(self.ctx.get_str(value.value).to_string()))
+                                ast::LiteralNode::Boolean(_) => unimplemented!(),
+                                ast::LiteralNode::Number(value) => args.push(Value::Number(self.ctx.get_str(value.value()).parse().unwrap())),
+                                ast::LiteralNode::String(value) => args.push(Value::String(self.ctx.get_str(value.value()).to_string()))
                             }
                         } else {
                             unimplemented!("{:#?}", arg);
@@ -434,12 +434,12 @@ impl<'a> Runner<'a> {
                     // LiteralStringNode(value) => Ok(Value::String(self.ctx.get_str(value.value).to_string())),
                     // LiteralNumberNode(value) => Ok(Value::Number),
                     // LiteralBooleanNode(value) => Ok(Value::Bool(value.value)),
-                    ast::LiteralNode::Bool(value) => Ok(Value::Bool(value.value)),
+                    ast::LiteralNode::Boolean(value) => Ok(Value::Bool(value.value())),
                     ast::LiteralNode::Number(value) => Ok(Value::Number(
-                        self.ctx.get_str(value.value).parse().unwrap(),
+                        self.ctx.get_str(value.value()).parse().unwrap(),
                     )),
                     ast::LiteralNode::String(value) => {
-                        Ok(Value::String(self.ctx.get_str(value.value).to_string()))
+                        Ok(Value::String(self.ctx.get_str(value.value()).to_string()))
                     }
                 }
             }

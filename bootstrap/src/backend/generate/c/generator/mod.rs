@@ -183,30 +183,30 @@ impl Generator {
             Node::DeclareFunction(node) => {
                 let func_ident = self.string_table.get(node.identifier.0).to_string();
 
-                let ty = if self.type_table.is_boolean(&node.return_type) {
-                    "_Bool"
-                } else if self.type_table.is_number(&node.return_type) {
-                    "double"
-                } else {
-                    unimplemented!()
-                };
+                // let ty = if self.type_table.is_boolean(&node.return_type) {
+                //     "_Bool"
+                // } else if self.type_table.is_number(&node.return_type) {
+                //     "double"
+                // } else {
+                //     unimplemented!()
+                // };
 
-                self.function_declarations.push(DeclareFunctionNode {
-                    indent: Indent::none(),
-                    identifier: func_ident.to_string(),
-                    arguments: Box::new([]),
-                    ty: ty.to_string(),
-                });
+                // self.function_declarations.push(DeclareFunctionNode {
+                //     indent: Indent::none(),
+                //     identifier: func_ident.to_string(),
+                //     arguments: Box::new([]),
+                //     ty: ty.to_string(),
+                // });
 
                 let statements = self.generate_block(node.body.as_ref())?;
-
-                self.function_definitions.push(DefineFunctionNode {
-                    indent: Indent::none(),
-                    identifier: func_ident.to_string(),
-                    arguments: Box::new([]),
-                    ty: ty.to_string(),
-                    statements,
-                });
+                //
+                // self.function_definitions.push(DefineFunctionNode {
+                //     indent: Indent::none(),
+                //     identifier: func_ident.to_string(),
+                //     arguments: Box::new([]),
+                //     ty: ty.to_string(),
+                //     statements,
+                // });
             }
             Node::DeclareExternalFunction(_) => unimplemented!(),
             Node::DeclarePackage(_) => unimplemented!(),
@@ -219,21 +219,21 @@ impl Generator {
 
                 let mut fields = Vec::new();
                 for prop in &node.properties {
-                    let ty = if self.type_table.is_number(&prop.r#type) {
-                        "double".to_string()
-                    } else if self.type_table.is_boolean(&prop.r#type) {
-                        "_Bool".to_string()
-                    } else if self.type_table.is_string(&prop.r#type) {
-                        "const char *".to_string()
-                    } else {
-                        panic!()
-                    };
-
-                    fields.push(DefineStructFieldNode {
-                        indent: Indent::none(),
-                        identifier: self.string_table.get(prop.identifier.0).to_string(),
-                        ty,
-                    })
+                    // let ty = if self.type_table.is_number(&prop.r#type) {
+                    //     "double".to_string()
+                    // } else if self.type_table.is_boolean(&prop.r#type) {
+                    //     "_Bool".to_string()
+                    // } else if self.type_table.is_string(&prop.r#type) {
+                    //     "const char *".to_string()
+                    // } else {
+                    //     panic!()
+                    // };
+                    //
+                    // fields.push(DefineStructFieldNode {
+                    //     indent: Indent::none(),
+                    //     identifier: self.string_table.get(prop.identifier.0).to_string(),
+                    //     ty,
+                    // })
                 }
 
                 self.struct_definitions.push(DefineStructNode {
@@ -316,31 +316,32 @@ impl Generator {
             Node::DeclareFunction(node) => {
                 let func_ident = self.string_table.get(node.identifier.0).to_string();
 
-                let ty = if self.type_table.is_boolean(&node.return_type) {
-                    "_Bool"
-                } else if self.type_table.is_number(&node.return_type) {
-                    "double"
-                } else {
-                    unimplemented!()
-                };
-
-                self.function_declarations.push(DeclareFunctionNode {
-                    indent: Indent::none(),
-                    identifier: func_ident.to_string(),
-                    arguments: Box::new([]),
-                    ty: ty.to_string(),
-                });
-
-                let statements = self.generate_block(node.body.as_ref())?;
-
-                self.function_definitions.push(DefineFunctionNode {
-                    indent: Indent::none(),
-                    identifier: func_ident.to_string(),
-                    arguments: Box::new([]),
-                    ty: ty.to_string(),
-                    statements,
-                });
-                Ok(vec![])
+                // let ty = if self.type_table.is_boolean(&node.return_type) {
+                //     "_Bool"
+                // } else if self.type_table.is_number(&node.return_type) {
+                //     "double"
+                // } else {
+                //     unimplemented!()
+                // };
+                //
+                // self.function_declarations.push(DeclareFunctionNode {
+                //     indent: Indent::none(),
+                //     identifier: func_ident.to_string(),
+                //     arguments: Box::new([]),
+                //     ty: ty.to_string(),
+                // });
+                //
+                // let statements = self.generate_block(node.body.as_ref())?;
+                //
+                // self.function_definitions.push(DefineFunctionNode {
+                //     indent: Indent::none(),
+                //     identifier: func_ident.to_string(),
+                //     arguments: Box::new([]),
+                //     ty: ty.to_string(),
+                //     statements,
+                // });
+                // Ok(vec![])
+                todo!()
             }
             Node::DeclareExternalFunction(_) => unimplemented!(),
             Node::DeclarePackage(_) => unimplemented!(),

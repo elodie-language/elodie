@@ -1,6 +1,5 @@
 use std::rc::Rc;
 
-use crate::common::DefaultTypeIds;
 use crate::frontend::{ast, parse};
 use crate::frontend::ast::Compiler;
 use crate::frontend::ast::node::{DeclareExternalFunctionNode, Identifier};
@@ -15,7 +14,7 @@ impl<'a> Compiler<'a> {
         Ok(ast::Node::DeclareExternalFunction(DeclareExternalFunctionNode {
             identifier: Identifier::from(&node.identifier),
             arguments,
-            return_type: DefaultTypeIds::never(),
+            return_type: None,
         }))
     }
 }

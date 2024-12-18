@@ -1,6 +1,5 @@
 use std::ops::Deref;
 
-use crate::common::DefaultTypeIds;
 use crate::frontend::{ast, parse};
 use crate::frontend::ast::Compiler;
 use crate::frontend::ast::node::{DeclareVariableNode, Identifier, Node};
@@ -10,18 +9,18 @@ impl<'a> Compiler<'a> {
         let identifier = Identifier::from(&node.identifier);
         let value = self.compile_node(node.node.deref())?;
 
-        let value_type = if let Node::Literal(node) = &value {
-            node.ty()
-        } else {
-            DefaultTypeIds::never()
-        };
+        // self.scope.insert_identifier(identifier.clone());
 
-        self.scope.insert_identifier(identifier.clone(), value_type);
+        let value_type = if let Some(type_node) = node.r#type.as_ref() {
+            Some(self.handle_type_node(type_node)?)
+        } else {
+            None
+        };
 
         Ok(Node::DeclareVariable(DeclareVariableNode {
             identifier,
             value: Box::new(value),
-            value_type,
+            value_type
         }))
     }
 }

@@ -1,7 +1,6 @@
 use std::ops::Deref;
 use std::rc::Rc;
 
-use crate::common::DefaultTypeIds;
 use crate::common::PackagePath;
 use crate::frontend::{ast, parse};
 use crate::frontend::ast::Compiler;
@@ -26,7 +25,7 @@ impl<'a> Compiler<'a> {
 
         // call function of object / self
         if left.is_infix() && matches!(left.as_infix().operator, InfixOperator::AccessProperty(_)) && matches!(operator, InfixOperator::Call(_)) {
-            let ast::Node::LoadValueFromObject(LoadValueFromObjectNode { object, property, ty }) = self.compile_access_property(left.as_infix())? else { panic!() };
+            let ast::Node::LoadValueFromObject(LoadValueFromObjectNode { object, property }) = self.compile_access_property(left.as_infix())? else { panic!() };
 
             let arguments = self.compile_arguments(right.as_tuple())?;
 
@@ -87,10 +86,11 @@ impl<'a> Compiler<'a> {
             // FIXME support chaining objects root.level_one.level_two..
             let object = left.as_identifier();
             let property = right.as_identifier();
+
+
             return Ok(ast::Node::LoadValueFromObject(LoadValueFromObjectNode {
                 object: ast::Identifier::from(object),
                 property: ast::Identifier::from(property),
-                ty: DefaultTypeIds::never(),
             }));
         }
 
@@ -171,7 +171,6 @@ impl<'a> Compiler<'a> {
         return Ok(ast::Node::LoadValueFromObject(LoadValueFromObjectNode {
             object: ast::Identifier::from(object_identifier),
             property: ast::Identifier::from(property),
-            ty: DefaultTypeIds::never(),
         }));
     }
 
@@ -184,7 +183,6 @@ impl<'a> Compiler<'a> {
         let mut arguments = self.compile_named_arguments(arguments_node)?;
 
         return Ok(ast::Node::InstantiateType(ast::InstantiateTypeNode {
-            type_id: DefaultTypeIds::never(),
             type_name: Identifier(type_node.token.value()),
             arguments,
         }));

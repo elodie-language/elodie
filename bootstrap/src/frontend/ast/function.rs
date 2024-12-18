@@ -1,12 +1,10 @@
 use std::ops::Deref;
 use std::rc::Rc;
 
-use crate::common::{BaseType, DefaultTypeIds};
 use crate::frontend::{ast, parse};
-use crate::frontend::ast::Compiler;
-use crate::frontend::ast::node::{BlockNode, DeclareFunctionNode, FunctionArgumentNode, Identifier, Node, ReturnFromFunctionNode};
+use crate::frontend::ast::{Compiler, FunctionArgumentNode};
+use crate::frontend::ast::node::{BlockNode, DeclareFunctionNode, Identifier, Node, ReturnFromFunctionNode};
 use crate::frontend::ast::node::Node::ReturnFromFunction;
-use crate::ir;
 
 impl<'a> Compiler<'a> {
     pub(crate) fn compile_declare_function(&mut self, node: &parse::FunctionDeclarationNode) -> ast::Result<ast::Node> {
@@ -20,30 +18,30 @@ impl<'a> Compiler<'a> {
             body.push(self.compile_node(node)?)
         }
 
-        let return_type = if let Some(ty) = &node.return_type {
-            match ty.deref() {
-                parse::TypeNode::Boolean(_) => self.ctx.type_table.get_base_type_id(&BaseType::Boolean),
-                parse::TypeNode::Number(_) => self.ctx.type_table.get_base_type_id(&BaseType::Number),
-                parse::TypeNode::String(_) => self.ctx.type_table.get_base_type_id(&BaseType::String),
-                parse::TypeNode::Function(_) => DefaultTypeIds::never(),
-                parse::TypeNode::Custom(_) => DefaultTypeIds::never(),
-            }
+        let return_type = if let Some(type_node) = node.return_type.as_deref() {
+            Some(self.handle_type_node(type_node)?)
         } else {
-            DefaultTypeIds::never()
+            None
         };
 
         Ok(ast::Node::DeclareFunction(DeclareFunctionNode {
             identifier: Identifier::from(&node.identifier),
             arguments,
             return_type,
-            body: Rc::new(BlockNode { body, return_type: DefaultTypeIds::never() }),
+            body: Rc::new(BlockNode { body }),
         }))
     }
 
     pub(crate) fn compile_declare_function_argument(&mut self, node: &parse::FunctionDeclarationArgumentNode) -> ast::Result<ast::FunctionArgumentNode> {
+        let ty = if let Some(type_node) = node.r#type.as_deref() {
+            Some(self.handle_type_node(type_node)?)
+        } else {
+            None
+        };
+
         Ok(FunctionArgumentNode {
             identifier: Identifier::from(&node.identifier),
-            ty: DefaultTypeIds::never(),
+            ty,
         })
     }
 
@@ -56,7 +54,7 @@ impl<'a> Compiler<'a> {
 
         Ok(ReturnFromFunction(ReturnFromFunctionNode {
             node: Box::new(result),
-            return_type_id: DefaultTypeIds::never(),
+            return_type: None,
         }))
     }
 }

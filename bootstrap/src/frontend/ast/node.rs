@@ -1,21 +1,19 @@
 use std::rc::Rc;
 
 use crate::common::{PackagePath, StringTableId};
-use crate::common::TypeId;
+use crate::frontend::lex::token::{LiteralToken, Token, TokenKind};
 use crate::frontend::parse;
-use crate::frontend::parse::IdentifierNode;
+use crate::frontend::parse::{IdentifierNode, TupleNode};
 use crate::ir::Modifiers;
 
 #[derive(Debug)]
 pub struct BlockNode {
     pub body: Vec<Node>,
-    pub return_type: TypeId,
 }
 
 #[derive(Debug)]
 pub struct BreakLoopNode {
     pub body: Option<Box<Node>>,
-    pub return_type: TypeId,
 }
 
 #[derive(Debug)]
@@ -87,13 +85,11 @@ pub struct IfNode {
     pub condition: Box<Node>,
     pub then: BlockNode,
     pub otherwise: Option<BlockNode>,
-    pub return_type: TypeId,
 }
 
 #[derive(Debug)]
 pub struct LoopNode {
     pub body: Vec<Node>,
-    pub return_type: TypeId,
 }
 
 #[derive(Debug)]
@@ -136,51 +132,49 @@ pub enum Node {
     InterpolateString(InterpolateStringNode),
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub enum LiteralNode {
-    Bool(LiteralBoolNode),
     Number(LiteralNumberNode),
     String(LiteralStringNode),
+    Boolean(LiteralBooleanNode),
 }
 
-impl LiteralNode {
-    pub fn ty(&self) -> TypeId {
-        match self {
-            LiteralNode::Bool(n) => n.ty,
-            LiteralNode::Number(n) => n.ty,
-            LiteralNode::String(n) => n.ty
-        }
+#[derive(Debug, PartialEq)]
+pub struct LiteralNumberNode(pub Token);
+
+impl LiteralNumberNode {
+    pub fn value(&self) -> StringTableId {
+        self.0.value()
     }
 }
 
-#[derive(Debug)]
-pub struct LiteralBoolNode {
-    pub value: bool,
-    pub ty: TypeId,
+#[derive(Debug, PartialEq)]
+pub struct LiteralStringNode(pub Token);
+
+impl LiteralStringNode {
+    pub fn value(&self) -> StringTableId {
+        self.0.value()
+    }
 }
 
-#[derive(Debug)]
-pub struct LiteralNumberNode {
-    pub value: StringTableId,
-    pub ty: TypeId,
-}
+#[derive(Debug, PartialEq)]
+pub struct LiteralBooleanNode(pub Token);
 
-#[derive(Debug)]
-pub struct LiteralStringNode {
-    pub value: StringTableId,
-    pub ty: TypeId,
+impl LiteralBooleanNode {
+    pub fn value(&self) -> bool {
+        self.0.kind == TokenKind::Literal(LiteralToken::True)
+    }
 }
 
 #[derive(Debug)]
 pub struct ReturnFromFunctionNode {
     pub node: Box<Node>,
-    pub return_type_id: TypeId,
+    pub return_type: Option<TypeNode>,
 }
 
 #[derive(Debug)]
 pub struct LoadValueNode {
     pub identifier: Identifier,
-    pub ty: TypeId,
 }
 
 #[derive(Clone, Debug)]
@@ -218,14 +212,14 @@ impl AsRef<Identifier> for Identifier {
 pub struct DeclareVariableNode {
     pub identifier: Identifier,
     pub value: Box<Node>,
-    pub value_type: TypeId,
+    pub value_type: Option<TypeNode>,
 }
 
 #[derive(Debug)]
 pub struct DeclareFunctionNode {
     pub identifier: Identifier,
     pub arguments: Vec<Rc<FunctionArgumentNode>>,
-    pub return_type: TypeId,
+    pub return_type: Option<TypeNode>,
     pub body: Rc<BlockNode>,
 }
 
@@ -233,18 +227,13 @@ pub struct DeclareFunctionNode {
 pub struct DeclareExternalFunctionNode {
     pub identifier: Identifier,
     pub arguments: Vec<Rc<FunctionArgumentNode>>,
-    pub return_type: TypeId,
+    pub return_type: Option<TypeNode>,
 }
 
 #[derive(Debug)]
 pub struct FunctionArgumentNode {
     pub identifier: Identifier,
-    pub ty: TypeId,
-}
-
-pub struct TypedNode {
-    pub ty: TypeId,
-    pub node: Node,
+    pub ty: Option<TypeNode>,
 }
 
 #[derive(Debug)]
@@ -267,7 +256,7 @@ pub struct DeclareTypeNode {
 #[derive(Debug)]
 pub struct DeclarePropertyNode {
     pub identifier: Identifier,
-    pub r#type: TypeId,
+    pub r#type: TypeNode,
 }
 
 #[derive(Debug)]
@@ -295,7 +284,6 @@ pub struct InterpolateStringNode {
 
 #[derive(Debug)]
 pub struct InstantiateTypeNode {
-    pub type_id: TypeId,
     pub type_name: Identifier,
     pub arguments: Vec<NamedArgumentNode>,
 }
@@ -310,10 +298,48 @@ pub struct NamedArgumentNode {
 pub struct LoadValueFromObjectNode {
     pub object: Identifier,
     pub property: Identifier,
-    pub ty: TypeId,
 }
 
 #[derive(Debug)]
 pub struct LoadValueFromSelfNode {
     pub property: Identifier,
+}
+
+
+#[derive(Debug, PartialEq)]
+pub enum TypeNode {
+    Boolean(Token),
+    Custom(CustomTypeNode),
+    Number(Token),
+    String(Token),
+    Function(TypeFunctionNode),
+}
+
+#[derive(Clone, Debug, PartialEq)]
+pub struct CustomTypeNode {
+    pub token: Token,
+}
+
+#[derive(Debug, PartialEq)]
+pub struct TypeFunctionNode {
+    pub arguments: Vec<TypeFunctionArgumentNode>,
+    pub return_type: Option<Box<TypeNode>>,
+}
+
+impl TypeFunctionNode {
+    pub fn as_return_type(&self) -> &TypeNode { if let Some(ref node) = self.return_type { node } else { panic!() } }
+}
+
+#[derive(Debug, PartialEq)]
+pub struct TypeFunctionArgumentNode {
+    pub identifier: Option<IdentifierNode>,
+    pub r#type: Box<TypeNode>,
+}
+
+#[derive(Debug, PartialEq)]
+pub struct TypeDeclarationNode {
+    pub token: Token,
+    pub identifier: IdentifierNode,
+    pub properties: TupleNode,
+    pub modifiers: Modifiers,
 }

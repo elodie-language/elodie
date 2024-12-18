@@ -1,6 +1,5 @@
 use std::ops::Deref;
 
-use crate::common::DefaultTypeIds;
 use crate::frontend::{ast, parse};
 use crate::frontend::ast::Compiler;
 use crate::frontend::ast::node::{BlockNode, ExportPackageNode, Node, Source, SourceLocalFileNode};
@@ -37,7 +36,6 @@ impl<'a> Compiler<'a> {
                         source,
                     })
                 ],
-                return_type: DefaultTypeIds::never(),
             })
         );
     }

@@ -430,3 +430,4 @@ pub struct TypeDeclarationNode {
     pub properties: TupleNode,
     pub modifiers: Modifiers,
 }
+

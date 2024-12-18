@@ -85,19 +85,19 @@ impl Generator {
         for arg in args {
             let arg_identifier = self.scope.push_argument();
 
-            if let ast::Node::LoadValue(LoadValueNode { identifier, ty }) = arg {
-                if self.type_table.is_string(ty) {
-                    statements.push(Statement::DeclareVariable(DeclareVariableStatement {
-                        indent: Indent::none(),
-                        identifier: arg_identifier.to_string(),
-                        r#type: "const char *".to_string(),
-                        expression: Expression::Variable(VariableExpression { indent: Indent::none(), identifier: self.scope.get_variable(identifier).unwrap().to_string(&self.string_table) }),
-                    }));
-
-
-                    arguments.push(c::Expression::Variable(VariableExpression { indent: Indent::none(), identifier: arg_identifier.to_string() }));
-                    continue;
-                }
+            if let ast::Node::LoadValue(LoadValueNode { identifier }) = arg {
+                // if self.type_table.is_string(ty) {
+                //     statements.push(Statement::DeclareVariable(DeclareVariableStatement {
+                //         indent: Indent::none(),
+                //         identifier: arg_identifier.to_string(),
+                //         r#type: "const char *".to_string(),
+                //         expression: Expression::Variable(VariableExpression { indent: Indent::none(), identifier: self.scope.get_variable(identifier).unwrap().to_string(&self.string_table) }),
+                //     }));
+                //
+                //
+                //     arguments.push(c::Expression::Variable(VariableExpression { indent: Indent::none(), identifier: arg_identifier.to_string() }));
+                //     continue;
+                // }
             }
 
             if let ast::Node::Literal(ast::LiteralNode::String(str)) = arg {
@@ -107,7 +107,7 @@ impl Generator {
                     r#type: "const char *".to_string(),
                     expression: Expression::Literal(LiteralExpression::String(LiteralStringExpression {
                         indent: Indent::none(),
-                        value: self.string_table.get(str.value).to_string(),
+                        value: self.string_table.get(str.value()).to_string(),
                     })),
                 }));
 

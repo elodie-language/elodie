@@ -1,9 +1,6 @@
-use crate::common::{BaseType, DefaultTypeIds, TypeId};
 use crate::common::Context;
 use crate::frontend::{Ast, parse};
 pub use crate::frontend::ast::node::*;
-use crate::frontend::ast::scope::Scope;
-use crate::frontend::parse::TypeNode;
 
 mod r#let;
 mod infix;
@@ -35,16 +32,16 @@ pub(crate) fn from(ctx: &mut Context, nodes: Vec<parse::Node>) -> Result<Ast> {
 
 pub(crate) struct Compiler<'a> {
     ctx: &'a mut Context,
-    scope: Scope,
+    // scope: Scope,
 }
 
 impl<'a> Compiler<'a> {
     fn new(ctx: &'a mut Context) -> Self {
-        let mut scope = Scope::new();
+        // let mut scope = Scope::new();
 
         Self {
             ctx,
-            scope,
+            // scope,
         }
     }
 }
@@ -84,19 +81,8 @@ impl<'a> Compiler<'a> {
             parse::Node::Literal(literal_node) => Ok(self.compile_literal(literal_node)?),
             parse::Node::Loop(loop_node) => Ok(self.compile_loop(loop_node)?),
             parse::Node::Return(return_node) => Ok(self.compile_function_return(return_node)?),
-            parse::Node::TypeDeclaration(node) => Ok(self.compile_declare_type(node)?),
+            parse::Node::TypeDeclaration(node) => Ok(self.declare_type(node)?),
             _ => unimplemented!("{:?}", node)
-        }
-    }
-
-    // FIXME temp hack until type node uses type ids from type table
-    pub(crate) fn get_type_id(&mut self, type_node: &TypeNode) -> TypeId {
-        match type_node {
-            parse::TypeNode::Boolean(_) => self.ctx.type_table.get_base_type_id(&BaseType::Boolean),
-            parse::TypeNode::Number(_) => self.ctx.type_table.get_base_type_id(&BaseType::Number),
-            parse::TypeNode::String(_) => self.ctx.type_table.get_base_type_id(&BaseType::String),
-            parse::TypeNode::Function(_) => DefaultTypeIds::never(),
-            parse::TypeNode::Custom(_) => DefaultTypeIds::never()
         }
     }
 }

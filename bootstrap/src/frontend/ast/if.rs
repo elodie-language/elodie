@@ -1,6 +1,5 @@
 use std::ops::Deref;
 
-use crate::common::DefaultTypeIds;
 use crate::frontend::{ast, parse};
 use crate::frontend::ast::Compiler;
 use crate::frontend::ast::node::{BlockNode, IfNode};
@@ -20,7 +19,7 @@ impl<'a> Compiler<'a> {
             for node in &node.otherwise.as_ref().unwrap().block.nodes {
                 otherwise_body.push(self.compile_node(node)?)
             }
-            Some(BlockNode { body: otherwise_body, return_type: DefaultTypeIds::unit() })
+            Some(BlockNode { body: otherwise_body })
         } else {
             None
         };
@@ -28,9 +27,8 @@ impl<'a> Compiler<'a> {
         Ok(ast::Node::If(
             IfNode {
                 condition,
-                then: BlockNode { body: then_body, return_type: DefaultTypeIds::unit() },
-                otherwise,
-                return_type: DefaultTypeIds::unit(),
+                then: BlockNode { body: then_body },
+                otherwise
             }
         ))
     }

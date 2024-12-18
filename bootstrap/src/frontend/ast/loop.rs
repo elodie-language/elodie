@@ -1,4 +1,3 @@
-use crate::common::DefaultTypeIds;
 use crate::frontend::{ast, parse};
 use crate::frontend::ast::Compiler;
 use crate::frontend::ast::node::{BreakLoopNode, ContinueLoopNode, LoopNode, Node};
@@ -6,13 +5,11 @@ use crate::frontend::ast::node::{BreakLoopNode, ContinueLoopNode, LoopNode, Node
 impl<'a> Compiler<'a> {
     pub(crate) fn compile_break(&mut self, node: &parse::BreakNode) -> ast::Result<ast::Node> {
         if node.result.is_none() {
-            Ok(Node::BreakLoop(BreakLoopNode { body: None, return_type: DefaultTypeIds::unit() }))
+            Ok(Node::BreakLoop(BreakLoopNode { body: None }))
         } else {
             let body = Some(Box::new(self.compile_node(node.result.as_ref().unwrap())?));
-            Ok(Node::BreakLoop(BreakLoopNode {
-                body,
-                return_type: DefaultTypeIds::never(),
-            }))
+
+            Ok(Node::BreakLoop(BreakLoopNode { body }))
         }
     }
 
@@ -30,7 +27,6 @@ impl<'a> Compiler<'a> {
         Ok(
             Node::Loop(LoopNode {
                 body,
-                return_type: DefaultTypeIds::unit(),
             })
         )
     }
