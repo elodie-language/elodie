@@ -23,7 +23,7 @@ impl<'a> Node<'a> {
 
 #[derive(Debug, PartialEq)]
 pub struct DeclareVariableNode<'a> {
-    pub parsed_node: &'a parse::DeclareVariableNode,
+    pub parsed_node: &'a parse::VariableDeclarationNode,
     pub symbol: SymbolId,
     pub node: Box<Node<'a>>,
     pub inferred_type: InferredType,

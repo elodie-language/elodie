@@ -9,7 +9,7 @@ use crate::frontend::parse::{Error, Parser};
 use crate::frontend::parse::Error::UnsupportedToken;
 use crate::frontend::parse::node::{Node, PrefixNode, PrefixOperator};
 use crate::frontend::parse::Node::{DefineDeclaration, ExternalFunctionDeclaration, Itself, PackageDeclaration, TypeDeclaration};
-use crate::frontend::parse::node::Node::{Break, Continue, FunctionDeclaration, If, DeclareVariable, Loop, Return};
+use crate::frontend::parse::node::Node::{Break, Continue, FunctionDeclaration, If, VariableDeclaration, Loop, Return};
 use crate::frontend::parse::precedence::Precedence;
 
 impl<'a> Parser<'a> {
@@ -53,7 +53,7 @@ impl<'a> Parser<'a> {
                     KeywordToken::Function => Ok(FunctionDeclaration(self.parse_function_declaration()?)),
                     KeywordToken::If => Ok(If(self.parse_if()?)),
                     KeywordToken::Itself => Ok(Itself(self.parse_self()?)),
-                    KeywordToken::Let => Ok(DeclareVariable(self.parse_variable_declaration()?)),
+                    KeywordToken::Let => Ok(VariableDeclaration(self.parse_variable_declaration()?)),
                     KeywordToken::Loop => Ok(Loop(self.parse_loop()?)),
                     KeywordToken::Package => Ok(PackageDeclaration(self.parse_package_declaration()?)),
                     KeywordToken::Return => Ok(Return(self.parse_return()?)),

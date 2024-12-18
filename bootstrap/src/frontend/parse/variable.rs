@@ -2,13 +2,13 @@ use std::rc::Rc;
 use KeywordToken::Let;
 
 use crate::frontend::lex::token::{KeywordToken, OperatorToken};
-use crate::frontend::parse::node::DeclareVariableNode;
+use crate::frontend::parse::node::VariableDeclarationNode;
 use crate::frontend::parse::Parser;
 use crate::frontend::parse::precedence::Precedence;
 
 impl<'a> Parser<'a> {
 
-    pub(crate) fn parse_variable_declaration(&mut self) -> crate::frontend::parse::Result<DeclareVariableNode> {
+    pub(crate) fn parse_variable_declaration(&mut self) -> crate::frontend::parse::Result<VariableDeclarationNode> {
         let token = self.consume_keyword(Let)?;
         let identifier = self.parse_identifier()?;
 
@@ -22,7 +22,7 @@ impl<'a> Parser<'a> {
         self.consume_operator(OperatorToken::Equal)?;
         let value = Rc::new(self.parse_node(Precedence::None)?);
 
-        Ok(DeclareVariableNode {
+        Ok(VariableDeclarationNode {
             token,
             identifier,
             node: value,

@@ -4,7 +4,7 @@ use crate::ir::infer::{DeclareVariableNode, Node};
 use crate::ir::infer::Inference;
 
 impl<'a> Inference<'a> {
-    pub(crate) fn infer_declare_variable(&self, parsed_node: &'a parse::DeclareVariableNode) -> crate::ir::infer::Result<Node<'a>> {
+    pub(crate) fn infer_declare_variable(&self, parsed_node: &'a parse::VariableDeclarationNode) -> crate::ir::infer::Result<Node<'a>> {
         let node = self.infer_node(&parsed_node.node)?;
         let inferred_type = if let Some(type_node) = &parsed_node.r#type {
             self.type_from_type_node(type_node)?

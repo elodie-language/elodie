@@ -17,7 +17,6 @@ pub enum Node {
     If(IfNode),
     Infix(InfixNode),
     Itself(ItselfNode),
-    DeclareVariable(DeclareVariableNode),
     Literal(LiteralNode),
     Loop(LoopNode),
     Nop,
@@ -28,6 +27,7 @@ pub enum Node {
     Tuple(TupleNode),
     Type(TypeNode),
     TypeDeclaration(TypeDeclarationNode),
+    VariableDeclaration(VariableDeclarationNode),
 }
 
 impl Node {
@@ -74,9 +74,9 @@ impl Node {
         if let Node::Infix(result) = self { result } else { panic!("not infix") }
     }
 
-    pub fn is_declare_variable(&self) -> bool { matches!(self, Node::DeclareVariable(_)) }
-    pub fn as_declare_variable(&self) -> &DeclareVariableNode {
-        if let Node::DeclareVariable(result) = self { result } else { panic!("not let") }
+    pub fn is_declare_variable(&self) -> bool { matches!(self, Node::VariableDeclaration(_)) }
+    pub fn as_declare_variable(&self) -> &VariableDeclarationNode {
+        if let Node::VariableDeclaration(result) = self { result } else { panic!("not let") }
     }
 
     pub fn is_literal(&self) -> bool { matches!(self, Node::Literal(_)) }
@@ -294,7 +294,7 @@ impl InfixOperator {
 }
 
 #[derive(Debug, PartialEq)]
-pub struct DeclareVariableNode {
+pub struct VariableDeclarationNode {
     pub token: Token,
     pub identifier: IdentifierNode,
     pub node: Rc<Node>,

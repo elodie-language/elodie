@@ -70,7 +70,7 @@ impl<'a> Inference<'a> {
 
     fn infer_node(&self, node: &'a parse::Node) -> Result<Node<'a>> {
         match node {
-            parse::Node::DeclareVariable(node) => self.infer_declare_variable(node),
+            parse::Node::VariableDeclaration(node) => self.infer_declare_variable(node),
             parse::Node::Literal(node) => self.infer_literal(node),
             _ => unimplemented!("{node:#?}")
         }

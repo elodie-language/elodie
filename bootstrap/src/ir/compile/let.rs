@@ -7,7 +7,7 @@ use crate::ir::{DeclareVariableNode, Identifier, Node};
 use crate::ir::compile::Compiler;
 
 impl<'a> Compiler<'a> {
-    pub(crate) fn compile_let(&mut self, node: &parse::DeclareVariableNode) -> crate::ir::compile::Result<ir::Node> {
+    pub(crate) fn compile_let(&mut self, node: &parse::VariableDeclarationNode) -> crate::ir::compile::Result<ir::Node> {
         let identifier = Identifier::from(&node.identifier);
         let value = self.compile_node(node.node.deref())?;
 
