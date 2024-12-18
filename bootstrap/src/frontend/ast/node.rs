@@ -3,54 +3,54 @@ use std::rc::Rc;
 
 use crate::common::{PackagePath, StringTableId};
 use crate::frontend::lex::token::{LiteralToken, Token, TokenKind};
+use crate::frontend::modifier::Modifiers;
 use crate::frontend::parse;
 use crate::frontend::parse::{IdentifierNode, TupleNode};
-use crate::ir::Modifiers;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct BlockNode {
     pub body: Vec<Node>,
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct BreakLoopNode {
     pub token: Token,
     pub body: Option<Box<Node>>,
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct CompareNode {
     pub left: Box<Node>,
     pub operator: CompareOperator,
     pub right: Box<Node>,
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub enum CompareOperator {
     Equal,
     NotEqual,
     GreaterThan,
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct CalculateNode {
     pub left: Box<Node>,
     pub operator: CalculationOperator,
     pub right: Box<Node>,
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub enum CalculationOperator {
     Add,
     Multiply,
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct ContinueLoopNode {
     pub token: Token,
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct CallFunctionOfObjectNode {
     pub token: Token,
     pub object: Identifier,
@@ -60,7 +60,7 @@ pub struct CallFunctionOfObjectNode {
     pub arguments: Vec<Node>,
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct CallFunctionOfPackageNode {
     pub token: Token,
     pub package: PackagePath,
@@ -68,28 +68,28 @@ pub struct CallFunctionOfPackageNode {
     pub arguments: Vec<Node>,
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct CallFunctionNode {
     pub token: Token,
     pub function: Identifier,
     pub arguments: Vec<Node>,
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct CallFunctionWithLambdaNode {
     pub token: Token,
     pub call_function: CallFunctionNode,
     pub lambda: Rc<BlockNode>,
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct ExportPackageNode {
     pub token: Token,
     pub identifier: Identifier,
     pub source: Source,
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct IfNode {
     pub token: Token,
     pub condition: Box<Node>,
@@ -97,13 +97,13 @@ pub struct IfNode {
     pub otherwise: Option<BlockNode>,
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct LoopNode {
     pub token: Token,
     pub body: Vec<Node>,
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub enum Node {
     Block(BlockNode),
     BreakLoop(BreakLoopNode),
@@ -177,14 +177,14 @@ impl LiteralBooleanNode {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct ReturnFromFunctionNode {
     pub token: Token,
     pub node: Box<Node>,
     pub return_type: Option<TypeNode>,
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct LoadValueNode {
     pub token: Token,
     pub identifier: Identifier,
@@ -234,7 +234,7 @@ impl AsRef<Identifier> for Identifier {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct DeclareVariableNode {
     pub token: Token,
     pub identifier: Identifier,
@@ -242,7 +242,7 @@ pub struct DeclareVariableNode {
     pub value_type: Option<TypeNode>,
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct DeclareFunctionNode {
     pub token: Token,
     pub identifier: Identifier,
@@ -251,7 +251,7 @@ pub struct DeclareFunctionNode {
     pub body: Rc<BlockNode>,
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct DeclareExternalFunctionNode {
     pub token: Token,
     pub identifier: Identifier,
@@ -259,13 +259,13 @@ pub struct DeclareExternalFunctionNode {
     pub return_type: Option<TypeNode>,
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct FunctionArgumentNode {
     pub identifier: Identifier,
     pub ty: Option<TypeNode>,
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct DeclarePackageNode {
     pub token: Token,
     pub identifier: Identifier,
@@ -276,7 +276,7 @@ pub struct DeclarePackageNode {
     pub definitions: Vec<DefineTypeNode>,
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct DeclareTypeNode {
     pub token: Token,
     pub identifier: Identifier,
@@ -284,14 +284,14 @@ pub struct DeclareTypeNode {
     pub properties: Vec<DeclarePropertyNode>,
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct DeclarePropertyNode {
     pub token: Token,
     pub identifier: Identifier,
     pub r#type: TypeNode,
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct DefineTypeNode {
     pub token: Token,
     pub identifier: Identifier,
@@ -299,45 +299,45 @@ pub struct DefineTypeNode {
     pub functions: Vec<DeclareFunctionNode>,
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub enum Source {
     LocalFile(SourceLocalFileNode),
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct SourceLocalFileNode {
     pub path: String,
 }
 
 // FIXME compiler should give a hint whether the interpolated string will be used locally only and whether it is small enough to be allocated on the stack only
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct InterpolateStringNode {
     pub token: Token,
     pub nodes: Vec<Node>,
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct InstantiateTypeNode {
     pub token: Token,
     pub type_name: Identifier,
     pub arguments: Vec<NamedArgumentNode>,
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct NamedArgumentNode {
     pub token: Token,
     pub identifier: Identifier,
     pub value: Node,
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct LoadValueFromObjectNode {
     pub token: Token,
     pub object: Identifier,
     pub property: Identifier,
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct LoadValueFromSelfNode {
     pub token: Token,
     pub property: Identifier,

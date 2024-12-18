@@ -1,7 +1,8 @@
-use crate::common::{StringTable, StringTableId};
 use std::ops::Deref;
 
-#[derive(Clone, Debug)]
+use crate::common::{StringTable, StringTableId};
+
+#[derive(Clone, Debug, PartialEq)]
 pub struct PackagePath {
     pub segments: Box<[StringTableId]>,
 }

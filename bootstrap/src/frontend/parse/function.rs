@@ -5,12 +5,12 @@ use TokenKind::{Operator, Separator};
 
 use crate::frontend::lex::token::OperatorToken::{Arrow, CloseParen};
 use crate::frontend::lex::token::{KeywordToken, OperatorToken, SeparatorToken, TokenKind};
+use crate::frontend::modifier::Modifiers;
 use crate::frontend::parse::node::{
     FunctionDeclarationArgumentNode, FunctionDeclarationNode, ReturnNode,
 };
 use crate::frontend::parse::precedence::Precedence;
 use crate::frontend::parse::Parser;
-use crate::ir::Modifiers;
 
 impl<'a> Parser<'a> {
     pub(crate) fn parse_function_declaration(

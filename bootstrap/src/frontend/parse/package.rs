@@ -1,6 +1,6 @@
 use crate::frontend::lex::token::KeywordToken;
+use crate::frontend::modifier::Modifiers;
 use crate::frontend::parse::{PackageDeclarationNode, Parser};
-use crate::ir::Modifiers;
 
 impl<'a> Parser<'a> {
     pub(crate) fn parse_package_declaration(
@@ -69,7 +69,7 @@ mod tests {
             &mut ctx,
             "export package magic{ export function some_fn() {} }",
         )
-        .unwrap();
+            .unwrap();
         let result = parse(&mut ctx, tokens).unwrap();
         assert_eq!(result.len(), 1);
 

@@ -4,8 +4,8 @@ use crate::frontend::lex::token::KeywordToken;
 use crate::frontend::lex::token::OperatorToken::{Arrow, CloseParen, OpenParen};
 use crate::frontend::lex::token::SeparatorToken::Comma;
 use crate::frontend::lex::token::TokenKind::{Operator, Separator};
+use crate::frontend::modifier::Modifiers;
 use crate::frontend::parse::{ExternalFunctionDeclarationNode, Parser};
-use crate::ir::Modifiers;
 
 impl<'a> Parser<'a> {
     pub(crate) fn parse_external(

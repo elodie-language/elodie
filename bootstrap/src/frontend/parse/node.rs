@@ -2,7 +2,7 @@ use std::rc::Rc;
 
 use crate::common::StringTableId;
 use crate::frontend::lex::token::{LiteralToken, Token, TokenKind};
-use crate::ir::Modifiers;
+use crate::frontend::modifier::Modifiers;
 
 #[derive(Debug, PartialEq)]
 pub(crate) enum Node {

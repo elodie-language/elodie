@@ -1,12 +1,9 @@
-pub use modifier::*;
-
 use crate::common::StringTable;
 use crate::common::TypeTable;
-use crate::frontend::{ast, Ast};
+use crate::frontend::Ast;
 
 mod check;
 mod infer;
-mod modifier;
 mod unify;
 
 #[derive(Debug)]

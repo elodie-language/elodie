@@ -8,6 +8,7 @@ use crate::frontend::parse::parse;
 pub mod ast;
 pub mod lex;
 pub mod parse;
+pub mod modifier;
 
 #[derive(Debug)]
 pub enum Error {

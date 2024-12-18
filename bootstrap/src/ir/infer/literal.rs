@@ -1,20 +1,20 @@
-use crate::frontend::parse;
+use crate::frontend::ast;
 use crate::ir::infer::{Inference, InferredType};
 use crate::ir::infer::{LiteralBooleanNode, LiteralNode, LiteralNumberNode, LiteralStringNode, Node};
 use crate::ir::infer::Node::Literal;
 
 impl<'a> Inference<'a> {
-    pub(crate) fn infer_literal(&self, node: &'a parse::LiteralNode) -> crate::ir::infer::Result<Node<'a>> {
+    pub(crate) fn infer_literal(&self, node: &'a ast::LiteralNode) -> crate::ir::infer::Result<Node<'a>> {
         match node {
-            parse::LiteralNode::Boolean(parsed_node) => Ok(Literal(LiteralNode::Boolean(LiteralBooleanNode {
+            ast::LiteralNode::Boolean(parsed_node) => Ok(Literal(LiteralNode::Boolean(LiteralBooleanNode {
                 parsed_node,
                 inferred_type: InferredType::Boolean,
             }))),
-            parse::LiteralNode::Number(parsed_node) => Ok(Literal(LiteralNode::Number(LiteralNumberNode {
+            ast::LiteralNode::Number(parsed_node) => Ok(Literal(LiteralNode::Number(LiteralNumberNode {
                 parsed_node,
                 inferred_type: InferredType::Number,
             }))),
-            parse::LiteralNode::String(parsed_node) => Ok(Literal(LiteralNode::String(LiteralStringNode {
+            ast::LiteralNode::String(parsed_node) => Ok(Literal(LiteralNode::String(LiteralStringNode {
                 parsed_node,
                 inferred_type: InferredType::String,
             }

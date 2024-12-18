@@ -26,30 +26,22 @@ pub(crate) type Result<T, E = Error> = core::result::Result<T, E>;
 
 pub(crate) fn from(ctx: &mut Context, nodes: Vec<parse::Node>) -> Result<Ast> {
     let mut compiler = Generator::new(ctx);
-    compiler.compile(nodes)
+    compiler.generate(nodes)
 }
 
 pub(crate) struct Generator<'a> {
     ctx: &'a mut Context,
-    // scope: Scope,
 }
 
 impl<'a> Generator<'a> {
     fn new(ctx: &'a mut Context) -> Self {
-        // let mut scope = Scope::new();
-
-        Self {
-            ctx,
-            // scope,
-        }
+        Self { ctx }
     }
 }
 
 impl<'a> Generator<'a> {
-    pub(crate) fn compile(&mut self, nodes: Vec<parse::Node>) -> Result<Ast> {
-        // 2 pass
-        // populate symbol table
-        // create ir
+
+    pub(crate) fn generate(&mut self, nodes: Vec<parse::Node>) -> Result<Ast> {
 
         let mut result = Vec::new();
         for node in &nodes {

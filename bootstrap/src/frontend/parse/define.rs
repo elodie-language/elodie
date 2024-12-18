@@ -1,8 +1,8 @@
 use KeywordToken::Define;
 
 use crate::frontend::lex::token::KeywordToken;
+use crate::frontend::modifier::Modifiers;
 use crate::frontend::parse::{DefineDeclarationNode, Parser};
-use crate::ir::Modifiers;
 
 impl<'a> Parser<'a> {
     pub(crate) fn parse_define(&mut self) -> crate::frontend::parse::Result<DefineDeclarationNode> {

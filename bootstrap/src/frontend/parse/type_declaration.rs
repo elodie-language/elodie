@@ -1,6 +1,6 @@
 use crate::frontend::lex::token::KeywordToken::Type;
+use crate::frontend::modifier::Modifiers;
 use crate::frontend::parse::{Parser, TypeDeclarationNode};
-use crate::ir::Modifiers;
 
 impl<'a> Parser<'a> {
     pub(crate) fn parse_type_declaration(
@@ -29,7 +29,7 @@ impl<'a> Parser<'a> {
 mod tests {
     use crate::common::Context;
     use crate::frontend::lex::lex;
-    use crate::frontend::parse::{parse, Error, InfixOperator, TypeNode};
+    use crate::frontend::parse::{Error, InfixOperator, parse, TypeNode};
 
     #[test]
     fn parse_empty_type_declaration() {
@@ -111,7 +111,7 @@ mod tests {
             p_2: Bool
         )"#,
         )
-        .unwrap();
+            .unwrap();
         let result = parse(&mut ctx, tokens).unwrap();
         assert_eq!(result.len(), 1);
 
