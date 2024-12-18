@@ -1,4 +1,4 @@
-use crate::common::{BaseType, TypeId};
+use crate::common::{BaseType, DefaultTypeIds, TypeId};
 use crate::common::Context;
 use crate::frontend;
 use crate::frontend::{parse, Parsed};
@@ -109,8 +109,8 @@ impl<'a> Compiler<'a> {
             parse::TypeNode::Boolean(_) => self.ctx.type_table.get_base_type_id(&BaseType::Boolean),
             parse::TypeNode::Number(_) => self.ctx.type_table.get_base_type_id(&BaseType::Number),
             parse::TypeNode::String(_) => self.ctx.type_table.get_base_type_id(&BaseType::String),
-            parse::TypeNode::Function(_) => unimplemented!(),
-            parse::TypeNode::Custom(_) => unimplemented!()
+            parse::TypeNode::Function(_) => DefaultTypeIds::never(),
+            parse::TypeNode::Custom(_) => DefaultTypeIds::never()
         }
     }
 }

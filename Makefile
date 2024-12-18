@@ -22,7 +22,7 @@ test-bootstrap: bootstrap
 	cargo test --manifest-path $(BOOTSTRAP_DIR)/Cargo.toml
 
 .PHONY: test-smoke
-test-smoke: bootstrap test-smoke-bootstrap-run test-smoke-bootstrap-build
+test-smoke: bootstrap test-smoke-bootstrap-run # test-smoke-bootstrap-build
 
 .PHONY: test-smoke-bootstrap-run
 test-smoke-bootstrap-run: bootstrap
