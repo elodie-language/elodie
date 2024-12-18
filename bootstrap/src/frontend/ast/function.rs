@@ -2,14 +2,14 @@ use std::ops::Deref;
 use std::rc::Rc;
 
 use crate::common::{BaseType, DefaultTypeIds};
-use crate::frontend::parse;
+use crate::frontend::{ast, parse};
+use crate::frontend::ast::Compiler;
+use crate::frontend::ast::node::{BlockNode, DeclareFunctionNode, FunctionArgumentNode, Identifier, Node, ReturnFromFunctionNode};
+use crate::frontend::ast::node::Node::ReturnFromFunction;
 use crate::ir;
-use crate::ir::{BlockNode, DeclareFunctionNode, FunctionArgumentNode, Identifier, Node, ReturnFromFunctionNode};
-use crate::ir::compile::Compiler;
-use crate::ir::Node::ReturnFromFunction;
 
 impl<'a> Compiler<'a> {
-    pub(crate) fn compile_declare_function(&mut self, node: &parse::FunctionDeclarationNode) -> crate::ir::compile::Result<ir::Node> {
+    pub(crate) fn compile_declare_function(&mut self, node: &parse::FunctionDeclarationNode) -> ast::Result<ast::Node> {
         let mut arguments = Vec::with_capacity(node.arguments.len());
         for arg in &node.arguments {
             arguments.push(Rc::new(self.compile_declare_function_argument(arg)?))
@@ -32,7 +32,7 @@ impl<'a> Compiler<'a> {
             DefaultTypeIds::never()
         };
 
-        Ok(ir::Node::DeclareFunction(DeclareFunctionNode {
+        Ok(ast::Node::DeclareFunction(DeclareFunctionNode {
             identifier: Identifier::from(&node.identifier),
             arguments,
             return_type,
@@ -40,14 +40,14 @@ impl<'a> Compiler<'a> {
         }))
     }
 
-    pub(crate) fn compile_declare_function_argument(&mut self, node: &parse::FunctionDeclarationArgumentNode) -> crate::ir::compile::Result<ir::FunctionArgumentNode> {
+    pub(crate) fn compile_declare_function_argument(&mut self, node: &parse::FunctionDeclarationArgumentNode) -> ast::Result<ast::FunctionArgumentNode> {
         Ok(FunctionArgumentNode {
             identifier: Identifier::from(&node.identifier),
             ty: DefaultTypeIds::never(),
         })
     }
 
-    pub(crate) fn compile_function_return(&mut self, node: &parse::ReturnNode) -> crate::ir::compile::Result<ir::Node> {
+    pub(crate) fn compile_function_return(&mut self, node: &parse::ReturnNode) -> ast::Result<ast::Node> {
         let result = if let Some(ref node) = node.result {
             self.compile_node(node.deref())?
         } else {

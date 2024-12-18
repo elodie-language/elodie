@@ -1,18 +1,17 @@
 use crate::common::DefaultTypeIds;
-use crate::frontend::parse;
-use crate::ir;
-use crate::ir::BlockNode;
-use crate::ir::compile::Compiler;
+use crate::frontend::{ast, parse};
+use crate::frontend::ast::Compiler;
+use crate::frontend::ast::node::BlockNode;
 
 impl<'a> Compiler<'a> {
-    pub(crate) fn compile_block(&mut self, node: &parse::BlockNode) -> crate::ir::compile::Result<ir::Node> {
+    pub(crate) fn compile_block(&mut self, node: &parse::BlockNode) -> ast::Result<ast::Node> {
         let mut body = Vec::with_capacity(node.nodes.len());
 
         for node in &node.nodes {
             body.push(self.compile_node(node)?)
         }
 
-        return Ok(ir::Node::Block(BlockNode {
+        return Ok(ast::Node::Block(BlockNode {
             body,
             return_type: DefaultTypeIds::never(),
         }));

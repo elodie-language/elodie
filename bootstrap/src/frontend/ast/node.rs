@@ -1,17 +1,10 @@
 use std::rc::Rc;
 
 use crate::common::{PackagePath, StringTableId};
-use crate::ir::modifier::Modifiers;
+use crate::common::TypeId;
 use crate::frontend::parse;
 use crate::frontend::parse::IdentifierNode;
-use crate::common::TypeId;
-
-#[derive(Debug)]
-pub struct SourceFile {
-    // imports
-    // exports
-    pub body: Vec<Node>,
-}
+use crate::ir::Modifiers;
 
 #[derive(Debug)]
 pub struct BlockNode {
@@ -317,7 +310,7 @@ pub struct NamedArgumentNode {
 pub struct LoadValueFromObjectNode {
     pub object: Identifier,
     pub property: Identifier,
-    pub ty: TypeId
+    pub ty: TypeId,
 }
 
 #[derive(Debug)]

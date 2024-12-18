@@ -1,8 +1,8 @@
 use std::collections::HashMap;
 
 use crate::common::StringTableId;
-use crate::ir::Identifier;
 use crate::common::TypeId;
+use crate::frontend::ast::node::Identifier;
 
 #[derive(Debug)]
 pub struct Scope {
@@ -37,7 +37,7 @@ impl Scope {
         self.identifiers.last_mut().unwrap().insert(identifier, type_id);
     }
 
-    pub fn get_identifier_type(&self, identifier: &Identifier) -> Option<TypeId>{
+    pub fn get_identifier_type(&self, identifier: &Identifier) -> Option<TypeId> {
         for scope in self.identifiers.iter().rev() {
             if let Some(value) = scope.get(identifier) {
                 return Some(*value);

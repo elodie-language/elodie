@@ -11,7 +11,7 @@ use crate::backend::run::scope::Scope;
 use crate::backend::run::type_definitions::TypeDefinitions;
 use crate::backend::test::test_files;
 use crate::common::Context;
-use crate::ir::compile::compile_str;
+use crate::frontend::ast_from_str;
 
 mod common;
 mod cli;
@@ -41,19 +41,19 @@ fn main() {
 
         let (scope, definitions) = {
             let std_content = load_library_file("core/index.ec").unwrap();
-            let std_file = compile_str(&mut ctx, std_content.as_str()).unwrap();
+            let std_file = ast_from_str(&mut ctx, std_content.as_str()).unwrap();
             run(&mut ctx, scope, TypeDefinitions { definitions: Default::default() }, std_file, true).unwrap()
         };
 
         let mut path = PathBuf::from(file.clone());
         let content = load_text_from_file(path.to_str().unwrap()).unwrap();
 
-        let source_file = compile_str(&mut ctx, content.as_str()).unwrap();
+        let source_file = ast_from_str(&mut ctx, content.as_str()).unwrap();
 
         let code = generate::generate_c_code(
             ir::Context {
                 file: source_file,
-                core_scope: scope,
+
                 string_table: ctx.string_table,
                 type_table: ctx.type_table,
             }).unwrap();

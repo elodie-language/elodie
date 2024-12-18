@@ -1,17 +1,16 @@
 use std::ops::Deref;
 use std::rc::Rc;
 
-use crate::{ir};
+use crate::common::DefaultTypeIds;
 use crate::common::PackagePath;
-use crate::ir::compile::Compiler;
-use crate::ir::{CalculateNode, CalculationOperator, CallFunctionNode, CallFunctionOfObjectNode, CallFunctionOfPackageNode, CallFunctionWithLambdaNode, CompareNode, CompareOperator, Identifier, InstantiateTypeNode, LoadValueFromObjectNode, LoadValueFromSelfNode, NamedArgumentNode};
+use crate::frontend::{ast, parse};
+use crate::frontend::ast::Compiler;
+use crate::frontend::ast::node::{CalculateNode, CalculationOperator, CallFunctionNode, CallFunctionOfObjectNode, CallFunctionOfPackageNode, CallFunctionWithLambdaNode, CompareNode, CompareOperator, Identifier, LoadValueFromObjectNode, LoadValueFromSelfNode, NamedArgumentNode};
 use crate::frontend::parse::{InfixNode, InfixOperator, Node, TypeNode};
 use crate::frontend::parse::Node::Type;
-use crate::common::{DefaultTypeIds, TypeId};
-use crate::frontend::parse;
 
 impl<'a> Compiler<'a> {
-    pub(crate) fn compile_infix(&mut self, node: &parse::InfixNode) -> crate::ir::compile::Result<ir::Node> {
+    pub(crate) fn compile_infix(&mut self, node: &parse::InfixNode) -> ast::Result<ast::Node> {
         let InfixNode { left, operator, right } = node;
 
         if left.is_type() && matches!(operator, InfixOperator::Call(_)) && right.is_tuple() {
@@ -22,19 +21,19 @@ impl<'a> Compiler<'a> {
         if left.is_identifier() && matches!(operator, InfixOperator::Call(_)) && right.is_tuple() {
             let Node::Identifier(function_identifier) = left.deref() else { todo!() };
             let arguments = self.compile_arguments(right.as_tuple())?;
-            return Ok(ir::Node::CallFunction(CallFunctionNode { function: Identifier(function_identifier.value()), arguments }));
+            return Ok(ast::Node::CallFunction(CallFunctionNode { function: Identifier(function_identifier.value()), arguments }));
         }
 
         // call function of object / self
         if left.is_infix() && matches!(left.as_infix().operator, InfixOperator::AccessProperty(_)) && matches!(operator, InfixOperator::Call(_)) {
-            let ir::Node::LoadValueFromObject(LoadValueFromObjectNode { object, property, ty}) = self.compile_access_property(left.as_infix())? else { panic!() };
+            let ast::Node::LoadValueFromObject(LoadValueFromObjectNode { object, property, ty }) = self.compile_access_property(left.as_infix())? else { panic!() };
 
             let arguments = self.compile_arguments(right.as_tuple())?;
 
             // FIXME add type information
-            return Ok(ir::Node::CallFunctionOfObject(CallFunctionOfObjectNode {
-                object: ir::Identifier::from(object),
-                function: ir::Identifier::from(property),
+            return Ok(ast::Node::CallFunctionOfObject(CallFunctionOfObjectNode {
+                object: ast::Identifier::from(object),
+                function: ast::Identifier::from(property),
                 arguments,
             }));
         };
@@ -44,10 +43,10 @@ impl<'a> Compiler<'a> {
             let left = self.compile_node(left.deref())?;
             let right = self.compile_node(right.deref())?;
 
-            let ir::Node::CallFunction(call_function) = left else { panic!() };
-            let ir::Node::Block(lambda) = right else { panic!() };
+            let ast::Node::CallFunction(call_function) = left else { panic!() };
+            let ast::Node::Block(lambda) = right else { panic!() };
 
-            return Ok(ir::Node::CallFunctionWithLambda(CallFunctionWithLambdaNode {
+            return Ok(ast::Node::CallFunctionWithLambda(CallFunctionWithLambdaNode {
                 call_function,
                 lambda: Rc::new(lambda),
             }));
@@ -59,17 +58,17 @@ impl<'a> Compiler<'a> {
 
             // FIXME
             let paths = {
-                if left.as_infix().left.is_infix() && matches!(left.as_infix().left.as_infix().operator, InfixOperator::AccessPackage(_)){
+                if left.as_infix().left.is_infix() && matches!(left.as_infix().left.as_infix().operator, InfixOperator::AccessPackage(_)) {
                     self.package_path(left.as_infix())
-                }else{
+                } else {
                     vec![Identifier::from(left.as_infix().left.as_identifier())]
                 }
             };
 
             let function_identifier = left.as_infix().right.as_identifier();
 
-            return Ok(ir::Node::CallFunctionOfPackage(CallFunctionOfPackageNode {
-                package: PackagePath::from(paths.into_iter().map(|p|p.0).collect::<Vec<_>>()),
+            return Ok(ast::Node::CallFunctionOfPackage(CallFunctionOfPackageNode {
+                package: PackagePath::from(paths.into_iter().map(|p| p.0).collect::<Vec<_>>()),
                 function: Identifier(function_identifier.value()),
                 arguments,
             }));
@@ -78,8 +77,8 @@ impl<'a> Compiler<'a> {
         // self.variable
         if left.is_itself() && matches!(operator, InfixOperator::AccessProperty(_)) && right.is_identifier() {
             let property = right.as_identifier();
-            return Ok(ir::Node::LoadValueFromSelf(LoadValueFromSelfNode {
-                property: ir::Identifier::from(property),
+            return Ok(ast::Node::LoadValueFromSelf(LoadValueFromSelfNode {
+                property: ast::Identifier::from(property),
             }));
         }
 
@@ -88,10 +87,10 @@ impl<'a> Compiler<'a> {
             // FIXME support chaining objects root.level_one.level_two..
             let object = left.as_identifier();
             let property = right.as_identifier();
-            return Ok(ir::Node::LoadValueFromObject(LoadValueFromObjectNode {
-                object: ir::Identifier::from(object),
-                property: ir::Identifier::from(property),
-                ty: DefaultTypeIds::never()
+            return Ok(ast::Node::LoadValueFromObject(LoadValueFromObjectNode {
+                object: ast::Identifier::from(object),
+                property: ast::Identifier::from(property),
+                ty: DefaultTypeIds::never(),
             }));
         }
 
@@ -99,7 +98,7 @@ impl<'a> Compiler<'a> {
         if let InfixOperator::Add(_) = operator {
             let left = Box::new(self.compile_node(left.deref())?);
             let right = Box::new(self.compile_node(right.deref())?);
-            return Ok(ir::Node::Calculate(CalculateNode {
+            return Ok(ast::Node::Calculate(CalculateNode {
                 left,
                 operator: CalculationOperator::Add,
                 right,
@@ -110,7 +109,7 @@ impl<'a> Compiler<'a> {
             let left = Box::new(self.compile_node(left.deref())?);
             let right = Box::new(self.compile_node(right.deref())?);
 
-            return Ok(ir::Node::Compare(CompareNode {
+            return Ok(ast::Node::Compare(CompareNode {
                 left,
                 operator: CompareOperator::Equal,
                 right,
@@ -121,7 +120,7 @@ impl<'a> Compiler<'a> {
             let left = Box::new(self.compile_node(left.deref())?);
             let right = Box::new(self.compile_node(right.deref())?);
 
-            return Ok(ir::Node::Compare(CompareNode {
+            return Ok(ast::Node::Compare(CompareNode {
                 left,
                 operator: CompareOperator::NotEqual,
                 right,
@@ -132,7 +131,7 @@ impl<'a> Compiler<'a> {
             let left = Box::new(self.compile_node(left.deref())?);
             let right = Box::new(self.compile_node(right.deref())?);
 
-            return Ok(ir::Node::Compare(CompareNode {
+            return Ok(ast::Node::Compare(CompareNode {
                 left,
                 operator: CompareOperator::GreaterThan,
                 right,
@@ -143,7 +142,7 @@ impl<'a> Compiler<'a> {
             let left = Box::new(self.compile_node(left.deref())?);
             let right = Box::new(self.compile_node(right.deref())?);
 
-            return Ok(ir::Node::Calculate(CalculateNode {
+            return Ok(ast::Node::Calculate(CalculateNode {
                 left,
                 operator: CalculationOperator::Multiply,
                 right,
@@ -154,13 +153,13 @@ impl<'a> Compiler<'a> {
     }
 
 
-    fn compile_access_property(&mut self, node: &parse::InfixNode) -> crate::ir::compile::Result<ir::Node> {
+    fn compile_access_property(&mut self, node: &parse::InfixNode) -> ast::Result<ast::Node> {
         let InfixNode { left, operator, right } = node;
 
         if let Node::Itself(_) = left.deref() {
             if let Node::Identifier(property) = right.deref() {
-                return Ok(ir::Node::LoadValueFromSelf(LoadValueFromSelfNode {
-                    property: ir::Identifier::from(property),
+                return Ok(ast::Node::LoadValueFromSelf(LoadValueFromSelfNode {
+                    property: ast::Identifier::from(property),
                 }));
             }
         }
@@ -169,14 +168,14 @@ impl<'a> Compiler<'a> {
 
         let Node::Identifier(property) = right.deref() else { todo!() };
 
-        return Ok(ir::Node::LoadValueFromObject(LoadValueFromObjectNode {
-            object: ir::Identifier::from(object_identifier),
-            property: ir::Identifier::from(property),
-            ty: DefaultTypeIds::never()
+        return Ok(ast::Node::LoadValueFromObject(LoadValueFromObjectNode {
+            object: ast::Identifier::from(object_identifier),
+            property: ast::Identifier::from(property),
+            ty: DefaultTypeIds::never(),
         }));
     }
 
-    fn compile_type_instantiation(&mut self, node: &parse::InfixNode) -> crate::ir::compile::Result<ir::Node> {
+    fn compile_type_instantiation(&mut self, node: &parse::InfixNode) -> ast::Result<ast::Node> {
         let InfixNode { left, operator, right } = node;
 
         let Type(TypeNode::Custom(type_node)) = left.deref() else { panic!() };
@@ -184,14 +183,14 @@ impl<'a> Compiler<'a> {
 
         let mut arguments = self.compile_named_arguments(arguments_node)?;
 
-        return Ok(ir::Node::InstantiateType(InstantiateTypeNode {
+        return Ok(ast::Node::InstantiateType(ast::InstantiateTypeNode {
             type_id: DefaultTypeIds::never(),
             type_name: Identifier(type_node.token.value()),
             arguments,
         }));
     }
 
-    fn compile_arguments(&mut self, node: &parse::TupleNode) -> crate::ir::compile::Result<Vec<ir::Node>> {
+    fn compile_arguments(&mut self, node: &parse::TupleNode) -> ast::Result<Vec<ast::Node>> {
         let mut result = Vec::with_capacity(node.nodes.len());
         for node in &node.nodes {
             result.push(self.compile_node(node)?)
@@ -199,7 +198,7 @@ impl<'a> Compiler<'a> {
         Ok(result)
     }
 
-    fn compile_named_arguments(&mut self, node: &parse::TupleNode) -> crate::ir::compile::Result<Vec<NamedArgumentNode>> {
+    fn compile_named_arguments(&mut self, node: &parse::TupleNode) -> ast::Result<Vec<NamedArgumentNode>> {
         let mut result = Vec::with_capacity(node.nodes.len());
 
         for node in &node.nodes {

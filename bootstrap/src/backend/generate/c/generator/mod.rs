@@ -7,9 +7,9 @@ use crate::backend::generate::c::{BlockStatement, CallFunctionStatement, CallFun
 use crate::backend::generate::c::DirectiveNode::{IncludeLocalDirective, IncludeSystemDirective};
 use crate::backend::generate::c::generator::scope::Scope;
 use crate::backend::generate::c::Node::DefineFunction;
-use crate::ir;
-use crate::ir::{DefineTypeNode, Node};
 use crate::common::TypeTable;
+use crate::frontend::ast::node::{DefineTypeNode, Node};
+use crate::ir;
 
 mod literal;
 mod function;
@@ -36,7 +36,7 @@ pub(crate) fn generate(ctx: ir::Context) -> Result<Vec<c::Node>> {
         struct_definitions: Vec::new(),
         struct_declarations: Vec::new(),
     };
-    generator.generate(ctx.file.body)
+    generator.generate(ctx.file.nodes)
 }
 
 pub(crate) struct Generator {

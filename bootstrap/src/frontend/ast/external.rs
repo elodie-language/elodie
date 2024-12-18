@@ -1,19 +1,18 @@
 use std::rc::Rc;
 
 use crate::common::DefaultTypeIds;
-use crate::frontend::parse;
-use crate::ir;
-use crate::ir::{DeclareExternalFunctionNode, Identifier, Node};
-use crate::ir::compile::Compiler;
+use crate::frontend::{ast, parse};
+use crate::frontend::ast::Compiler;
+use crate::frontend::ast::node::{DeclareExternalFunctionNode, Identifier};
 
 impl<'a> Compiler<'a> {
-    pub(crate) fn compile_declare_external_function(&mut self, node: &parse::ExternalFunctionDeclarationNode) -> crate::ir::compile::Result<Node> {
+    pub(crate) fn compile_declare_external_function(&mut self, node: &parse::ExternalFunctionDeclarationNode) -> ast::Result<ast::Node> {
         let mut arguments = Vec::with_capacity(node.arguments.len());
         for arg in &node.arguments {
             arguments.push(Rc::new(self.compile_declare_function_argument(arg)?))
         }
 
-        Ok(ir::Node::DeclareExternalFunction(DeclareExternalFunctionNode {
+        Ok(ast::Node::DeclareExternalFunction(DeclareExternalFunctionNode {
             identifier: Identifier::from(&node.identifier),
             arguments,
             return_type: DefaultTypeIds::never(),

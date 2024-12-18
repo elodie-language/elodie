@@ -3,13 +3,12 @@ use std::io;
 use std::io::Read;
 use std::path::PathBuf;
 
-use crate::frontend::parse;
-use crate::ir;
-use crate::ir::{DeclarePackageNode, ExportPackageNode, Identifier};
-use crate::ir::compile::{compile_str, Compiler};
+use crate::frontend::{ast, ast_from_str, parse};
+use crate::frontend::ast::Compiler;
+use crate::frontend::ast::node::{DeclarePackageNode, ExportPackageNode, Identifier};
 
 impl<'a> Compiler<'a> {
-    pub(crate) fn compile_declare_package(&mut self, node: &parse::PackageDeclarationNode) -> crate::ir::compile::Result<ir::Node> {
+    pub(crate) fn compile_declare_package(&mut self, node: &parse::PackageDeclarationNode) -> crate::frontend::ast::Result<ast::Node> {
         let mut compiled_body = vec![];
 
         for node in &node.block.nodes {
@@ -22,9 +21,9 @@ impl<'a> Compiler<'a> {
         let mut packages = vec![];
 
         for node in compiled_body.into_iter() {
-            if let ir::Node::Block(block) = node {
+            if let ast::Node::Block(block) = node {
                 for node in block.body {
-                    if let ir::Node::ExportPackage(ExportPackageNode { identifier, .. }) = node {
+                    if let ast::Node::ExportPackage(ExportPackageNode { identifier, .. }) = node {
                         let package = self.ctx.get_str(identifier.0).to_string();
 
                         // FIXME temporary hack to load std packages
@@ -39,26 +38,26 @@ impl<'a> Compiler<'a> {
                             "intrinsics" => packages.extend(self.load_declared_packages("core/intrinsics/index.ec")),
                             _ => unimplemented!()
                         }
-                    } else if let ir::Node::DeclareFunction(declare_function) = node {
+                    } else if let ast::Node::DeclareFunction(declare_function) = node {
                         functions.push(declare_function)
-                    } else if let ir::Node::DefineType(define_type) = node {
+                    } else if let ast::Node::DefineType(define_type) = node {
                         definitions.push(define_type);
                     }
                 }
-            } else if let ir::Node::DeclareFunction(declare_function) = node {
+            } else if let ast::Node::DeclareFunction(declare_function) = node {
                 functions.push(declare_function)
-            } else if let ir::Node::DefineType(define_type) = node {
+            } else if let ast::Node::DefineType(define_type) = node {
                 definitions.push(define_type);
-            } else if let ir::Node::DeclarePackage(package) = node {
+            } else if let ast::Node::DeclarePackage(package) = node {
                 packages.push(package);
-            } else if let ir::Node::DeclareExternalFunction(external) = node {
+            } else if let ast::Node::DeclareExternalFunction(external) = node {
                 external_functions.push(external);
             } else {
                 // unimplemented!("{:?}", node)
             }
         }
 
-        Ok(ir::Node::DeclarePackage(DeclarePackageNode {
+        Ok(ast::Node::DeclarePackage(DeclarePackageNode {
             identifier: Identifier::from(&node.identifier),
             modifiers: node.modifiers.clone(),
             functions,
@@ -71,12 +70,12 @@ impl<'a> Compiler<'a> {
 
     fn load_declared_packages(&mut self, name: &str) -> Vec<DeclarePackageNode> {
         let content = crate::load_library_file(name).unwrap();
-        let src_file = compile_str(&mut self.ctx, content.as_str()).unwrap();
+        let src_file = ast_from_str(&mut self.ctx, content.as_str()).unwrap();
 
         let mut result = vec![];
 
-        for node in src_file.body {
-            if let ir::Node::DeclarePackage(package_node) = node {
+        for node in src_file.nodes {
+            if let ast::Node::DeclarePackage(package_node) = node {
                 result.push(package_node);
             }
         }

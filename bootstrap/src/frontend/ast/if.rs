@@ -1,13 +1,12 @@
 use std::ops::Deref;
 
-use crate::{ir};
-use crate::ir::compile::Compiler;
-use crate::ir::{BlockNode, IfNode};
 use crate::common::DefaultTypeIds;
-use crate::frontend::parse;
+use crate::frontend::{ast, parse};
+use crate::frontend::ast::Compiler;
+use crate::frontend::ast::node::{BlockNode, IfNode};
 
 impl<'a> Compiler<'a> {
-    pub(crate) fn compile_if(&mut self, node: &parse::IfNode) -> crate::ir::compile::Result<ir::Node> {
+    pub(crate) fn compile_if(&mut self, node: &parse::IfNode) -> ast::Result<ast::Node> {
         // condition needs to be of type boolean --> every node has a type?!
         let condition = Box::new(self.compile_node(node.condition.deref())?);
 
@@ -26,7 +25,7 @@ impl<'a> Compiler<'a> {
             None
         };
 
-        Ok(ir::Node::If(
+        Ok(ast::Node::If(
             IfNode {
                 condition,
                 then: BlockNode { body: then_body, return_type: DefaultTypeIds::unit() },

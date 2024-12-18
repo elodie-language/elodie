@@ -2,26 +2,24 @@ use std::collections::HashMap;
 use std::ops::Deref;
 use std::rc::Rc;
 
-use crate::ir::{DeclareExternalFunctionNode, DeclareFunctionNode, DeclarePackageNode, DeclareVariableNode};
-use crate::common::TypeId;
 use crate::backend::run::Runner;
 use crate::backend::run::value::{FunctionValue, IntrinsicFunctionValue, PackageValue, Value};
-use crate::backend::run::value::Value::IntrinsicFunction;
+use crate::common::TypeId;
+use crate::frontend::ast;
 
 impl<'a> Runner<'a> {
-
-    pub(crate) fn run_external_function_declaration(&mut self, node: &DeclareExternalFunctionNode) -> crate::backend::run::Result<Value> {
+    pub(crate) fn run_external_function_declaration(&mut self, node: &ast::DeclareExternalFunctionNode) -> crate::backend::run::Result<Value> {
         unimplemented!()
     }
 
-    pub(crate) fn run_variable_declaration(&mut self, node: &DeclareVariableNode) -> crate::backend::run::Result<Value> {
+    pub(crate) fn run_variable_declaration(&mut self, node: &ast::DeclareVariableNode) -> crate::backend::run::Result<Value> {
         let name = node.identifier.0.clone();
         let value = self.run_node(node.value.deref())?;
         self.scope.insert_value(name, value);
         Ok(Value::Unit)
     }
 
-    pub(crate) fn run_function_declaration(&mut self, node: &DeclareFunctionNode) -> crate::backend::run::Result<Value> {
+    pub(crate) fn run_function_declaration(&mut self, node: &ast::DeclareFunctionNode) -> crate::backend::run::Result<Value> {
         let name = node.identifier.0.clone();
 
         let mut arguments = Vec::with_capacity(node.arguments.len());
@@ -38,7 +36,7 @@ impl<'a> Runner<'a> {
         Ok(f)
     }
 
-    pub(crate) fn run_package_declaration(&mut self, node: &DeclarePackageNode) -> crate::backend::run::Result<Value> {
+    pub(crate) fn run_package_declaration(&mut self, node: &ast::DeclarePackageNode) -> crate::backend::run::Result<Value> {
         let mut functions = HashMap::new();
         for node in &node.functions {
             let name = node.identifier.0.clone();
@@ -84,31 +82,31 @@ impl<'a> Runner<'a> {
 
             let print_colors = self.print_colors.clone();
             match function {
-             "cos_f64" => {
-                 external_functions.insert(node.identifier.0, IntrinsicFunctionValue(Rc::new(move |args: &[Value]| {
-                     let Value::Number(arg) = args.get(0).cloned().unwrap() else {panic!()};
+                "cos_f64" => {
+                    external_functions.insert(node.identifier.0, IntrinsicFunctionValue(Rc::new(move |args: &[Value]| {
+                        let Value::Number(arg) = args.get(0).cloned().unwrap() else { panic!() };
 
-                     Ok(Value::Number(arg.cos()))
-                 })));
-             },
+                        Ok(Value::Number(arg.cos()))
+                    })));
+                }
                 "print" => {
                     external_functions.insert(node.identifier.0, IntrinsicFunctionValue(Rc::new(move |args: &[Value]| {
                         for arg in args {
                             if arg.to_string() == "\\n" {
                                 println!();
                             } else {
-                                if print_colors{
-                                print!("{} ", arg.to_string().replace("\\x1b", "\x1b"));
-                                }else{
+                                if print_colors {
+                                    print!("{} ", arg.to_string().replace("\\x1b", "\x1b"));
+                                } else {
                                     print!("{} ", arg.to_string())
                                 }
                             }
                         }
                         Ok(Value::Unit)
                     })));
-                },
-              _ => unimplemented!("{function}")
-             }
+                }
+                _ => unimplemented!("{function}")
+            }
         }
 
         Ok(
@@ -116,7 +114,7 @@ impl<'a> Runner<'a> {
                 identifier: node.identifier.0,
                 functions,
                 packages,
-                external_functions
+                external_functions,
             }),
         )
     }

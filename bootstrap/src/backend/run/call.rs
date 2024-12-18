@@ -1,13 +1,13 @@
 use std::collections::HashMap;
 
-use crate::common::StringTableId;
-use crate::ir::{CallFunctionNode, CallFunctionWithLambdaNode};
 use crate::backend::run::Runner;
 use crate::backend::run::value::{FunctionValue, Value};
+use crate::common::StringTableId;
+use crate::frontend::ast;
+use crate::frontend::ast::node::CallFunctionWithLambdaNode;
 
 impl<'a> Runner<'a> {
-
-    pub(crate) fn run_node_call_function(&mut self, node: &CallFunctionNode) -> crate::backend::run::Result<Value> {
+    pub(crate) fn run_node_call_function(&mut self, node: &ast::CallFunctionNode) -> crate::backend::run::Result<Value> {
         self.reset_interrupt();
 
         let mut args: Vec<Value> = Vec::with_capacity(node.arguments.len());
@@ -16,9 +16,9 @@ impl<'a> Runner<'a> {
         }
 
 
-       if let Some(Value::IntrinsicFunction(func)) = self.scope.get_value(&node.function.0) {
-           return func.0(&args)
-       }
+        if let Some(Value::IntrinsicFunction(func)) = self.scope.get_value(&node.function.0) {
+            return func.0(&args);
+        }
 
         let function = if let Some(Value::Function(func)) = self.scope.get_value(&node.function.0) {
             func.clone()

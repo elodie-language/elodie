@@ -1,10 +1,9 @@
 use crate::common::{BaseType, DefaultTypeIds, TypeId};
 use crate::common::Context;
-use crate::frontend;
-use crate::frontend::{parse, Parsed};
+use crate::frontend::{Ast, parse};
+pub use crate::frontend::ast::node::*;
+use crate::frontend::ast::scope::Scope;
 use crate::frontend::parse::TypeNode;
-use crate::ir::{compile, node, SourceFile};
-use crate::ir::compile::scope::Scope;
 
 mod r#let;
 mod infix;
@@ -21,30 +20,17 @@ mod define;
 mod external;
 mod string;
 mod scope;
+pub mod node;
 
 #[derive(Debug)]
-pub enum Error {
-    Frontend(frontend::Error),
-}
-
-impl From<frontend::Error> for Error {
-    fn from(value: frontend::Error) -> Self {
-        Self::Frontend(value)
-    }
-}
+pub enum Error {}
 
 pub(crate) type Result<T, E = Error> = core::result::Result<T, E>;
 
-pub fn compile_str(ctx: &mut Context, str: &str) -> Result<SourceFile> {
-    let parsed = frontend::parse_str(ctx, str)?;
-    let result = compile::from(ctx, parsed)?;
-    Ok(result)
-}
 
-
-pub(crate) fn from(ctx: &mut Context, parsed: Parsed) -> Result<SourceFile> {
+pub(crate) fn from(ctx: &mut Context, nodes: Vec<parse::Node>) -> Result<Ast> {
     let mut compiler = Compiler::new(ctx);
-    compiler.compile(parsed)
+    compiler.compile(nodes)
 }
 
 pub(crate) struct Compiler<'a> {
@@ -64,19 +50,19 @@ impl<'a> Compiler<'a> {
 }
 
 impl<'a> Compiler<'a> {
-    pub(crate) fn compile(&mut self, node: Parsed) -> Result<SourceFile> {
+    pub(crate) fn compile(&mut self, nodes: Vec<parse::Node>) -> Result<Ast> {
         // 2 pass
         // populate symbol table
         // create ir
 
         let mut result = Vec::new();
-        for node in &node.nodes {
+        for node in &nodes {
             if !matches!(node, parse::Node::Nop) {
                 result.push(self.compile_node(node)?);
             }
         }
 
-        Ok(SourceFile { body: result })
+        Ok(Ast { nodes: result })
     }
 
     pub(crate) fn compile_node(&mut self, node: &parse::Node) -> Result<node::Node> {

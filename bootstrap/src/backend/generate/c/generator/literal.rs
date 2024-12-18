@@ -1,12 +1,12 @@
 use crate::backend::generate::c::{Indent, LiteralBooleanExpression, LiteralDoubleExpression, LiteralExpression, LiteralStringExpression};
 use crate::backend::generate::c::generator::Generator;
-use crate::ir;
-use crate::ir::LiteralNode;
+use crate::frontend::ast;
+use crate::frontend::ast::node::LiteralNode;
 
 impl Generator {
     pub(crate) fn generate_literal(
         &mut self,
-        node: &ir::LiteralNode,
+        node: &ast::LiteralNode,
     ) -> crate::backend::generate::c::generator::Result<LiteralExpression> {
         Ok(match node {
             LiteralNode::Bool(b) => LiteralExpression::Bool(LiteralBooleanExpression {

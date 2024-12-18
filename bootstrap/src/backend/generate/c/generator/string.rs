@@ -2,10 +2,11 @@ use crate::backend::generate::c;
 use crate::backend::generate::c::{CallFunctionStatement, CallFunctionStatementResult, DeclareArrayStatement, DeclareVariableStatement, Expression, Indent, LiteralExpression, LiteralIntExpression, LiteralStringExpression, Statement, VariableExpression};
 use crate::backend::generate::c::Expression::{Literal, Variable};
 use crate::backend::generate::c::generator::Generator;
-use crate::ir::{InterpolateStringNode, LiteralNode, LoadValueFromObjectNode, LoadValueNode, Node};
+use crate::frontend::ast;
+use crate::frontend::ast::node::{LiteralNode, LoadValueFromObjectNode, LoadValueNode, Node};
 
 impl Generator {
-    pub(crate) fn interpolate_string(&mut self, node: &InterpolateStringNode) -> c::generator::Result<(Vec<Statement>, Expression)> {
+    pub(crate) fn interpolate_string(&mut self, node: &ast::InterpolateStringNode) -> c::generator::Result<(Vec<Statement>, Expression)> {
         let mut statements = Vec::new();
 
         let mut temp_variables = Vec::new();
@@ -175,9 +176,7 @@ impl Generator {
                 );
 
                 temp_variables.push(result_temp);
-
-
-            }else {
+            } else {
                 unimplemented!("{node:#?}")
             }
         }

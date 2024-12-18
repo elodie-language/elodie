@@ -1,10 +1,10 @@
 use std::ops::Deref;
 
 use crate::backend::generate::c;
-use crate::backend::generate::c::{DeclareVariableStatement, Indent, InitialiseStructExpression, InitialiseStructField, LiteralDoubleExpression, Statement, VariableExpression};
+use crate::backend::generate::c::{DeclareVariableStatement, Indent, InitialiseStructExpression, InitialiseStructField, Statement, VariableExpression};
 use crate::backend::generate::c::generator::Generator;
-use crate::ir::{DeclareVariableNode, LiteralNode, LoadValueFromSelfNode, LoadValueNode, Node};
-use crate::ir::Node::Literal;
+use crate::frontend::ast::node::{DeclareVariableNode, LiteralNode, LoadValueFromSelfNode, LoadValueNode, Node};
+use crate::frontend::ast::node::Node::Literal;
 
 impl Generator {
     pub(crate) fn generate_declare_variable(&mut self, node: &DeclareVariableNode) -> crate::backend::generate::c::generator::Result<Vec<Statement>> {
@@ -64,7 +64,7 @@ impl Generator {
 
             let mut statements = vec![];
 
-            for arg in &instantiate.arguments{
+            for arg in &instantiate.arguments {
                 let (s, expression) = self.generate_expression(&arg.value)?;
 
                 statements.extend(s);
@@ -101,6 +101,6 @@ impl Generator {
     }
 
     pub(crate) fn generate_load_self_value(&mut self, node: &LoadValueFromSelfNode) -> c::generator::Result<c::Expression> {
-        Ok(c::Expression::Variable(VariableExpression { indent: Indent::none(), identifier: format!("self.{}", self.string_table.get(node.property.0) ) }))
+        Ok(c::Expression::Variable(VariableExpression { indent: Indent::none(), identifier: format!("self.{}", self.string_table.get(node.property.0)) }))
     }
 }

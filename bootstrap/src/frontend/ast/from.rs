@@ -1,14 +1,13 @@
 use std::ops::Deref;
 
-use crate::{ir};
-use crate::ir::{BlockNode, ExportPackageNode, Node, Source, SourceLocalFileNode};
-use crate::ir::compile::Compiler;
-use crate::frontend::parse::LiteralNode;
 use crate::common::DefaultTypeIds;
-use crate::frontend::parse;
+use crate::frontend::{ast, parse};
+use crate::frontend::ast::Compiler;
+use crate::frontend::ast::node::{BlockNode, ExportPackageNode, Node, Source, SourceLocalFileNode};
+use crate::frontend::parse::LiteralNode;
 
 impl<'a> Compiler<'a> {
-    pub(crate) fn compile_from(&mut self, node: &parse::FromNode) -> crate::ir::compile::Result<ir::Node> {
+    pub(crate) fn compile_from(&mut self, node: &parse::FromNode) -> ast::Result<ast::Node> {
         if let parse::FromNode::Export(export_node) = node {
             return self.compile_from_export(export_node);
         }
@@ -16,7 +15,7 @@ impl<'a> Compiler<'a> {
         unimplemented!();
     }
 
-    pub(crate) fn compile_from_export(&mut self, node: &parse::FromExportNode) -> crate::ir::compile::Result<ir::Node> {
+    pub(crate) fn compile_from_export(&mut self, node: &parse::FromExportNode) -> ast::Result<ast::Node> {
         let source = if let parse::Node::Literal(LiteralNode::String(from)) = &node.from_node.deref() {
             Source::LocalFile(SourceLocalFileNode { path: self.ctx.get_str(from.value()).to_string() })
         } else {
@@ -25,13 +24,13 @@ impl<'a> Compiler<'a> {
 
         let identifier = if let parse::Node::Identifier(identifier) = &node.what_node.deref() {
             // at this point in time it should be clear what identifier refers to at the moment in can only be package
-            ir::Identifier::from(identifier)
+            ast::Identifier::from(identifier)
         } else {
             todo!()
         };
 
         return Ok(
-            ir::Node::Block(BlockNode {
+            ast::Node::Block(BlockNode {
                 body: vec![
                     Node::ExportPackage(ExportPackageNode {
                         identifier,

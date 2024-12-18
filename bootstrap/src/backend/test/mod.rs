@@ -9,12 +9,12 @@ use std::sync::mpsc;
 
 use crate::{load_library_file, load_test_runner};
 use crate::common::Context;
-use crate::ir::compile::compile_str;
 use crate::backend::run::run;
 use crate::backend::run::scope::Scope;
 use crate::backend::run::type_definitions::TypeDefinitions;
 use crate::backend::run::value::{IntrinsicFunctionValue, ObjectValue, Value};
 use crate::backend::run::value::Value::IntrinsicFunction;
+use crate::frontend::ast_from_str;
 
 pub fn test_files(files: Vec<PathBuf>, print_colors: bool, fails_at_the_end: bool) {
     test_file(files.first().unwrap(), print_colors, fails_at_the_end);
@@ -82,27 +82,27 @@ fn test_file(file: &PathBuf, print_colors: bool, fails_at_the_end: bool) {
 // load core
     let (scope, definitions) = {
         let std_content = load_library_file("core/index.ec").unwrap();
-        let std_file = compile_str(&mut ctx, std_content.as_str()).unwrap();
+        let std_file = ast_from_str(&mut ctx, std_content.as_str()).unwrap();
         run(&mut ctx, scope, TypeDefinitions { definitions: Default::default() }, std_file, print_colors).unwrap()
     };
 
 // load std
     let (scope, definitions) = {
         let std_content = load_library_file("std/index.ec").unwrap();
-        let std_file = compile_str(&mut ctx, std_content.as_str()).unwrap();
+        let std_file = ast_from_str(&mut ctx, std_content.as_str()).unwrap();
         run(&mut ctx, scope, definitions, std_file, print_colors).unwrap()
     };
 
 // load test runner
     let (scope, definitions) = {
         let std_content = load_test_runner().unwrap();
-        let std_file = compile_str(&mut ctx, std_content.as_str()).unwrap();
+        let std_file = ast_from_str(&mut ctx, std_content.as_str()).unwrap();
         run(&mut ctx, scope, definitions, std_file, print_colors).unwrap()
     };
 
     let mut path = PathBuf::from(file);
     let content = load_text_from_file(path.to_str().unwrap()).unwrap();
-    let source_file = compile_str(&mut ctx, content.as_str()).unwrap();
+    let source_file = ast_from_str(&mut ctx, content.as_str()).unwrap();
 
     run(&mut ctx, scope, definitions, source_file, print_colors).unwrap();
 

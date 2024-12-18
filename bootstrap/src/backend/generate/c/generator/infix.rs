@@ -1,11 +1,11 @@
 use crate::backend::generate::c;
 use crate::backend::generate::c::{InfixExpression, InfixOperator, Statement};
 use crate::backend::generate::c::generator::Generator;
-use crate::ir::{CalculateNode, CalculationOperator, CompareNode, CompareOperator};
-use crate::frontend::lex::token::KeywordToken::In;
+use crate::frontend::ast;
+use crate::frontend::ast::node::{CalculationOperator, CompareOperator};
 
 impl Generator {
-    pub(crate) fn generate_compare(&mut self, node: &CompareNode) -> c::generator::Result<(Vec<Statement>, InfixExpression)> {
+    pub(crate) fn generate_compare(&mut self, node: &ast::CompareNode) -> c::generator::Result<(Vec<Statement>, InfixExpression)> {
         let mut statements = vec![];
 
         let (left_statements, left_expression) = self.generate_expression(&node.left)?;
@@ -27,7 +27,7 @@ impl Generator {
         }));
     }
 
-    pub(crate) fn generate_calculate(&mut self, node: &CalculateNode) -> c::generator::Result<(Vec<Statement>, InfixExpression)> {
+    pub(crate) fn generate_calculate(&mut self, node: &ast::CalculateNode) -> c::generator::Result<(Vec<Statement>, InfixExpression)> {
         let mut statements = vec![];
 
         let (left_statements, left_expression) = self.generate_expression(&node.left)?;

@@ -1,13 +1,12 @@
 use std::ops::Deref;
 
 use crate::common::DefaultTypeIds;
-use crate::frontend::parse;
-use crate::ir;
-use crate::ir::{DeclareVariableNode, Identifier, Node};
-use crate::ir::compile::Compiler;
+use crate::frontend::{ast, parse};
+use crate::frontend::ast::Compiler;
+use crate::frontend::ast::node::{DeclareVariableNode, Identifier, Node};
 
 impl<'a> Compiler<'a> {
-    pub(crate) fn compile_let(&mut self, node: &parse::VariableDeclarationNode) -> crate::ir::compile::Result<ir::Node> {
+    pub(crate) fn compile_let(&mut self, node: &parse::VariableDeclarationNode) -> ast::Result<ast::Node> {
         let identifier = Identifier::from(&node.identifier);
         let value = self.compile_node(node.node.deref())?;
 

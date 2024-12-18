@@ -1,10 +1,11 @@
 use std::ops::Index;
+
 use crate::common::Context;
-
+use crate::frontend::ast::node::*;
 use crate::frontend::lex::lex;
-use crate::frontend::parse::{Node, parse};
+use crate::frontend::parse::parse;
 
-
+pub mod ast;
 pub mod lex;
 pub mod parse;
 
@@ -12,6 +13,7 @@ pub mod parse;
 pub enum Error {
     Lexer(lex::Error),
     Parser(parse::Error),
+    Ast(ast::Error),
 }
 
 impl From<lex::Error> for Error {
@@ -25,34 +27,42 @@ impl From<parse::Error> for Error {
         Self::Parser(value)
     }
 }
+
+impl From<ast::Error> for Error {
+    fn from(value: ast::Error) -> Self {
+        Self::Ast(value)
+    }
+}
+
+
 pub type Result<T, E = Error> = core::result::Result<T, E>;
 
 #[derive(Debug)]
-pub struct Parsed {
+pub struct Ast {
     pub nodes: Vec<Node>,
 }
 
-impl Index<usize> for Parsed {
+impl Index<usize> for Ast {
     type Output = Node;
     fn index(&self, index: usize) -> &Self::Output {
         self.nodes.index(index)
     }
 }
 
-impl From<Vec<Node>> for Parsed {
+impl From<Vec<Node>> for Ast {
     fn from(value: Vec<Node>) -> Self {
         Self { nodes: value }
     }
 }
 
-impl Parsed {
+impl Ast {
     pub fn len(&self) -> usize {
         self.nodes.len()
     }
 }
 
-pub fn parse_str(ctx: &mut Context, str: &str) -> Result<Parsed> {
+pub fn ast_from_str(ctx: &mut Context, str: &str) -> Result<Ast> {
     let lexed = lex(ctx, str)?;
     let nodes = parse(ctx, lexed)?;
-    Ok(Parsed { nodes })
+    Ok(ast::from(ctx, nodes)?)
 }

@@ -4,7 +4,7 @@ use std::fmt::{Debug, Formatter};
 use std::rc::Rc;
 
 use crate::common::StringTableId;
-use crate::ir::{BlockNode, FunctionArgumentNode, Identifier};
+use crate::frontend::ast::node::{BlockNode, FunctionArgumentNode, Identifier};
 
 #[derive(Debug, Clone)]
 pub enum Value {
