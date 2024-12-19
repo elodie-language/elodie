@@ -1,6 +1,6 @@
-use crate::frontend::lex::token::LiteralToken::{False, Number, True};
-use crate::frontend::lex::token::{LiteralToken, TextSpan, Token, TokenKind};
 use crate::frontend::lex::Lexer;
+use crate::frontend::lex::token::{LiteralToken, TextSpan, Token, TokenKind};
+use crate::frontend::lex::token::LiteralToken::{False, Number, True};
 
 impl Lexer<'_> {
     pub(crate) fn is_string(&self, c: char) -> bool {
@@ -153,10 +153,10 @@ impl Lexer<'_> {
 
 #[cfg(test)]
 mod test {
-    use crate::common::Context;
+    use crate::frontend::context::Context;
+    use crate::frontend::lex::Lexer;
     use crate::frontend::lex::token::LiteralToken::{False, Number, String, True};
     use crate::frontend::lex::token::TokenKind;
-    use crate::frontend::lex::Lexer;
 
     #[test]
     fn empty_string() {

@@ -7,14 +7,14 @@ use std::process::exit;
 use std::rc::Rc;
 use std::sync::mpsc;
 
+use crate::{load_library_file, load_test_runner};
 use crate::backend::run::run;
 use crate::backend::run::scope::Scope;
 use crate::backend::run::type_definitions::TypeDefinitions;
-use crate::backend::run::value::Value::IntrinsicFunction;
 use crate::backend::run::value::{IntrinsicFunctionValue, ObjectValue, Value};
-use crate::common::Context;
+use crate::backend::run::value::Value::IntrinsicFunction;
 use crate::frontend::ast_from_str;
-use crate::{load_library_file, load_test_runner};
+use crate::frontend::context::Context;
 
 pub fn test_files(files: Vec<PathBuf>, print_colors: bool, fails_at_the_end: bool) {
     test_file(files.first().unwrap(), print_colors, fails_at_the_end);
@@ -102,7 +102,7 @@ fn test_file(file: &PathBuf, print_colors: bool, fails_at_the_end: bool) {
             std_file,
             print_colors,
         )
-        .unwrap()
+            .unwrap()
     };
 
     // load std

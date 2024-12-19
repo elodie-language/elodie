@@ -2,7 +2,8 @@ pub use node::*;
 
 use crate::backend::generate::c::emitter::emit;
 use crate::backend::generate::c::generator::generate;
-use crate::ir;
+use crate::{frontend, ir};
+use crate::frontend::Ast;
 
 mod emitter;
 mod generator;
@@ -28,7 +29,7 @@ impl From<emitter::Error> for Error {
 
 type Result<T> = core::result::Result<T, Error>;
 
-pub fn generate_c_code(ctx: ir::Context) -> Result<String> {
-    let node = generate(ctx)?;
+pub fn generate_c_code(ctx: frontend::Context, ast: Ast) -> Result<String> {
+    let node = generate(ctx, ast)?;
     Ok(emit(&node))
 }

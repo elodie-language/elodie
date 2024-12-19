@@ -1,5 +1,5 @@
-use crate::frontend::lex::token::{TextSpan, Token, TokenKind};
 use crate::frontend::lex::Lexer;
+use crate::frontend::lex::token::{TextSpan, Token, TokenKind};
 
 impl Lexer<'_> {
     pub(crate) fn consume_identifier(&mut self) -> crate::frontend::lex::Result<Token> {
@@ -20,9 +20,9 @@ impl Lexer<'_> {
 
 #[cfg(test)]
 mod test {
-    use crate::common::Context;
-    use crate::frontend::lex::token::{LiteralToken, OperatorToken, TokenKind};
+    use crate::frontend::context::Context;
     use crate::frontend::lex::Lexer;
+    use crate::frontend::lex::token::{LiteralToken, OperatorToken, TokenKind};
 
     #[test]
     fn some_var() {

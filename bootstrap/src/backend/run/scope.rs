@@ -2,7 +2,7 @@ use std::collections::HashMap;
 
 use crate::backend::run::value::Value;
 use crate::common::StringTableId;
-use crate::common::Type;
+use crate::ir::Type;
 
 #[derive(Debug)]
 pub struct Scope {

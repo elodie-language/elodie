@@ -1,14 +1,8 @@
-use crate::common::StringTable;
-use crate::common::TypeTable;
-use crate::frontend::Ast;
+pub use context::Context;
+pub use r#type::{Property, BaseType, TypeId, TypeName, Type, TypeTable};
 
 mod check;
+mod context;
 mod infer;
 mod unify;
-
-#[derive(Debug)]
-pub struct Context {
-    pub file: Ast,
-    pub string_table: StringTable,
-    pub type_table: TypeTable,
-}
+mod r#type;

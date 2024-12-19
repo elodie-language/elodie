@@ -1,5 +1,6 @@
-use crate::common::{Context, StringTableId};
-use crate::frontend::lex::token::TokenKind::{Identifier, EOF};
+use crate::common::StringTableId;
+use crate::frontend::context::Context;
+use crate::frontend::lex::token::TokenKind::{EOF, Identifier};
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct Token {

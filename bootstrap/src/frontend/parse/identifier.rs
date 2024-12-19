@@ -3,9 +3,9 @@ use TokenKind::Keyword;
 
 use crate::common::{is_pascal_snake_case, is_snake_case};
 use crate::frontend::lex::token::{KeywordToken, TokenKind};
-use crate::frontend::parse::node::IdentifierNode;
-use crate::frontend::parse::Error::InvalidIdentifier;
 use crate::frontend::parse::{ItselfNode, Parser};
+use crate::frontend::parse::Error::InvalidIdentifier;
+use crate::frontend::parse::node::IdentifierNode;
 
 impl<'a> Parser<'a> {
     pub(crate) fn parse_identifier(&mut self) -> crate::frontend::parse::Result<IdentifierNode> {
@@ -36,7 +36,7 @@ impl<'a> Parser<'a> {
 
 #[cfg(test)]
 mod tests {
-    use crate::common::Context;
+    use crate::frontend::context::Context;
     use crate::frontend::lex::lex;
     use crate::frontend::parse::parse;
 

@@ -3,7 +3,7 @@ use regex::Regex;
 use crate::frontend::lex::lex;
 use crate::frontend::lex::token::{LiteralToken, TextSpan, Token, TokenKind};
 use crate::frontend::parse::{
-    parse, LiteralNode, LiteralStringNode, Node, Parser, StringInterpolationNode,
+    LiteralNode, LiteralStringNode, Node, parse, Parser, StringInterpolationNode,
 };
 
 impl<'a> Parser<'a> {
@@ -68,14 +68,14 @@ impl<'a> Parser<'a> {
 
 #[cfg(test)]
 mod tests {
-    use crate::common::Context;
+    use crate::frontend::context::Context;
     use crate::frontend::lex::lex;
+    use crate::frontend::parse::{
+        InfixNode, InfixOperator, parse, StringInterpolationNode, TupleNode,
+    };
     use crate::frontend::parse::node::LiteralNode;
     use crate::frontend::parse::node::Node::Literal;
     use crate::frontend::parse::Node::StringInterpolation;
-    use crate::frontend::parse::{
-        parse, InfixNode, InfixOperator, StringInterpolationNode, TupleNode,
-    };
 
     #[test]
     fn string_literal() {

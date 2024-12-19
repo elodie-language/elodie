@@ -2,9 +2,6 @@ use std::ops::Deref;
 use std::vec;
 
 use crate::backend::generate::c;
-use crate::backend::generate::c::generator::scope::Scope;
-use crate::backend::generate::c::DirectiveNode::{IncludeLocalDirective, IncludeSystemDirective};
-use crate::backend::generate::c::Node::DefineFunction;
 use crate::backend::generate::c::{
     BlockStatement, CallFunctionStatement, CallFunctionStatementResult,
     DeclareFunctionArgumentNode, DeclareFunctionNode, DeclareStructNode,
@@ -12,10 +9,13 @@ use crate::backend::generate::c::{
     IncludeLocalDirectiveNode, IncludeSystemDirectiveNode, Indent, ReturnFromFunctionStatement,
     Statement, VariableExpression,
 };
+use crate::backend::generate::c::DirectiveNode::{IncludeLocalDirective, IncludeSystemDirective};
+use crate::backend::generate::c::generator::scope::Scope;
+use crate::backend::generate::c::Node::DefineFunction;
 use crate::common::StringTable;
-use crate::common::TypeTable;
 use crate::frontend::ast::node::{DefineTypeNode, Node};
-use crate::ir;
+use crate::{frontend, ir};
+use crate::ir::TypeTable;
 
 mod block;
 mod control;
@@ -30,10 +30,10 @@ pub enum Error {}
 
 type Result<T> = core::result::Result<T, Error>;
 
-pub(crate) fn generate(ctx: ir::Context) -> Result<Vec<c::Node>> {
+pub(crate) fn generate(ctx: frontend::Context, ast: frontend::Ast) -> Result<Vec<c::Node>> {
     let mut generator = Generator {
         string_table: ctx.string_table,
-        type_table: ctx.type_table,
+        // type_table: ctx.type_table,
         scope: Scope::new(),
         directives: Vec::new(),
         function_declarations: Vec::new(),
@@ -42,12 +42,12 @@ pub(crate) fn generate(ctx: ir::Context) -> Result<Vec<c::Node>> {
         struct_definitions: Vec::new(),
         struct_declarations: Vec::new(),
     };
-    generator.generate(ctx.file.nodes)
+    generator.generate(ast.nodes)
 }
 
 pub(crate) struct Generator {
     string_table: StringTable,
-    type_table: TypeTable,
+    // type_table: TypeTable,
     scope: Scope,
     //
     directives: Vec<DirectiveNode>,
@@ -270,11 +270,11 @@ impl Generator {
             }
             Node::InstantiateType(_) => unimplemented!(),
             Node::DefineType(DefineTypeNode {
-                identifier,
-                modifiers,
-                functions,
-                ..
-            }) => {
+                                 identifier,
+                                 modifiers,
+                                 functions,
+                                 ..
+                             }) => {
                 for function in functions {
                     self.function_declarations.push(DeclareFunctionNode {
                         indent: Indent::none(),

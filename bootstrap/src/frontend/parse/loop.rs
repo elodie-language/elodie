@@ -3,8 +3,8 @@ use SeparatorToken::NewLine;
 
 use crate::frontend::lex::token::{KeywordToken, OperatorToken, SeparatorToken};
 use crate::frontend::parse::node::{BreakNode, ContinueNode, LoopNode};
-use crate::frontend::parse::precedence::Precedence;
 use crate::frontend::parse::Parser;
+use crate::frontend::parse::precedence::Precedence;
 
 impl<'a> Parser<'a> {
     pub(crate) fn parse_loop(&mut self) -> crate::frontend::parse::Result<LoopNode> {
@@ -39,7 +39,7 @@ impl<'a> Parser<'a> {
 mod tests {
     use std::ops::Deref;
 
-    use crate::common::Context;
+    use crate::frontend::context::Context;
     use crate::frontend::lex::lex;
     use crate::frontend::parse::node::LiteralNode;
     use crate::frontend::parse::node::Node::{Continue, Literal};

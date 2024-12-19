@@ -28,7 +28,7 @@ impl<'a> Parser<'a> {
 
 #[cfg(test)]
 mod tests {
-    use crate::common::Context;
+    use crate::frontend::context::Context;
     use crate::frontend::lex::lex;
     use crate::frontend::parse::parse;
 
@@ -69,7 +69,7 @@ mod tests {
             &mut ctx,
             "export define Magic { export function some_fn() {} }",
         )
-        .unwrap();
+            .unwrap();
         let result = parse(&mut ctx, tokens).unwrap();
         assert_eq!(result.len(), 1);
 

@@ -1,10 +1,11 @@
 use std::rc::Rc;
+
 use KeywordToken::Let;
 
 use crate::frontend::lex::token::{KeywordToken, OperatorToken};
 use crate::frontend::parse::node::VariableDeclarationNode;
-use crate::frontend::parse::precedence::Precedence;
 use crate::frontend::parse::Parser;
+use crate::frontend::parse::precedence::Precedence;
 
 impl<'a> Parser<'a> {
     pub(crate) fn parse_variable_declaration(
@@ -36,10 +37,10 @@ impl<'a> Parser<'a> {
 mod tests {
     use std::ops::Deref;
 
-    use crate::common::Context;
+    use crate::frontend::context::Context;
     use crate::frontend::lex::lex;
-    use crate::frontend::parse::node::Node::Literal;
     use crate::frontend::parse::node::{LiteralNode, TypeNode};
+    use crate::frontend::parse::node::Node::Literal;
     use crate::frontend::parse::parse;
 
     #[test]

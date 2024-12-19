@@ -1,7 +1,7 @@
 use std::ops::Index;
 
-use crate::common::Context;
 use crate::frontend::ast::node::*;
+pub use crate::frontend::context::Context;
 use crate::frontend::lex::lex;
 use crate::frontend::parse::parse;
 
@@ -9,6 +9,7 @@ pub mod ast;
 pub mod lex;
 pub mod parse;
 pub mod modifier;
+pub mod context;
 
 #[derive(Debug)]
 pub enum Error {

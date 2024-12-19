@@ -27,17 +27,20 @@ impl<'a> Inference<'a> {
 
 #[cfg(test)]
 mod tests {
-    use crate::common::Context;
+    use crate::frontend;
     use crate::frontend::ast_from_str;
+    use crate::ir::context::Context;
     use crate::ir::infer::{infer, InferredType};
     use crate::ir::infer::node::LiteralNode;
     use crate::ir::infer::node::Node::Literal;
 
     #[test]
     fn number_literal() {
-        let mut ctx = Context::new();
-        let mut parsed = ast_from_str(&mut ctx, "9924").unwrap();
-        let inferred = infer(&mut ctx, &mut parsed).unwrap();
+        let mut ctx = frontend::Context::new();
+        let ast = ast_from_str(&mut ctx, "9924").unwrap();
+
+        let mut ctx = Context::new(ctx, ast);
+        let inferred = infer(&mut ctx).unwrap();
         assert_eq!(inferred.nodes.len(), 1);
 
         let Literal(LiteralNode::Number(node)) = &inferred[0] else { panic!() };
@@ -46,9 +49,11 @@ mod tests {
 
     #[test]
     fn string_literal() {
-        let mut ctx = Context::new();
-        let mut parsed = ast_from_str(&mut ctx, "'Elodie'").unwrap();
-        let inferred = infer(&mut ctx, &mut parsed).unwrap();
+        let mut ctx = frontend::Context::new();
+        let ast = ast_from_str(&mut ctx, "'Elodie'").unwrap();
+
+        let mut ctx = Context::new(ctx, ast);
+        let inferred = infer(&mut ctx).unwrap();
         assert_eq!(inferred.nodes.len(), 1);
 
         let Literal(LiteralNode::String(node)) = &inferred[0] else { panic!() };
@@ -57,9 +62,11 @@ mod tests {
 
     #[test]
     fn true_literal() {
-        let mut ctx = Context::new();
-        let mut parsed = ast_from_str(&mut ctx, "true").unwrap();
-        let inferred = infer(&mut ctx, &mut parsed).unwrap();
+        let mut ctx = frontend::Context::new();
+        let ast = ast_from_str(&mut ctx, "true").unwrap();
+
+        let mut ctx = Context::new(ctx, ast);
+        let inferred = infer(&mut ctx).unwrap();
         assert_eq!(inferred.nodes.len(), 1);
 
         let Literal(LiteralNode::Boolean(node)) = &inferred[0] else { panic!() };
@@ -68,9 +75,11 @@ mod tests {
 
     #[test]
     fn false_literal() {
-        let mut ctx = Context::new();
-        let mut parsed = ast_from_str(&mut ctx, "false").unwrap();
-        let inferred = infer(&mut ctx, &mut parsed).unwrap();
+        let mut ctx = frontend::Context::new();
+        let ast = ast_from_str(&mut ctx, "false").unwrap();
+
+        let mut ctx = Context::new(ctx, ast);
+        let inferred = infer(&mut ctx).unwrap();
         assert_eq!(inferred.nodes.len(), 1);
 
         let Literal(LiteralNode::Boolean(node)) = &inferred[0] else { panic!() };

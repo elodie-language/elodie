@@ -3,8 +3,9 @@ use std::ops::Index;
 
 pub use node::*;
 
-use crate::common::{Context, StringTableId};
+use crate::common::StringTableId;
 use crate::frontend::{Ast, ast};
+use crate::ir::context::Context;
 use crate::ir::infer::node::Node;
 
 mod node;
@@ -46,24 +47,23 @@ impl<'a> Index<usize> for Inferred<'a> {
     }
 }
 
-pub(crate) fn infer<'a>(ctx: &'a mut Context, parsed: &'a mut Ast) -> Result<Inferred<'a>> {
-    Ok(Inferred { nodes: Inference::new(ctx, parsed).infer()? })
+pub(crate) fn infer<'a>(ctx: &'a mut Context) -> Result<Inferred<'a>> {
+    Ok(Inferred { nodes: Inference::new(ctx).infer()? })
 }
 
 struct Inference<'a> {
-    ctx: &'a Context,
-    parsed: &'a Ast,
+    ctx: &'a Context
 }
 
 impl<'a> Inference<'a> {
-    fn new(ctx: &'a mut Context, parsed: &'a Ast) -> Self {
-        Self { ctx, parsed }
+    fn new(ctx: &'a mut Context) -> Self {
+        Self { ctx }
     }
 
     fn infer(&mut self) -> Result<Vec<Node<'a>>> {
         let mut nodes = vec![];
-        for x in &self.parsed.nodes {
-            nodes.push(self.infer_node(x)?);
+        for node in &self.ctx.ast.nodes {
+            nodes.push(self.infer_node(node)?);
         }
         Ok(nodes)
     }

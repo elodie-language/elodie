@@ -10,8 +10,8 @@ use crate::backend::run::type_definitions::TypeDefinitions;
 use crate::backend::run::{run, run_file};
 use crate::backend::test::test_files;
 use crate::backend::{build, generate};
-use crate::common::Context;
 use crate::frontend::ast_from_str;
+use crate::frontend::context::Context;
 
 mod backend;
 mod cli;
@@ -59,12 +59,9 @@ fn main() {
 
         let source_file = ast_from_str(&mut ctx, content.as_str()).unwrap();
 
-        let code = generate::generate_c_code(ir::Context {
-            file: source_file,
-
+        let code = generate::generate_c_code(frontend::Context {
             string_table: ctx.string_table,
-            type_table: ctx.type_table,
-        })
+        }, source_file)
         .unwrap();
 
         // println!("{}",code);

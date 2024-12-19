@@ -2,7 +2,7 @@ use std::collections::HashMap;
 
 use crate::backend::run::value::FunctionValue;
 use crate::common::StringTableId;
-use crate::common::TypeId;
+use crate::ir::TypeId;
 
 #[derive(Debug)]
 pub struct TypeDefinitions {

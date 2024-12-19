@@ -4,8 +4,8 @@ use std::rc::Rc;
 
 use crate::backend::run::value::{FunctionValue, IntrinsicFunctionValue, PackageValue, Value};
 use crate::backend::run::Runner;
-use crate::common::TypeId;
 use crate::frontend::ast;
+use crate::ir::TypeId;
 
 impl<'a> Runner<'a> {
     pub(crate) fn run_external_function_declaration(

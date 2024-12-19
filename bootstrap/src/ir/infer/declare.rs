@@ -22,16 +22,19 @@ impl<'a> Inference<'a> {
 
 #[cfg(test)]
 mod tests {
-    use crate::common::Context;
+    use crate::frontend;
     use crate::frontend::ast_from_str;
+    use crate::ir::context::Context;
     use crate::ir::infer::{infer, InferredType};
     use crate::ir::infer::node::Node::DeclareVariable;
 
     #[test]
     fn declare_number_variable() {
-        let mut ctx = Context::new();
-        let mut parsed = ast_from_str(&mut ctx, "let value = 23").unwrap();
-        let inferred = infer(&mut ctx, &mut parsed).unwrap();
+        let mut ctx = frontend::Context::new();
+        let ast = ast_from_str(&mut ctx, "let value = 23").unwrap();
+
+        let mut ctx = Context::new(ctx, ast);
+        let inferred = infer(&mut ctx).unwrap();
         assert_eq!(inferred.nodes.len(), 1);
 
         let DeclareVariable(node) = &inferred[0] else { panic!() };
@@ -40,9 +43,11 @@ mod tests {
 
     #[test]
     fn declare_number_variable_with_explicit_type() {
-        let mut ctx = Context::new();
-        let mut parsed = ast_from_str(&mut ctx, "let value: Number = 23").unwrap();
-        let inferred = infer(&mut ctx, &mut parsed).unwrap();
+        let mut ctx = frontend::Context::new();
+        let ast = ast_from_str(&mut ctx, "let value: Number = 23").unwrap();
+
+        let mut ctx = Context::new(ctx, ast);
+        let inferred = infer(&mut ctx).unwrap();
         assert_eq!(inferred.nodes.len(), 1);
 
         let DeclareVariable(node) = &inferred[0] else { panic!() };
@@ -51,9 +56,11 @@ mod tests {
 
     #[test]
     fn declare_string_variable_with_explicit_type() {
-        let mut ctx = Context::new();
-        let mut parsed = ast_from_str(&mut ctx, "let value: String = 'Elo'").unwrap();
-        let inferred = infer(&mut ctx, &mut parsed).unwrap();
+        let mut ctx = frontend::Context::new();
+        let ast = ast_from_str(&mut ctx, "let value: String = 'Elo'").unwrap();
+
+        let mut ctx = Context::new(ctx, ast);
+        let inferred = infer(&mut ctx).unwrap();
         assert_eq!(inferred.nodes.len(), 1);
 
         let DeclareVariable(node) = &inferred[0] else { panic!() };
@@ -62,9 +69,11 @@ mod tests {
 
     #[test]
     fn declare_boolean_variable_with_explicit_type() {
-        let mut ctx = Context::new();
-        let mut parsed = ast_from_str(&mut ctx, "let value = true").unwrap();
-        let inferred = infer(&mut ctx, &mut parsed).unwrap();
+        let mut ctx = frontend::Context::new();
+        let ast = ast_from_str(&mut ctx, "let value = true").unwrap();
+
+        let mut ctx = Context::new(ctx, ast);
+        let inferred = infer(&mut ctx).unwrap();
         assert_eq!(inferred.nodes.len(), 1);
 
         let DeclareVariable(node) = &inferred[0] else { panic!() };

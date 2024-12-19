@@ -1,19 +1,21 @@
-use crate::common::symbol::SymbolTable;
-use crate::common::{StringTable, StringTableId, TypeTable};
+use crate::common::{StringTable, StringTableId};
+use crate::frontend;
+use crate::frontend::Ast;
+use crate::ir::r#type::TypeTable;
 
 #[derive(Debug)]
 pub struct Context {
     pub string_table: StringTable,
-    pub symbol_table: SymbolTable,
     pub type_table: TypeTable,
+    pub ast: Ast,
 }
 
 impl Context {
-    pub fn new() -> Self {
+    pub fn new(ctx: frontend::Context, ast: frontend::Ast) -> Self {
         Self {
-            string_table: StringTable::new(),
-            symbol_table: SymbolTable::new(),
+            string_table: ctx.string_table,
             type_table: TypeTable::new(),
+            ast,
         }
     }
 
