@@ -237,7 +237,7 @@ impl AsRef<Identifier> for Identifier {
 pub struct DeclareVariableNode {
     pub token: Token,
     pub identifier: Identifier,
-    pub value: Box<Node>,
+    pub value: Rc<Node>,
     pub value_type: Option<TypeNode>,
 }
 

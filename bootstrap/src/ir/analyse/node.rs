@@ -1,14 +1,16 @@
+use std::rc::Rc;
+
 use crate::frontend::ast;
-use crate::ir::infer::InferredType;
+use crate::ir::analyse::InferredType;
 use crate::ir::symbol::SymbolId;
 
 #[derive(Debug, PartialEq)]
-pub enum Node<'a> {
-    DeclareVariable(DeclareVariableNode<'a>),
-    Literal(LiteralNode<'a>),
+pub enum Node {
+    DeclareVariable(DeclareVariableNode),
+    Literal(LiteralNode),
 }
 
-impl<'a> Node<'a> {
+impl Node {
     pub fn inferred_type(&mut self) -> InferredType {
         match self {
             Node::DeclareVariable(DeclareVariableNode { inferred_type, .. })
@@ -20,35 +22,35 @@ impl<'a> Node<'a> {
 }
 
 #[derive(Debug, PartialEq)]
-pub struct DeclareVariableNode<'a> {
-    pub ast: &'a ast::DeclareVariableNode,
+pub struct DeclareVariableNode {
+    pub ast: Rc<ast::DeclareVariableNode>,
     pub symbol: SymbolId,
-    pub node: Box<Node<'a>>,
+    pub node: Box<Node>,
     pub inferred_type: InferredType,
 }
 
 #[derive(Debug, PartialEq)]
-pub enum LiteralNode<'a> {
-    Boolean(LiteralBooleanNode<'a>),
-    Number(LiteralNumberNode<'a>),
-    String(LiteralStringNode<'a>),
+pub enum LiteralNode {
+    Boolean(LiteralBooleanNode),
+    Number(LiteralNumberNode),
+    String(LiteralStringNode),
 }
 
 
 #[derive(Debug, PartialEq)]
-pub struct LiteralBooleanNode<'a> {
-    pub ast: &'a ast::LiteralBooleanNode,
+pub struct LiteralBooleanNode {
+    pub ast: Rc<ast::LiteralBooleanNode>,
     pub inferred_type: InferredType,
 }
 
 #[derive(Debug, PartialEq)]
-pub struct LiteralNumberNode<'a> {
-    pub ast: &'a ast::LiteralNumberNode,
+pub struct LiteralNumberNode {
+    pub ast: Rc<ast::LiteralNumberNode>,
     pub inferred_type: InferredType,
 }
 
 #[derive(Debug, PartialEq)]
-pub struct LiteralStringNode<'a> {
-    pub ast: &'a ast::LiteralStringNode,
+pub struct LiteralStringNode {
+    pub ast: Rc<ast::LiteralStringNode>,
     pub inferred_type: InferredType,
 }

@@ -1,4 +1,5 @@
 use std::ops::Deref;
+use std::rc::Rc;
 
 use crate::frontend::ast::node::{DeclareVariableNode, Identifier, Node};
 use crate::frontend::ast::Generator;
@@ -23,7 +24,7 @@ impl<'a> Generator<'a> {
         Ok(Node::DeclareVariable(DeclareVariableNode {
             token: node.token.clone(),
             identifier,
-            value: Box::new(value),
+            value: Rc::new(value),
             value_type,
         }))
     }

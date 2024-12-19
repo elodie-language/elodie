@@ -1,24 +1,21 @@
 use crate::common::{StringTable, StringTableId};
 use crate::frontend;
-use crate::frontend::Ast;
-use crate::ir::r#type::TypeTable;
 use crate::ir::symbol::SymbolTable;
+use crate::ir::TypeTable;
 
 #[derive(Debug)]
 pub struct Context {
     pub string_table: StringTable,
     pub symbol_table: SymbolTable,
     pub type_table: TypeTable,
-    pub ast: Ast,
 }
 
 impl Context {
-    pub fn new(ctx: frontend::Context, ast: frontend::Ast) -> Self {
+    pub fn new(ctx: frontend::Context) -> Self {
         Self {
             string_table: ctx.string_table,
             symbol_table: SymbolTable::new(),
             type_table: TypeTable::new(),
-            ast,
         }
     }
 
@@ -29,7 +26,6 @@ impl Context {
     pub fn get_str(&self, idx: StringTableId) -> &str {
         self.string_table.get(idx)
     }
-
 }
 
 impl Default for Context {
@@ -38,7 +34,6 @@ impl Default for Context {
             string_table: StringTable::new(),
             symbol_table: SymbolTable::new(),
             type_table: TypeTable::new(),
-            ast: Ast::from(vec![]),
         }
     }
 }
