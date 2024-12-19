@@ -7,14 +7,14 @@ impl<'a> Generator<'a> {
         if node.result.is_none() {
             Ok(Node::BreakLoop(BreakLoopNode {
                 body: None,
-                token: node.token.clone(),
+                span: node.token.span.clone(),
             }))
         } else {
             let body = Some(Box::new(self.generate_node(node.result.as_ref().unwrap())?));
 
             Ok(Node::BreakLoop(BreakLoopNode {
                 body,
-                token: node.token.clone(),
+                span: node.token.span.clone(),
             }))
         }
     }
@@ -24,7 +24,7 @@ impl<'a> Generator<'a> {
         node: &parse::ContinueNode,
     ) -> crate::frontend::ast::Result<ast::Node> {
         Ok(Node::ContinueLoop(ContinueLoopNode {
-            token: node.token.clone(),
+            span: node.token.span.clone(),
         }))
     }
 
@@ -36,7 +36,7 @@ impl<'a> Generator<'a> {
         }
 
         Ok(Node::Loop(LoopNode {
-            token: node.token.clone(),
+            span: node.token.span.clone(),
             body,
         }))
     }

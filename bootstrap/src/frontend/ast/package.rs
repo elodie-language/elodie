@@ -69,7 +69,7 @@ impl<'a> Generator<'a> {
         }
 
         Ok(ast::Node::DeclarePackage(DeclarePackageNode {
-            token: node.token.clone(),
+            span: node.token.span.clone(),
             identifier: Identifier::from(&node.identifier),
             modifiers: node.modifiers.clone(),
             functions,

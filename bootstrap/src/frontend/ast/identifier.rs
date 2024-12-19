@@ -11,14 +11,14 @@ impl<'a> Generator<'a> {
         let identifier = Identifier::from(node);
 
         return Ok(LoadValue(LoadValueNode {
-            token: node.0.clone(),
+            span: node.0.span.clone(),
             identifier,
         }));
     }
 
     pub(crate) fn generate_self(&mut self, node: &parse::ItselfNode) -> ast::Result<ast::Node> {
         return Ok(LoadValue(LoadValueNode {
-            token: node.0.clone(),
+            span: node.0.span.clone(),
             identifier: Identifier(node.0.clone()),
         }));
     }

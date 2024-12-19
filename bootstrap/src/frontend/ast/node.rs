@@ -2,10 +2,13 @@ use std::hash::{Hash, Hasher};
 use std::rc::Rc;
 
 use crate::common::{PackagePath, StringTableId};
-use crate::frontend::lex::token::{LiteralToken, Token, TokenKind};
+use crate::frontend::lex::token::{LiteralToken, TextSpan, Token, TokenKind};
 use crate::frontend::modifier::Modifiers;
 use crate::frontend::parse;
 use crate::frontend::parse::{IdentifierNode, TupleNode};
+
+#[derive(Debug, Clone, PartialEq)]
+pub struct NewNode {}
 
 #[derive(Debug, PartialEq)]
 pub struct BlockNode {
@@ -14,7 +17,7 @@ pub struct BlockNode {
 
 #[derive(Debug, PartialEq)]
 pub struct BreakLoopNode {
-    pub token: Token,
+    pub span: TextSpan,
     pub body: Option<Box<Node>>,
 }
 
@@ -47,12 +50,12 @@ pub enum CalculationOperator {
 
 #[derive(Debug, PartialEq)]
 pub struct ContinueLoopNode {
-    pub token: Token,
+    pub span: TextSpan,
 }
 
 #[derive(Debug, PartialEq)]
 pub struct CallFunctionOfObjectNode {
-    pub token: Token,
+    pub span: TextSpan,
     pub object: Identifier,
     // FIXME object_tid : TypeId
     pub function: Identifier,
@@ -62,7 +65,7 @@ pub struct CallFunctionOfObjectNode {
 
 #[derive(Debug, PartialEq)]
 pub struct CallFunctionOfPackageNode {
-    pub token: Token,
+    pub span: TextSpan,
     pub package: PackagePath,
     pub function: Identifier,
     pub arguments: Vec<Node>,
@@ -70,28 +73,28 @@ pub struct CallFunctionOfPackageNode {
 
 #[derive(Debug, PartialEq)]
 pub struct CallFunctionNode {
-    pub token: Token,
+    pub span: TextSpan,
     pub function: Identifier,
     pub arguments: Vec<Node>,
 }
 
 #[derive(Debug, PartialEq)]
 pub struct CallFunctionWithLambdaNode {
-    pub token: Token,
+    pub span: TextSpan,
     pub call_function: CallFunctionNode,
     pub lambda: Rc<BlockNode>,
 }
 
 #[derive(Debug, PartialEq)]
 pub struct ExportPackageNode {
-    pub token: Token,
+    pub span: TextSpan,
     pub identifier: Identifier,
     pub source: Source,
 }
 
 #[derive(Debug, PartialEq)]
 pub struct IfNode {
-    pub token: Token,
+    pub span: TextSpan,
     pub condition: Box<Node>,
     pub then: BlockNode,
     pub otherwise: Option<BlockNode>,
@@ -99,7 +102,7 @@ pub struct IfNode {
 
 #[derive(Debug, PartialEq)]
 pub struct LoopNode {
-    pub token: Token,
+    pub span: TextSpan,
     pub body: Vec<Node>,
 }
 
@@ -178,14 +181,14 @@ impl LiteralBooleanNode {
 
 #[derive(Debug, PartialEq)]
 pub struct ReturnFromFunctionNode {
-    pub token: Token,
+    pub span: TextSpan,
     pub node: Box<Node>,
     pub return_type: Option<TypeNode>,
 }
 
 #[derive(Debug, PartialEq)]
 pub struct LoadValueNode {
-    pub token: Token,
+    pub span: TextSpan,
     pub identifier: Identifier,
 }
 
@@ -235,7 +238,7 @@ impl AsRef<Identifier> for Identifier {
 
 #[derive(Debug, PartialEq)]
 pub struct DeclareVariableNode {
-    pub token: Token,
+    pub span: TextSpan,
     pub identifier: Identifier,
     pub value: Rc<Node>,
     pub value_type: Option<TypeNode>,
@@ -243,7 +246,7 @@ pub struct DeclareVariableNode {
 
 #[derive(Debug, PartialEq)]
 pub struct DeclareFunctionNode {
-    pub token: Token,
+    pub span: TextSpan,
     pub identifier: Identifier,
     pub arguments: Vec<Rc<FunctionArgumentNode>>,
     pub return_type: Option<TypeNode>,
@@ -252,7 +255,7 @@ pub struct DeclareFunctionNode {
 
 #[derive(Debug, PartialEq)]
 pub struct DeclareExternalFunctionNode {
-    pub token: Token,
+    pub span: TextSpan,
     pub identifier: Identifier,
     pub arguments: Vec<Rc<FunctionArgumentNode>>,
     pub return_type: Option<TypeNode>,
@@ -266,7 +269,7 @@ pub struct FunctionArgumentNode {
 
 #[derive(Debug, PartialEq)]
 pub struct DeclarePackageNode {
-    pub token: Token,
+    pub span: TextSpan,
     pub identifier: Identifier,
     pub modifiers: Modifiers,
     pub external_functions: Vec<DeclareExternalFunctionNode>,
@@ -277,7 +280,7 @@ pub struct DeclarePackageNode {
 
 #[derive(Debug, PartialEq)]
 pub struct DeclareTypeNode {
-    pub token: Token,
+    pub span: TextSpan,
     pub identifier: Identifier,
     pub modifiers: Modifiers,
     pub properties: Vec<DeclarePropertyNode>,
@@ -285,14 +288,14 @@ pub struct DeclareTypeNode {
 
 #[derive(Debug, PartialEq)]
 pub struct DeclarePropertyNode {
-    pub token: Token,
+    pub span: TextSpan,
     pub identifier: Identifier,
     pub r#type: TypeNode,
 }
 
 #[derive(Debug, PartialEq)]
 pub struct DefineTypeNode {
-    pub token: Token,
+    pub span: TextSpan,
     pub identifier: Identifier,
     pub modifiers: Modifiers,
     pub functions: Vec<DeclareFunctionNode>,
@@ -311,34 +314,34 @@ pub struct SourceLocalFileNode {
 // FIXME compiler should give a hint whether the interpolated string will be used locally only and whether it is small enough to be allocated on the stack only
 #[derive(Debug, PartialEq)]
 pub struct InterpolateStringNode {
-    pub token: Token,
+    pub span: TextSpan,
     pub nodes: Vec<Node>,
 }
 
 #[derive(Debug, PartialEq)]
 pub struct InstantiateTypeNode {
-    pub token: Token,
+    pub span: TextSpan,
     pub type_name: Identifier,
     pub arguments: Vec<NamedArgumentNode>,
 }
 
 #[derive(Debug, PartialEq)]
 pub struct NamedArgumentNode {
-    pub token: Token,
+    pub span: TextSpan,
     pub identifier: Identifier,
     pub value: Node,
 }
 
 #[derive(Debug, PartialEq)]
 pub struct LoadValueFromObjectNode {
-    pub token: Token,
+    pub span: TextSpan,
     pub object: Identifier,
     pub property: Identifier,
 }
 
 #[derive(Debug, PartialEq)]
 pub struct LoadValueFromSelfNode {
-    pub token: Token,
+    pub span: TextSpan,
     pub property: Identifier,
 }
 
@@ -353,7 +356,7 @@ pub enum TypeNode {
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct ObjectTypeNode {
-    pub token: Token,
+    pub span: TextSpan,
 }
 
 #[derive(Debug, PartialEq)]
@@ -380,7 +383,7 @@ pub struct TypeFunctionArgumentNode {
 
 #[derive(Debug, PartialEq)]
 pub struct TypeDeclarationNode {
-    pub token: Token,
+    pub span: TextSpan,
     pub identifier: IdentifierNode,
     pub properties: TupleNode,
     pub modifiers: Modifiers,

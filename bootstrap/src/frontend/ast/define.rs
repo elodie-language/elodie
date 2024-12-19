@@ -14,7 +14,7 @@ impl<'a> Generator<'a> {
         }
 
         Ok(ast::Node::DefineType(DefineTypeNode {
-            token: node.token.clone(),
+            span: node.token.span.clone(),
             identifier: Identifier::from(&node.identifier),
             modifiers: node.modifiers.clone(),
             functions: compiled_body

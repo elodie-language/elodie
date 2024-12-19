@@ -22,7 +22,7 @@ impl<'a> Generator<'a> {
         };
 
         Ok(Node::DeclareVariable(DeclareVariableNode {
-            token: node.token.clone(),
+            span: node.token.span.clone(),
             identifier,
             value: Rc::new(value),
             value_type,

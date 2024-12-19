@@ -1,9 +1,9 @@
 use std::cell::RefCell;
-use crate::frontend::context::Context;
 
-use crate::frontend::lex::token::TokenKind::EOF;
-use crate::frontend::lex::token::{Column, Index, Position, Row, TextSpan, Token};
+use crate::frontend::context::Context;
 use crate::frontend::lex::Error::UnexpectedEndOfFile;
+use crate::frontend::lex::token::{Column, Index, Position, Row, TextSpan, Token};
+use crate::frontend::lex::token::TokenKind::EOF;
 
 mod comment;
 mod identifier;
@@ -196,8 +196,8 @@ impl<'a> Lexer<'a> {
                 span: TextSpan {
                     start: self.position(),
                     end: self.position(),
-                    value: self.ctx.string_table.push_str(""),
                 },
+                value: self.ctx.string_table.push_str(""),
             });
         }
 
@@ -216,8 +216,8 @@ impl<'a> Lexer<'a> {
                     span: TextSpan {
                         start: self.position(),
                         end: self.position(),
-                        value: self.ctx.string_table.push_str(""),
                     },
+                    value: self.ctx.string_table.push_str(""),
                 });
             }
         }

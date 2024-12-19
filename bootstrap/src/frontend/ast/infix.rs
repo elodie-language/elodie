@@ -32,7 +32,7 @@ impl<'a> Generator<'a> {
             };
             let arguments = self.generate_arguments(right.as_tuple())?;
             return Ok(ast::Node::CallFunction(CallFunctionNode {
-                token: token.clone(),
+                span: token.span.clone(),
                 function: Identifier(function_identifier.0.clone()),
                 arguments,
             }));
@@ -44,7 +44,7 @@ impl<'a> Generator<'a> {
             && matches!(operator, InfixOperator::Call(_))
         {
             let ast::Node::LoadValueFromObject(LoadValueFromObjectNode {
-                token,
+                span,
                 object,
                 property,
             }) = self.generate_access_property(left.as_infix())?
@@ -56,7 +56,7 @@ impl<'a> Generator<'a> {
 
             // FIXME add type information
             return Ok(ast::Node::CallFunctionOfObject(CallFunctionOfObjectNode {
-                token,
+                span,
                 object: ast::Identifier::from(object),
                 function: ast::Identifier::from(property),
                 arguments,
@@ -77,7 +77,7 @@ impl<'a> Generator<'a> {
 
             return Ok(ast::Node::CallFunctionWithLambda(
                 CallFunctionWithLambdaNode {
-                    token: node.token.clone(),
+                    span: node.token.span.clone(),
                     call_function,
                     lambda: Rc::new(lambda),
                 },
@@ -109,7 +109,7 @@ impl<'a> Generator<'a> {
 
             return Ok(ast::Node::CallFunctionOfPackage(
                 CallFunctionOfPackageNode {
-                    token: node.token.clone(),
+                    span: node.token.span.clone(),
                     package: PackagePath::from(
                         paths.into_iter().map(|p| p.0.value()).collect::<Vec<_>>(),
                     ),
@@ -126,7 +126,7 @@ impl<'a> Generator<'a> {
         {
             let property = right.as_identifier();
             return Ok(ast::Node::LoadValueFromSelf(LoadValueFromSelfNode {
-                token: node.token.clone(),
+                span: node.token.span.clone(),
                 property: ast::Identifier::from(property),
             }));
         }
@@ -141,7 +141,7 @@ impl<'a> Generator<'a> {
             let property = right.as_identifier();
 
             return Ok(ast::Node::LoadValueFromObject(LoadValueFromObjectNode {
-                token: node.token.clone(),
+                span: node.token.span.clone(),
                 object: ast::Identifier::from(object),
                 property: ast::Identifier::from(property),
             }));
@@ -215,7 +215,7 @@ impl<'a> Generator<'a> {
         if let Node::Itself(_) = left.deref() {
             if let Node::Identifier(property) = right.deref() {
                 return Ok(ast::Node::LoadValueFromSelf(LoadValueFromSelfNode {
-                    token: node.token.clone(),
+                    span: node.token.span.clone(),
                     property: ast::Identifier::from(property),
                 }));
             }
@@ -230,7 +230,7 @@ impl<'a> Generator<'a> {
         };
 
         return Ok(ast::Node::LoadValueFromObject(LoadValueFromObjectNode {
-            token: node.token.clone(),
+            span: node.token.span.clone(),
             object: ast::Identifier::from(object_identifier),
             property: ast::Identifier::from(property),
         }));
@@ -254,7 +254,7 @@ impl<'a> Generator<'a> {
         let mut arguments = self.generate_named_arguments(arguments_node)?;
 
         return Ok(ast::Node::InstantiateType(ast::InstantiateTypeNode {
-            token: node.token.clone(),
+            span: node.token.span.clone(),
             type_name: Identifier(type_node.token.clone()),
             arguments,
         }));
@@ -290,7 +290,7 @@ impl<'a> Generator<'a> {
             };
             let right = self.generate_node(right)?;
             result.push(NamedArgumentNode {
-                token: node.token(),
+                span: node.token().span,
                 identifier: Identifier::from(identifier),
                 value: right,
             })

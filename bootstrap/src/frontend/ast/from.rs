@@ -1,9 +1,9 @@
 use std::ops::Deref;
 
-use crate::frontend::ast::node::{BlockNode, ExportPackageNode, Node, Source, SourceLocalFileNode};
-use crate::frontend::ast::Generator;
-use crate::frontend::parse::LiteralNode;
 use crate::frontend::{ast, parse};
+use crate::frontend::ast::Generator;
+use crate::frontend::ast::node::{BlockNode, ExportPackageNode, Node, Source, SourceLocalFileNode};
+use crate::frontend::parse::LiteralNode;
 
 impl<'a> Generator<'a> {
     pub(crate) fn generate_from(&mut self, node: &parse::FromNode) -> ast::Result<ast::Node> {
@@ -36,7 +36,7 @@ impl<'a> Generator<'a> {
 
         return Ok(ast::Node::Block(BlockNode {
             body: vec![Node::ExportPackage(ExportPackageNode {
-                token: node.token.clone(),
+                span: node.token.span.clone(),
                 identifier,
                 source,
             })],

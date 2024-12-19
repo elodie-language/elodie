@@ -30,7 +30,7 @@ impl<'a> Generator<'a> {
         };
 
         Ok(ast::Node::DeclareFunction(DeclareFunctionNode {
-            token: node.token.clone(),
+            span: node.token.span.clone(),
             identifier: Identifier::from(&node.identifier),
             arguments,
             return_type,
@@ -65,7 +65,7 @@ impl<'a> Generator<'a> {
         };
 
         Ok(ReturnFromFunction(ReturnFromFunctionNode {
-            token: node.token.clone(),
+            span: node.token.span.clone(),
             node: Box::new(result),
             return_type: None,
         }))

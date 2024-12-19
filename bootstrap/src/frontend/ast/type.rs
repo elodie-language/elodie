@@ -27,14 +27,14 @@ impl<'a> Generator<'a> {
             let identifier = left.deref().as_identifier();
             let r#type = self.handle_type_node(right.deref().as_type())?;
             properties.push(DeclarePropertyNode {
-                token: node.token(),
+                span: node.token().span.clone(),
                 identifier: Identifier::from(identifier),
                 r#type,
             })
         }
 
         Ok(DeclareType(DeclareTypeNode {
-            token: node.token.clone(),
+            span: node.token.span.clone(),
             identifier: Identifier::from(&node.identifier),
             modifiers: node.modifiers.clone(),
             properties,
@@ -48,7 +48,7 @@ impl<'a> Generator<'a> {
         match node {
             TypeNode::Boolean(t) => Ok(ast::TypeNode::Boolean(t.clone())),
             TypeNode::Object(node) => Ok(ast::TypeNode::Object(ObjectTypeNode {
-                token: node.token.clone(),
+                span: node.token.span.clone(),
             })),
             TypeNode::Number(t) => Ok(ast::TypeNode::Number(t.clone())),
             TypeNode::String(t) => Ok(ast::TypeNode::String(t.clone())),

@@ -412,7 +412,7 @@ pub(crate) struct IdentifierNode(pub(crate) Token);
 
 impl IdentifierNode {
     pub(crate) fn value(&self) -> StringTableId {
-        self.0.span.value
+        self.0.value
     }
 }
 
@@ -421,7 +421,7 @@ pub(crate) struct ItselfNode(pub(crate) Token);
 
 impl ItselfNode {
     pub(crate) fn value(&self) -> StringTableId {
-        self.0.span.value
+        self.0.value
     }
 }
 

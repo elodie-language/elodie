@@ -27,7 +27,7 @@ impl<'a> Generator<'a> {
         };
 
         Ok(ast::Node::If(IfNode {
-            token: node.token.clone(),
+            span: node.token.span.clone(),
             condition,
             then: BlockNode { body: then_body },
             otherwise,

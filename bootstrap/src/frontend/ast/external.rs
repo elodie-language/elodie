@@ -16,7 +16,7 @@ impl<'a> Generator<'a> {
 
         Ok(ast::Node::DeclareExternalFunction(
             DeclareExternalFunctionNode {
-                token: node.token.clone(),
+                span: node.token.span.clone(),
                 identifier: Identifier::from(&node.identifier),
                 arguments,
                 return_type: None,

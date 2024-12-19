@@ -13,7 +13,7 @@ impl<'a> Generator<'a> {
             nodes.push(self.generate_node(node)?);
         }
         Ok(InterpolateString(InterpolateStringNode {
-            token: node.token.clone(),
+            span: node.token.span.clone(),
             nodes,
         }))
     }
