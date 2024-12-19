@@ -1,6 +1,7 @@
 use std::ops::Index;
 
 use crate::common::StringTableId;
+use crate::frontend::ast::Identifier;
 use crate::ir::context::Context;
 
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
@@ -14,6 +15,12 @@ impl AsRef<SymbolId> for SymbolId {
 
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
 pub struct SymbolName(pub StringTableId);
+
+impl From<&Identifier> for SymbolName {
+    fn from(value: &Identifier) -> Self {
+        SymbolName(value.0.value())
+    }
+}
 
 #[derive(Debug, Clone, PartialEq)]
 pub enum Symbol {
@@ -68,32 +75,36 @@ impl SymbolTable {
         }
     }
 
-    pub fn register_argument(&mut self, name: SymbolName) -> SymbolId {
-        let new_id = SymbolId(self.symbols.len() + 1);
+    pub fn len(&self) -> usize {
+        self.symbols.len()
+    }
+
+    pub(crate) fn register_argument(&mut self, name: SymbolName) -> SymbolId {
+        let new_id = SymbolId(self.len() + 1);
         self.symbols.push(Symbol::Argument { id: new_id.clone(), name });
         new_id
     }
 
-    pub fn register_function(&mut self, name: SymbolName) -> SymbolId {
-        let new_id = SymbolId(self.symbols.len() + 1);
+    pub(crate) fn register_function(&mut self, name: SymbolName) -> SymbolId {
+        let new_id = SymbolId(self.len() + 1);
         self.symbols.push(Symbol::Function { id: new_id.clone(), name });
         new_id
     }
 
-    pub fn register_package(&mut self, name: SymbolName) -> SymbolId {
-        let new_id = SymbolId(self.symbols.len() + 1);
+    pub(crate) fn register_package(&mut self, name: SymbolName) -> SymbolId {
+        let new_id = SymbolId(self.len() + 1);
         self.symbols.push(Symbol::Package { id: new_id.clone(), name });
         new_id
     }
 
-    pub fn register_type(&mut self, name: SymbolName) -> SymbolId {
-        let new_id = SymbolId(self.symbols.len() + 1);
+    pub(crate) fn register_type(&mut self, name: SymbolName) -> SymbolId {
+        let new_id = SymbolId(self.len() + 1);
         self.symbols.push(Symbol::Type { id: new_id.clone(), name });
         new_id
     }
 
-    pub fn register_variable(&mut self, name: SymbolName) -> SymbolId {
-        let new_id = SymbolId(self.symbols.len() + 1);
+    pub(crate) fn register_variable(&mut self, name: SymbolName) -> SymbolId {
+        let new_id = SymbolId(self.len() + 1);
         self.symbols.push(Symbol::Variable { id: new_id.clone(), name });
         new_id
     }
@@ -128,9 +139,9 @@ mod tests {
 
         let id = table.register_argument(SymbolName(ctx.push_str("argument")));
         assert_eq!(id, SymbolId(1));
-        assert_eq!(table.symbols.len(), 1);
+        assert_eq!(table.len(), 1);
 
-        let symbol = &table.symbols[0];
+        let symbol = &table[0];
         assert_eq!(symbol.id(), SymbolId(1));
         assert_eq!(symbol.name_str(&ctx), "argument");
     }
@@ -142,9 +153,9 @@ mod tests {
 
         let id = table.register_function(SymbolName(ctx.push_str("function")));
         assert_eq!(id, SymbolId(1));
-        assert_eq!(table.symbols.len(), 1);
+        assert_eq!(table.len(), 1);
 
-        let symbol = &table.symbols[0];
+        let symbol = &table[0];
         assert_eq!(symbol.id(), SymbolId(1));
         assert_eq!(symbol.name_str(&ctx), "function");
     }
@@ -156,9 +167,9 @@ mod tests {
 
         let id = table.register_package(SymbolName(ctx.push_str("package")));
         assert_eq!(id, SymbolId(1));
-        assert_eq!(table.symbols.len(), 1);
+        assert_eq!(table.len(), 1);
 
-        let symbol = &table.symbols[0];
+        let symbol = &table[0];
         assert_eq!(symbol.id(), SymbolId(1));
         assert_eq!(symbol.name_str(&ctx), "package");
     }
@@ -170,9 +181,9 @@ mod tests {
 
         let id = table.register_type(SymbolName(ctx.push_str("type")));
         assert_eq!(id, SymbolId(1));
-        assert_eq!(table.symbols.len(), 1);
+        assert_eq!(table.len(), 1);
 
-        let symbol = &table.symbols[0];
+        let symbol = &table[0];
         assert_eq!(symbol.id(), SymbolId(1));
         assert_eq!(symbol.name_str(&ctx), "type");
     }
@@ -184,9 +195,9 @@ mod tests {
 
         let id = table.register_variable(SymbolName(ctx.push_str("variable")));
         assert_eq!(id, SymbolId(1));
-        assert_eq!(table.symbols.len(), 1);
+        assert_eq!(table.len(), 1);
 
-        let symbol = &table.symbols[0];
+        let symbol = &table[0];
         assert_eq!(symbol.id(), SymbolId(1));
         assert_eq!(symbol.name_str(&ctx), "variable");
     }
@@ -205,17 +216,17 @@ mod tests {
         assert_eq!(func_id, SymbolId(2));
         assert_eq!(var_id, SymbolId(3));
 
-        assert_eq!(table.symbols.len(), 3);
+        assert_eq!(table.len(), 3);
 
-        let symbol = &table.symbols[0];
+        let symbol = &table[0];
         assert_eq!(symbol.id(), SymbolId(1));
         assert_eq!(symbol.name_str(&ctx), "argument");
 
-        let symbol = &table.symbols[1];
+        let symbol = &table[1];
         assert_eq!(symbol.id(), SymbolId(2));
         assert_eq!(symbol.name_str(&ctx), "function");
 
-        let symbol = &table.symbols[2];
+        let symbol = &table[2];
         assert_eq!(symbol.id(), SymbolId(3));
         assert_eq!(symbol.name_str(&ctx), "variable");
     }

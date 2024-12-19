@@ -4,7 +4,7 @@ use crate::ir::infer::{LiteralBooleanNode, LiteralNode, LiteralNumberNode, Liter
 use crate::ir::infer::Node::Literal;
 
 impl<'a> Inference<'a> {
-    pub(crate) fn infer_literal(&self, node: &'a ast::LiteralNode) -> crate::ir::infer::Result<Node<'a>> {
+    pub(crate) fn infer_literal(&mut self, node: &'a ast::LiteralNode) -> crate::ir::infer::Result<Node<'a>> {
         match node {
             ast::LiteralNode::Boolean(parsed_node) => Ok(Literal(LiteralNode::Boolean(LiteralBooleanNode {
                 parsed_node,

@@ -1,5 +1,6 @@
 use crate::frontend::ast;
 use crate::ir::infer::InferredType;
+use crate::ir::symbol::SymbolId;
 
 #[derive(Debug, PartialEq)]
 pub enum Node<'a> {
@@ -8,7 +9,7 @@ pub enum Node<'a> {
 }
 
 impl<'a> Node<'a> {
-    pub fn inferred_type(&self) -> InferredType {
+    pub fn inferred_type(&mut self) -> InferredType {
         match self {
             Node::DeclareVariable(DeclareVariableNode { inferred_type, .. })
             | Node::Literal(LiteralNode::Boolean(LiteralBooleanNode { inferred_type, .. }))
@@ -21,7 +22,7 @@ impl<'a> Node<'a> {
 #[derive(Debug, PartialEq)]
 pub struct DeclareVariableNode<'a> {
     pub parsed_node: &'a ast::DeclareVariableNode,
-    // pub symbol: SymbolId,
+    pub symbol: SymbolId,
     pub node: Box<Node<'a>>,
     pub inferred_type: InferredType,
 }

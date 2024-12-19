@@ -1,10 +1,13 @@
 use crate::frontend::ast;
 use crate::ir::infer::{DeclareVariableNode, Node};
 use crate::ir::infer::Inference;
+use crate::ir::symbol::SymbolName;
 
 impl<'a> Inference<'a> {
-    pub(crate) fn infer_declare_variable(&self, parsed_node: &'a ast::DeclareVariableNode) -> crate::ir::infer::Result<Node<'a>> {
-        let node = self.infer_node(&parsed_node.value)?;
+    pub(crate) fn infer_declare_variable(&mut self, parsed_node: &'a ast::DeclareVariableNode) -> crate::ir::infer::Result<Node<'a>> {
+        let symbol = self.register_variable(SymbolName::from(&parsed_node.identifier));
+
+        let mut node = self.infer_node(&parsed_node.value)?;
         let inferred_type = if let Some(type_node) = &parsed_node.value_type {
             self.type_from_type_node(type_node)?
         } else {
@@ -13,7 +16,7 @@ impl<'a> Inference<'a> {
 
         Ok(Node::DeclareVariable(DeclareVariableNode {
             parsed_node,
-            // symbol: SymbolId(1),
+            symbol,
             node: Box::new(node),
             inferred_type,
         }))
@@ -27,6 +30,7 @@ mod tests {
     use crate::ir::context::Context;
     use crate::ir::infer::{infer, InferredType};
     use crate::ir::infer::node::Node::DeclareVariable;
+    use crate::ir::symbol::SymbolId;
 
     #[test]
     fn declare_number_variable() {
@@ -38,6 +42,7 @@ mod tests {
         assert_eq!(inferred.nodes.len(), 1);
 
         let DeclareVariable(node) = &inferred[0] else { panic!() };
+        assert_eq!(node.symbol, SymbolId(1));
         assert_eq!(node.inferred_type, InferredType::Number)
     }
 
