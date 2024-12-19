@@ -1,4 +1,4 @@
-pub use r#type::{Property, Type, TypeId, TypeName, TypeTable};
+pub use r#type::{TypeVariable, Type, TypeId, TypeName, TypeTable};
 
 mod check;
 mod context;

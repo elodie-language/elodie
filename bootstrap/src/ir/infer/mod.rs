@@ -22,7 +22,7 @@ pub enum InferredType {
     Number,
     String,
     Tuple(Vec<InferredType>),
-    Type(HashMap<StringTableId, InferredType>),
+    ObjectType(HashMap<StringTableId, InferredType>),
 
     OneOf(Vec<InferredType>),
     AllOf(Vec<InferredType>),

@@ -115,7 +115,6 @@ pub enum Node {
     CallFunctionWithLambda(CallFunctionWithLambdaNode),
 
     ExportPackage(ExportPackageNode),
-
     ReturnFromFunction(ReturnFromFunctionNode),
 
     ContinueLoop(ContinueLoopNode),
@@ -346,14 +345,14 @@ pub struct LoadValueFromSelfNode {
 #[derive(Debug, PartialEq)]
 pub enum TypeNode {
     Boolean(Token),
-    Custom(CustomTypeNode),
+    Object(ObjectTypeNode),
     Number(Token),
     String(Token),
     Function(TypeFunctionNode),
 }
 
 #[derive(Clone, Debug, PartialEq)]
-pub struct CustomTypeNode {
+pub struct ObjectTypeNode {
     pub token: Token,
 }
 

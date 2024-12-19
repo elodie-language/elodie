@@ -14,7 +14,7 @@ use crate::backend::run::value::{IntrinsicFunctionValue, ListValue, ObjectValue,
 use crate::backend::run::value::Value::IntrinsicFunction;
 use crate::frontend::{ast, Ast, ast_from_str};
 use crate::frontend::context::Context;
-use crate::ir::{Property, Type, TypeId, TypeName};
+use crate::ir::{TypeVariable, Type, TypeId, TypeName};
 use crate::load_library_file;
 
 mod block;
@@ -534,13 +534,13 @@ impl<'a> Runner<'a> {
                 let mut properties = HashMap::new();
 
                 for prop in &decl.properties {
-                    properties.insert(prop.identifier.0.value().clone(), Property {});
+                    properties.insert(prop.identifier.0.value().clone(), TypeVariable {});
                 }
 
                 let r#type = Type {
                     id: TypeId(0),
                     name: TypeName(self.ctx.get_str(decl.identifier.0.value()).to_string()),
-                    properties,
+                    variables: properties,
                 };
 
                 self.scope

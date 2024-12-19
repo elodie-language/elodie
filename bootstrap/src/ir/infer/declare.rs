@@ -15,7 +15,7 @@ impl<'a> Inference<'a> {
         };
 
         Ok(Node::DeclareVariable(DeclareVariableNode {
-            parsed_node,
+            ast: parsed_node,
             symbol,
             node: Box::new(node),
             inferred_type,

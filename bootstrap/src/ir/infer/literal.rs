@@ -7,15 +7,15 @@ impl<'a> Inference<'a> {
     pub(crate) fn infer_literal(&mut self, node: &'a ast::LiteralNode) -> crate::ir::infer::Result<Node<'a>> {
         match node {
             ast::LiteralNode::Boolean(parsed_node) => Ok(Literal(LiteralNode::Boolean(LiteralBooleanNode {
-                parsed_node,
+                ast: parsed_node,
                 inferred_type: InferredType::Boolean,
             }))),
             ast::LiteralNode::Number(parsed_node) => Ok(Literal(LiteralNode::Number(LiteralNumberNode {
-                parsed_node,
+                ast: parsed_node,
                 inferred_type: InferredType::Number,
             }))),
             ast::LiteralNode::String(parsed_node) => Ok(Literal(LiteralNode::String(LiteralStringNode {
-                parsed_node,
+                ast: parsed_node,
                 inferred_type: InferredType::String,
             }
             ))),

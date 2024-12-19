@@ -21,7 +21,7 @@ impl<'a> Node<'a> {
 
 #[derive(Debug, PartialEq)]
 pub struct DeclareVariableNode<'a> {
-    pub parsed_node: &'a ast::DeclareVariableNode,
+    pub ast: &'a ast::DeclareVariableNode,
     pub symbol: SymbolId,
     pub node: Box<Node<'a>>,
     pub inferred_type: InferredType,
@@ -37,18 +37,18 @@ pub enum LiteralNode<'a> {
 
 #[derive(Debug, PartialEq)]
 pub struct LiteralBooleanNode<'a> {
-    pub parsed_node: &'a ast::LiteralBooleanNode,
+    pub ast: &'a ast::LiteralBooleanNode,
     pub inferred_type: InferredType,
 }
 
 #[derive(Debug, PartialEq)]
 pub struct LiteralNumberNode<'a> {
-    pub parsed_node: &'a ast::LiteralNumberNode,
+    pub ast: &'a ast::LiteralNumberNode,
     pub inferred_type: InferredType,
 }
 
 #[derive(Debug, PartialEq)]
 pub struct LiteralStringNode<'a> {
-    pub parsed_node: &'a ast::LiteralStringNode,
+    pub ast: &'a ast::LiteralStringNode,
     pub inferred_type: InferredType,
 }

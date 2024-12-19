@@ -2,7 +2,7 @@ use crate::common::is_pascal_snake_case;
 use crate::frontend::lex::token::OperatorToken::{Arrow, CloseParen, Colon, OpenParen};
 use crate::frontend::lex::token::SeparatorToken::Comma;
 use crate::frontend::lex::token::TokenKind::{Operator, Separator};
-use crate::frontend::parse::{CustomTypeNode, Parser};
+use crate::frontend::parse::{ObjectTypeNode, Parser};
 use crate::frontend::parse::Error::InvalidType;
 use crate::frontend::parse::node::{TypeFunctionArgumentNode, TypeFunctionNode, TypeNode};
 
@@ -18,7 +18,7 @@ impl<'a> Parser<'a> {
             "Number" => Ok(TypeNode::Number(token)),
             "String" => Ok(TypeNode::String(token)),
             "function" => Ok(TypeNode::Function(self.parse_function_type()?)),
-            _ => Ok(TypeNode::Custom(CustomTypeNode { token })),
+            _ => Ok(TypeNode::Object(ObjectTypeNode { token })),
         }
     }
 
@@ -71,7 +71,7 @@ impl<'a> Parser<'a> {
 mod tests {
     use crate::frontend::context::Context;
     use crate::frontend::lex::lex;
-    use crate::frontend::parse::{CustomTypeNode, Parser};
+    use crate::frontend::parse::{ObjectTypeNode, Parser};
     use crate::frontend::parse::Error::InvalidType;
     use crate::frontend::parse::node::{TypeFunctionArgumentNode, TypeNode};
 
@@ -87,12 +87,12 @@ mod tests {
     }
 
     #[test]
-    fn custom_type_point() {
+    fn object_type_point() {
         let mut ctx = Context::new();
         let tokens = lex(&mut ctx, "Point").unwrap();
         let mut parser = Parser::new(&mut ctx, tokens);
         let result = parser.parse_type().unwrap();
-        let TypeNode::Custom(CustomTypeNode { token }) = result else {
+        let TypeNode::Object(ObjectTypeNode { token }) = result else {
             panic!()
         };
         assert_eq!(ctx.get_str(token.value()), "Point");

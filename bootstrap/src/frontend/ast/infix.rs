@@ -244,7 +244,7 @@ impl<'a> Generator<'a> {
             token,
         } = node;
 
-        let Type(TypeNode::Custom(type_node)) = left.deref() else {
+        let Type(TypeNode::Object(type_node)) = left.deref() else {
             panic!()
         };
         let Node::Tuple(arguments_node) = right.deref() else {

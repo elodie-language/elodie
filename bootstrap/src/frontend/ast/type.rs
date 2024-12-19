@@ -2,7 +2,7 @@ use std::ops::Deref;
 
 use crate::frontend::ast::node::Node::DeclareType;
 use crate::frontend::ast::node::{DeclarePropertyNode, DeclareTypeNode, Identifier};
-use crate::frontend::ast::{CustomTypeNode, Generator, TypeFunctionNode};
+use crate::frontend::ast::{ObjectTypeNode, Generator, TypeFunctionNode};
 use crate::frontend::parse::{InfixNode, InfixOperator, TypeNode};
 use crate::frontend::{ast, parse};
 
@@ -47,7 +47,7 @@ impl<'a> Generator<'a> {
     ) -> ast::Result<ast::TypeNode> {
         match node {
             TypeNode::Boolean(t) => Ok(ast::TypeNode::Boolean(t.clone())),
-            TypeNode::Custom(node) => Ok(ast::TypeNode::Custom(CustomTypeNode {
+            TypeNode::Object(node) => Ok(ast::TypeNode::Object(ObjectTypeNode {
                 token: node.token.clone(),
             })),
             TypeNode::Number(t) => Ok(ast::TypeNode::Number(t.clone())),
