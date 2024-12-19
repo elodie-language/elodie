@@ -72,7 +72,7 @@ pub fn test_token(ctx: &mut Context, kind: TokenKind, value: &str) -> Token {
         span: TextSpan {
             start: Position::new(Row(1), Column(1), Index(0)),
             end: Position::new(Row(1), Column(1 + value.len()), Index(value.len())),
-            value: ctx.string_table.insert(value),
+            value: ctx.string_table.push_str(value),
         },
     }
 }
@@ -92,7 +92,7 @@ pub fn test_token_with_offset(
                 Column(offset + 1 + value.len()),
                 Index(offset + value.len()),
             ),
-            value: ctx.string_table.insert(value),
+            value: ctx.string_table.push_str(value),
         },
     }
 }

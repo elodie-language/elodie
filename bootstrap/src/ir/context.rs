@@ -19,7 +19,21 @@ impl Context {
         }
     }
 
+    pub fn push_str(&mut self, s: &str) -> StringTableId {
+        self.string_table.push_str(s)
+    }
+
     pub fn get_str(&self, idx: StringTableId) -> &str {
         self.string_table.get(idx)
+    }
+}
+
+impl Default for Context {
+    fn default() -> Self {
+        Self {
+            string_table: StringTable::new(),
+            type_table: TypeTable::new(),
+            ast: Ast::from(vec![]),
+        }
     }
 }

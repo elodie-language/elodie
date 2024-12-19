@@ -26,7 +26,7 @@ impl<'a> Parser<'a> {
                         span: TextSpan {
                             start: token.span.start.clone(),
                             end: token.span.end.clone(),
-                            value: self.ctx.string_table.insert(part.as_str()),
+                            value: self.ctx.string_table.push_str(part.as_str()),
                         },
                     };
 

@@ -52,7 +52,7 @@ impl Lexer<'_> {
             span: TextSpan {
                 start,
                 end: self.position(),
-                value: self.ctx.string_table.insert(text.as_str()),
+                value: self.ctx.string_table.push_str(text.as_str()),
             },
         })
     }
@@ -110,7 +110,7 @@ impl Lexer<'_> {
             span: TextSpan {
                 start,
                 end: self.position(),
-                value: self.ctx.string_table.insert(text.as_str()),
+                value: self.ctx.string_table.push_str(text.as_str()),
             },
         })
     }
@@ -133,7 +133,7 @@ impl Lexer<'_> {
                 span: TextSpan {
                     start,
                     end: self.position(),
-                    value: self.ctx.string_table.insert("true"),
+                    value: self.ctx.string_table.push_str("true"),
                 },
             });
         }
@@ -145,7 +145,7 @@ impl Lexer<'_> {
             span: TextSpan {
                 start,
                 end: self.position(),
-                value: self.ctx.string_table.insert("false"),
+                value: self.ctx.string_table.push_str("false"),
             },
         })
     }

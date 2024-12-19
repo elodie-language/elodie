@@ -196,7 +196,7 @@ impl<'a> Lexer<'a> {
                 span: TextSpan {
                     start: self.position(),
                     end: self.position(),
-                    value: self.ctx.string_table.insert(""),
+                    value: self.ctx.string_table.push_str(""),
                 },
             });
         }
@@ -216,7 +216,7 @@ impl<'a> Lexer<'a> {
                     span: TextSpan {
                         start: self.position(),
                         end: self.position(),
-                        value: self.ctx.string_table.insert(""),
+                        value: self.ctx.string_table.push_str(""),
                     },
                 });
             }

@@ -71,7 +71,7 @@ pub fn run_file(file: &String, print_colors: bool) {
 
     let mut intrinsics = ObjectValue::new();
     intrinsics.set_property(
-        ctx.string_table.insert("print"),
+        ctx.string_table.push_str("print"),
         IntrinsicFunction(IntrinsicFunctionValue(Rc::new(|args: &[Value]| {
             for arg in args {
                 if arg.to_string() == "\\n" {
@@ -85,7 +85,7 @@ pub fn run_file(file: &String, print_colors: bool) {
     );
 
     intrinsics.set_property(
-        ctx.string_table.insert("list_length"),
+        ctx.string_table.push_str("list_length"),
         IntrinsicFunction(IntrinsicFunctionValue(Rc::new(|args| {
             let Value::List(list) = args.get(0).unwrap() else {
                 panic!("not list")
@@ -96,7 +96,7 @@ pub fn run_file(file: &String, print_colors: bool) {
     );
 
     intrinsics.set_property(
-        ctx.string_table.insert("list_append"),
+        ctx.string_table.push_str("list_append"),
         IntrinsicFunction(IntrinsicFunctionValue(Rc::new(|args| {
             let Value::List(list) = args.get(0).unwrap() else {
                 panic!("not list")
@@ -108,7 +108,7 @@ pub fn run_file(file: &String, print_colors: bool) {
     );
 
     intrinsics.set_property(
-        ctx.string_table.insert("list_get"),
+        ctx.string_table.push_str("list_get"),
         IntrinsicFunction(IntrinsicFunctionValue(Rc::new(|args| {
             let Value::List(list) = args.get(0).unwrap() else {
                 panic!("not list")
@@ -121,7 +121,7 @@ pub fn run_file(file: &String, print_colors: bool) {
     );
 
     intrinsics.set_property(
-        ctx.string_table.insert("exit"),
+        ctx.string_table.push_str("exit"),
         IntrinsicFunction(IntrinsicFunctionValue(Rc::new(|args| {
             let Value::Number(code) = args.get(0).cloned().unwrap() else {
                 panic!("not a number")
@@ -131,7 +131,7 @@ pub fn run_file(file: &String, print_colors: bool) {
     );
 
     root_values.insert(
-        ctx.string_table.insert("intrinsics"),
+        ctx.string_table.push_str("intrinsics"),
         Value::Object(intrinsics),
     );
     let scope = Scope::new(root_values, root_types);
@@ -243,7 +243,7 @@ impl<'a> Runner<'a> {
                 if let Value::List(object) = self.scope.get_value(&object.0.value()).unwrap() {
                     let mut args = HashMap::with_capacity(arguments.len());
                     args.insert(
-                        self.ctx.string_table.insert("self"),
+                        self.ctx.string_table.push_str("self"),
                         Value::List(object.clone()),
                     );
 
@@ -319,7 +319,7 @@ impl<'a> Runner<'a> {
                 } else {
                     let mut args = HashMap::with_capacity(arguments.len());
                     args.insert(
-                        self.ctx.string_table.insert("self"),
+                        self.ctx.string_table.push_str("self"),
                         Value::Object(object.clone()),
                     );
 
@@ -583,7 +583,7 @@ impl<'a> Runner<'a> {
             ast::Node::LoadValueFromSelf(load_variable) => {
                 let value = self
                     .scope
-                    .get_value(&self.ctx.string_table.insert("self"))
+                    .get_value(&self.ctx.string_table.push_str("self"))
                     .unwrap()
                     .clone();
                 let Value::Object(object_value) = value else {

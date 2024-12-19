@@ -24,7 +24,7 @@ impl StringTable {
         }
     }
 
-    pub fn insert(&mut self, string: &str) -> StringTableId {
+    pub fn push_str(&mut self, string: &str) -> StringTableId {
         match self.indexes.entry(string.into()) {
             std::collections::hash_map::Entry::Occupied(entry) => *entry.get(),
             std::collections::hash_map::Entry::Vacant(entry) => {
@@ -51,9 +51,9 @@ mod tests {
     #[test]
     fn insert_and_get() {
         let mut map = StringTable::new();
-        let idx1 = map.insert("hello");
-        let idx2 = map.insert("world");
-        let idx3 = map.insert("hello");
+        let idx1 = map.push_str("hello");
+        let idx2 = map.push_str("world");
+        let idx3 = map.push_str("hello");
 
         assert_eq!(idx1, idx3);
         assert_ne!(idx1, idx2);
