@@ -4,7 +4,7 @@ use std::ops::Index;
 pub use node::*;
 
 use crate::common::StringTableId;
-use crate::frontend::NewAst;
+use crate::frontend::Ast;
 use crate::ir::analyse::infer::Inference;
 use crate::ir::Context;
 
@@ -45,7 +45,7 @@ impl Index<usize> for Analysed {
     }
 }
 
-pub(crate) fn analyse(ctx: &mut Context, ast: NewAst) -> Result<Analysed> {
+pub(crate) fn analyse(ctx: &mut Context, ast: Ast) -> Result<Analysed> {
     let inferred = Inference::new(ctx).infer(ast)?;
 
     Ok(Analysed { nodes: inferred })

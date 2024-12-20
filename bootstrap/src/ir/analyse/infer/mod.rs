@@ -1,7 +1,7 @@
 use crate::common::{StringTable, WithSpan};
-use crate::frontend::{ast, NewAst};
-use crate::frontend::ast::Ast;
-use crate::frontend::ast::node::AstNode;
+use crate::frontend;
+use crate::frontend::{ast};
+use crate::frontend::ast::node::{Ast, AstNode};
 use crate::ir::analyse::AnalysedNode;
 use crate::ir::context::Context;
 use crate::ir::symbol::{SymbolId, SymbolName, SymbolTable};
@@ -23,7 +23,7 @@ impl<'a> Inference<'a> {
         }
     }
 
-    pub(crate) fn infer(&mut self, ast: NewAst) -> crate::ir::analyse::Result<Vec<AnalysedNode>> {
+    pub(crate) fn infer(&mut self, ast: frontend::Ast) -> crate::ir::analyse::Result<Vec<AnalysedNode>> {
         let mut nodes = vec![];
         for node in &ast.nodes {
             nodes.push(self.infer_node(node)?);

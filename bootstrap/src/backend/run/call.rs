@@ -3,13 +3,14 @@ use std::collections::HashMap;
 use crate::backend::run::value::{FunctionValue, Value};
 use crate::backend::run::Runner;
 use crate::common::StringTableId;
-use crate::frontend::old_ast;
-use crate::frontend::old_ast::node::CallFunctionWithLambdaNode;
+use crate::frontend::ast;
+use crate::frontend::ast::CallFunctionWithLambdaNode;
+use crate::frontend::ast::node::AstNode;
 
 impl<'a> Runner<'a> {
     pub(crate) fn run_node_call_function(
         &mut self,
-        node: &old_ast::CallFunctionNode,
+        node: &ast::CallFunctionNode<AstNode>,
     ) -> crate::backend::run::Result<Value> {
         self.reset_interrupt();
 
@@ -18,13 +19,13 @@ impl<'a> Runner<'a> {
             args.push(self.run_node(arg)?);
         }
 
-        if let Some(Value::IntrinsicFunction(func)) = self.scope.get_value(&node.function.0.value())
+        if let Some(Value::IntrinsicFunction(func)) = self.scope.get_value(&node.function.0)
         {
             return func.0(&args);
         }
 
         let function =
-            if let Some(Value::Function(func)) = self.scope.get_value(&node.function.0.value()) {
+            if let Some(Value::Function(func)) = self.scope.get_value(&node.function.0) {
                 func.clone()
             } else {
                 todo!()
@@ -36,7 +37,7 @@ impl<'a> Runner<'a> {
         for arg in &node.arguments {
             let arg_node = function.arguments.get(counter).unwrap();
 
-            let name = arg_node.identifier.0.value().clone();
+            let name = arg_node.argument.0;
             // FIXME resolve  name from definition
             args.insert(name, self.run_node(arg)?);
             counter += 1;
@@ -55,19 +56,19 @@ impl<'a> Runner<'a> {
 
     pub(crate) fn run_node_call_function_with_lambda(
         &mut self,
-        node: &CallFunctionWithLambdaNode,
+        node: &CallFunctionWithLambdaNode<AstNode>,
     ) -> crate::backend::run::Result<Value> {
         self.reset_interrupt();
 
         let function = if let Some(Value::Function(func)) =
-            self.scope.get_value(&node.call_function.function.0.value())
+            self.scope.get_value(&node.function.0)
         {
             func.clone()
         } else {
             todo!()
         };
 
-        let node_arguments = &node.call_function.arguments;
+        let node_arguments = &node.arguments;
 
         let mut args: Vec<Value> = Vec::with_capacity(node_arguments.len());
         for arg in node_arguments {
@@ -80,7 +81,7 @@ impl<'a> Runner<'a> {
         for arg in node_arguments {
             let arg_node = function.arguments.get(counter).unwrap();
 
-            let name = arg_node.identifier.0.value().clone();
+            let name = arg_node.argument.0;
             // FIXME resolve  name from definition
             args.insert(name, self.run_node(arg)?);
             counter += 1;
@@ -97,10 +98,8 @@ impl<'a> Runner<'a> {
                 .arguments
                 .last()
                 .unwrap()
-                .identifier
-                .0
-                .value()
-                .clone(),
+                .argument
+                .0,
             lambda_function,
         );
 

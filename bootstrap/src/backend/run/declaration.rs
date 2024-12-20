@@ -4,22 +4,24 @@ use std::rc::Rc;
 
 use crate::backend::run::value::{FunctionValue, IntrinsicFunctionValue, PackageValue, Value};
 use crate::backend::run::Runner;
-use crate::frontend::old_ast;
+use crate::frontend::ast;
+use crate::frontend::ast::{Node, SPAN_NOT_IMPLEMENTED};
+use crate::frontend::ast::node::AstNode;
 use crate::ir::TypeId;
 
 impl<'a> Runner<'a> {
     pub(crate) fn run_external_function_declaration(
         &mut self,
-        node: &old_ast::DeclareExternalFunctionNode,
+        node: &ast::DeclareExternalFunctionNode,
     ) -> crate::backend::run::Result<Value> {
         unimplemented!()
     }
 
     pub(crate) fn run_variable_declaration(
         &mut self,
-        node: &old_ast::DeclareVariableNode,
+        node: &ast::DeclareVariableNode<AstNode>,
     ) -> crate::backend::run::Result<Value> {
-        let name = node.identifier.0.value().clone();
+        let name = node.variable.0;
         let value = self.run_node(node.value.deref())?;
         self.scope.insert_value(name, value);
         Ok(Value::Unit)
@@ -27,17 +29,17 @@ impl<'a> Runner<'a> {
 
     pub(crate) fn run_function_declaration(
         &mut self,
-        node: &old_ast::DeclareFunctionNode,
+        node: &ast::DeclareFunctionNode<AstNode>,
     ) -> crate::backend::run::Result<Value> {
-        let name = node.identifier.0.value().clone();
+        let name = node.function.0.clone();
 
         let mut arguments = Vec::with_capacity(node.arguments.len());
         for arg in &node.arguments {
-            arguments.push(arg.clone())
+            arguments.push(Rc::new(arg.clone()))
         }
 
         let f = Value::Function(FunctionValue {
-            body: node.body.clone(),
+            body: node.nodes.clone(),
             arguments,
         });
 
@@ -47,17 +49,17 @@ impl<'a> Runner<'a> {
 
     pub(crate) fn run_package_declaration(
         &mut self,
-        node: &old_ast::DeclarePackageNode,
+        node: &ast::DeclarePackageNode<AstNode>,
     ) -> crate::backend::run::Result<Value> {
         let mut functions = HashMap::new();
         for node in &node.functions {
-            let name = node.identifier.0.value().clone();
+            let name = node.function.0;
             let mut arguments = Vec::with_capacity(node.arguments.len());
             for arg in &node.arguments {
-                arguments.push(arg.clone())
+                arguments.push(Rc::new(arg.clone()))
             }
             let f = FunctionValue {
-                body: node.body.clone(),
+                body: node.nodes.clone(),
                 arguments,
             };
             functions.insert(name, f);
@@ -65,7 +67,7 @@ impl<'a> Runner<'a> {
 
         let mut packages = HashMap::new();
         for node in &node.packages {
-            let identifier = node.identifier.0.value().clone();
+            let identifier = node.package.0;
             let value = self.run_package_declaration(node)?;
             let Value::Package(package) = value else {
                 panic!()
@@ -74,9 +76,9 @@ impl<'a> Runner<'a> {
         }
 
         for node in &node.definitions {
-            // self.run_node(&Node::DefineType(node))?;
+            self.run_node(&AstNode::new(Node::DefineType(node.clone()), SPAN_NOT_IMPLEMENTED.clone()))?;
             for func in &node.functions {
-                let func_ident = func.identifier.0.value();
+                let func_ident = func.function.0;
                 let func = func;
                 let value = self.run_function_declaration(func)?;
 
@@ -86,6 +88,7 @@ impl<'a> Runner<'a> {
                 self.type_definitions
                     .add_function(TypeId(99), func_ident, func);
             }
+
         }
 
         let mut external_functions = HashMap::new();
@@ -94,14 +97,14 @@ impl<'a> Runner<'a> {
             // dbg!(node);
             // println!("{}", self.ctx.get_str(node.identifier.0));
 
-            let function = self.ctx.get_str(node.identifier.0.value());
+            let function = self.ctx.get_str(node.function.0);
             // FIXME load
 
             let print_colors = self.print_colors.clone();
             match function {
                 "cos_f64" => {
                     external_functions.insert(
-                        node.identifier.0.value(),
+                        node.function.0,
                         IntrinsicFunctionValue(Rc::new(move |args: &[Value]| {
                             let Value::Number(arg) = args.get(0).cloned().unwrap() else {
                                 panic!()
@@ -113,7 +116,7 @@ impl<'a> Runner<'a> {
                 }
                 "print" => {
                     external_functions.insert(
-                        node.identifier.0.value(),
+                        node.function.0,
                         IntrinsicFunctionValue(Rc::new(move |args: &[Value]| {
                             for arg in args {
                                 if arg.to_string() == "\\n" {
@@ -135,7 +138,7 @@ impl<'a> Runner<'a> {
         }
 
         Ok(Value::Package(PackageValue {
-            identifier: node.identifier.0.value(),
+            identifier: node.package.0.clone(),
             functions,
             packages,
             external_functions,

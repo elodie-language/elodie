@@ -1,7 +1,7 @@
 use std::hash::Hash;
 use std::rc::Rc;
 
-use crate::common::{Column, Index, PackagePath, Position, Row, Span, WithSpan};
+use crate::common::{Column, Index, PackagePath, Position, Row, Span, StringTableId, WithSpan};
 use crate::frontend::lex::token::Token;
 use crate::frontend::modifier::Modifiers;
 
@@ -49,8 +49,8 @@ impl WithSpan for AstNode {
 #[derive(Debug, Clone, PartialEq)]
 pub enum Node<T: Ast<T>> {
     AccessVariable(AccessVariableNode),
-    AccessVariableOfObject(AccessVariableOfObject),
-    AccessVariableOfSelf(AccessVariableOfSelf),
+    AccessVariableOfObject(AccessVariableOfObjectNode),
+    AccessVariableOfSelf(AccessVariableOfSelfNode),
 
     Block(BlockNode<T>),
     BreakLoop(BreakLoopNode<T>),
@@ -94,13 +94,13 @@ pub struct AccessVariableNode {
 }
 
 #[derive(Debug, Clone, PartialEq)]
-pub struct AccessVariableOfObject {
+pub struct AccessVariableOfObjectNode {
     pub object: Identifier,
     pub variable: Identifier,
 }
 
 #[derive(Debug, Clone, PartialEq)]
-pub struct AccessVariableOfSelf {
+pub struct AccessVariableOfSelfNode {
     pub variable: Identifier,
 }
 
@@ -131,7 +131,7 @@ pub struct CallFunctionNode<T: Ast<T>> {
 pub struct CallFunctionWithLambdaNode<T: Ast<T>> {
     pub function: Identifier,
     pub arguments: Vec<T>,
-    pub lambda: Vec<T>,
+    pub lambda: Rc<BlockNode<T>>,
 }
 
 #[derive(Debug, Clone, PartialEq)]
@@ -181,7 +181,7 @@ pub struct DeclarePackageNode<T: Ast<T>> {
     pub external_functions: Vec<DeclareExternalFunctionNode>,
     pub functions: Vec<DeclareFunctionNode<T>>,
     pub packages: Vec<DeclarePackageNode<T>>,
-    pub types: Vec<DeclareTypeNode>,
+    pub definitions: Vec<DefineTypeNode<T>>,
 }
 
 #[derive(Debug, Clone, PartialEq)]
@@ -221,7 +221,7 @@ pub struct IfNode<T: Ast<T>> {
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct InterpolateStringNode<T: Ast<T>> {
-    pub values: Vec<T>,
+    pub nodes: Vec<T>,
 }
 
 #[derive(Debug, Clone, PartialEq)]
@@ -275,8 +275,8 @@ pub enum Source {
 }
 
 
-#[derive(Clone, Debug, PartialEq)]
-pub struct Identifier(pub Token);
+#[derive(Clone, Debug, PartialEq, Hash, Eq)]
+pub struct Identifier(pub StringTableId);
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct NamedArgument<T: Ast<T>> {

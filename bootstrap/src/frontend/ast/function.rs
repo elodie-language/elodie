@@ -19,7 +19,7 @@ impl<'a> Generator<'a> {
 
         Ok(AstNode::new(ast::Node::DeclareExternalFunction(
             DeclareExternalFunctionNode {
-                function: Identifier(node.identifier.0.clone()),
+                function: Identifier(node.identifier.value()),
                 arguments,
                 return_type: None,
             },
@@ -48,7 +48,7 @@ impl<'a> Generator<'a> {
         };
 
         Ok(AstNode::new(Node::DeclareFunction(DeclareFunctionNode {
-            function: Identifier(node.identifier.0.clone()),
+            function: Identifier(node.identifier.value()),
             arguments,
             return_type,
             nodes: Rc::new(BlockNode { nodes }),
@@ -66,7 +66,7 @@ impl<'a> Generator<'a> {
         };
 
         Ok(FunctionArgument {
-            argument: Identifier(node.identifier.0.clone()),
+            argument: Identifier(node.identifier.value()),
             argument_type,
         })
     }

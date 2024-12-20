@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 
 use crate::common::StringTable;
-use crate::frontend::old_ast::node::Identifier;
+use crate::frontend::ast::Identifier;
 
 pub(crate) struct Scope {
     pub variables: Vec<HashMap<Identifier, Variable>>,
@@ -17,7 +17,7 @@ pub struct Variable {
 
 impl Variable {
     pub fn to_string(&self, cache: &StringTable) -> String {
-        format!("{}_{}", cache.get(self.identifier.0.value()), self.id)
+        format!("{}_{}", cache.get(self.identifier.0), self.id)
     }
 }
 

@@ -10,7 +10,7 @@ impl<'a> Generator<'a> {
         &mut self,
         node: &parse::VariableDeclarationNode,
     ) -> ast::Result<AstNode> {
-        let variable = Identifier(node.identifier.0.clone());
+        let variable = Identifier(node.identifier.value());
 
         let node_type = if let Some(type_node) = node.r#type.as_ref() {
             Some(self.to_ast_type(type_node))

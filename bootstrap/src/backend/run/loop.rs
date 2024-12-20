@@ -1,11 +1,12 @@
 use crate::backend::run::value::Value;
 use crate::backend::run::{Interrupt, Runner};
-use crate::frontend::old_ast;
+use crate::frontend::ast;
+use crate::frontend::ast::node::AstNode;
 
 impl<'a> Runner<'a> {
     pub(crate) fn run_continue(
         &mut self,
-        _node: &old_ast::ContinueLoopNode,
+        _node: &ast::ContinueLoopNode,
     ) -> crate::backend::run::Result<Value> {
         self.interrupt(Interrupt::Continue);
         Ok(Value::Unit)
@@ -13,9 +14,9 @@ impl<'a> Runner<'a> {
 
     pub(crate) fn run_break(
         &mut self,
-        node: &old_ast::BreakLoopNode,
+        node: &ast::BreakLoopNode<AstNode>,
     ) -> crate::backend::run::Result<Value> {
-        let value = if let Some(result) = node.body.as_ref() {
+        let value = if let Some(result) = node.node.as_ref() {
             self.run_node(result)?
         } else {
             Value::Unit
@@ -24,7 +25,7 @@ impl<'a> Runner<'a> {
         Ok(value)
     }
 
-    pub(crate) fn run_loop(&mut self, node: &old_ast::LoopNode) -> crate::backend::run::Result<Value> {
+    pub(crate) fn run_loop(&mut self, node: &ast::LoopNode<AstNode>) -> crate::backend::run::Result<Value> {
         'main: loop {
             self.scope.enter();
 
@@ -32,7 +33,7 @@ impl<'a> Runner<'a> {
                 return Ok(return_value.clone());
             }
 
-            for node in &node.body {
+            for node in &node.nodes {
                 self.run_node(node)?;
 
                 if let Some(interrupt) = &self.interrupt {

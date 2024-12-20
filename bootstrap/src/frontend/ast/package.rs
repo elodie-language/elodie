@@ -3,10 +3,10 @@ use std::io;
 use std::io::Read;
 use std::ops::Deref;
 use std::path::PathBuf;
+use crate::frontend::{ast, ast_from_str, parse};
 
-use crate::frontend::{ast, ast_from_str, new_ast_from_str, parse};
-use crate::frontend::ast::{Ast, DeclareExternalFunctionNode, DeclareFunctionNode, DeclarePackageNode, DeclareTypeNode, Generator, Identifier, SPAN_NOT_IMPLEMENTED};
-use crate::frontend::ast::node::{AstNode, BlockNode, ExportPackageNode, Node, Source};
+use crate::frontend::ast::{BlockNode, DeclareExternalFunctionNode, DeclareFunctionNode, DeclarePackageNode, DeclareTypeNode, DefineTypeNode, ExportPackageNode, Generator, Identifier, Node, Source, SPAN_NOT_IMPLEMENTED};
+use crate::frontend::ast::node::{Ast, AstNode};
 use crate::frontend::parse::LiteralNode;
 
 impl<'a> Generator<'a> {
@@ -32,7 +32,7 @@ impl<'a> Generator<'a> {
 
         let package = if let parse::Node::Identifier(identifier) = &node.what_node.deref() {
             // at this point in time it should be clear what identifier refers to at the moment in can only be package
-            ast::Identifier(identifier.0.clone())
+            ast::Identifier(identifier.value())
         } else {
             todo!()
         };
@@ -58,67 +58,67 @@ impl<'a> Generator<'a> {
 
         let mut external_functions: Vec<DeclareExternalFunctionNode> = vec![];
         let mut functions: Vec<DeclareFunctionNode<AstNode>> = vec![];
-        let mut types: Vec<DeclareTypeNode> = vec![];
+        let mut definitions: Vec<DefineTypeNode<AstNode>> = vec![];
         let mut packages: Vec<DeclarePackageNode<AstNode>> = vec![];
 
         for node in compiled_body.into_iter() {
             if let Node::Block(block) = node.node() {
-            //     for node in block.nodes {
-            //         if let Node::ExportPackage(ExportPackageNode { package, .. }) = node.node() {
-            //             let package = self.ctx.get_str(package.0.value).to_string();
-            //
-            //             // FIXME temporary hack to load std packages
-            //             // FIXME compiler needs to track scope so that the parent package can easily be determined
-            //
-            //             match package.as_str() {
-            //                 "io" => packages.extend(self.load_declared_packages("std/io/index.ec")),
-            //                 "collection" => packages
-            //                     .extend(self.load_declared_packages("std/collection/index.ec")),
-            //                 "list" => packages.extend(
-            //                     self.load_declared_packages("std/collection/list/index.ec"),
-            //                 ),
-            //                 "math" => {
-            //                     packages.extend(self.load_declared_packages("std/math/index.ec"))
-            //                 }
-            //                 "process" => {
-            //                     packages.extend(self.load_declared_packages("std/process/index.ec"))
-            //                 }
-            //                 "intrinsics" => packages
-            //                     .extend(self.load_declared_packages("core/intrinsics/index.ec")),
-            //                 _ => unimplemented!(),
-            //             }
-            //         } else if let Node::DeclareFunction(declare_function) = node.node() {
-            //             // functions.push(declare_function)
-            //         } else if let Node::DefineType(define_type) = node.node() {
-            //             // types.push(define_type);
-            //         }
-            //     }
-            // } else if let Node::DeclareFunction(declare_function) = node.node() {
-            //     // functions.push(declare_function)
-            // } else if let Node::DefineType(define_type) = node.node() {
-            //     // types.push(define_type);
-            // } else if let Node::DeclarePackage(package) = node.node() {
-            //     // packages.push(package);
-            // } else if let Node::DeclareExternalFunction(external) = node.node() {
-            //     // external_functions.push(external);
+                for node in &block.nodes {
+                    if let Node::ExportPackage(ExportPackageNode { package, .. }) = node.node() {
+                        let package = self.ctx.get_str(package.0).to_string();
+
+                        // FIXME temporary hack to load std packages
+                        // FIXME compiler needs to track scope so that the parent package can easily be determined
+
+                        match package.as_str() {
+                            "io" => packages.extend(self.load_declared_packages("std/io/index.ec")),
+                            "collection" => packages
+                                .extend(self.load_declared_packages("std/collection/index.ec")),
+                            "list" => packages.extend(
+                                self.load_declared_packages("std/collection/list/index.ec"),
+                            ),
+                            "math" => {
+                                packages.extend(self.load_declared_packages("std/math/index.ec"))
+                            }
+                            "process" => {
+                                packages.extend(self.load_declared_packages("std/process/index.ec"))
+                            }
+                            "intrinsics" => packages
+                                .extend(self.load_declared_packages("core/intrinsics/index.ec")),
+                            _ => unimplemented!(),
+                        }
+                    } else if let Node::DeclareFunction(declare_function) = node.node() {
+                        functions.push(declare_function.clone())
+                    } else if let Node::DefineType(define_type) = node.node() {
+                        definitions.push(define_type.clone());
+                    }
+                }
+            } else if let Node::DeclareFunction(declare_function) = node.node() {
+                functions.push(declare_function.clone())
+            } else if let Node::DefineType(define_type) = node.node() {
+                definitions.push(define_type.clone());
+            } else if let Node::DeclarePackage(package) = node.node() {
+                packages.push(package.clone());
+            } else if let Node::DeclareExternalFunction(external) = node.node() {
+                external_functions.push(external.clone());
             } else {
-                unimplemented!("{:?}", node)
+                // unimplemented!("{:?}", node)
             }
         }
 
         Ok(AstNode::new(Node::DeclarePackage(DeclarePackageNode {
-            package: Identifier(node.identifier.0.clone()),
+            package: Identifier(node.identifier.value()),
             modifiers: node.modifiers.clone(),
             functions,
             packages,
-            types,
+            definitions: definitions,
             external_functions,
         }), SPAN_NOT_IMPLEMENTED.clone()))
     }
 
     fn load_declared_packages(&mut self, name: &str) -> Vec<DeclarePackageNode<AstNode>> {
         let content = crate::load_library_file(name).unwrap();
-        let ast = new_ast_from_str(&mut self.ctx, content.as_str()).unwrap();
+        let ast = ast_from_str(&mut self.ctx, content.as_str()).unwrap();
 
         let mut result = vec![];
 

@@ -1,13 +1,13 @@
 use crate::backend::generate::c;
 use crate::backend::generate::c::generator::Generator;
 use crate::backend::generate::c::{InfixExpression, InfixOperator, Statement};
-use crate::frontend::old_ast;
-use crate::frontend::old_ast::node::{CalculationOperator, CompareOperator};
+use crate::frontend::ast::{CalculateNode, CalculationOperator, CompareNode, CompareOperator};
+use crate::frontend::ast::node::AstNode;
 
 impl Generator {
     pub(crate) fn generate_compare(
         &mut self,
-        node: &old_ast::CompareNode,
+        node: &CompareNode<AstNode>,
     ) -> c::generator::Result<(Vec<Statement>, InfixExpression)> {
         let mut statements = vec![];
 
@@ -35,7 +35,7 @@ impl Generator {
 
     pub(crate) fn generate_calculate(
         &mut self,
-        node: &old_ast::CalculateNode,
+        node: &CalculateNode<AstNode>,
     ) -> c::generator::Result<(Vec<Statement>, InfixExpression)> {
         let mut statements = vec![];
 

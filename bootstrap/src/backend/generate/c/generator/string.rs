@@ -1,25 +1,26 @@
 use crate::backend::generate::c;
-use crate::backend::generate::c::generator::Generator;
-use crate::backend::generate::c::Expression::{Literal, Variable};
 use crate::backend::generate::c::{
     CallFunctionStatement, CallFunctionStatementResult, DeclareArrayStatement,
     DeclareVariableStatement, Expression, Indent, LiteralExpression, LiteralIntExpression,
     LiteralStringExpression, Statement, VariableExpression,
 };
-use crate::frontend::old_ast;
-use crate::frontend::old_ast::node::{LiteralNode, LoadValueFromObjectNode, LoadValueNode, Node};
+use crate::backend::generate::c::Expression::{Literal, Variable};
+use crate::backend::generate::c::generator::Generator;
+use crate::frontend::ast::{AccessVariableNode, AccessVariableOfObjectNode, InterpolateStringNode, LiteralStringNode, Node};
+use crate::frontend::ast::node::{Ast, AstNode};
+use crate::frontend::ast::Node::CallFunction;
 
 impl Generator {
     pub(crate) fn interpolate_string(
         &mut self,
-        node: &old_ast::InterpolateStringNode,
+        node: &InterpolateStringNode<AstNode>,
     ) -> c::generator::Result<(Vec<Statement>, Expression)> {
         let mut statements = Vec::new();
 
         let mut temp_variables = Vec::new();
 
         for node in &node.nodes {
-            if let Node::Literal(LiteralNode::String(string_node)) = &node {
+            if let Node::LiteralString(LiteralStringNode(string_node)) = &node.node() {
                 let temp = self.scope.push_temp();
                 // statements.push(c::Statement::DeclareVariable(DeclareVariableStatement {
                 //     indent: Indent::none(),
@@ -31,7 +32,7 @@ impl Generator {
                 //     })),
                 // }));
                 temp_variables.push(temp)
-            } else if let Node::LoadValueFromSelf(node) = &node {
+            } else if let Node::AccessVariableOfSelf(node) = node.node() {
                 let temp = self.scope.push_temp();
                 statements.push(c::Statement::DeclareVariable(DeclareVariableStatement {
                     indent: Indent::none(),
@@ -41,12 +42,12 @@ impl Generator {
                         indent: Indent::none(),
                         identifier: format!(
                             "self->{}",
-                            self.string_table.get(node.property.0.value())
+                            self.string_table.get(node.variable.0)
                         ),
                     }),
                 }));
                 temp_variables.push(temp)
-            } else if let Node::LoadValue(LoadValueNode { identifier, .. }) = &node {
+            } else if let Node::AccessVariable(AccessVariableNode { variable, .. }) = node.node() {
                 let temp = self.scope.push_temp();
                 //
                 // if self.type_table.is_number(ty) {
@@ -104,11 +105,11 @@ impl Generator {
                 // }
                 //
                 // temp_variables.push(temp);
-            } else if let Node::LoadValueFromObject(LoadValueFromObjectNode {
-                object,
-                property,
-                ..
-            }) = &node
+            } else if let Node::AccessVariableOfObject(AccessVariableOfObjectNode {
+                                                           object,
+                                                           variable,
+                                                           ..
+                                                       }) = node.node()
             {
                 let temp = self.scope.push_temp();
 
@@ -143,7 +144,7 @@ impl Generator {
                                     .get_variable(object)
                                     .unwrap()
                                     .to_string(&self.string_table),
-                                self.string_table.get(property.0.value())
+                                self.string_table.get(variable.0)
                             ),
                         }),
                     ]),
@@ -151,7 +152,7 @@ impl Generator {
                 }));
 
                 temp_variables.push(temp);
-            } else if let Node::CallFunction(node) = &node {
+            } else if let CallFunction(node) = node.node() {
                 let result_temp = self.scope.push_temp();
                 let temp = self.scope.push_temp();
 

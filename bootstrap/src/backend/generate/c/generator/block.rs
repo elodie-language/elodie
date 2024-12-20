@@ -1,17 +1,18 @@
 use crate::backend::generate::c;
-use crate::backend::generate::c::generator::Generator;
 use crate::backend::generate::c::{BlockStatement, Indent};
-use crate::frontend::old_ast;
+use crate::backend::generate::c::generator::Generator;
+use crate::frontend::ast::BlockNode;
+use crate::frontend::ast::node::AstNode;
 
 impl Generator {
     pub(crate) fn generate_block(
         &mut self,
-        node: &old_ast::BlockNode,
+        node: &BlockNode<AstNode>,
     ) -> c::generator::Result<BlockStatement> {
         self.scope.enter();
 
         let mut statements = vec![];
-        for node in &node.body {
+        for node in &node.nodes {
             statements.extend(self.generate_statements(node)?)
         }
 

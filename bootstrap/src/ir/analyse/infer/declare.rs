@@ -29,7 +29,7 @@ mod tests {
     use bigdecimal::BigDecimal;
 
     use crate::frontend;
-    use crate::frontend::new_ast_from_str;
+    use crate::frontend::ast_from_str;
     use crate::ir::analyse::{analyse, InferredType};
     use crate::ir::context::Context;
     use crate::ir::symbol::SymbolId;
@@ -37,7 +37,7 @@ mod tests {
     #[test]
     fn declare_number_variable() {
         let mut ctx = frontend::Context::new();
-        let ast = new_ast_from_str(&mut ctx, "let value = 23").unwrap();
+        let ast = ast_from_str(&mut ctx, "let value = 23").unwrap();
 
         let mut ctx = Context::new(ctx);
         let analysed = analyse(&mut ctx, ast).unwrap();
@@ -53,7 +53,7 @@ mod tests {
     #[test]
     fn declare_number_variable_with_explicit_type() {
         let mut ctx = frontend::Context::new();
-        let ast = new_ast_from_str(&mut ctx, "let value: Number = 23").unwrap();
+        let ast = ast_from_str(&mut ctx, "let value: Number = 23").unwrap();
 
         let mut ctx = Context::new(ctx);
         let analysed = analyse(&mut ctx, ast).unwrap();
@@ -69,7 +69,7 @@ mod tests {
     #[test]
     fn declare_string_variable_with_explicit_type() {
         let mut ctx = frontend::Context::new();
-        let ast = new_ast_from_str(&mut ctx, "let value: String = 'Elo'").unwrap();
+        let ast = ast_from_str(&mut ctx, "let value: String = 'Elo'").unwrap();
 
         let mut ctx = Context::new(ctx);
         let analysed = analyse(&mut ctx, ast).unwrap();
@@ -85,7 +85,7 @@ mod tests {
     #[test]
     fn declare_boolean_variable() {
         let mut ctx = frontend::Context::new();
-        let ast = new_ast_from_str(&mut ctx, "let value = true").unwrap();
+        let ast = ast_from_str(&mut ctx, "let value = true").unwrap();
 
         let mut ctx = Context::new(ctx);
         let analysed = analyse(&mut ctx, ast).unwrap();

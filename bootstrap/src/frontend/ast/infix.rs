@@ -2,18 +2,14 @@ use std::ops::Deref;
 use std::rc::Rc;
 
 use crate::common::PackagePath;
-use crate::frontend::old_ast::node::{
-    CalculateNode, CalculationOperator, CallFunctionNode, CallFunctionOfObjectNode,
-    CallFunctionOfPackageNode, CallFunctionWithLambdaNode, CompareNode, CompareOperator,
-    Identifier, LoadValueFromObjectNode, LoadValueFromSelfNode, NamedArgumentNode,
-};
-use crate::frontend::old_ast::Generator;
-use crate::frontend::parse::Node::Type;
+use crate::frontend::{ast, parse};
+use crate::frontend::ast::{AccessVariableOfObjectNode, AccessVariableOfSelfNode,  Generator, NamedArgument, SPAN_NOT_IMPLEMENTED};
+use crate::frontend::ast::node::{Ast, AstNode, CalculateNode, CalculationOperator, CallFunctionNode, CallFunctionOfObjectNode, CallFunctionOfPackageNode, CallFunctionWithLambdaNode, CompareNode, CompareOperator, Identifier};
 use crate::frontend::parse::{InfixNode, InfixOperator, Node, TypeNode};
-use crate::frontend::{old_ast, parse};
+use crate::frontend::parse::Node::Type;
 
 impl<'a> Generator<'a> {
-    pub(crate) fn generate_infix(&mut self, node: &parse::InfixNode) -> old_ast::Result<old_ast::Node> {
+    pub(crate) fn generate_infix(&mut self, node: &parse::InfixNode) -> ast::Result<AstNode> {
         let InfixNode {
             left,
             operator,
@@ -31,11 +27,10 @@ impl<'a> Generator<'a> {
                 todo!()
             };
             let arguments = self.generate_arguments(right.as_tuple())?;
-            return Ok(old_ast::Node::CallFunction(CallFunctionNode {
-                span: token.span.clone(),
-                function: Identifier(function_identifier.0.clone()),
+            return Ok(AstNode::new(ast::Node::CallFunction(CallFunctionNode {
+                function: Identifier(function_identifier.0.value),
                 arguments,
-            }));
+            }), SPAN_NOT_IMPLEMENTED.clone()));
         }
 
         // call function of object / self
@@ -43,24 +38,22 @@ impl<'a> Generator<'a> {
             && matches!(left.as_infix().operator, InfixOperator::AccessProperty(_))
             && matches!(operator, InfixOperator::Call(_))
         {
-            let old_ast::Node::LoadValueFromObject(LoadValueFromObjectNode {
-                span,
-                object,
-                property,
-            }) = self.generate_access_property(left.as_infix())?
-            else {
-                panic!()
-            };
+            let ast::Node::AccessVariableOfObject(AccessVariableOfObjectNode {
+                                                      object,
+                                                      variable,
+                                                  }) = self.generate_access_variable(left.as_infix())?.node_to_owned()
+                else {
+                    panic!()
+                };
 
             let arguments = self.generate_arguments(right.as_tuple())?;
 
             // FIXME add type information
-            return Ok(old_ast::Node::CallFunctionOfObject(CallFunctionOfObjectNode {
-                span,
-                object: old_ast::Identifier::from(object),
-                function: old_ast::Identifier::from(property),
+            return Ok(AstNode::new(ast::Node::CallFunctionOfObject(CallFunctionOfObjectNode {
+                object: ast::Identifier(object.0.clone()),
+                function: ast::Identifier(variable.0.clone()),
                 arguments,
-            }));
+            }), SPAN_NOT_IMPLEMENTED.clone()));
         };
 
         // lambda call
@@ -68,20 +61,20 @@ impl<'a> Generator<'a> {
             let left = self.generate_node(left.deref())?;
             let right = self.generate_node(right.deref())?;
 
-            let old_ast::Node::CallFunction(call_function) = left else {
+            let ast::Node::CallFunction(call_function) = left.node_to_owned() else {
                 panic!()
             };
-            let old_ast::Node::Block(lambda) = right else {
+            let ast::Node::Block(lambda) = right.node_to_owned() else {
                 panic!()
             };
 
-            return Ok(old_ast::Node::CallFunctionWithLambda(
+            return Ok(AstNode::new(ast::Node::CallFunctionWithLambda(
                 CallFunctionWithLambdaNode {
-                    span: node.token.span.clone(),
-                    call_function,
+                    function: call_function.function,
                     lambda: Rc::new(lambda),
+                    arguments: call_function.arguments,
                 },
-            ));
+            ), SPAN_NOT_IMPLEMENTED.clone()));
         }
 
         // call function of package
@@ -101,22 +94,21 @@ impl<'a> Generator<'a> {
                 {
                     self.package_path(left.as_infix())
                 } else {
-                    vec![Identifier::from(left.as_infix().left.as_identifier())]
+                    vec![Identifier(left.as_infix().left.as_identifier().0.value)]
                 }
             };
 
             let function_identifier = left.as_infix().right.as_identifier();
 
-            return Ok(old_ast::Node::CallFunctionOfPackage(
+            return Ok(AstNode::new(ast::Node::CallFunctionOfPackage(
                 CallFunctionOfPackageNode {
-                    span: node.token.span.clone(),
                     package: PackagePath::from(
-                        paths.into_iter().map(|p| p.0.value()).collect::<Vec<_>>(),
+                        paths.into_iter().map(|p| p.0).collect::<Vec<_>>(),
                     ),
-                    function: Identifier(function_identifier.0.clone()),
+                    function: Identifier(function_identifier.value()),
                     arguments,
                 },
-            ));
+            ), SPAN_NOT_IMPLEMENTED.clone()));
         }
 
         // self.variable
@@ -124,11 +116,10 @@ impl<'a> Generator<'a> {
             && matches!(operator, InfixOperator::AccessProperty(_))
             && right.is_identifier()
         {
-            let property = right.as_identifier();
-            return Ok(old_ast::Node::LoadValueFromSelf(LoadValueFromSelfNode {
-                span: node.token.span.clone(),
-                property: old_ast::Identifier::from(property),
-            }));
+            let variable = right.as_identifier();
+            return Ok(AstNode::new(ast::Node::AccessVariableOfSelf(AccessVariableOfSelfNode {
+                variable: ast::Identifier(variable.value()),
+            }), SPAN_NOT_IMPLEMENTED.clone()));
         }
 
         // variable.variable
@@ -138,73 +129,72 @@ impl<'a> Generator<'a> {
         {
             // FIXME support chaining objects root.level_one.level_two..
             let object = left.as_identifier();
-            let property = right.as_identifier();
+            let variable = right.as_identifier();
 
-            return Ok(old_ast::Node::LoadValueFromObject(LoadValueFromObjectNode {
-                span: node.token.span.clone(),
-                object: old_ast::Identifier::from(object),
-                property: old_ast::Identifier::from(property),
-            }));
+            return Ok(AstNode::new(ast::Node::AccessVariableOfObject(AccessVariableOfObjectNode {
+                object: ast::Identifier(object.value()),
+                variable: ast::Identifier(variable.value()),
+            }), SPAN_NOT_IMPLEMENTED.clone()));
         }
 
         if let InfixOperator::Add(_) = operator {
-            let left = Box::new(self.generate_node(left.deref())?);
-            let right = Box::new(self.generate_node(right.deref())?);
-            return Ok(old_ast::Node::Calculate(CalculateNode {
+            let left = Rc::new(self.generate_node(left.deref())?);
+            let right = Rc::new(self.generate_node(right.deref())?);
+            return Ok(AstNode::new(ast::Node::Calculate(CalculateNode {
                 left,
                 operator: CalculationOperator::Add,
                 right,
-            }));
+            }), SPAN_NOT_IMPLEMENTED.clone()));
         }
 
         if let InfixOperator::Equal(_) = operator {
-            let left = Box::new(self.generate_node(left.deref())?);
-            let right = Box::new(self.generate_node(right.deref())?);
+            let left = Rc::new(self.generate_node(left.deref())?);
+            let right = Rc::new(self.generate_node(right.deref())?);
 
-            return Ok(old_ast::Node::Compare(CompareNode {
+            return Ok(AstNode::new(ast::Node::Compare(CompareNode {
                 left,
                 operator: CompareOperator::Equal,
                 right,
-            }));
+            }), SPAN_NOT_IMPLEMENTED.clone()));
         }
 
         if let InfixOperator::NotEqual(_) = operator {
-            let left = Box::new(self.generate_node(left.deref())?);
-            let right = Box::new(self.generate_node(right.deref())?);
+            let left = Rc::new(self.generate_node(left.deref())?);
+            let right = Rc::new(self.generate_node(right.deref())?);
 
-            return Ok(old_ast::Node::Compare(CompareNode {
+            return Ok(AstNode::new(ast::Node::Compare(CompareNode {
                 left,
                 operator: CompareOperator::NotEqual,
                 right,
-            }));
+            }), SPAN_NOT_IMPLEMENTED.clone()));
         }
 
         if let InfixOperator::GreaterThan(_) = operator {
-            let left = Box::new(self.generate_node(left.deref())?);
-            let right = Box::new(self.generate_node(right.deref())?);
+            let left = Rc::new(self.generate_node(left.deref())?);
+            let right = Rc::new(self.generate_node(right.deref())?);
 
-            return Ok(old_ast::Node::Compare(CompareNode {
+            return Ok(AstNode::new(ast::Node::Compare(CompareNode {
                 left,
                 operator: CompareOperator::GreaterThan,
                 right,
-            }));
+            }), SPAN_NOT_IMPLEMENTED.clone()));
         }
 
         if let InfixOperator::Multiply(_) = operator {
-            let left = Box::new(self.generate_node(left.deref())?);
-            let right = Box::new(self.generate_node(right.deref())?);
+            let left = Rc::new(self.generate_node(left.deref())?);
+            let right = Rc::new(self.generate_node(right.deref())?);
 
-            return Ok(old_ast::Node::Calculate(CalculateNode {
+            return Ok(AstNode::new(ast::Node::Calculate(CalculateNode {
                 left,
                 operator: CalculationOperator::Multiply,
                 right,
-            }));
+            }), SPAN_NOT_IMPLEMENTED.clone()));
         }
 
         unimplemented!("{:#?}", node);
     }
 
-    fn generate_access_property(&mut self, node: &parse::InfixNode) -> old_ast::Result<old_ast::Node> {
+    fn generate_access_variable(&mut self, node: &parse::InfixNode) -> ast::Result<AstNode> {
         let InfixNode {
             left,
             operator,
@@ -213,11 +203,10 @@ impl<'a> Generator<'a> {
         } = node;
 
         if let Node::Itself(_) = left.deref() {
-            if let Node::Identifier(property) = right.deref() {
-                return Ok(old_ast::Node::LoadValueFromSelf(LoadValueFromSelfNode {
-                    span: node.token.span.clone(),
-                    property: old_ast::Identifier::from(property),
-                }));
+            if let Node::Identifier(variable) = right.deref() {
+                return Ok(AstNode::new(ast::Node::AccessVariableOfSelf(AccessVariableOfSelfNode {
+                    variable: Identifier(variable.0.value),
+                }), SPAN_NOT_IMPLEMENTED.clone()));
             }
         }
 
@@ -225,18 +214,17 @@ impl<'a> Generator<'a> {
             todo!()
         };
 
-        let Node::Identifier(property) = right.deref() else {
+        let Node::Identifier(variable) = right.deref() else {
             todo!()
         };
 
-        return Ok(old_ast::Node::LoadValueFromObject(LoadValueFromObjectNode {
-            span: node.token.span.clone(),
-            object: old_ast::Identifier::from(object_identifier),
-            property: old_ast::Identifier::from(property),
-        }));
+        return Ok(AstNode::new(ast::Node::AccessVariableOfObject(AccessVariableOfObjectNode {
+            object: ast::Identifier(object_identifier.0.value),
+            variable: ast::Identifier(variable.0.value),
+        }), SPAN_NOT_IMPLEMENTED.clone()));
     }
 
-    fn generate_type_instantiation(&mut self, node: &parse::InfixNode) -> old_ast::Result<old_ast::Node> {
+    fn generate_type_instantiation(&mut self, node: &parse::InfixNode) -> ast::Result<AstNode> {
         let InfixNode {
             left,
             operator,
@@ -253,14 +241,13 @@ impl<'a> Generator<'a> {
 
         let mut arguments = self.generate_named_arguments(arguments_node)?;
 
-        return Ok(old_ast::Node::InstantiateType(old_ast::InstantiateTypeNode {
-            span: node.token.span.clone(),
-            type_name: Identifier(type_node.token.clone()),
+        return Ok(AstNode::new(ast::Node::InstantiateType(ast::InstantiateTypeNode {
+            r#type: Identifier(type_node.token.value),
             arguments,
-        }));
+        }), SPAN_NOT_IMPLEMENTED.clone()));
     }
 
-    fn generate_arguments(&mut self, node: &parse::TupleNode) -> old_ast::Result<Vec<old_ast::Node>> {
+    fn generate_arguments(&mut self, node: &parse::TupleNode) -> ast::Result<Vec<AstNode>> {
         let mut result = Vec::with_capacity(node.nodes.len());
         for node in &node.nodes {
             result.push(self.generate_node(node)?)
@@ -271,27 +258,26 @@ impl<'a> Generator<'a> {
     fn generate_named_arguments(
         &mut self,
         node: &parse::TupleNode,
-    ) -> old_ast::Result<Vec<NamedArgumentNode>> {
+    ) -> ast::Result<Vec<NamedArgument<AstNode>>> {
         let mut result = Vec::with_capacity(node.nodes.len());
 
         for node in &node.nodes {
             let Node::Infix(InfixNode {
-                left,
-                operator,
-                right,
-                token,
-            }) = node
-            else {
-                panic!()
-            };
+                                left,
+                                operator,
+                                right,
+                                token,
+                            }) = node
+                else {
+                    panic!()
+                };
             assert!(matches!(operator, InfixOperator::Assign(_)));
             let Node::Identifier(identifier) = left.deref() else {
                 panic!()
             };
             let right = self.generate_node(right)?;
-            result.push(NamedArgumentNode {
-                span: node.token().span,
-                identifier: Identifier::from(identifier),
+            result.push(NamedArgument {
+                identifier: Identifier(identifier.0.value),
                 value: right,
             })
         }
@@ -313,11 +299,11 @@ impl<'a> Generator<'a> {
             } = current;
 
             if let parse::Node::Identifier(identifier) = right.deref() {
-                paths.push(Identifier::from(identifier))
+                paths.push(Identifier(identifier.0.value))
             }
 
             if let parse::Node::Identifier(identifier) = left.deref() {
-                paths.push(Identifier::from(identifier))
+                paths.push(Identifier(identifier.0.value))
             }
 
             if !left.is_infix() {

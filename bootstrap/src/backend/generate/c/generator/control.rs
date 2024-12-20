@@ -1,14 +1,15 @@
 use std::ops::Deref;
 
 use crate::backend::generate::c;
-use crate::backend::generate::c::generator::Generator;
 use crate::backend::generate::c::{IfStatement, Statement};
-use crate::frontend::old_ast;
+use crate::backend::generate::c::generator::Generator;
+use crate::frontend::ast::IfNode;
+use crate::frontend::ast::node::AstNode;
 
 impl Generator {
     pub(crate) fn generate_if(
         &mut self,
-        node: &old_ast::IfNode,
+        node: &IfNode<AstNode>,
     ) -> c::generator::Result<Vec<Statement>> {
         let mut result = vec![];
 

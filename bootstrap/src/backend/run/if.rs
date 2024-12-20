@@ -1,9 +1,10 @@
-use crate::backend::run::value::Value;
 use crate::backend::run::Runner;
-use crate::frontend::old_ast;
+use crate::backend::run::value::Value;
+use crate::frontend::ast;
+use crate::frontend::ast::node::AstNode;
 
 impl<'a> Runner<'a> {
-    pub(crate) fn run_if(&mut self, node: &old_ast::IfNode) -> crate::backend::run::Result<Value> {
+    pub(crate) fn run_if(&mut self, node: &ast::IfNode<AstNode>) -> crate::backend::run::Result<Value> {
         let condition = self.run_node(&node.condition)?;
         match condition {
             Value::Bool(v) => {

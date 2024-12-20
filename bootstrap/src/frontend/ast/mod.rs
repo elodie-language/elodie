@@ -1,22 +1,26 @@
-use crate::frontend::{Context, NewAst, parse};
+use crate::frontend::{Context, Ast, parse};
 pub use crate::frontend::ast::node::*;
 use crate::frontend::ast::node::AstNode;
 
 mod block;
 mod control;
 mod function;
-mod variable;
+mod identifier;
+mod infix;
 mod literal;
 pub(crate) mod node;
-mod r#type;
 mod package;
+mod string;
+mod r#type;
+mod variable;
+
 
 #[derive(Debug)]
 pub enum Error {}
 
 pub(crate) type Result<T, E = Error> = core::result::Result<T, E>;
 
-pub(crate) fn from(ctx: &mut Context, nodes: Vec<parse::Node>) -> Result<NewAst> {
+pub(crate) fn from(ctx: &mut Context, nodes: Vec<parse::Node>) -> Result<Ast> {
     let mut compiler = Generator::new(ctx);
     compiler.generate(nodes)
 }
@@ -32,7 +36,7 @@ impl<'a> Generator<'a> {
 }
 
 impl<'a> Generator<'a> {
-    pub(crate) fn generate(&mut self, nodes: Vec<parse::Node>) -> Result<NewAst> {
+    pub(crate) fn generate(&mut self, nodes: Vec<parse::Node>) -> Result<Ast> {
         let mut result = Vec::new();
         for node in &nodes {
             if !matches!(node, parse::Node::Nop) {
@@ -40,7 +44,7 @@ impl<'a> Generator<'a> {
             }
         }
 
-        Ok(NewAst { nodes: result })
+        Ok(Ast { nodes: result })
     }
 
     pub(crate) fn generate_node(&mut self, node: &parse::Node) -> Result<AstNode> {
@@ -56,20 +60,20 @@ impl<'a> Generator<'a> {
             parse::Node::FunctionDeclaration(declaration_node) => {
                 Ok(self.generate_declare_function(declaration_node)?)
             }
-            // parse::Node::PackageDeclaration(declaration_node) => {
-            //     Ok(self.generate_declare_package(declaration_node)?)
-            // }
-            // parse::Node::Identifier(identifier_node) => {
-            //     Ok(self.generate_identifier(identifier_node)?)
-            // }
+            parse::Node::PackageDeclaration(declaration_node) => {
+                Ok(self.generate_declare_package(declaration_node)?)
+            }
+            parse::Node::Identifier(identifier_node) => {
+                Ok(self.generate_identifier(identifier_node)?)
+            }
             parse::Node::If(if_node) => Ok(self.generate_if(if_node)?),
-            // parse::Node::Infix(infix_node) => Ok(self.generate_infix(infix_node)?),
-            // parse::Node::StringInterpolation(node) => self.generate_interpolate_string(node),
-            // parse::Node::Itself(node) => Ok(self.generate_self(node)?),
+            parse::Node::Infix(infix_node) => Ok(self.generate_infix(infix_node)?),
+            parse::Node::StringInterpolation(node) => self.generate_interpolate_string(node),
+            parse::Node::Itself(node) => Ok(self.generate_self(node)?),
             parse::Node::Literal(literal_node) => Ok(self.generate_literal(literal_node)?),
             parse::Node::Loop(loop_node) => Ok(self.generate_loop(loop_node)?),
             parse::Node::Return(return_node) => Ok(self.generate_function_return(return_node)?),
-            // parse::Node::TypeDeclaration(node) => Ok(self.declare_type(node)?),
+            parse::Node::TypeDeclaration(node) => Ok(self.generate_declare_type(node)?),
             parse::Node::VariableDeclaration(let_node) => Ok(self.generate_declare_variable(let_node)?),
             _ => unimplemented!("{:?}", node),
         }

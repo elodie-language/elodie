@@ -4,7 +4,8 @@ use std::fmt::{Debug, Formatter};
 use std::rc::Rc;
 
 use crate::common::StringTableId;
-use crate::frontend::old_ast::node::{BlockNode, FunctionArgumentNode, Identifier};
+use crate::frontend::ast::{BlockNode, FunctionArgument, Identifier};
+use crate::frontend::ast::node::AstNode;
 
 #[derive(Debug, Clone)]
 pub enum Value {
@@ -53,8 +54,8 @@ impl Debug for IntrinsicFunctionValue {
 
 #[derive(Debug, Clone)]
 pub struct FunctionValue {
-    pub arguments: Vec<Rc<FunctionArgumentNode>>,
-    pub body: Rc<BlockNode>,
+    pub arguments: Vec<Rc<FunctionArgument>>,
+    pub body: Rc<BlockNode<AstNode>>,
 }
 
 #[derive(Debug, Clone)]
@@ -104,10 +105,9 @@ impl ObjectValue {
     #[deprecated]
     pub fn get_property_host_function(
         &self,
-        identifier: impl AsRef<Identifier>,
+        identifier: &Identifier,
     ) -> Option<&IntrinsicFunctionValue> {
-        let identifier = identifier.as_ref();
-        if let Some(Value::IntrinsicFunction(result)) = &self.properties.get(&identifier.0.value())
+        if let Some(Value::IntrinsicFunction(result)) = &self.properties.get(&identifier.0)
         {
             Some(result)
         } else {

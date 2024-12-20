@@ -1,13 +1,11 @@
 use std::ops::Index;
 
-use crate::frontend::old_ast::node::*;
 pub use crate::frontend::context::Context;
 use crate::frontend::lex::lex;
 use crate::frontend::ast::node::AstNode;
 use crate::frontend::parse::parse;
 
 pub mod ast;
-pub mod old_ast;
 pub mod lex;
 pub mod parse;
 pub mod modifier;
@@ -17,8 +15,7 @@ pub mod context;
 pub enum Error {
     Lexer(lex::Error),
     Parser(parse::Error),
-    Ast(old_ast::Error),
-    NewAst(ast::Error),
+    Ast(ast::Error),
 }
 
 impl From<lex::Error> for Error {
@@ -33,34 +30,29 @@ impl From<parse::Error> for Error {
     }
 }
 
-impl From<old_ast::Error> for Error {
-    fn from(value: old_ast::Error) -> Self {
-        Self::Ast(value)
-    }
-}
-
 impl From<ast::Error> for Error {
     fn from(value: ast::Error) -> Self {
-        Self::NewAst(value)
+        Self::Ast(value)
     }
 }
 
 pub type Result<T, E = Error> = core::result::Result<T, E>;
 
+
 #[derive(Debug)]
 pub struct Ast {
-    pub nodes: Vec<Node>,
+    pub nodes: Vec<AstNode>,
 }
 
 impl Index<usize> for Ast {
-    type Output = Node;
+    type Output = AstNode;
     fn index(&self, index: usize) -> &Self::Output {
         self.nodes.index(index)
     }
 }
 
-impl From<Vec<Node>> for Ast {
-    fn from(value: Vec<Node>) -> Self {
+impl From<Vec<AstNode>> for Ast {
+    fn from(value: Vec<AstNode>) -> Self {
         Self { nodes: value }
     }
 }
@@ -72,36 +64,6 @@ impl Ast {
 }
 
 pub fn ast_from_str(ctx: &mut Context, str: &str) -> Result<Ast> {
-    let lexed = lex(ctx, str)?;
-    let nodes = parse(ctx, lexed)?;
-    Ok(old_ast::from(ctx, nodes)?)
-}
-
-#[derive(Debug)]
-pub struct NewAst {
-    pub nodes: Vec<AstNode>,
-}
-
-impl Index<usize> for NewAst {
-    type Output = AstNode;
-    fn index(&self, index: usize) -> &Self::Output {
-        self.nodes.index(index)
-    }
-}
-
-impl From<Vec<AstNode>> for NewAst {
-    fn from(value: Vec<AstNode>) -> Self {
-        Self { nodes: value }
-    }
-}
-
-impl NewAst {
-    pub fn len(&self) -> usize {
-        self.nodes.len()
-    }
-}
-
-pub fn new_ast_from_str(ctx: &mut Context, str: &str) -> Result<NewAst> {
     let lexed = lex(ctx, str)?;
     let nodes = parse(ctx, lexed)?;
     Ok(ast::from(ctx, nodes)?)

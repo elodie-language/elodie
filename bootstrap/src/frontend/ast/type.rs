@@ -1,11 +1,39 @@
 use std::ops::Deref;
 
 use crate::frontend::{ast, parse};
-use crate::frontend::ast::{Ast, AstType, DefineTypeNode, Generator, Identifier, Node, SPAN_NOT_IMPLEMENTED};
-use crate::frontend::ast::node::AstNode;
-use crate::frontend::parse::{TypeFunctionNode, TypeNode};
+use crate::frontend::ast::{AstType, DefineTypeNode, Generator, Identifier, Node, SPAN_NOT_IMPLEMENTED, TypeVariable};
+use crate::frontend::ast::DeclareTypeNode;
+use crate::frontend::ast::node::{Ast, AstNode};
+use crate::frontend::ast::Node::DeclareType;
+use crate::frontend::parse::{InfixNode, InfixOperator, TypeFunctionNode, TypeNode};
 
 impl<'a> Generator<'a> {
+
+    pub(crate) fn generate_declare_type(
+        &mut self,
+        node: &parse::TypeDeclarationNode,
+    ) -> ast::Result<AstNode> {
+
+        let mut variables = Vec::with_capacity(node.properties.nodes.len());
+        for node in &node.properties.nodes {
+            let parse::Node::Infix(InfixNode { left, right, operator, token, }) = node else { panic!() };
+            assert!(matches!(operator, InfixOperator::TypeAscription(_)));
+            let identifier = left.deref().as_identifier();
+            let r#type = self.to_ast_type(right.deref().as_type());
+            variables.push(TypeVariable {
+                variable: Identifier(identifier.value()),
+                r#type,
+            })
+        }
+
+        Ok(AstNode::new(DeclareType(DeclareTypeNode {
+            r#type: Identifier(node.identifier.value()),
+            modifiers: node.modifiers.clone(),
+            variables,
+        }), SPAN_NOT_IMPLEMENTED.clone()))
+    }
+
+
     pub(crate) fn to_ast_type(&self, node: &parse::TypeNode) -> AstType {
         match node {
             TypeNode::Boolean(_) => AstType::Boolean,
@@ -23,7 +51,6 @@ impl<'a> Generator<'a> {
         &mut self,
         node: &parse::DefineDeclarationNode,
     ) -> ast::Result<AstNode> {
-
         let mut compiled_body = vec![];
 
         for node in &node.block.nodes {
@@ -31,7 +58,7 @@ impl<'a> Generator<'a> {
         }
 
         Ok(AstNode::new(Node::DefineType(DefineTypeNode {
-            r#type: Identifier(node.identifier.0.clone()),
+            r#type: Identifier(node.identifier.value()),
             modifiers: node.modifiers.clone(),
             functions: compiled_body
                 .into_iter()

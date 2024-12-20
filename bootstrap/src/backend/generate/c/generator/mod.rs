@@ -13,9 +13,9 @@ use crate::backend::generate::c::DirectiveNode::{IncludeLocalDirective, IncludeS
 use crate::backend::generate::c::generator::scope::Scope;
 use crate::backend::generate::c::Node::DefineFunction;
 use crate::common::StringTable;
-use crate::frontend::old_ast::node::{DefineTypeNode, Node};
-use crate::{frontend, ir};
-use crate::ir::TypeTable;
+use crate::frontend;
+use crate::frontend::ast::{DefineTypeNode, Node};
+use crate::frontend::ast::node::{Ast, AstNode};
 
 mod block;
 mod control;
@@ -59,9 +59,9 @@ pub(crate) struct Generator {
 }
 
 impl Generator {
-    pub(crate) fn generate(mut self, nodes: Vec<Node>) -> Result<Vec<c::Node>> {
+    pub(crate) fn generate(mut self, nodes: Vec<AstNode>) -> Result<Vec<c::Node>> {
         for node in &nodes {
-            match node {
+            match node.node() {
                 Node::DeclareFunction(_) => {}
                 _ => {}
             }
@@ -151,8 +151,8 @@ impl Generator {
         Ok(result)
     }
 
-    pub(crate) fn generate_nodes(&mut self, node: &Node) -> Result<()> {
-        let _ = match node {
+    pub(crate) fn generate_nodes(&mut self, node: &AstNode) -> Result<()> {
+        let _ = match node.node() {
             Node::Block(node) => {
                 let stmts = self.generate_block(node)?;
                 self.main_statements.push(Statement::Block(stmts));
@@ -168,7 +168,7 @@ impl Generator {
                         identifier: format!(
                             "{}_{}",
                             "person",
-                            self.string_table.get(node.function.0.value())
+                            self.string_table.get(node.function.0)
                         ),
                         arguments: Box::new([Expression::Variable(VariableExpression {
                             indent: Indent::none(),
@@ -197,18 +197,16 @@ impl Generator {
                 let stmts = self.generate_if(node)?;
                 self.main_statements.extend(stmts);
             }
-            Node::LoadValue(_) => unimplemented!(),
-            Node::LoadValueFromObject(_) => unimplemented!(),
-            Node::LoadValueFromSelf(_) => unimplemented!(),
+            Node::AccessVariable(_) => unimplemented!(),
+            Node::AccessVariableOfObject(_) => unimplemented!(),
+            Node::AccessVariableOfSelf(_) => unimplemented!(),
             Node::Loop(_) => unimplemented!(),
-            Node::Literal(_) => unimplemented!(),
-            Node::Unit => unimplemented!(),
             Node::DeclareVariable(node) => {
                 let stmts = self.generate_declare_variable(node)?;
                 self.main_statements.extend(stmts);
             }
             Node::DeclareFunction(node) => {
-                let func_ident = self.string_table.get(node.identifier.0.value()).to_string();
+                let func_ident = self.string_table.get(node.function.0).to_string();
 
                 // let ty = if self.type_table.is_boolean(&node.return_type) {
                 //     "_Bool"
@@ -225,7 +223,7 @@ impl Generator {
                 //     ty: ty.to_string(),
                 // });
 
-                let statements = self.generate_block(node.body.as_ref())?;
+                let statements = self.generate_block(node.nodes.as_ref())?;
                 //
                 // self.function_definitions.push(DefineFunctionNode {
                 //     indent: Indent::none(),
@@ -240,11 +238,11 @@ impl Generator {
             Node::DeclareType(node) => {
                 self.struct_declarations.push(DeclareStructNode {
                     indent: Indent::none(),
-                    identifier: self.string_table.get(node.identifier.0.value()).to_string(),
+                    identifier: self.string_table.get(node.r#type.0).to_string(),
                 });
 
                 let mut fields = Vec::new();
-                for prop in &node.properties {
+                for prop in &node.variables {
                     // let ty = if self.type_table.is_number(&prop.r#type) {
                     //     "double".to_string()
                     // } else if self.type_table.is_boolean(&prop.r#type) {
@@ -264,13 +262,13 @@ impl Generator {
 
                 self.struct_definitions.push(DefineStructNode {
                     indent: Indent::none(),
-                    identifier: self.string_table.get(node.identifier.0.value()).to_string(),
+                    identifier: self.string_table.get(node.r#type.0).to_string(),
                     fields: fields.into_boxed_slice(),
                 })
             }
             Node::InstantiateType(_) => unimplemented!(),
             Node::DefineType(DefineTypeNode {
-                                 identifier,
+                                 r#type,
                                  modifiers,
                                  functions,
                                  ..
@@ -280,18 +278,18 @@ impl Generator {
                         indent: Indent::none(),
                         identifier: format!(
                             "{}_{}",
-                            self.string_table.get(identifier.0.value()).to_lowercase(),
-                            self.string_table.get(function.identifier.0.value())
+                            self.string_table.get(r#type.0).to_lowercase(),
+                            self.string_table.get(function.function.0)
                         ),
                         arguments: Box::new([DeclareFunctionArgumentNode {
                             indent: Indent::none(),
                             identifier: "self".to_string(),
-                            ty: format!("struct {} *", self.string_table.get(identifier.0.value())),
+                            ty: format!("struct {} *", self.string_table.get(r#type.0)),
                         }]),
                         ty: "void".to_string(),
                     });
 
-                    let statements = self.generate_block(function.body.as_ref())?;
+                    let statements = self.generate_block(function.nodes.as_ref())?;
 
                     self.function_definitions.push(DefineFunctionNode {
                         indent: Indent::none(),
@@ -299,7 +297,7 @@ impl Generator {
                         arguments: Box::new([DefineFunctionArgumentNode {
                             indent: Indent::none(),
                             identifier: "self".to_string(),
-                            ty: format!("struct {} *", self.string_table.get(identifier.0.value())),
+                            ty: format!("struct {} *", self.string_table.get(function.function.0)),
                         }]),
                         ty: "void".to_string(),
                         statements,
@@ -307,12 +305,15 @@ impl Generator {
                 }
             }
             Node::InterpolateString(_) => unimplemented!(),
+            Node::LiteralBoolean(_) => {}
+            Node::LiteralNumber(_) => {}
+            Node::LiteralString(_) => {}
         };
         Ok(())
     }
 
-    pub(crate) fn generate_statements(&mut self, node: &Node) -> Result<Vec<c::Statement>> {
-        match node {
+    pub(crate) fn generate_statements(&mut self, node: &AstNode) -> Result<Vec<c::Statement>> {
+        match node.node() {
             Node::Block(node) => Ok(vec![Statement::Block(self.generate_block(node)?)]),
             Node::BreakLoop(_) => unimplemented!(),
             Node::Calculate(_) => unimplemented!(),
@@ -323,7 +324,9 @@ impl Generator {
             Node::ExportPackage(_) => unimplemented!(),
             Node::ReturnFromFunction(node) => {
                 let mut result = vec![];
-                let (statements, expression) = self.generate_expression(node.node.as_ref())?;
+
+
+                let (statements, expression) = self.generate_expression(&node.node.clone().unwrap().as_ref())?;
 
                 result.extend(statements);
 
@@ -339,15 +342,13 @@ impl Generator {
             Node::ContinueLoop(_) => unimplemented!(),
             Node::Compare(_) => unimplemented!(),
             Node::If(node) => self.generate_if(node),
-            Node::LoadValue(_) => unimplemented!(),
-            Node::LoadValueFromObject(_) => unimplemented!(),
-            Node::LoadValueFromSelf(_) => unimplemented!(),
+            Node::AccessVariable(_) => unimplemented!(),
+            Node::AccessVariableOfObject(_) => unimplemented!(),
+            Node::AccessVariableOfSelf(_) => unimplemented!(),
             Node::Loop(_) => unimplemented!(),
-            Node::Literal(_) => unimplemented!(),
-            Node::Unit => unimplemented!(),
             Node::DeclareVariable(node) => self.generate_declare_variable(node),
             Node::DeclareFunction(node) => {
-                let func_ident = self.string_table.get(node.identifier.0.value()).to_string();
+                let func_ident = self.string_table.get(node.function.0).to_string();
 
                 // let ty = if self.type_table.is_boolean(&node.return_type) {
                 //     "_Bool"
@@ -382,19 +383,22 @@ impl Generator {
             Node::InstantiateType(_) => unimplemented!(),
             Node::DefineType(_) => unimplemented!(),
             Node::InterpolateString(_) => unimplemented!(),
+            Node::LiteralBoolean(_) => unimplemented!(),
+            Node::LiteralNumber(_) => unimplemented!(),
+            Node::LiteralString(_) => unimplemented!(),
         }
     }
 
     pub(crate) fn generate_expression(
         &mut self,
-        node: &Node,
+        node: &AstNode,
     ) -> Result<(Vec<c::Statement>, c::Expression)> {
-        match node {
-            Node::Literal(node) => {
-                Ok((vec![], c::Expression::Literal(self.generate_literal(node)?)))
-            }
-            Node::LoadValue(node) => Ok((vec![], self.generate_load_value(node)?)),
-            Node::LoadValueFromSelf(node) => Ok((vec![], self.generate_load_self_value(node)?)),
+        match node.node() {
+            Node::LiteralString(node) => Ok((vec![], c::Expression::Literal(self.generate_literal_string(node)?))),
+            Node::LiteralNumber(node) => Ok((vec![], c::Expression::Literal(self.generate_literal_number(node)?))),
+            Node::LiteralBoolean(node) => Ok((vec![], c::Expression::Literal(self.generate_literal_bool(node)?))),
+            Node::AccessVariable(node) => Ok((vec![], self.generate_load_value(node)?)),
+            Node::AccessVariableOfSelf(node) => Ok((vec![], self.generate_load_self_value(node)?)),
             Node::Compare(node) => {
                 let (statements, expression) = self.generate_compare(node)?;
                 Ok((statements, Expression::Infix(expression)))
@@ -409,7 +413,7 @@ impl Generator {
 
                 statements.push(Statement::CallFunction(CallFunctionStatement {
                     indent: Indent::none(),
-                    identifier: self.string_table.get(node.function.0.value()).to_string(),
+                    identifier: self.string_table.get(node.function.0).to_string(),
                     arguments: Box::new([]),
                     result: Some(CallFunctionStatementResult {
                         indent: Indent::none(),

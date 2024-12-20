@@ -35,14 +35,14 @@ mod tests {
     use bigdecimal::BigDecimal;
 
     use crate::frontend;
-    use crate::frontend::new_ast_from_str;
+    use crate::frontend::ast_from_str;
     use crate::ir::analyse;
     use crate::ir::analyse::InferredType;
 
     #[test]
     fn number_literal() {
         let mut ctx = frontend::Context::new();
-        let ast = new_ast_from_str(&mut ctx, "9924").unwrap();
+        let ast = ast_from_str(&mut ctx, "9924").unwrap();
 
         let mut ctx = analyse::Context::new(ctx);
         let analysed = analyse(&mut ctx, ast).unwrap();
@@ -57,7 +57,7 @@ mod tests {
     #[test]
     fn string_literal() {
         let mut ctx = frontend::Context::new();
-        let ast = new_ast_from_str(&mut ctx, "'Elodie'").unwrap();
+        let ast = ast_from_str(&mut ctx, "'Elodie'").unwrap();
 
         let mut ctx = analyse::Context::new(ctx);
         let analysed = analyse(&mut ctx, ast).unwrap();
@@ -72,7 +72,7 @@ mod tests {
     #[test]
     fn true_literal() {
         let mut ctx = frontend::Context::new();
-        let ast = new_ast_from_str(&mut ctx, "true").unwrap();
+        let ast = ast_from_str(&mut ctx, "true").unwrap();
 
         let mut ctx = analyse::Context::new(ctx);
         let analysed = analyse(&mut ctx, ast).unwrap();
@@ -87,7 +87,7 @@ mod tests {
     #[test]
     fn false_literal() {
         let mut ctx = frontend::Context::new();
-        let ast = new_ast_from_str(&mut ctx, "false").unwrap();
+        let ast = ast_from_str(&mut ctx, "false").unwrap();
 
         let mut ctx = analyse::Context::new(ctx);
         let analysed = analyse(&mut ctx, ast).unwrap();

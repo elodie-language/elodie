@@ -6,22 +6,22 @@ use crate::backend::generate::c::{
     DeclareVariableStatement, Expression, Indent, LiteralExpression, LiteralStringExpression,
     Statement, VariableExpression,
 };
-use crate::frontend::old_ast;
-use crate::frontend::old_ast::node::LoadValueNode;
+use crate::frontend::ast::{AccessVariableNode, AccessVariableOfObjectNode, CallFunctionNode, CallFunctionOfPackageNode, Node};
+use crate::frontend::ast::node::{Ast, AstNode};
 
 impl Generator {
     pub(crate) fn generate_declare_function(
         &mut self,
-        node: &old_ast::DeclareFunctionNode,
+        node: &DeclareFunctionNode,
     ) -> c::generator::Result<DeclareFunctionNode> {
         unimplemented!("{node:#?}")
     }
 
     pub(crate) fn generate_call_function(
         &mut self,
-        node: &old_ast::CallFunctionNode,
+        node: &CallFunctionNode<AstNode>,
     ) -> c::generator::Result<Vec<Statement>> {
-        let function = self.string_table.get(node.function.0.value()).to_string();
+        let function = self.string_table.get(node.function.0).to_string();
 
         let mut result = vec![];
 
@@ -44,10 +44,10 @@ impl Generator {
 
     pub(crate) fn generate_call_function_with_result(
         &mut self,
-        node: &old_ast::CallFunctionNode,
+        node: &CallFunctionNode<AstNode>,
         call_result: CallFunctionStatementResult,
     ) -> c::generator::Result<Vec<Statement>> {
-        let function = self.string_table.get(node.function.0.value()).to_string();
+        let function = self.string_table.get(node.function.0).to_string();
 
         let mut result = vec![];
 
@@ -66,13 +66,13 @@ impl Generator {
 
     pub(crate) fn generate_call_function_of_package(
         &mut self,
-        node: &old_ast::CallFunctionOfPackageNode,
+        node: &CallFunctionOfPackageNode<AstNode>,
     ) -> c::generator::Result<Vec<Statement>> {
         let mut result = vec![];
 
         let std = self.string_table.get(node.package.segments[0]).to_string();
         let io = self.string_table.get(node.package.segments[1]).to_string();
-        let function = self.string_table.get(node.function.0.value()).to_string();
+        let function = self.string_table.get(node.function.0).to_string();
 
         let (statements, arguments) = self.generate_call_arguments(&node.arguments)?;
         result.extend(statements);
@@ -89,7 +89,7 @@ impl Generator {
 
     fn generate_call_arguments(
         &mut self,
-        args: &[old_ast::Node],
+        args: &[AstNode],
     ) -> c::generator::Result<(Vec<Statement>, Vec<Expression>)> {
         let mut statements = vec![];
         let mut arguments = vec![];
@@ -97,7 +97,7 @@ impl Generator {
         for arg in args {
             let arg_identifier = self.scope.push_argument();
 
-            if let old_ast::Node::LoadValue(LoadValueNode { identifier, .. }) = arg {
+            if let Node::AccessVariable(AccessVariableNode { variable, .. }) = arg.node() {
                 // if self.type_table.is_string(ty) {
                 //     statements.push(Statement::DeclareVariable(DeclareVariableStatement {
                 //         indent: Indent::none(),
@@ -112,35 +112,35 @@ impl Generator {
                 // }
             }
 
-            if let old_ast::Node::Literal(old_ast::LiteralNode::String(str)) = arg {
-                statements.push(Statement::DeclareVariable(DeclareVariableStatement {
-                    indent: Indent::none(),
-                    identifier: arg_identifier.to_string(),
-                    r#type: "const char *".to_string(),
-                    expression: Expression::Literal(LiteralExpression::String(
-                        LiteralStringExpression {
-                            indent: Indent::none(),
-                            value: self.string_table.get(str.value()).to_string(),
-                        },
-                    )),
-                }));
+            // if let :Node::Literal(old_ast::LiteralNode::String(str)) = arg {
+            //     statements.push(Statement::DeclareVariable(DeclareVariableStatement {
+            //         indent: Indent::none(),
+            //         identifier: arg_identifier.to_string(),
+            //         r#type: "const char *".to_string(),
+            //         expression: Expression::Literal(LiteralExpression::String(
+            //             LiteralStringExpression {
+            //                 indent: Indent::none(),
+            //                 value: self.string_table.get(str.value()).to_string(),
+            //             },
+            //         )),
+            //     }));
 
-                arguments.push(c::Expression::Variable(VariableExpression {
-                    indent: Indent::none(),
-                    identifier: arg_identifier.to_string(),
-                }));
-                continue;
-            }
+                // arguments.push(c::Expression::Variable(VariableExpression {
+                //     indent: Indent::none(),
+                //     identifier: arg_identifier.to_string(),
+                // }));
+            //     continue;
+            // }
 
             // to_string + concatenation
-            if let old_ast::Node::InterpolateString(node) = arg {
+            if let Node::InterpolateString(node) = arg.node() {
                 let (s, a) = self.interpolate_string(node)?;
                 statements.extend(s);
                 arguments.push(a);
                 continue;
             }
 
-            if let old_ast::Node::CallFunction(node) = arg {
+            if let Node::CallFunction(node) = arg.node() {
                 let s = self.generate_call_function(node)?;
                 statements.extend(s);
                 arguments.push(Expression::Variable(VariableExpression {

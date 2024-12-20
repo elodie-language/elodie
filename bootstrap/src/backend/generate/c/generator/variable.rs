@@ -1,24 +1,23 @@
 use std::ops::Deref;
 
 use crate::backend::generate::c;
-use crate::backend::generate::c::generator::Generator;
 use crate::backend::generate::c::{
     DeclareVariableStatement, Indent, InitialiseStructExpression, InitialiseStructField, Statement,
     VariableExpression,
 };
-use crate::frontend::old_ast::node::Node::Literal;
-use crate::frontend::old_ast::node::{
-    DeclareVariableNode, LiteralNode, LoadValueFromSelfNode, LoadValueNode, Node,
-};
+use crate::backend::generate::c::generator::Generator;
+use crate::frontend::ast::{AccessVariableNode, AccessVariableOfSelfNode, DeclareVariableNode, LiteralBooleanNode, LiteralNumberNode, LiteralStringNode, Node};
+use crate::frontend::ast::node::{Ast, AstNode};
+use crate::frontend::ast::Node::{LiteralNumber, LiteralString};
 
 impl Generator {
     pub(crate) fn generate_declare_variable(
         &mut self,
-        node: &DeclareVariableNode,
+        node: &DeclareVariableNode<AstNode>,
     ) -> crate::backend::generate::c::generator::Result<Vec<Statement>> {
-        let variable = self.scope.push_variable(&node.identifier);
+        let variable = self.scope.push_variable(&node.variable);
 
-        if let Literal(LiteralNode::String(string)) = &node.value.deref() {
+        if let LiteralString(LiteralStringNode(string)) = &node.value.node() {
             return Ok(vec![Statement::DeclareVariable(DeclareVariableStatement {
                 indent: Indent::none(),
                 identifier: variable.to_string(&self.string_table),
@@ -32,7 +31,7 @@ impl Generator {
             })]);
         }
 
-        if let Literal(LiteralNode::Number(number)) = &node.value.deref() {
+        if let LiteralNumber(LiteralNumberNode(number)) = &node.value.node() {
             return Ok(vec![Statement::DeclareVariable(DeclareVariableStatement {
                 indent: Indent::none(),
                 identifier: variable.to_string(&self.string_table),
@@ -50,7 +49,7 @@ impl Generator {
             })]);
         }
 
-        if let Literal(LiteralNode::Boolean(boolean)) = &node.value.deref() {
+        if let Node::LiteralBoolean(LiteralBooleanNode(boolean)) = &node.value.node() {
             return Ok(vec![Statement::DeclareVariable(DeclareVariableStatement {
                 indent: Indent::none(),
                 identifier: variable.to_string(&self.string_table),
@@ -58,13 +57,13 @@ impl Generator {
                 expression: c::Expression::Literal(c::LiteralExpression::Bool(
                     c::LiteralBooleanExpression {
                         indent: Indent::none(),
-                        value: boolean.value(),
+                        value: self.string_table.get(boolean.value) == "true",
                     },
                 )),
             })]);
         }
 
-        if let Node::InstantiateType(instantiate) = &node.value.deref() {
+        if let Node::InstantiateType(instantiate) = &node.value.node() {
             let mut fields = Vec::new();
 
             let mut statements = vec![];
@@ -75,7 +74,7 @@ impl Generator {
                 statements.extend(s);
                 fields.push(InitialiseStructField {
                     indent: Indent::none(),
-                    identifier: self.string_table.get(arg.identifier.0.value()).to_string(),
+                    identifier: self.string_table.get(arg.identifier.0).to_string(),
                     expression,
                 })
             }
@@ -85,7 +84,7 @@ impl Generator {
                 identifier: variable.to_string(&self.string_table),
                 r#type: format!(
                     "struct {}",
-                    self.string_table.get(instantiate.type_name.0.value())
+                    self.string_table.get(instantiate.r#type.0)
                 ),
                 expression: c::Expression::StructInitialisation(InitialiseStructExpression {
                     fields: fields.into_boxed_slice(),
@@ -100,13 +99,13 @@ impl Generator {
 
     pub(crate) fn generate_load_value(
         &mut self,
-        node: &LoadValueNode,
+        node: &AccessVariableNode,
     ) -> c::generator::Result<c::Expression> {
         Ok(c::Expression::Variable(VariableExpression {
             indent: Indent::none(),
             identifier: self
                 .scope
-                .get_variable(&node.identifier)
+                .get_variable(&node.variable)
                 .unwrap()
                 .to_string(&self.string_table),
         }))
@@ -114,11 +113,11 @@ impl Generator {
 
     pub(crate) fn generate_load_self_value(
         &mut self,
-        node: &LoadValueFromSelfNode,
+        node: &AccessVariableOfSelfNode,
     ) -> c::generator::Result<c::Expression> {
         Ok(c::Expression::Variable(VariableExpression {
             indent: Indent::none(),
-            identifier: format!("self.{}", self.string_table.get(node.property.0.value())),
+            identifier: format!("self.{}", self.string_table.get(node.variable.0)),
         }))
     }
 }

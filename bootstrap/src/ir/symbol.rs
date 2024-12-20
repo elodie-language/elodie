@@ -18,7 +18,7 @@ pub struct SymbolName(pub StringTableId);
 
 impl From<&ast::Identifier> for SymbolName {
     fn from(value: &ast::Identifier) -> Self {
-        SymbolName(value.0.value())
+        SymbolName(value.0)
     }
 }
 
