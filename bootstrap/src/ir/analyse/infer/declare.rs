@@ -3,9 +3,9 @@ use std::rc::Rc;
 use crate::common::Span;
 use crate::frontend::ast;
 use crate::frontend::ast::node::AstNode;
-use crate::ir::analyse::{AnalysedNode, DeclareVariableInner};
+use crate::ir::analyse::{AnalysedNode, DeclareVariableNode};
 use crate::ir::analyse::infer::Inference;
-use crate::ir::analyse::Inner::DeclareVariable;
+use crate::ir::analyse::Node::DeclareVariable;
 use crate::ir::symbol::SymbolName;
 
 impl<'a> Inference<'a> {
@@ -20,7 +20,7 @@ impl<'a> Inference<'a> {
             value.inferred_type.clone()
         };
 
-        Ok(AnalysedNode::new(DeclareVariable(DeclareVariableInner { symbol, value }), span, inferred_type))
+        Ok(AnalysedNode::new(DeclareVariable(DeclareVariableNode { symbol, value }), span, inferred_type))
     }
 }
 

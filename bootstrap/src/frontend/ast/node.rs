@@ -3,6 +3,7 @@ use std::rc::Rc;
 
 use crate::common::{Column, Index, PackagePath, Position, Row, Span, WithSpan};
 use crate::frontend::lex::token::Token;
+use crate::frontend::modifier::Modifiers;
 
 pub trait Ast<T: Ast<T>>: Clone {
     fn node(&self) -> &Node<T>;
@@ -47,36 +48,44 @@ impl WithSpan for AstNode {
 
 #[derive(Debug, Clone, PartialEq)]
 pub enum Node<T: Ast<T>> {
-    AccessVariable { variable: Identifier },
-    AccessVariableOfObject { object: Identifier, variable: Identifier },
-    AccessVariableOfSelf { variable: Identifier },
+    AccessVariable(AccessVariableNode),
+    AccessVariableOfObject(AccessVariableOfObject),
+    AccessVariableOfSelf(AccessVariableOfSelf),
 
-    Block { nodes: Vec<T> },
-    BreakLoop { node: Option<Rc<T>> },
+    Block(BlockNode<T>),
+    BreakLoop(BreakLoopNode<T>),
 
-    Calculate { left: Rc<T>, operator: CalculationOperator, right: Rc<T> },
+    Calculate(CalculateNode<T>),
 
-    CallFunction { function: Identifier, arguments: Vec<T> },
-    CallFunctionWithLambda { function: Identifier, arguments: Vec<T>, lambda: Vec<T> },
-    CallFunctionOfObject { object: Identifier, function: Identifier, arguments: Vec<T> },
-    CallFunctionOfPackage { package: PackagePath, function: Identifier, arguments: Vec<T> },
+    CallFunction(CallFunctionNode<T>),
+    CallFunctionWithLambda(CallFunctionWithLambdaNode<T>),
+    CallFunctionOfObject(CallFunctionOfObjectNode<T>),
+    CallFunctionOfPackage(CallFunctionOfPackageNode<T>),
 
-    Compare { left: Rc<T>, operator: CompareOperator, right: Rc<T> },
-    ContinueLoop {},
+    Compare(CompareNode<T>),
+    ContinueLoop,
 
+    DeclareExternalFunction(DeclareExternalFunctionNode),
+    DeclareFunction(DeclareFunctionNode<T>),
+    DeclarePackage(DeclarePackageNode<T>),
+    DeclareType(DeclareTypeNode),
     DeclareVariable(DeclareVariableNode<T>),
 
-    ExportPackage { package: PackagePath, source: Source },
+    DefineType(DefineTypeNode<T>),
 
-    If { condition: Rc<T>, then: Rc<T>, otherwise: Option<Rc<T>> },
+    ExportPackage(ExportPackageNode),
+
+    If(IfNode<T>),
+    InterpolateString(InterpolateStringNode<T>),
+    InstantiateType(InstantiateTypeNode<T>),
 
     LiteralBoolean(LiteralBooleanNode),
     LiteralNumber(LiteralNumberNode),
     LiteralString(LiteralStringNode),
 
-    Loop { nodes: Vec<T> },
+    Loop(LoopNode<T>),
 
-    ReturnFromFunction { node: Rc<T> },
+    ReturnFromFunction(ReturnFromFunctionNode<T>),
 }
 
 #[derive(Debug, Clone, PartialEq)]
@@ -85,10 +94,136 @@ pub struct AccessVariableNode {
 }
 
 #[derive(Debug, Clone, PartialEq)]
-pub struct DeclareVariableNode<T: Clone + Ast<T>> {
+pub struct AccessVariableOfObject {
+    pub object: Identifier,
+    pub variable: Identifier,
+}
+
+#[derive(Debug, Clone, PartialEq)]
+pub struct AccessVariableOfSelf {
+    pub variable: Identifier,
+}
+
+#[derive(Debug, Clone, PartialEq)]
+pub struct BlockNode<T: Ast<T>> {
+    pub nodes: Vec<T>,
+}
+
+#[derive(Debug, Clone, PartialEq)]
+pub struct BreakLoopNode<T: Ast<T>> {
+    pub node: Option<Rc<T>>,
+}
+
+#[derive(Debug, Clone, PartialEq)]
+pub struct CalculateNode<T: Ast<T>> {
+    pub left: Rc<T>,
+    pub operator: CalculationOperator,
+    pub right: Rc<T>,
+}
+
+#[derive(Debug, Clone, PartialEq)]
+pub struct CallFunctionNode<T: Ast<T>> {
+    pub function: Identifier,
+    pub arguments: Vec<T>,
+}
+
+#[derive(Debug, Clone, PartialEq)]
+pub struct CallFunctionWithLambdaNode<T: Ast<T>> {
+    pub function: Identifier,
+    pub arguments: Vec<T>,
+    pub lambda: Vec<T>,
+}
+
+#[derive(Debug, Clone, PartialEq)]
+pub struct CallFunctionOfObjectNode<T: Ast<T>> {
+    pub object: Identifier,
+    pub function: Identifier,
+    pub arguments: Vec<T>,
+}
+
+#[derive(Debug, Clone, PartialEq)]
+pub struct CallFunctionOfPackageNode<T: Ast<T>> {
+    pub package: PackagePath,
+    pub function: Identifier,
+    pub arguments: Vec<T>,
+}
+
+#[derive(Debug, Clone, PartialEq)]
+pub struct CompareNode<T: Ast<T>> {
+    pub left: Rc<T>,
+    pub operator: CompareOperator,
+    pub right: Rc<T>,
+}
+
+#[derive(Debug, Clone, PartialEq)]
+pub struct DeclareExternalFunctionNode {
+    pub function: Identifier,
+    pub arguments: Vec<FunctionArgument>,
+    pub return_type: Option<AstType>,
+}
+
+#[derive(Debug, Clone, PartialEq)]
+pub struct DeclareFunctionNode<T: Ast<T>> {
+    pub function: Identifier,
+    pub arguments: Vec<FunctionArgument>,
+    pub return_type: Option<AstType>,
+    pub body: BlockNode<T>,
+}
+
+#[derive(Debug, Clone, PartialEq)]
+pub struct DeclarePackageNode<T: Ast<T>> {
+    pub package: Identifier,
+    pub modifiers: Modifiers,
+    pub external_functions: Vec<DeclareExternalFunctionNode>,
+    pub functions: Vec<DeclareFunctionNode<T>>,
+    pub packages: Vec<DeclarePackageNode<T>>,
+    pub types: Vec<DeclareTypeNode>,
+}
+
+#[derive(Debug, Clone, PartialEq)]
+pub struct DeclareTypeNode {
+    pub r#type: Identifier,
+    pub modifiers: Modifiers,
+    pub variables: Vec<TypeVariable>,
+}
+
+#[derive(Debug, Clone, PartialEq)]
+pub struct DefineTypeNode<T: Ast<T>> {
+    pub r#type: Identifier,
+    pub modifiers: Modifiers,
+    pub functions: Vec<DeclareFunctionNode<T>>,
+}
+
+
+#[derive(Debug, Clone, PartialEq)]
+pub struct DeclareVariableNode<T: Ast<T>> {
     pub variable: Identifier,
     pub value: Rc<T>,
     pub value_type: Option<AstType>,
+}
+
+#[derive(Debug, Clone, PartialEq)]
+pub struct ExportPackageNode {
+    pub package: PackagePath,
+    pub source: Source,
+}
+
+#[derive(Debug, Clone, PartialEq)]
+pub struct IfNode<T: Ast<T>> {
+    pub condition: Rc<T>,
+    pub then: Rc<T>,
+    pub otherwise: Option<Rc<T>>,
+}
+
+#[derive(Debug, Clone, PartialEq)]
+pub struct InterpolateStringNode<T: Ast<T>> {
+    pub values: Vec<T>,
+}
+
+#[derive(Debug, Clone, PartialEq)]
+pub struct InstantiateTypeNode<T: Ast<T>> {
+    pub r#type: Identifier,
+    pub arguments: Vec<NamedArgument<T>>,
 }
 
 #[derive(Debug, Clone, PartialEq)]
@@ -99,6 +234,16 @@ pub struct LiteralNumberNode(pub Token);
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct LiteralStringNode(pub Token);
+
+#[derive(Debug, Clone, PartialEq)]
+pub struct LoopNode<T: Ast<T>> {
+    pub nodes: Vec<T>,
+}
+
+#[derive(Debug, Clone, PartialEq)]
+pub struct ReturnFromFunctionNode<T: Ast<T>> {
+    pub node: Rc<T>,
+}
 
 #[derive(Debug, Clone, PartialEq)]
 pub enum CalculationOperator {
@@ -114,6 +259,13 @@ pub enum CompareOperator {
 }
 
 #[derive(Debug, Clone, PartialEq)]
+pub struct FunctionArgument {
+    pub argument: Identifier,
+    pub argument_type: Option<AstType>,
+}
+
+
+#[derive(Debug, Clone, PartialEq)]
 pub enum Source {
     LocalFile { path: String },
 }
@@ -122,6 +274,11 @@ pub enum Source {
 #[derive(Clone, Debug, PartialEq)]
 pub struct Identifier(pub Token);
 
+#[derive(Clone, Debug, PartialEq)]
+pub struct NamedArgument<T: Ast<T>> {
+    pub identifier: Identifier,
+    pub value: T,
+}
 
 #[derive(Debug, Clone, PartialEq)]
 pub enum AstType {
@@ -130,4 +287,10 @@ pub enum AstType {
     Number,
     String,
     Function { arguments: Vec<Box<AstType>>, return_type: Option<Box<AstType>> },
+}
+
+#[derive(Debug, Clone, PartialEq)]
+pub struct TypeVariable {
+    pub variable: Identifier,
+    pub r#type: AstType,
 }

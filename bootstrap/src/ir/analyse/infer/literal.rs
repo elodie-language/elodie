@@ -4,28 +4,28 @@ use bigdecimal::BigDecimal;
 
 use crate::common::Span;
 use crate::frontend::ast;
-use crate::ir::analyse::{AnalysedNode, InferredType, LiteralBooleanInner, LiteralNumberInner, LiteralStringInner};
+use crate::ir::analyse::{AnalysedNode, InferredType, LiteralBooleanNode, LiteralNumberNode, LiteralStringNode};
 use crate::ir::analyse::infer::Inference;
-use crate::ir::analyse::Inner::{LiteralBoolean, LiteralNumber, LiteralString};
+use crate::ir::analyse::Node::{LiteralBoolean, LiteralNumber, LiteralString};
 
 // FIXME no unwrap
 impl<'a> Inference<'a> {
     pub(crate) fn infer_literal_boolean(&mut self, span: Span, node: &ast::LiteralBooleanNode) -> crate::ir::analyse::Result<AnalysedNode> {
         let str = self.string_table.get(node.0.value());
 
-        Ok(AnalysedNode::new(LiteralBoolean(LiteralBooleanInner { value: bool::from_str(str).unwrap() }), span, InferredType::Boolean))
+        Ok(AnalysedNode::new(LiteralBoolean(LiteralBooleanNode { value: bool::from_str(str).unwrap() }), span, InferredType::Boolean))
     }
 
     pub(crate) fn infer_literal_number(&mut self, span: Span, node: &ast::LiteralNumberNode) -> crate::ir::analyse::Result<AnalysedNode> {
         let str = self.string_table.get(node.0.value());
 
-        Ok(AnalysedNode::new(LiteralNumber(LiteralNumberInner {
+        Ok(AnalysedNode::new(LiteralNumber(LiteralNumberNode {
             value: BigDecimal::from_str(str).unwrap()
         }), span, InferredType::Number))
     }
 
     pub(crate) fn infer_literal_string(&mut self, span: Span, node: &ast::LiteralStringNode) -> crate::ir::analyse::Result<AnalysedNode> {
-        Ok(AnalysedNode::new(LiteralString(LiteralStringInner { value: node.0.value() }), span, InferredType::String))
+        Ok(AnalysedNode::new(LiteralString(LiteralStringNode { value: node.0.value() }), span, InferredType::String))
     }
 }
 
