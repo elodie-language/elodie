@@ -1,5 +1,6 @@
+use crate::common::Span;
 use crate::frontend::lex::Lexer;
-use crate::frontend::lex::token::{TextSpan, Token, TokenKind};
+use crate::frontend::lex::token::{Token, TokenKind};
 use crate::frontend::lex::token::OperatorToken::*;
 
 impl Lexer<'_> {
@@ -133,7 +134,7 @@ impl Lexer<'_> {
 
         Ok(Token {
             kind,
-            span: TextSpan {
+            span: Span {
                 start,
                 end: self.position(),
             },

@@ -1,5 +1,6 @@
+use crate::common::Span;
 use crate::frontend::lex::Lexer;
-use crate::frontend::lex::token::{TextSpan, Token, TokenKind};
+use crate::frontend::lex::token::{Token, TokenKind};
 
 impl Lexer<'_> {
     pub(crate) fn consume_identifier(&mut self) -> crate::frontend::lex::Result<Token> {
@@ -9,7 +10,7 @@ impl Lexer<'_> {
 
         Ok(Token {
             kind: TokenKind::Identifier,
-            span: TextSpan {
+            span: Span {
                 start,
                 end: self.position(),
             },

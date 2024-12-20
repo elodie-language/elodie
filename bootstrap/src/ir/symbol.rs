@@ -1,7 +1,7 @@
 use std::ops::Index;
 
 use crate::common::StringTableId;
-use crate::frontend::ast::Identifier;
+use crate::frontend::new_ast;
 use crate::ir::Context;
 
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
@@ -16,8 +16,8 @@ impl AsRef<SymbolId> for SymbolId {
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
 pub struct SymbolName(pub StringTableId);
 
-impl From<&Identifier> for SymbolName {
-    fn from(value: &Identifier) -> Self {
+impl From<&new_ast::Identifier> for SymbolName {
+    fn from(value: &new_ast::Identifier) -> Self {
         SymbolName(value.0.value())
     }
 }

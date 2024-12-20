@@ -1,5 +1,6 @@
+use crate::common::Span;
 use crate::frontend::lex::Lexer;
-use crate::frontend::lex::token::{LiteralToken, TextSpan, Token, TokenKind};
+use crate::frontend::lex::token::{LiteralToken, Token, TokenKind};
 use crate::frontend::lex::token::LiteralToken::{False, Number, True};
 
 impl Lexer<'_> {
@@ -49,7 +50,7 @@ impl Lexer<'_> {
 
         Ok(Token {
             kind: TokenKind::Literal(LiteralToken::String),
-            span: TextSpan {
+            span: Span {
                 start,
                 end: self.position(),
             },
@@ -107,7 +108,7 @@ impl Lexer<'_> {
 
         Ok(Token {
             kind: TokenKind::Literal(Number),
-            span: TextSpan {
+            span: Span {
                 start,
                 end: self.position(),
             },
@@ -130,7 +131,7 @@ impl Lexer<'_> {
             self.consume_if("rue").unwrap();
             return Ok(Token {
                 kind: TokenKind::Literal(True),
-                span: TextSpan {
+                span: Span {
                     start,
                     end: self.position(),
                 },
@@ -142,7 +143,7 @@ impl Lexer<'_> {
         self.consume_if("alse").unwrap();
         Ok(Token {
             kind: TokenKind::Literal(False),
-            span: TextSpan {
+            span: Span {
                 start,
                 end: self.position(),
             },

@@ -1,8 +1,8 @@
-use std::rc::Rc;
-
-use crate::common::StringTable;
-use crate::frontend::{Ast, ast};
-use crate::ir::analyse::node::Node;
+use crate::common::{StringTable, WithSpan};
+use crate::frontend::{new_ast, NewAst};
+use crate::frontend::new_ast::Ast;
+use crate::frontend::new_ast::node::AstNode;
+use crate::ir::analyse::AnalysedNode;
 use crate::ir::context::Context;
 use crate::ir::symbol::{SymbolId, SymbolName, SymbolTable};
 
@@ -23,19 +23,22 @@ impl<'a> Inference<'a> {
         }
     }
 
-    pub(crate) fn infer(&mut self, ast: Ast) -> crate::ir::analyse::Result<Vec<Node>> {
+    pub(crate) fn infer(&mut self, ast: NewAst) -> crate::ir::analyse::Result<Vec<AnalysedNode>> {
         let mut nodes = vec![];
-        for node in ast.nodes {
-            nodes.push(self.infer_node(Rc::new(node))?);
+        for node in &ast.nodes {
+            nodes.push(self.infer_node(node)?);
         }
         Ok(nodes)
     }
 
-    fn infer_node(&mut self, node: Rc<ast::Node>) -> crate::ir::analyse::Result<Node> {
-        match node {
-            // ast::Node::DeclareVariable(node) => self.infer_declare_variable(node),
+    fn infer_node(&mut self, ast: &AstNode) -> crate::ir::analyse::Result<AnalysedNode> {
+        match ast.node() {
+            new_ast::Node::DeclareVariable(node) => self.infer_declare_variable(ast.span(), node),
+            new_ast::Node::LiteralBoolean(node) => self.infer_literal_boolean(ast.span(), node),
+            new_ast::Node::LiteralNumber(node) => self.infer_literal_number(ast.span(), node),
+            new_ast::Node::LiteralString(node) => self.infer_literal_string(ast.span(), node),
             // ast::Node::Literal(node) => self.infer_literal(node),
-            _ => unimplemented!("{node:#?}")
+            _ => unimplemented!("{ast:#?}")
         }
     }
 

@@ -1,8 +1,9 @@
 use std::cell::RefCell;
 
+use crate::common::{Column, Index, Position, Row, Span};
 use crate::frontend::context::Context;
 use crate::frontend::lex::Error::UnexpectedEndOfFile;
-use crate::frontend::lex::token::{Column, Index, Position, Row, TextSpan, Token};
+use crate::frontend::lex::token::Token;
 use crate::frontend::lex::token::TokenKind::EOF;
 
 mod comment;
@@ -193,7 +194,7 @@ impl<'a> Lexer<'a> {
         if self.reader.at_the_end() {
             return Ok(Token {
                 kind: EOF,
-                span: TextSpan {
+                span: Span {
                     start: self.position(),
                     end: self.position(),
                 },
@@ -213,7 +214,7 @@ impl<'a> Lexer<'a> {
             } else {
                 return Ok(Token {
                     kind: EOF,
-                    span: TextSpan {
+                    span: Span {
                         start: self.position(),
                         end: self.position(),
                     },

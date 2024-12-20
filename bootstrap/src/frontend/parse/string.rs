@@ -1,7 +1,8 @@
 use regex::Regex;
 
+use crate::common::Span;
 use crate::frontend::lex::lex;
-use crate::frontend::lex::token::{LiteralToken, TextSpan, Token, TokenKind};
+use crate::frontend::lex::token::{LiteralToken, Token, TokenKind};
 use crate::frontend::parse::{
     LiteralNode, LiteralStringNode, Node, parse, Parser, StringInterpolationNode,
 };
@@ -23,7 +24,7 @@ impl<'a> Parser<'a> {
                 } else {
                     let token = Token {
                         kind: TokenKind::Literal(LiteralToken::String),
-                        span: TextSpan {
+                        span: Span {
                             start: token.span.start.clone(),
                             end: token.span.end.clone(),
                         },

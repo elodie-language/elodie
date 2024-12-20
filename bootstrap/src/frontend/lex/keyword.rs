@@ -1,7 +1,8 @@
 use std::collections::HashMap;
 
+use crate::common::Span;
 use crate::frontend::lex::Lexer;
-use crate::frontend::lex::token::{KeywordToken, TextSpan, Token, TokenKind};
+use crate::frontend::lex::token::{KeywordToken, Token, TokenKind};
 
 impl Lexer<'_> {
     pub(crate) fn is_keyword(&self, c: char) -> bool {
@@ -32,7 +33,7 @@ impl Lexer<'_> {
 
                 return Ok(Token {
                     kind: TokenKind::Keyword(keyword_enum),
-                    span: TextSpan {
+                    span: Span {
                         start,
                         end: self.position(),
                     },

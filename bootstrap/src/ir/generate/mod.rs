@@ -4,6 +4,6 @@ use crate::ir::Ir;
 
 mod literal;
 
-pub(crate) fn generate<'a>(ctx: &'a mut Context, analysed: &'a Analysed) -> crate::ir::Result<Ir> {
+pub(crate) fn generate(ctx: &mut Context, analysed: Analysed) -> crate::ir::Result<Ir> {
     todo!()
 }

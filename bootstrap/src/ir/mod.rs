@@ -4,7 +4,8 @@ pub use r#type::{Type, TypeId, TypeName, TypeTable, TypeVariable};
 pub use context::Context;
 
 use crate::{frontend, ir};
-use crate::frontend::ast_from_str;
+use crate::frontend::new_ast_from_str;
+
 use crate::ir::analyse::analyse;
 use crate::ir::generate::generate;
 
@@ -54,12 +55,12 @@ impl Ir {
 
 pub fn ir_from_str(str: &str) -> Result<ir::Ir> {
     let mut ctx = frontend::Context::new();
-    let ast = ast_from_str(&mut ctx, str)?;
+    let ast = new_ast_from_str(&mut ctx, str)?;
 
     let mut ctx = ir::Context::new(ctx);
     let analysed = analyse(&mut ctx, ast)?;
 
     // let mut ctx = generate::Context::new(ctx, analysed);
-    generate(&mut ctx, &analysed);
+    // generate(&mut ctx, &analysed);
     todo!()
 }
