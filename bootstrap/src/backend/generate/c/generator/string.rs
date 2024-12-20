@@ -6,13 +6,13 @@ use crate::backend::generate::c::{
     DeclareVariableStatement, Expression, Indent, LiteralExpression, LiteralIntExpression,
     LiteralStringExpression, Statement, VariableExpression,
 };
-use crate::frontend::ast;
-use crate::frontend::ast::node::{LiteralNode, LoadValueFromObjectNode, LoadValueNode, Node};
+use crate::frontend::old_ast;
+use crate::frontend::old_ast::node::{LiteralNode, LoadValueFromObjectNode, LoadValueNode, Node};
 
 impl Generator {
     pub(crate) fn interpolate_string(
         &mut self,
-        node: &ast::InterpolateStringNode,
+        node: &old_ast::InterpolateStringNode,
     ) -> c::generator::Result<(Vec<Statement>, Expression)> {
         let mut statements = Vec::new();
 

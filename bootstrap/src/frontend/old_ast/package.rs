@@ -3,15 +3,15 @@ use std::io;
 use std::io::Read;
 use std::path::PathBuf;
 
-use crate::frontend::ast::node::{DeclarePackageNode, ExportPackageNode, Identifier};
-use crate::frontend::ast::Generator;
-use crate::frontend::{ast, ast_from_str, parse};
+use crate::frontend::old_ast::node::{DeclarePackageNode, ExportPackageNode, Identifier};
+use crate::frontend::old_ast::Generator;
+use crate::frontend::{old_ast, ast_from_str, parse};
 
 impl<'a> Generator<'a> {
     pub(crate) fn generate_declare_package(
         &mut self,
         node: &parse::PackageDeclarationNode,
-    ) -> crate::frontend::ast::Result<ast::Node> {
+    ) -> crate::frontend::old_ast::Result<old_ast::Node> {
         let mut compiled_body = vec![];
 
         for node in &node.block.nodes {
@@ -24,9 +24,9 @@ impl<'a> Generator<'a> {
         let mut packages = vec![];
 
         for node in compiled_body.into_iter() {
-            if let ast::Node::Block(block) = node {
+            if let old_ast::Node::Block(block) = node {
                 for node in block.body {
-                    if let ast::Node::ExportPackage(ExportPackageNode { identifier, .. }) = node {
+                    if let old_ast::Node::ExportPackage(ExportPackageNode { identifier, .. }) = node {
                         let package = self.ctx.get_str(identifier.0.value()).to_string();
 
                         // FIXME temporary hack to load std packages
@@ -49,26 +49,26 @@ impl<'a> Generator<'a> {
                                 .extend(self.load_declared_packages("core/intrinsics/index.ec")),
                             _ => unimplemented!(),
                         }
-                    } else if let ast::Node::DeclareFunction(declare_function) = node {
+                    } else if let old_ast::Node::DeclareFunction(declare_function) = node {
                         functions.push(declare_function)
-                    } else if let ast::Node::DefineType(define_type) = node {
+                    } else if let old_ast::Node::DefineType(define_type) = node {
                         definitions.push(define_type);
                     }
                 }
-            } else if let ast::Node::DeclareFunction(declare_function) = node {
+            } else if let old_ast::Node::DeclareFunction(declare_function) = node {
                 functions.push(declare_function)
-            } else if let ast::Node::DefineType(define_type) = node {
+            } else if let old_ast::Node::DefineType(define_type) = node {
                 definitions.push(define_type);
-            } else if let ast::Node::DeclarePackage(package) = node {
+            } else if let old_ast::Node::DeclarePackage(package) = node {
                 packages.push(package);
-            } else if let ast::Node::DeclareExternalFunction(external) = node {
+            } else if let old_ast::Node::DeclareExternalFunction(external) = node {
                 external_functions.push(external);
             } else {
                 // unimplemented!("{:?}", node)
             }
         }
 
-        Ok(ast::Node::DeclarePackage(DeclarePackageNode {
+        Ok(old_ast::Node::DeclarePackage(DeclarePackageNode {
             span: node.token.span.clone(),
             identifier: Identifier::from(&node.identifier),
             modifiers: node.modifiers.clone(),
@@ -86,7 +86,7 @@ impl<'a> Generator<'a> {
         let mut result = vec![];
 
         for node in src_file.nodes {
-            if let ast::Node::DeclarePackage(package_node) = node {
+            if let old_ast::Node::DeclarePackage(package_node) = node {
                 result.push(package_node);
             }
         }

@@ -6,20 +6,20 @@ use crate::backend::generate::c::{
     DeclareVariableStatement, Expression, Indent, LiteralExpression, LiteralStringExpression,
     Statement, VariableExpression,
 };
-use crate::frontend::ast;
-use crate::frontend::ast::node::LoadValueNode;
+use crate::frontend::old_ast;
+use crate::frontend::old_ast::node::LoadValueNode;
 
 impl Generator {
     pub(crate) fn generate_declare_function(
         &mut self,
-        node: &ast::DeclareFunctionNode,
+        node: &old_ast::DeclareFunctionNode,
     ) -> c::generator::Result<DeclareFunctionNode> {
         unimplemented!("{node:#?}")
     }
 
     pub(crate) fn generate_call_function(
         &mut self,
-        node: &ast::CallFunctionNode,
+        node: &old_ast::CallFunctionNode,
     ) -> c::generator::Result<Vec<Statement>> {
         let function = self.string_table.get(node.function.0.value()).to_string();
 
@@ -44,7 +44,7 @@ impl Generator {
 
     pub(crate) fn generate_call_function_with_result(
         &mut self,
-        node: &ast::CallFunctionNode,
+        node: &old_ast::CallFunctionNode,
         call_result: CallFunctionStatementResult,
     ) -> c::generator::Result<Vec<Statement>> {
         let function = self.string_table.get(node.function.0.value()).to_string();
@@ -66,7 +66,7 @@ impl Generator {
 
     pub(crate) fn generate_call_function_of_package(
         &mut self,
-        node: &ast::CallFunctionOfPackageNode,
+        node: &old_ast::CallFunctionOfPackageNode,
     ) -> c::generator::Result<Vec<Statement>> {
         let mut result = vec![];
 
@@ -89,7 +89,7 @@ impl Generator {
 
     fn generate_call_arguments(
         &mut self,
-        args: &[ast::Node],
+        args: &[old_ast::Node],
     ) -> c::generator::Result<(Vec<Statement>, Vec<Expression>)> {
         let mut statements = vec![];
         let mut arguments = vec![];
@@ -97,7 +97,7 @@ impl Generator {
         for arg in args {
             let arg_identifier = self.scope.push_argument();
 
-            if let ast::Node::LoadValue(LoadValueNode { identifier, .. }) = arg {
+            if let old_ast::Node::LoadValue(LoadValueNode { identifier, .. }) = arg {
                 // if self.type_table.is_string(ty) {
                 //     statements.push(Statement::DeclareVariable(DeclareVariableStatement {
                 //         indent: Indent::none(),
@@ -112,7 +112,7 @@ impl Generator {
                 // }
             }
 
-            if let ast::Node::Literal(ast::LiteralNode::String(str)) = arg {
+            if let old_ast::Node::Literal(old_ast::LiteralNode::String(str)) = arg {
                 statements.push(Statement::DeclareVariable(DeclareVariableStatement {
                     indent: Indent::none(),
                     identifier: arg_identifier.to_string(),
@@ -133,14 +133,14 @@ impl Generator {
             }
 
             // to_string + concatenation
-            if let ast::Node::InterpolateString(node) = arg {
+            if let old_ast::Node::InterpolateString(node) = arg {
                 let (s, a) = self.interpolate_string(node)?;
                 statements.extend(s);
                 arguments.push(a);
                 continue;
             }
 
-            if let ast::Node::CallFunction(node) = arg {
+            if let old_ast::Node::CallFunction(node) = arg {
                 let s = self.generate_call_function(node)?;
                 statements.extend(s);
                 arguments.push(Expression::Variable(VariableExpression {

@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 
 use crate::common::StringTable;
-use crate::frontend::ast::node::Identifier;
+use crate::frontend::old_ast::node::Identifier;
 
 pub(crate) struct Scope {
     pub variables: Vec<HashMap<Identifier, Variable>>,

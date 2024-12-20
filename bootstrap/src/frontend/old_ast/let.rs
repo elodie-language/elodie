@@ -1,15 +1,15 @@
 use std::ops::Deref;
 use std::rc::Rc;
 
-use crate::frontend::ast::node::{DeclareVariableNode, Identifier, Node};
-use crate::frontend::ast::Generator;
-use crate::frontend::{ast, parse};
+use crate::frontend::old_ast::node::{DeclareVariableNode, Identifier, Node};
+use crate::frontend::old_ast::Generator;
+use crate::frontend::{old_ast, parse};
 
 impl<'a> Generator<'a> {
     pub(crate) fn generate_let(
         &mut self,
         node: &parse::VariableDeclarationNode,
-    ) -> ast::Result<ast::Node> {
+    ) -> old_ast::Result<old_ast::Node> {
         let identifier = Identifier::from(&node.identifier);
         let value = self.generate_node(node.node.deref())?;
 

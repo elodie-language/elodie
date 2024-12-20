@@ -3,13 +3,13 @@ use std::collections::HashMap;
 use crate::backend::run::value::{FunctionValue, Value};
 use crate::backend::run::Runner;
 use crate::common::StringTableId;
-use crate::frontend::ast;
-use crate::frontend::ast::node::CallFunctionWithLambdaNode;
+use crate::frontend::old_ast;
+use crate::frontend::old_ast::node::CallFunctionWithLambdaNode;
 
 impl<'a> Runner<'a> {
     pub(crate) fn run_node_call_function(
         &mut self,
-        node: &ast::CallFunctionNode,
+        node: &old_ast::CallFunctionNode,
     ) -> crate::backend::run::Result<Value> {
         self.reset_interrupt();
 

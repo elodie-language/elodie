@@ -12,7 +12,7 @@ use crate::backend::run::scope::Scope;
 use crate::backend::run::type_definitions::TypeDefinitions;
 use crate::backend::run::value::{IntrinsicFunctionValue, ListValue, ObjectValue, Value};
 use crate::backend::run::value::Value::IntrinsicFunction;
-use crate::frontend::{ast, Ast, ast_from_str};
+use crate::frontend::{old_ast, Ast, ast_from_str};
 use crate::frontend::context::Context;
 use crate::ir::{TypeVariable, Type, TypeId, TypeName};
 use crate::load_library_file;
@@ -199,13 +199,13 @@ impl<'a> Runner<'a> {
         Ok(Value::Unit)
     }
 
-    pub(crate) fn run_node(&mut self, node: &ast::Node) -> Result<Value> {
+    pub(crate) fn run_node(&mut self, node: &old_ast::Node) -> Result<Value> {
         match node {
-            ast::Node::BreakLoop(break_node) => self.run_break(break_node),
+            old_ast::Node::BreakLoop(break_node) => self.run_break(break_node),
 
-            ast::Node::DeclareVariable(declaration) => self.run_variable_declaration(declaration),
-            ast::Node::DeclareFunction(declaration) => self.run_function_declaration(declaration),
-            ast::Node::DeclarePackage(declaration) => {
+            old_ast::Node::DeclareVariable(declaration) => self.run_variable_declaration(declaration),
+            old_ast::Node::DeclareFunction(declaration) => self.run_function_declaration(declaration),
+            old_ast::Node::DeclarePackage(declaration) => {
                 let value = self.run_package_declaration(declaration)?;
                 let Value::Package(package) = value else {
                     panic!()
@@ -215,7 +215,7 @@ impl<'a> Runner<'a> {
                 Ok(Value::Unit)
             }
 
-            ast::Node::CallFunctionOfObject(ast::CallFunctionOfObjectNode {
+            old_ast::Node::CallFunctionOfObject(old_ast::CallFunctionOfObjectNode {
                                                 object,
                                                 function,
                                                 arguments,
@@ -293,20 +293,20 @@ impl<'a> Runner<'a> {
 
                     let mut args = Vec::with_capacity(arguments.len());
                     for arg in arguments {
-                        if let ast::Node::LoadValue(load_varialbe_node) = arg {
+                        if let old_ast::Node::LoadValue(load_varialbe_node) = arg {
                             let value = self
                                 .scope
                                 .get_value(&load_varialbe_node.identifier.0.value())
                                 .unwrap()
                                 .clone();
                             args.push(value);
-                        } else if let ast::Node::Literal(node) = arg {
+                        } else if let old_ast::Node::Literal(node) = arg {
                             match node {
-                                ast::LiteralNode::Boolean(_) => unimplemented!(),
-                                ast::LiteralNode::Number(value) => args.push(Value::Number(
+                                old_ast::LiteralNode::Boolean(_) => unimplemented!(),
+                                old_ast::LiteralNode::Number(value) => args.push(Value::Number(
                                     self.ctx.get_str(value.value()).parse().unwrap(),
                                 )),
-                                ast::LiteralNode::String(value) => args.push(Value::String(
+                                old_ast::LiteralNode::String(value) => args.push(Value::String(
                                     self.ctx.get_str(value.value()).to_string(),
                                 )),
                             }
@@ -336,7 +336,7 @@ impl<'a> Runner<'a> {
                 };
             }
 
-            ast::Node::CallFunctionOfPackage(ast::CallFunctionOfPackageNode {
+            old_ast::Node::CallFunctionOfPackage(old_ast::CallFunctionOfPackageNode {
                                                  package: packages,
                                                  function,
                                                  arguments,
@@ -376,20 +376,20 @@ impl<'a> Runner<'a> {
                 {
                     let mut args = Vec::with_capacity(arguments.len());
                     for arg in arguments {
-                        if let ast::Node::LoadValue(load_varialbe_node) = arg {
+                        if let old_ast::Node::LoadValue(load_varialbe_node) = arg {
                             let value = self
                                 .scope
                                 .get_value(&load_varialbe_node.identifier.0.value())
                                 .unwrap()
                                 .clone();
                             args.push(value);
-                        } else if let ast::Node::Literal(node) = arg {
+                        } else if let old_ast::Node::Literal(node) = arg {
                             match node {
-                                ast::LiteralNode::Boolean(_) => unimplemented!(),
-                                ast::LiteralNode::Number(value) => args.push(Value::Number(
+                                old_ast::LiteralNode::Boolean(_) => unimplemented!(),
+                                old_ast::LiteralNode::Number(value) => args.push(Value::Number(
                                     self.ctx.get_str(value.value()).parse().unwrap(),
                                 )),
-                                ast::LiteralNode::String(value) => args.push(Value::String(
+                                old_ast::LiteralNode::String(value) => args.push(Value::String(
                                     self.ctx.get_str(value.value()).to_string(),
                                 )),
                             }
@@ -437,78 +437,78 @@ impl<'a> Runner<'a> {
                 result
             }
 
-            ast::Node::CallFunction(function_node) => self.run_node_call_function(function_node),
-            ast::Node::CallFunctionWithLambda(lambda) => {
+            old_ast::Node::CallFunction(function_node) => self.run_node_call_function(function_node),
+            old_ast::Node::CallFunctionWithLambda(lambda) => {
                 self.run_node_call_function_with_lambda(lambda)
             }
-            ast::Node::ReturnFromFunction(node) => {
+            old_ast::Node::ReturnFromFunction(node) => {
                 let value = self.run_node(node.node.deref())?;
                 self.interrupt(Interrupt::Return(value.clone()));
                 Ok(value)
             }
-            ast::Node::Literal(node) => {
+            old_ast::Node::Literal(node) => {
                 match node {
                     // LiteralStringNode(value) => Ok(Value::String(self.ctx.get_str(value.value).to_string())),
                     // LiteralNumberNode(value) => Ok(Value::Number),
                     // LiteralBooleanNode(value) => Ok(Value::Bool(value.value)),
-                    ast::LiteralNode::Boolean(value) => Ok(Value::Bool(value.value())),
-                    ast::LiteralNode::Number(value) => Ok(Value::Number(
+                    old_ast::LiteralNode::Boolean(value) => Ok(Value::Bool(value.value())),
+                    old_ast::LiteralNode::Number(value) => Ok(Value::Number(
                         self.ctx.get_str(value.value()).parse().unwrap(),
                     )),
-                    ast::LiteralNode::String(value) => {
+                    old_ast::LiteralNode::String(value) => {
                         Ok(Value::String(self.ctx.get_str(value.value()).to_string()))
                     }
                 }
             }
-            ast::Node::Loop(loop_node) => self.run_loop(loop_node),
-            ast::Node::If(if_node) => self.run_if(if_node),
+            old_ast::Node::Loop(loop_node) => self.run_loop(loop_node),
+            old_ast::Node::If(if_node) => self.run_if(if_node),
 
-            ast::Node::Block(block_node) => self.run_block(block_node),
+            old_ast::Node::Block(block_node) => self.run_block(block_node),
 
-            ast::Node::Compare(compare_node) => {
+            old_ast::Node::Compare(compare_node) => {
                 let left = self.run_node(compare_node.left.deref())?;
                 let right = self.run_node(compare_node.right.deref())?;
 
                 if let (Value::Number(l), Value::Number(r)) = (&left, &right) {
                     return match compare_node.operator {
-                        ast::CompareOperator::GreaterThan => Ok(Value::Bool(l > r)),
-                        ast::CompareOperator::Equal => Ok(Value::Bool(l == r)),
-                        ast::CompareOperator::NotEqual => Ok(Value::Bool(l != r)),
+                        old_ast::CompareOperator::GreaterThan => Ok(Value::Bool(l > r)),
+                        old_ast::CompareOperator::Equal => Ok(Value::Bool(l == r)),
+                        old_ast::CompareOperator::NotEqual => Ok(Value::Bool(l != r)),
                     };
                 }
 
                 if let (Value::Bool(l), Value::Bool(r)) = (&left, &right) {
                     return match compare_node.operator {
-                        ast::CompareOperator::GreaterThan => Ok(Value::Bool(l > r)),
-                        ast::CompareOperator::Equal => Ok(Value::Bool(l == r)),
-                        ast::CompareOperator::NotEqual => Ok(Value::Bool(l != r)),
+                        old_ast::CompareOperator::GreaterThan => Ok(Value::Bool(l > r)),
+                        old_ast::CompareOperator::Equal => Ok(Value::Bool(l == r)),
+                        old_ast::CompareOperator::NotEqual => Ok(Value::Bool(l != r)),
                     };
                 }
 
                 unimplemented!()
             }
 
-            ast::Node::Calculate(calculation_node) => {
+            old_ast::Node::Calculate(calculation_node) => {
                 let left = self.run_node(calculation_node.left.deref())?;
                 let right = self.run_node(calculation_node.right.deref())?;
 
                 if let (Value::Number(l), Value::Number(r)) = (&left, &right) {
                     return match calculation_node.operator {
-                        ast::CalculationOperator::Multiply => Ok(Value::Number(l * r)),
-                        ast::CalculationOperator::Add => Ok(Value::Number(l + r)),
+                        old_ast::CalculationOperator::Multiply => Ok(Value::Number(l * r)),
+                        old_ast::CalculationOperator::Add => Ok(Value::Number(l + r)),
                     };
                 }
 
                 if let (Value::String(l), Value::String(r)) = (&left, &right) {
                     return match calculation_node.operator {
-                        ast::CalculationOperator::Add => Ok(Value::String(l.clone() + r)),
+                        old_ast::CalculationOperator::Add => Ok(Value::String(l.clone() + r)),
                         _ => todo!(),
                     };
                 }
 
                 unimplemented!()
             }
-            ast::Node::LoadValue(load_variable) => {
+            old_ast::Node::LoadValue(load_variable) => {
                 let value = self
                     .scope
                     .get_value(&load_variable.identifier.0.value())
@@ -516,7 +516,7 @@ impl<'a> Runner<'a> {
                     .clone();
                 Ok(value)
             }
-            ast::Node::LoadValueFromObject(load) => {
+            old_ast::Node::LoadValueFromObject(load) => {
                 let value = self
                     .scope
                     .get_value(&load.object.0.value())
@@ -530,7 +530,7 @@ impl<'a> Runner<'a> {
                     .cloned()
                     .unwrap())
             }
-            ast::Node::DeclareType(decl) => {
+            old_ast::Node::DeclareType(decl) => {
                 let mut properties = HashMap::new();
 
                 for prop in &decl.properties {
@@ -547,7 +547,7 @@ impl<'a> Runner<'a> {
                     .insert_type(decl.identifier.0.value().clone(), r#type);
                 Ok(Value::Unit)
             }
-            ast::Node::InstantiateType(node) => {
+            old_ast::Node::InstantiateType(node) => {
                 let mut properties = HashMap::with_capacity(node.arguments.len());
 
                 for arg in &node.arguments {
@@ -567,7 +567,7 @@ impl<'a> Runner<'a> {
 
                 Ok(obj)
             }
-            ast::Node::DefineType(node) => {
+            old_ast::Node::DefineType(node) => {
                 let func_ident = node.functions.get(0).unwrap().identifier.0.value();
                 let func = node.functions.get(0).unwrap().clone();
                 let value = self.run_function_declaration(func)?;
@@ -580,7 +580,7 @@ impl<'a> Runner<'a> {
 
                 Ok(Value::Unit)
             }
-            ast::Node::LoadValueFromSelf(load_variable) => {
+            old_ast::Node::LoadValueFromSelf(load_variable) => {
                 let value = self
                     .scope
                     .get_value(&self.ctx.string_table.push_str("self"))
@@ -594,7 +594,7 @@ impl<'a> Runner<'a> {
                     .cloned()
                     .unwrap())
             }
-            ast::Node::InterpolateString(node) => {
+            old_ast::Node::InterpolateString(node) => {
                 let mut result = String::new();
                 for node in &node.nodes {
                     result += self.run_node(node)?.to_string().as_str()

@@ -13,7 +13,7 @@ use crate::backend::generate::c::DirectiveNode::{IncludeLocalDirective, IncludeS
 use crate::backend::generate::c::generator::scope::Scope;
 use crate::backend::generate::c::Node::DefineFunction;
 use crate::common::StringTable;
-use crate::frontend::ast::node::{DefineTypeNode, Node};
+use crate::frontend::old_ast::node::{DefineTypeNode, Node};
 use crate::{frontend, ir};
 use crate::ir::TypeTable;
 

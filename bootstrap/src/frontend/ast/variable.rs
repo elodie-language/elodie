@@ -1,15 +1,15 @@
 use std::ops::Deref;
 use std::rc::Rc;
 
-use crate::frontend::{new_ast, parse};
-use crate::frontend::new_ast::{DeclareVariableNode, Generator, Identifier, Node, SPAN_NOT_IMPLEMENTED};
-use crate::frontend::new_ast::node::AstNode;
+use crate::frontend::{ast, parse};
+use crate::frontend::ast::{DeclareVariableNode, Generator, Identifier, Node, SPAN_NOT_IMPLEMENTED};
+use crate::frontend::ast::node::AstNode;
 
 impl<'a> Generator<'a> {
     pub(crate) fn generate_declare_variable(
         &mut self,
         node: &parse::VariableDeclarationNode,
-    ) -> new_ast::Result<AstNode> {
+    ) -> ast::Result<AstNode> {
         let variable = Identifier(node.identifier.0.clone());
 
         let node_type = if let Some(type_node) = node.r#type.as_ref() {

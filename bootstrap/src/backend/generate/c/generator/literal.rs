@@ -3,13 +3,13 @@ use crate::backend::generate::c::{
     Indent, LiteralBooleanExpression, LiteralDoubleExpression, LiteralExpression,
     LiteralStringExpression,
 };
-use crate::frontend::ast;
-use crate::frontend::ast::node::LiteralNode;
+use crate::frontend::old_ast;
+use crate::frontend::old_ast::node::LiteralNode;
 
 impl Generator {
     pub(crate) fn generate_literal(
         &mut self,
-        node: &ast::LiteralNode,
+        node: &old_ast::LiteralNode,
     ) -> crate::backend::generate::c::generator::Result<LiteralExpression> {
         Ok(match node {
             LiteralNode::Boolean(b) => LiteralExpression::Bool(LiteralBooleanExpression {

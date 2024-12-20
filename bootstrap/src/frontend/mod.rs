@@ -1,13 +1,13 @@
 use std::ops::Index;
 
-use crate::frontend::ast::node::*;
+use crate::frontend::old_ast::node::*;
 pub use crate::frontend::context::Context;
 use crate::frontend::lex::lex;
-use crate::frontend::new_ast::node::AstNode;
+use crate::frontend::ast::node::AstNode;
 use crate::frontend::parse::parse;
 
-pub mod new_ast;
 pub mod ast;
+pub mod old_ast;
 pub mod lex;
 pub mod parse;
 pub mod modifier;
@@ -17,8 +17,8 @@ pub mod context;
 pub enum Error {
     Lexer(lex::Error),
     Parser(parse::Error),
-    Ast(ast::Error),
-    NewAst(new_ast::Error),
+    Ast(old_ast::Error),
+    NewAst(ast::Error),
 }
 
 impl From<lex::Error> for Error {
@@ -33,14 +33,14 @@ impl From<parse::Error> for Error {
     }
 }
 
-impl From<ast::Error> for Error {
-    fn from(value: ast::Error) -> Self {
+impl From<old_ast::Error> for Error {
+    fn from(value: old_ast::Error) -> Self {
         Self::Ast(value)
     }
 }
 
-impl From<new_ast::Error> for Error {
-    fn from(value: new_ast::Error) -> Self {
+impl From<ast::Error> for Error {
+    fn from(value: ast::Error) -> Self {
         Self::NewAst(value)
     }
 }
@@ -74,7 +74,7 @@ impl Ast {
 pub fn ast_from_str(ctx: &mut Context, str: &str) -> Result<Ast> {
     let lexed = lex(ctx, str)?;
     let nodes = parse(ctx, lexed)?;
-    Ok(ast::from(ctx, nodes)?)
+    Ok(old_ast::from(ctx, nodes)?)
 }
 
 #[derive(Debug)]
@@ -104,5 +104,5 @@ impl NewAst {
 pub fn new_ast_from_str(ctx: &mut Context, str: &str) -> Result<NewAst> {
     let lexed = lex(ctx, str)?;
     let nodes = parse(ctx, lexed)?;
-    Ok(new_ast::from(ctx, nodes)?)
+    Ok(ast::from(ctx, nodes)?)
 }

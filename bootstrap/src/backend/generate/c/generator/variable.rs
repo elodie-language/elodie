@@ -6,8 +6,8 @@ use crate::backend::generate::c::{
     DeclareVariableStatement, Indent, InitialiseStructExpression, InitialiseStructField, Statement,
     VariableExpression,
 };
-use crate::frontend::ast::node::Node::Literal;
-use crate::frontend::ast::node::{
+use crate::frontend::old_ast::node::Node::Literal;
+use crate::frontend::old_ast::node::{
     DeclareVariableNode, LiteralNode, LoadValueFromSelfNode, LoadValueNode, Node,
 };
 

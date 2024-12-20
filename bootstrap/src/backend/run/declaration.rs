@@ -4,20 +4,20 @@ use std::rc::Rc;
 
 use crate::backend::run::value::{FunctionValue, IntrinsicFunctionValue, PackageValue, Value};
 use crate::backend::run::Runner;
-use crate::frontend::ast;
+use crate::frontend::old_ast;
 use crate::ir::TypeId;
 
 impl<'a> Runner<'a> {
     pub(crate) fn run_external_function_declaration(
         &mut self,
-        node: &ast::DeclareExternalFunctionNode,
+        node: &old_ast::DeclareExternalFunctionNode,
     ) -> crate::backend::run::Result<Value> {
         unimplemented!()
     }
 
     pub(crate) fn run_variable_declaration(
         &mut self,
-        node: &ast::DeclareVariableNode,
+        node: &old_ast::DeclareVariableNode,
     ) -> crate::backend::run::Result<Value> {
         let name = node.identifier.0.value().clone();
         let value = self.run_node(node.value.deref())?;
@@ -27,7 +27,7 @@ impl<'a> Runner<'a> {
 
     pub(crate) fn run_function_declaration(
         &mut self,
-        node: &ast::DeclareFunctionNode,
+        node: &old_ast::DeclareFunctionNode,
     ) -> crate::backend::run::Result<Value> {
         let name = node.identifier.0.value().clone();
 
@@ -47,7 +47,7 @@ impl<'a> Runner<'a> {
 
     pub(crate) fn run_package_declaration(
         &mut self,
-        node: &ast::DeclarePackageNode,
+        node: &old_ast::DeclarePackageNode,
     ) -> crate::backend::run::Result<Value> {
         let mut functions = HashMap::new();
         for node in &node.functions {

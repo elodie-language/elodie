@@ -1,68 +1,19 @@
 use std::ops::Deref;
 
-use crate::frontend::ast::node::Node::DeclareType;
-use crate::frontend::ast::node::{DeclarePropertyNode, DeclareTypeNode, Identifier};
-use crate::frontend::ast::{ObjectTypeNode, Generator, TypeFunctionNode};
-use crate::frontend::parse::{InfixNode, InfixOperator, TypeNode};
-use crate::frontend::{ast, parse};
+use crate::frontend::ast::{AstType, Generator};
+use crate::frontend::parse;
+use crate::frontend::parse::{TypeFunctionNode, TypeNode};
 
 impl<'a> Generator<'a> {
-    pub(crate) fn declare_type(
-        &mut self,
-        node: &parse::TypeDeclarationNode,
-    ) -> crate::frontend::ast::Result<ast::Node> {
-        let mut properties = Vec::with_capacity(node.properties.nodes.len());
-
-        for node in &node.properties.nodes {
-            let parse::Node::Infix(InfixNode {
-                left,
-                right,
-                operator,
-                token,
-            }) = node
-            else {
-                panic!()
-            };
-            assert!(matches!(operator, InfixOperator::TypeAscription(_)));
-            let identifier = left.deref().as_identifier();
-            let r#type = self.handle_type_node(right.deref().as_type())?;
-            properties.push(DeclarePropertyNode {
-                span: node.token().span.clone(),
-                identifier: Identifier::from(identifier),
-                r#type,
-            })
-        }
-
-        Ok(DeclareType(DeclareTypeNode {
-            span: node.token.span.clone(),
-            identifier: Identifier::from(&node.identifier),
-            modifiers: node.modifiers.clone(),
-            properties,
-        }))
-    }
-
-    pub(crate) fn handle_type_node(
-        &mut self,
-        node: &parse::TypeNode,
-    ) -> ast::Result<ast::TypeNode> {
+    pub(crate) fn to_ast_type(&self, node: &parse::TypeNode) -> AstType {
         match node {
-            TypeNode::Boolean(t) => Ok(ast::TypeNode::Boolean(t.clone())),
-            TypeNode::Object(node) => Ok(ast::TypeNode::Object(ObjectTypeNode {
-                span: node.token.span.clone(),
-            })),
-            TypeNode::Number(t) => Ok(ast::TypeNode::Number(t.clone())),
-            TypeNode::String(t) => Ok(ast::TypeNode::String(t.clone())),
-            TypeNode::Function(node) => {
-                let return_type = if let Some(type_node) = node.return_type.as_deref() {
-                    Some(Box::new(self.handle_type_node(type_node)?))
-                } else {
-                    None
-                };
-
-                Ok(ast::TypeNode::Function(TypeFunctionNode {
-                    arguments: vec![],
-                    return_type,
-                }))
+            TypeNode::Boolean(_) => AstType::Boolean,
+            TypeNode::Object(_) => AstType::Object,
+            TypeNode::Number(_) => AstType::Number,
+            TypeNode::String(_) => AstType::String,
+            TypeNode::Function(TypeFunctionNode { arguments, return_type, .. }) => AstType::Function {
+                arguments: arguments.iter().map(|a| Box::new(self.to_ast_type(a.r#type.deref()))).collect::<Vec<_>>(),
+                return_type: return_type.as_ref().map(|r| Box::new(self.to_ast_type(r.deref()))),
             }
         }
     }

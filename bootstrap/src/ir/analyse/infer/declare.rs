@@ -1,15 +1,15 @@
 use std::rc::Rc;
 
 use crate::common::Span;
-use crate::frontend::new_ast;
-use crate::frontend::new_ast::node::AstNode;
+use crate::frontend::ast;
+use crate::frontend::ast::node::AstNode;
 use crate::ir::analyse::{AnalysedNode, DeclareVariableInner};
 use crate::ir::analyse::infer::Inference;
 use crate::ir::analyse::Inner::DeclareVariable;
 use crate::ir::symbol::SymbolName;
 
 impl<'a> Inference<'a> {
-    pub(crate) fn infer_declare_variable(&mut self, span: Span, node: &new_ast::DeclareVariableNode<AstNode>) -> crate::ir::analyse::Result<AnalysedNode> {
+    pub(crate) fn infer_declare_variable(&mut self, span: Span, node: &ast::DeclareVariableNode<AstNode>) -> crate::ir::analyse::Result<AnalysedNode> {
         let symbol = self.register_variable(SymbolName::from(&node.variable));
 
         let mut value = Rc::new(self.infer_node(&node.value)?);

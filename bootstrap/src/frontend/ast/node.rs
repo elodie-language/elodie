@@ -1,28 +1,109 @@
-use std::hash::{Hash, Hasher};
+use std::hash::Hash;
 use std::rc::Rc;
 
-use crate::common::{PackagePath, Span, StringTableId, WithSpan};
-use crate::frontend::lex::token::{LiteralToken, Token, TokenKind};
-use crate::frontend::modifier::Modifiers;
-use crate::frontend::parse;
-use crate::frontend::parse::{IdentifierNode, TupleNode};
+use crate::common::{Column, Index, PackagePath, Position, Row, Span, WithSpan};
+use crate::frontend::lex::token::Token;
 
-#[derive(Debug, PartialEq)]
-pub struct BlockNode {
-    pub body: Vec<Node>,
+pub trait Ast<T: Ast<T>>: Clone {
+    fn node(&self) -> &Node<T>;
+    fn node_mut(&mut self) -> &mut Node<T>;
+    fn node_to_owned(self) -> Node<T>;
 }
 
-#[derive(Debug, PartialEq)]
-pub struct BreakLoopNode {
-    pub span: Span,
-    pub body: Option<Box<Node>>,
+#[derive(Debug, Clone, PartialEq)]
+pub struct AstNode {
+    node: Node<AstNode>,
+    span: Span,
 }
 
-#[derive(Debug, PartialEq)]
-pub struct CompareNode {
-    pub left: Box<Node>,
-    pub operator: CompareOperator,
-    pub right: Box<Node>,
+impl AstNode {
+    pub fn new(node: Node<AstNode>, span: Span) -> AstNode {
+        AstNode { node, span }
+    }
+}
+
+pub static SPAN_NOT_IMPLEMENTED: Span = Span {
+    start: Position {
+        row: Row(0),
+        column: Column(0),
+        index: Index(0),
+    },
+    end: Position {
+        row: Row(0),
+        column: Column(0),
+        index: Index(0),
+    },
+};
+
+impl Ast<AstNode> for AstNode {
+    fn node(&self) -> &Node<AstNode> { &self.node }
+    fn node_mut(&mut self) -> &mut Node<AstNode> { &mut self.node }
+    fn node_to_owned(self) -> Node<AstNode> { self.node }
+}
+
+impl WithSpan for AstNode {
+    fn span(&self) -> Span { self.span.clone() }
+}
+
+#[derive(Debug, Clone, PartialEq)]
+pub enum Node<T: Ast<T>> {
+    AccessVariable { variable: Identifier },
+    AccessVariableOfObject { object: Identifier, variable: Identifier },
+    AccessVariableOfSelf { variable: Identifier },
+
+    Block { nodes: Vec<T> },
+    BreakLoop { node: Option<Rc<T>> },
+
+    Calculate { left: Rc<T>, operator: CalculationOperator, right: Rc<T> },
+
+    CallFunction { function: Identifier, arguments: Vec<T> },
+    CallFunctionWithLambda { function: Identifier, arguments: Vec<T>, lambda: Vec<T> },
+    CallFunctionOfObject { object: Identifier, function: Identifier, arguments: Vec<T> },
+    CallFunctionOfPackage { package: PackagePath, function: Identifier, arguments: Vec<T> },
+
+    Compare { left: Rc<T>, operator: CompareOperator, right: Rc<T> },
+    ContinueLoop {},
+
+    DeclareVariable(DeclareVariableNode<T>),
+
+    ExportPackage { package: PackagePath, source: Source },
+
+    If { condition: Rc<T>, then: Rc<T>, otherwise: Option<Rc<T>> },
+
+    LiteralBoolean(LiteralBooleanNode),
+    LiteralNumber(LiteralNumberNode),
+    LiteralString(LiteralStringNode),
+
+    Loop { nodes: Vec<T> },
+
+    ReturnFromFunction { node: Rc<T> },
+}
+
+#[derive(Debug, Clone, PartialEq)]
+pub struct AccessVariableNode {
+    pub variable: Identifier,
+}
+
+#[derive(Debug, Clone, PartialEq)]
+pub struct DeclareVariableNode<T: Clone + Ast<T>> {
+    pub variable: Identifier,
+    pub value: Rc<T>,
+    pub value_type: Option<AstType>,
+}
+
+#[derive(Debug, Clone, PartialEq)]
+pub struct LiteralBooleanNode(pub Token);
+
+#[derive(Debug, Clone, PartialEq)]
+pub struct LiteralNumberNode(pub Token);
+
+#[derive(Debug, Clone, PartialEq)]
+pub struct LiteralStringNode(pub Token);
+
+#[derive(Debug, Clone, PartialEq)]
+pub enum CalculationOperator {
+    Add,
+    Multiply,
 }
 
 #[derive(Debug, Clone, PartialEq)]
@@ -32,356 +113,21 @@ pub enum CompareOperator {
     GreaterThan,
 }
 
-#[derive(Debug, PartialEq)]
-pub struct CalculateNode {
-    pub left: Box<Node>,
-    pub operator: CalculationOperator,
-    pub right: Box<Node>,
-}
-
-#[derive(Debug, Clone, PartialEq)]
-pub enum CalculationOperator {
-    Add,
-    Multiply,
-}
-
-#[derive(Debug, PartialEq)]
-pub struct ContinueLoopNode {
-    pub span: Span,
-}
-
-#[derive(Debug, PartialEq)]
-pub struct CallFunctionOfObjectNode {
-    pub span: Span,
-    pub object: Identifier,
-    // FIXME object_tid : TypeId
-    pub function: Identifier,
-    // FIXME function_tid: TypeId
-    pub arguments: Vec<Node>,
-}
-
-#[derive(Debug, PartialEq)]
-pub struct CallFunctionOfPackageNode {
-    pub span: Span,
-    pub package: PackagePath,
-    pub function: Identifier,
-    pub arguments: Vec<Node>,
-}
-
-#[derive(Debug, PartialEq)]
-pub struct CallFunctionNode {
-    pub span: Span,
-    pub function: Identifier,
-    pub arguments: Vec<Node>,
-}
-
-#[derive(Debug, PartialEq)]
-pub struct CallFunctionWithLambdaNode {
-    pub span: Span,
-    pub call_function: CallFunctionNode,
-    pub lambda: Rc<BlockNode>,
-}
-
-#[derive(Debug, PartialEq)]
-pub struct ExportPackageNode {
-    pub span: Span,
-    pub identifier: Identifier,
-    pub source: Source,
-}
-
-#[derive(Debug, PartialEq)]
-pub struct IfNode {
-    pub span: Span,
-    pub condition: Box<Node>,
-    pub then: BlockNode,
-    pub otherwise: Option<BlockNode>,
-}
-
-#[derive(Debug, PartialEq)]
-pub struct LoopNode {
-    pub span: Span,
-    pub body: Vec<Node>,
-}
-
-#[derive(Debug, PartialEq)]
-pub enum Node {
-    Block(BlockNode),
-    BreakLoop(BreakLoopNode),
-
-    Calculate(CalculateNode),
-    CallFunctionOfObject(CallFunctionOfObjectNode),
-    CallFunctionOfPackage(CallFunctionOfPackageNode),
-    CallFunction(CallFunctionNode),
-    CallFunctionWithLambda(CallFunctionWithLambdaNode),
-
-    ExportPackage(ExportPackageNode),
-    ReturnFromFunction(ReturnFromFunctionNode),
-
-    ContinueLoop(ContinueLoopNode),
-    Compare(CompareNode),
-
-    If(IfNode),
-    // Itself(ItselfNode),
-    LoadValue(LoadValueNode),
-    LoadValueFromObject(LoadValueFromObjectNode),
-    LoadValueFromSelf(LoadValueFromSelfNode),
-    Loop(LoopNode),
-
-    Literal(LiteralNode),
-    Unit,
-
-    DeclareVariable(DeclareVariableNode),
-    DeclareFunction(DeclareFunctionNode),
-    DeclareExternalFunction(DeclareExternalFunctionNode),
-    DeclarePackage(DeclarePackageNode),
-    DeclareType(DeclareTypeNode),
-
-    InstantiateType(InstantiateTypeNode),
-    DefineType(DefineTypeNode),
-
-    InterpolateString(InterpolateStringNode),
-}
-
-#[derive(Debug, PartialEq)]
-pub enum LiteralNode {
-    Number(LiteralNumberNode),
-    String(LiteralStringNode),
-    Boolean(LiteralBooleanNode),
-}
-
-#[derive(Debug, PartialEq)]
-pub struct LiteralNumberNode(pub Token);
-
-impl LiteralNumberNode {
-    pub fn value(&self) -> StringTableId {
-        self.0.value()
-    }
-}
-
-#[derive(Debug, PartialEq)]
-pub struct LiteralStringNode(pub Token);
-
-impl LiteralStringNode {
-    pub fn value(&self) -> StringTableId {
-        self.0.value()
-    }
-}
-
-#[derive(Debug, PartialEq)]
-pub struct LiteralBooleanNode(pub Token);
-
-impl LiteralBooleanNode {
-    pub fn value(&self) -> bool {
-        self.0.kind == TokenKind::Literal(LiteralToken::True)
-    }
-}
-
-#[derive(Debug, PartialEq)]
-pub struct ReturnFromFunctionNode {
-    pub span: Span,
-    pub node: Box<Node>,
-    pub return_type: Option<TypeNode>,
-}
-
-#[derive(Debug, PartialEq)]
-pub struct LoadValueNode {
-    pub span: Span,
-    pub identifier: Identifier,
-}
-
-#[derive(Clone, Debug)]
-pub struct ItselfNode(pub Token);
-
-#[derive(Clone, Debug)]
-pub struct Identifier(pub Token);
-
-impl Hash for Identifier {
-    fn hash<H: Hasher>(&self, state: &mut H) {
-        self.0.value().hash(state)
-    }
-}
-
-impl Eq for Identifier {}
-
-impl PartialEq for Identifier {
-    fn eq(&self, other: &Self) -> bool {
-        self.0.value().eq(&other.0.value())
-    }
-}
-
-impl From<parse::IdentifierNode> for Identifier {
-    fn from(value: IdentifierNode) -> Self {
-        Identifier(value.0.clone())
-    }
-}
-
-impl From<Rc<parse::IdentifierNode>> for Identifier {
-    fn from(value: Rc<IdentifierNode>) -> Self {
-        Identifier(value.0.clone())
-    }
-}
-
-impl From<&parse::IdentifierNode> for Identifier {
-    fn from(value: &IdentifierNode) -> Self {
-        Identifier(value.0.clone())
-    }
-}
-
-impl AsRef<Identifier> for Identifier {
-    fn as_ref(&self) -> &Identifier {
-        &self
-    }
-}
-
-#[derive(Debug, PartialEq)]
-pub struct DeclareVariableNode {
-    pub span: Span,
-    pub identifier: Identifier,
-    pub value: Rc<Node>,
-    pub value_type: Option<TypeNode>,
-}
-
-#[derive(Debug, PartialEq)]
-pub struct DeclareFunctionNode {
-    pub span: Span,
-    pub identifier: Identifier,
-    pub arguments: Vec<Rc<FunctionArgumentNode>>,
-    pub return_type: Option<TypeNode>,
-    pub body: Rc<BlockNode>,
-}
-
-#[derive(Debug, PartialEq)]
-pub struct DeclareExternalFunctionNode {
-    pub span: Span,
-    pub identifier: Identifier,
-    pub arguments: Vec<Rc<FunctionArgumentNode>>,
-    pub return_type: Option<TypeNode>,
-}
-
-#[derive(Debug, PartialEq)]
-pub struct FunctionArgumentNode {
-    pub identifier: Identifier,
-    pub ty: Option<TypeNode>,
-}
-
-#[derive(Debug, PartialEq)]
-pub struct DeclarePackageNode {
-    pub span: Span,
-    pub identifier: Identifier,
-    pub modifiers: Modifiers,
-    pub external_functions: Vec<DeclareExternalFunctionNode>,
-    pub functions: Vec<DeclareFunctionNode>,
-    pub packages: Vec<DeclarePackageNode>,
-    pub definitions: Vec<DefineTypeNode>,
-}
-
-#[derive(Debug, PartialEq)]
-pub struct DeclareTypeNode {
-    pub span: Span,
-    pub identifier: Identifier,
-    pub modifiers: Modifiers,
-    pub properties: Vec<DeclarePropertyNode>,
-}
-
-#[derive(Debug, PartialEq)]
-pub struct DeclarePropertyNode {
-    pub span: Span,
-    pub identifier: Identifier,
-    pub r#type: TypeNode,
-}
-
-#[derive(Debug, PartialEq)]
-pub struct DefineTypeNode {
-    pub span: Span,
-    pub identifier: Identifier,
-    pub modifiers: Modifiers,
-    pub functions: Vec<DeclareFunctionNode>,
-}
-
 #[derive(Debug, Clone, PartialEq)]
 pub enum Source {
-    LocalFile(SourceLocalFileNode),
+    LocalFile { path: String },
 }
 
-#[derive(Debug, Clone, PartialEq)]
-pub struct SourceLocalFileNode {
-    pub path: String,
-}
-
-// FIXME compiler should give a hint whether the interpolated string will be used locally only and whether it is small enough to be allocated on the stack only
-#[derive(Debug, PartialEq)]
-pub struct InterpolateStringNode {
-    pub span: Span,
-    pub nodes: Vec<Node>,
-}
-
-#[derive(Debug, PartialEq)]
-pub struct InstantiateTypeNode {
-    pub span: Span,
-    pub type_name: Identifier,
-    pub arguments: Vec<NamedArgumentNode>,
-}
-
-#[derive(Debug, PartialEq)]
-pub struct NamedArgumentNode {
-    pub span: Span,
-    pub identifier: Identifier,
-    pub value: Node,
-}
-
-#[derive(Debug, PartialEq)]
-pub struct LoadValueFromObjectNode {
-    pub span: Span,
-    pub object: Identifier,
-    pub property: Identifier,
-}
-
-#[derive(Debug, PartialEq)]
-pub struct LoadValueFromSelfNode {
-    pub span: Span,
-    pub property: Identifier,
-}
-
-#[derive(Debug, PartialEq)]
-pub enum TypeNode {
-    Boolean(Token),
-    Object(ObjectTypeNode),
-    Number(Token),
-    String(Token),
-    Function(TypeFunctionNode),
-}
 
 #[derive(Clone, Debug, PartialEq)]
-pub struct ObjectTypeNode {
-    pub span: Span,
-}
+pub struct Identifier(pub Token);
 
-#[derive(Debug, PartialEq)]
-pub struct TypeFunctionNode {
-    pub arguments: Vec<TypeFunctionArgumentNode>,
-    pub return_type: Option<Box<TypeNode>>,
-}
 
-impl TypeFunctionNode {
-    pub fn as_return_type(&self) -> &TypeNode {
-        if let Some(ref node) = self.return_type {
-            node
-        } else {
-            panic!()
-        }
-    }
-}
-
-#[derive(Debug, PartialEq)]
-pub struct TypeFunctionArgumentNode {
-    pub identifier: Option<IdentifierNode>,
-    pub r#type: Box<TypeNode>,
-}
-
-#[derive(Debug, PartialEq)]
-pub struct TypeDeclarationNode {
-    pub span: Span,
-    pub identifier: IdentifierNode,
-    pub properties: TupleNode,
-    pub modifiers: Modifiers,
+#[derive(Debug, Clone, PartialEq)]
+pub enum AstType {
+    Boolean,
+    Object,
+    Number,
+    String,
+    Function { arguments: Vec<Box<AstType>>, return_type: Option<Box<AstType>> },
 }
