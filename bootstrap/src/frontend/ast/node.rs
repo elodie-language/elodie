@@ -63,7 +63,7 @@ pub enum Node<T: Ast<T>> {
     CallFunctionOfPackage(CallFunctionOfPackageNode<T>),
 
     Compare(CompareNode<T>),
-    ContinueLoop,
+    ContinueLoop(ContinueLoopNode),
 
     DeclareExternalFunction(DeclareExternalFunctionNode),
     DeclareFunction(DeclareFunctionNode<T>),
@@ -156,6 +156,10 @@ pub struct CompareNode<T: Ast<T>> {
 }
 
 #[derive(Debug, Clone, PartialEq)]
+pub struct ContinueLoopNode {}
+
+
+#[derive(Debug, Clone, PartialEq)]
 pub struct DeclareExternalFunctionNode {
     pub function: Identifier,
     pub arguments: Vec<FunctionArgument>,
@@ -167,7 +171,7 @@ pub struct DeclareFunctionNode<T: Ast<T>> {
     pub function: Identifier,
     pub arguments: Vec<FunctionArgument>,
     pub return_type: Option<AstType>,
-    pub body: BlockNode<T>,
+    pub nodes: Rc<BlockNode<T>>,
 }
 
 #[derive(Debug, Clone, PartialEq)]
@@ -204,15 +208,15 @@ pub struct DeclareVariableNode<T: Ast<T>> {
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct ExportPackageNode {
-    pub package: PackagePath,
+    pub package: Identifier,
     pub source: Source,
 }
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct IfNode<T: Ast<T>> {
     pub condition: Rc<T>,
-    pub then: Rc<T>,
-    pub otherwise: Option<Rc<T>>,
+    pub then: Rc<BlockNode<T>>,
+    pub otherwise: Option<Rc<BlockNode<T>>>,
 }
 
 #[derive(Debug, Clone, PartialEq)]
@@ -242,7 +246,7 @@ pub struct LoopNode<T: Ast<T>> {
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct ReturnFromFunctionNode<T: Ast<T>> {
-    pub node: Rc<T>,
+    pub node: Option<Rc<T>>,
 }
 
 #[derive(Debug, Clone, PartialEq)]
