@@ -4,8 +4,18 @@ use std::rc::Rc;
 
 use node::CalculateNode;
 
-use crate::common::{Column, Index, node, PackagePath, Position, Row, Span, StringTableId, WithSpan};
-use crate::common::node::{AccessVariableNode, AccessVariableOfObjectNode, AccessVariableOfSelfNode, BlockNode, BreakLoopNode, CallFunctionNode, CallFunctionOfObjectNode, CallFunctionOfPackageNode, CallFunctionWithLambdaNode, CompareNode, CompareOperator, ContinueLoopNode, DeclareExternalFunctionNode, DeclareFunctionNode, DeclarePackageNode, DeclareTypeNode, DeclareVariableNode, DefineTypeNode, ExportPackageNode, IfNode, InstantiateTypeNode, InterpolateStringNode, LiteralBooleanNode, LiteralNumberNode, LiteralStringNode, LoopNode, Node, ReturnFromFunctionNode, Source, Variant};
+use crate::common::node::{
+    AccessVariableNode, AccessVariableOfObjectNode, AccessVariableOfSelfNode, BlockNode,
+    BreakLoopNode, CallFunctionNode, CallFunctionOfObjectNode, CallFunctionOfPackageNode,
+    CallFunctionWithLambdaNode, CompareNode, CompareOperator, ContinueLoopNode,
+    DeclareExternalFunctionNode, DeclareFunctionNode, DeclarePackageNode, DeclareTypeNode,
+    DeclareVariableNode, DefineTypeNode, ExportPackageNode, IfNode, InstantiateTypeNode,
+    InterpolateStringNode, LiteralBooleanNode, LiteralNumberNode, LiteralStringNode, LoopNode,
+    Node, ReturnFromFunctionNode, Source, Variant,
+};
+use crate::common::{
+    node, Column, Index, PackagePath, Position, Row, Span, StringTableId, WithSpan,
+};
 use crate::frontend::lex::token::Token;
 use crate::frontend::modifier::Modifiers;
 
@@ -42,7 +52,7 @@ pub type AstNode = Node<
     AstLiteralNumberNode,
     AstLiteralStringNode,
     AstLoopNode,
-    AstReturnFromFunctionNode
+    AstReturnFromFunctionNode,
 >;
 
 #[derive(Debug, Clone, PartialEq)]
@@ -52,8 +62,12 @@ pub struct AstTreeNode {
 }
 
 impl AstTreeNode {
-    pub fn node(&self) -> &AstNode { &self.node }
-    pub fn node_to_owned(self) -> AstNode { self.node }
+    pub fn node(&self) -> &AstNode {
+        &self.node
+    }
+    pub fn node_to_owned(self) -> AstNode {
+        self.node
+    }
 }
 
 impl AstTreeNode {
@@ -315,7 +329,10 @@ pub enum AstType {
     Object,
     Number,
     String,
-    Function { arguments: Vec<Box<AstType>>, return_type: Option<Box<AstType>> },
+    Function {
+        arguments: Vec<Box<AstType>>,
+        return_type: Option<Box<AstType>>,
+    },
 }
 
 #[derive(Debug, Clone, PartialEq)]

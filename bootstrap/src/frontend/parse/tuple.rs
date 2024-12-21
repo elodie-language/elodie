@@ -1,11 +1,11 @@
 use SeparatorToken::Comma;
 
-use crate::frontend::lex::token::{OperatorToken, SeparatorToken, Token};
 use crate::frontend::lex::token::OperatorToken::CloseParen;
 use crate::frontend::lex::token::TokenKind::Separator;
+use crate::frontend::lex::token::{OperatorToken, SeparatorToken, Token};
 use crate::frontend::parse::node::TupleNode;
-use crate::frontend::parse::Parser;
 use crate::frontend::parse::precedence::Precedence;
+use crate::frontend::parse::Parser;
 
 impl<'a> Parser<'a> {
     pub(crate) fn parse_tuple(&mut self) -> crate::frontend::parse::Result<TupleNode> {
@@ -40,10 +40,10 @@ impl<'a> Parser<'a> {
 mod tests {
     use crate::frontend::context::Context;
     use crate::frontend::lex::lex;
-    use crate::frontend::parse::{InfixOperator, LiteralNode, parse};
-    use crate::frontend::parse::node::{InfixNode, TypeNode};
     use crate::frontend::parse::node::LiteralNode::Number;
     use crate::frontend::parse::node::Node::{Identifier, Infix, Literal, Type};
+    use crate::frontend::parse::node::{InfixNode, TypeNode};
+    use crate::frontend::parse::{parse, InfixOperator, LiteralNode};
 
     #[test]
     fn empty_tuple() {
@@ -85,14 +85,14 @@ mod tests {
             panic!()
         };
         let Infix(InfixNode {
-                      left,
-                      operator,
-                      right,
-                      ..
-                  }) = &node
-            else {
-                panic!()
-            };
+            left,
+            operator,
+            right,
+            ..
+        }) = &node
+        else {
+            panic!()
+        };
 
         let Literal(Number(left)) = &left.as_ref() else {
             panic!()
@@ -148,14 +148,14 @@ mod tests {
             panic!()
         };
         let Infix(InfixNode {
-                      left,
-                      operator,
-                      right,
-                      ..
-                  }) = &node
-            else {
-                panic!()
-            };
+            left,
+            operator,
+            right,
+            ..
+        }) = &node
+        else {
+            panic!()
+        };
 
         let identifier = &left.as_identifier();
         assert_eq!(ctx.get_str(identifier.value()), "u");
@@ -198,14 +198,14 @@ mod tests {
             panic!()
         };
         let Infix(InfixNode {
-                      left,
-                      operator,
-                      right,
-                      ..
-                  }) = &u_node
-            else {
-                panic!()
-            };
+            left,
+            operator,
+            right,
+            ..
+        }) = &u_node
+        else {
+            panic!()
+        };
         let Identifier(identifier) = &left.as_ref() else {
             panic!()
         };
@@ -218,14 +218,14 @@ mod tests {
             panic!()
         };
         let Infix(InfixNode {
-                      left,
-                      operator,
-                      right,
-                      ..
-                  }) = &v_node
-            else {
-                panic!()
-            };
+            left,
+            operator,
+            right,
+            ..
+        }) = &v_node
+        else {
+            panic!()
+        };
         let Identifier(identifier) = &left.as_ref() else {
             panic!()
         };
@@ -248,14 +248,14 @@ mod tests {
             panic!()
         };
         let Infix(InfixNode {
-                      left,
-                      operator,
-                      right,
-                      ..
-                  }) = &u_node
-            else {
-                panic!()
-            };
+            left,
+            operator,
+            right,
+            ..
+        }) = &u_node
+        else {
+            panic!()
+        };
         let Identifier(identifier) = &left.as_ref() else {
             panic!()
         };
@@ -270,14 +270,14 @@ mod tests {
             panic!()
         };
         let Infix(InfixNode {
-                      left,
-                      operator,
-                      right,
-                      ..
-                  }) = &v_node
-            else {
-                panic!()
-            };
+            left,
+            operator,
+            right,
+            ..
+        }) = &v_node
+        else {
+            panic!()
+        };
         let Identifier(identifier) = &left.as_ref() else {
             panic!()
         };
@@ -299,7 +299,7 @@ mod tests {
         v: String
         )"#,
         )
-            .unwrap();
+        .unwrap();
         let result = parse(&mut ctx, tokens).unwrap();
         assert_eq!(result.len(), 1);
 
@@ -309,14 +309,14 @@ mod tests {
             panic!()
         };
         let Infix(InfixNode {
-                      left,
-                      operator,
-                      right,
-                      ..
-                  }) = &u_node
-            else {
-                panic!()
-            };
+            left,
+            operator,
+            right,
+            ..
+        }) = &u_node
+        else {
+            panic!()
+        };
         let Identifier(identifier) = &left.as_ref() else {
             panic!()
         };
@@ -329,14 +329,14 @@ mod tests {
             panic!()
         };
         let Infix(InfixNode {
-                      left,
-                      operator,
-                      right,
-                      ..
-                  }) = &v_node
-            else {
-                panic!()
-            };
+            left,
+            operator,
+            right,
+            ..
+        }) = &v_node
+        else {
+            panic!()
+        };
         let Identifier(identifier) = &left.as_ref() else {
             panic!()
         };

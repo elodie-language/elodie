@@ -2,8 +2,16 @@ use std::rc::Rc;
 
 use bigdecimal::BigDecimal;
 
+use crate::common::node::{
+    AccessVariableNode, AccessVariableOfObjectNode, AccessVariableOfSelfNode, BlockNode,
+    BreakLoopNode, CalculateNode, CallFunctionNode, CallFunctionOfObjectNode,
+    CallFunctionOfPackageNode, CallFunctionWithLambdaNode, CompareNode, ContinueLoopNode,
+    DeclareExternalFunctionNode, DeclareFunctionNode, DeclarePackageNode, DeclareTypeNode,
+    DeclareVariableNode, DefineTypeNode, ExportPackageNode, IfNode, InstantiateTypeNode,
+    InterpolateStringNode, LiteralBooleanNode, LiteralNumberNode, LiteralStringNode, LoopNode,
+    Node, ReturnFromFunctionNode, Variant,
+};
 use crate::common::{Span, StringTableId, WithSpan};
-use crate::common::node::{AccessVariableNode, AccessVariableOfObjectNode, AccessVariableOfSelfNode, BlockNode, BreakLoopNode, CalculateNode, CallFunctionNode, CallFunctionOfObjectNode, CallFunctionOfPackageNode, CallFunctionWithLambdaNode, CompareNode, ContinueLoopNode, DeclareExternalFunctionNode, DeclareFunctionNode, DeclarePackageNode, DeclareTypeNode, DeclareVariableNode, DefineTypeNode, ExportPackageNode, IfNode, InstantiateTypeNode, InterpolateStringNode, LiteralBooleanNode, LiteralNumberNode, LiteralStringNode, LoopNode, Node, ReturnFromFunctionNode, Variant};
 use crate::ir::analyse::InferredType;
 use crate::ir::symbol::SymbolId;
 
@@ -40,7 +48,7 @@ pub type AnalyseNode = crate::common::node::Node<
     AnalyseLiteralNumberNode,
     AnalyseLiteralStringNode,
     AnalyseLoopNode,
-    AnalyseReturnFromFunctionNode
+    AnalyseReturnFromFunctionNode,
 >;
 
 #[derive(Clone, Debug, PartialEq)]
@@ -49,7 +57,6 @@ pub struct AnalyseTreeNode {
     pub span: Span,
     pub inferred_type: InferredType,
 }
-
 
 impl AnalyseTreeNode {
     pub fn as_declared_variable(&self) -> &AnalyseDeclareVariableNode {
@@ -86,13 +93,21 @@ impl AnalyseTreeNode {
 }
 
 impl AnalyseTreeNode {
-    pub fn node(&self) -> &AnalyseNode { &self.node }
-    pub fn node_to_owned(self) -> AnalyseNode { self.node }
+    pub fn node(&self) -> &AnalyseNode {
+        &self.node
+    }
+    pub fn node_to_owned(self) -> AnalyseNode {
+        self.node
+    }
 }
 
 impl AnalyseTreeNode {
     pub fn new(node: AnalyseNode, span: Span, inferred_type: InferredType) -> AnalyseTreeNode {
-        AnalyseTreeNode { node, span, inferred_type }
+        AnalyseTreeNode {
+            node,
+            span,
+            inferred_type,
+        }
     }
 }
 
@@ -101,7 +116,6 @@ impl WithSpan for AnalyseTreeNode {
         self.span.clone()
     }
 }
-
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct AnalyseAccessVariableNode {}
@@ -246,4 +260,3 @@ impl LoopNode<AnalyseVariant> for AnalyseLoopNode {}
 pub struct AnalyseReturnFromFunctionNode {}
 
 impl ReturnFromFunctionNode<AnalyseVariant> for AnalyseReturnFromFunctionNode {}
-

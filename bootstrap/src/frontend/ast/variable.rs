@@ -2,8 +2,10 @@ use std::ops::Deref;
 use std::rc::Rc;
 
 use crate::common::node::Node;
+use crate::frontend::ast::{
+    AstDeclareVariableNode, AstIdentifier, AstTreeNode, Generator, SPAN_NOT_IMPLEMENTED,
+};
 use crate::frontend::{ast, parse};
-use crate::frontend::ast::{AstDeclareVariableNode, AstIdentifier, AstTreeNode, Generator, SPAN_NOT_IMPLEMENTED};
 
 impl<'a> Generator<'a> {
     pub(crate) fn generate_declare_variable(
@@ -19,10 +21,13 @@ impl<'a> Generator<'a> {
         };
 
         let node = Rc::new(self.generate_node(node.node.deref())?);
-        Ok(AstTreeNode::new(Node::DeclareVariable(AstDeclareVariableNode {
-            variable,
-            value: node,
-            value_type: node_type,
-        }), SPAN_NOT_IMPLEMENTED.clone()))
+        Ok(AstTreeNode::new(
+            Node::DeclareVariable(AstDeclareVariableNode {
+                variable,
+                value: node,
+                value_type: node_type,
+            }),
+            SPAN_NOT_IMPLEMENTED.clone(),
+        ))
     }
 }

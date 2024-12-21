@@ -1,5 +1,5 @@
-use crate::frontend::{Ast, Context, parse};
 pub use crate::frontend::ast::node::*;
+use crate::frontend::{parse, Ast, Context};
 
 mod block;
 mod control;
@@ -12,7 +12,6 @@ mod package;
 mod string;
 mod r#type;
 mod variable;
-
 
 #[derive(Debug)]
 pub enum Error {}
@@ -73,7 +72,9 @@ impl<'a> Generator<'a> {
             parse::Node::Loop(loop_node) => Ok(self.generate_loop(loop_node)?),
             parse::Node::Return(return_node) => Ok(self.generate_function_return(return_node)?),
             parse::Node::TypeDeclaration(node) => Ok(self.generate_declare_type(node)?),
-            parse::Node::VariableDeclaration(let_node) => Ok(self.generate_declare_variable(let_node)?),
+            parse::Node::VariableDeclaration(let_node) => {
+                Ok(self.generate_declare_variable(let_node)?)
+            }
             _ => unimplemented!("{:?}", node),
         }
     }

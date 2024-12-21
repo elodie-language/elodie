@@ -3,9 +3,9 @@ use std::ops::Deref;
 use KeywordToken::{Else, If};
 
 use crate::frontend::lex::token::KeywordToken;
-use crate::frontend::parse::{InfixNode, InfixOperator, Node, Parser};
 use crate::frontend::parse::node::{ElseNode, IfNode};
 use crate::frontend::parse::precedence::Precedence;
+use crate::frontend::parse::{InfixNode, InfixOperator, Node, Parser};
 
 impl<'a> Parser<'a> {
     pub(crate) fn parse_if(&mut self) -> crate::frontend::parse::Result<IfNode> {
@@ -15,18 +15,18 @@ impl<'a> Parser<'a> {
 
         // TODO make this recursive and walk down the tree to the out most right node and check for lambda call
         let (condition, then) = if let Node::Infix(InfixNode {
-                                                       token,
-                                                       left,
-                                                       operator,
-                                                       right,
-                                                   }) = condition
+            token,
+            left,
+            operator,
+            right,
+        }) = condition
         {
             if let Node::Infix(InfixNode {
-                                   left: inner_left,
-                                   operator: inner_operator,
-                                   right: inner_right,
-                                   ..
-                               }) = *right
+                left: inner_left,
+                operator: inner_operator,
+                right: inner_right,
+                ..
+            }) = *right
             {
                 assert!(matches!(inner_operator, InfixOperator::LambdaCall(_)));
                 (
@@ -75,9 +75,9 @@ mod tests {
 
     use crate::frontend::context::Context;
     use crate::frontend::lex::lex;
-    use crate::frontend::parse::{InfixNode, InfixOperator, parse};
-    use crate::frontend::parse::node::{IfNode, LiteralNode};
     use crate::frontend::parse::node::Node::Literal;
+    use crate::frontend::parse::node::{IfNode, LiteralNode};
+    use crate::frontend::parse::{parse, InfixNode, InfixOperator};
 
     #[test]
     fn empty_if_no_else() {
@@ -121,9 +121,9 @@ mod tests {
             right,
             ..
         } = condition.as_infix()
-            else {
-                panic!("not infix")
-            };
+        else {
+            panic!("not infix")
+        };
 
         let Literal(LiteralNode::Boolean(left)) = left.deref() else {
             panic!("not boolean node")
@@ -153,7 +153,7 @@ mod tests {
             24
         }"#,
         )
-            .unwrap();
+        .unwrap();
         let result = parse(&mut ctx, tokens).unwrap();
         assert_eq!(result.len(), 1);
 
@@ -222,7 +222,7 @@ mod tests {
             4
         }"#,
         )
-            .unwrap();
+        .unwrap();
         let result = parse(&mut ctx, tokens).unwrap();
         assert_eq!(result.len(), 1);
 

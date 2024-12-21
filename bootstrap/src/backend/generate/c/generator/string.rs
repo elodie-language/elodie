@@ -1,14 +1,17 @@
 use crate::backend::generate::c;
+use crate::backend::generate::c::generator::Generator;
+use crate::backend::generate::c::Expression::{Literal, Variable};
 use crate::backend::generate::c::{
     CallFunctionStatement, CallFunctionStatementResult, DeclareArrayStatement,
     DeclareVariableStatement, Expression, Indent, LiteralExpression, LiteralIntExpression,
     LiteralStringExpression, Statement, VariableExpression,
 };
-use crate::backend::generate::c::Expression::{Literal, Variable};
-use crate::backend::generate::c::generator::Generator;
 use crate::common::node::Node;
 use crate::common::node::Node::CallFunction;
-use crate::frontend::ast::{AstAccessVariableNode, AstAccessVariableOfObjectNode, AstInterpolateStringNode, AstLiteralStringNode};
+use crate::frontend::ast::{
+    AstAccessVariableNode, AstAccessVariableOfObjectNode, AstInterpolateStringNode,
+    AstLiteralStringNode,
+};
 
 impl Generator {
     pub(crate) fn interpolate_string(
@@ -40,14 +43,12 @@ impl Generator {
                     r#type: "const char *".to_string(),
                     expression: c::Expression::Variable(VariableExpression {
                         indent: Indent::none(),
-                        identifier: format!(
-                            "self->{}",
-                            self.string_table.get(node.variable.0)
-                        ),
+                        identifier: format!("self->{}", self.string_table.get(node.variable.0)),
                     }),
                 }));
                 temp_variables.push(temp)
-            } else if let Node::AccessVariable(AstAccessVariableNode { variable, .. }) = node.node() {
+            } else if let Node::AccessVariable(AstAccessVariableNode { variable, .. }) = node.node()
+            {
                 let temp = self.scope.push_temp();
                 //
                 // if self.type_table.is_number(ty) {
@@ -106,10 +107,10 @@ impl Generator {
                 //
                 // temp_variables.push(temp);
             } else if let Node::AccessVariableOfObject(AstAccessVariableOfObjectNode {
-                                                           object,
-                                                           variable,
-                                                           ..
-                                                       }) = node.node()
+                object,
+                variable,
+                ..
+            }) = node.node()
             {
                 let temp = self.scope.push_temp();
 

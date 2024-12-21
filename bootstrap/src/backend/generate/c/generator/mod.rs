@@ -2,6 +2,9 @@ use std::ops::Deref;
 use std::vec;
 
 use crate::backend::generate::c;
+use crate::backend::generate::c::generator::scope::Scope;
+use crate::backend::generate::c::DirectiveNode::{IncludeLocalDirective, IncludeSystemDirective};
+use crate::backend::generate::c::Node::DefineFunction;
 use crate::backend::generate::c::{
     BlockStatement, CallFunctionStatement, CallFunctionStatementResult,
     DeclareFunctionArgumentNode, DeclareFunctionNode, DeclareStructNode,
@@ -9,9 +12,6 @@ use crate::backend::generate::c::{
     IncludeLocalDirectiveNode, IncludeSystemDirectiveNode, Indent, ReturnFromFunctionStatement,
     Statement, VariableExpression,
 };
-use crate::backend::generate::c::DirectiveNode::{IncludeLocalDirective, IncludeSystemDirective};
-use crate::backend::generate::c::generator::scope::Scope;
-use crate::backend::generate::c::Node::DefineFunction;
 use crate::common::node::Node;
 use crate::common::StringTable;
 use crate::frontend;
@@ -268,11 +268,11 @@ impl Generator {
             }
             Node::InstantiateType(_) => unimplemented!(),
             Node::DefineType(AstDefineTypeNode {
-                                 r#type,
-                                 modifiers,
-                                 functions,
-                                 ..
-                             }) => {
+                r#type,
+                modifiers,
+                functions,
+                ..
+            }) => {
                 for function in functions {
                     self.function_declarations.push(DeclareFunctionNode {
                         indent: Indent::none(),
@@ -326,8 +326,8 @@ impl Generator {
             Node::ReturnFromFunction(node) => {
                 let mut result = vec![];
 
-
-                let (statements, expression) = self.generate_expression(&node.node.clone().unwrap())?;
+                let (statements, expression) =
+                    self.generate_expression(&node.node.clone().unwrap())?;
 
                 result.extend(statements);
 
@@ -387,7 +387,7 @@ impl Generator {
             Node::LiteralBoolean(_) => unimplemented!(),
             Node::LiteralNumber(_) => unimplemented!(),
             Node::LiteralString(_) => unimplemented!(),
-            AstNode::Marker(_) => unreachable!()
+            AstNode::Marker(_) => unreachable!(),
         }
     }
 
@@ -396,9 +396,18 @@ impl Generator {
         node: &AstTreeNode,
     ) -> Result<(Vec<c::Statement>, c::Expression)> {
         match node.node() {
-            Node::LiteralString(node) => Ok((vec![], c::Expression::Literal(self.generate_literal_string(node)?))),
-            Node::LiteralNumber(node) => Ok((vec![], c::Expression::Literal(self.generate_literal_number(node)?))),
-            Node::LiteralBoolean(node) => Ok((vec![], c::Expression::Literal(self.generate_literal_bool(node)?))),
+            Node::LiteralString(node) => Ok((
+                vec![],
+                c::Expression::Literal(self.generate_literal_string(node)?),
+            )),
+            Node::LiteralNumber(node) => Ok((
+                vec![],
+                c::Expression::Literal(self.generate_literal_number(node)?),
+            )),
+            Node::LiteralBoolean(node) => Ok((
+                vec![],
+                c::Expression::Literal(self.generate_literal_bool(node)?),
+            )),
             Node::AccessVariable(node) => Ok((vec![], self.generate_load_value(node)?)),
             Node::AccessVariableOfSelf(node) => Ok((vec![], self.generate_load_self_value(node)?)),
             Node::Compare(node) => {

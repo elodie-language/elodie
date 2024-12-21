@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 
-use crate::backend::run::Runner;
 use crate::backend::run::value::{FunctionValue, Value};
+use crate::backend::run::Runner;
 use crate::common::StringTableId;
 use crate::frontend::ast::{AStCallFunctionNode, AstCallFunctionWithLambdaNode};
 
@@ -17,17 +17,15 @@ impl<'a> Runner<'a> {
             args.push(self.run_node(arg)?);
         }
 
-        if let Some(Value::IntrinsicFunction(func)) = self.scope.get_value(&node.function.0)
-        {
+        if let Some(Value::IntrinsicFunction(func)) = self.scope.get_value(&node.function.0) {
             return func.0(&args);
         }
 
-        let function =
-            if let Some(Value::Function(func)) = self.scope.get_value(&node.function.0) {
-                func.clone()
-            } else {
-                todo!()
-            };
+        let function = if let Some(Value::Function(func)) = self.scope.get_value(&node.function.0) {
+            func.clone()
+        } else {
+            todo!()
+        };
 
         let mut args = HashMap::with_capacity(node.arguments.len());
         let mut counter = 0;
@@ -58,9 +56,7 @@ impl<'a> Runner<'a> {
     ) -> crate::backend::run::Result<Value> {
         self.reset_interrupt();
 
-        let function = if let Some(Value::Function(func)) =
-            self.scope.get_value(&node.function.0)
-        {
+        let function = if let Some(Value::Function(func)) = self.scope.get_value(&node.function.0) {
             func.clone()
         } else {
             todo!()
@@ -92,12 +88,7 @@ impl<'a> Runner<'a> {
         });
 
         args.insert(
-            function
-                .arguments
-                .last()
-                .unwrap()
-                .argument
-                .0,
+            function.arguments.last().unwrap().argument.0,
             lambda_function,
         );
 

@@ -4,8 +4,8 @@ use std::fmt::{Debug, Formatter};
 use std::rc::Rc;
 
 use crate::common::StringTableId;
-use crate::frontend::ast::{AstBlockNode, AstFunctionArgument, AstIdentifier};
 use crate::frontend::ast::node::AstNode;
+use crate::frontend::ast::{AstBlockNode, AstFunctionArgument, AstIdentifier};
 
 #[derive(Debug, Clone)]
 pub enum Value {
@@ -107,8 +107,7 @@ impl ObjectValue {
         &self,
         identifier: &AstIdentifier,
     ) -> Option<&IntrinsicFunctionValue> {
-        if let Some(Value::IntrinsicFunction(result)) = &self.properties.get(&identifier.0)
-        {
+        if let Some(Value::IntrinsicFunction(result)) = &self.properties.get(&identifier.0) {
             Some(result)
         } else {
             None

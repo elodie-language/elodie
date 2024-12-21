@@ -2,7 +2,7 @@ use crate::common::{StringTable, StringTableId};
 
 #[derive(Debug)]
 pub struct Context {
-    pub string_table: StringTable
+    pub string_table: StringTable,
 }
 
 impl Context {

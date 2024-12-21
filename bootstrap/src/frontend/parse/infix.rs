@@ -2,8 +2,8 @@ use OperatorToken::CloseCurly;
 
 use crate::frontend::lex::token::OperatorToken;
 use crate::frontend::lex::token::TokenKind::Operator;
-use crate::frontend::parse::Error::UnsupportedToken;
 use crate::frontend::parse::node::{InfixNode, InfixOperator, Node};
+use crate::frontend::parse::Error::UnsupportedToken;
 use crate::frontend::parse::Parser;
 
 impl<'a> Parser<'a> {
@@ -68,10 +68,10 @@ mod tests {
     use crate::frontend::context::Context;
     use crate::frontend::lex::lex;
     use crate::frontend::lex::token::OperatorToken::*;
-    use crate::frontend::parse::{parse, TypeNode};
+    use crate::frontend::parse::node::Node::{Identifier, Literal};
     use crate::frontend::parse::node::{InfixNode, InfixOperator, LiteralNode, TupleNode};
     use crate::frontend::parse::Node::{Infix, Type};
-    use crate::frontend::parse::node::Node::{Identifier, Literal};
+    use crate::frontend::parse::{parse, TypeNode};
 
     #[test]
     fn identifier_with_type() {
@@ -81,14 +81,14 @@ mod tests {
         assert_eq!(result.len(), 1);
 
         let Infix(InfixNode {
-                      left,
-                      operator,
-                      right,
-                      ..
-                  }) = &result[0]
-            else {
-                panic!()
-            };
+            left,
+            operator,
+            right,
+            ..
+        }) = &result[0]
+        else {
+            panic!()
+        };
         let InfixOperator::TypeAscription(_) = operator else {
             panic!()
         };
@@ -114,14 +114,14 @@ mod tests {
         assert_eq!(result.len(), 1);
 
         let Infix(InfixNode {
-                      ref left,
-                      ref operator,
-                      ref right,
-                      ..
-                  }) = result[0]
-            else {
-                panic!()
-            };
+            ref left,
+            ref operator,
+            ref right,
+            ..
+        }) = result[0]
+        else {
+            panic!()
+        };
 
         let Literal(LiteralNode::Number(node)) = left.deref() else {
             panic!()
@@ -144,14 +144,14 @@ mod tests {
         assert_eq!(result.len(), 1);
 
         let Infix(InfixNode {
-                      ref left,
-                      ref operator,
-                      ref right,
-                      ..
-                  }) = result[0]
-            else {
-                panic!()
-            };
+            ref left,
+            ref operator,
+            ref right,
+            ..
+        }) = result[0]
+        else {
+            panic!()
+        };
 
         let Literal(LiteralNode::Number(node)) = left.deref() else {
             panic!()
@@ -174,14 +174,14 @@ mod tests {
         assert_eq!(result.len(), 1);
 
         let Infix(InfixNode {
-                      ref left,
-                      ref operator,
-                      ref right,
-                      ..
-                  }) = result[0]
-            else {
-                panic!()
-            };
+            ref left,
+            ref operator,
+            ref right,
+            ..
+        }) = result[0]
+        else {
+            panic!()
+        };
 
         let Literal(LiteralNode::Number(node)) = left.deref() else {
             panic!()
@@ -204,14 +204,14 @@ mod tests {
         assert_eq!(result.len(), 1);
 
         let Infix(InfixNode {
-                      ref left,
-                      ref operator,
-                      ref right,
-                      ..
-                  }) = result[0]
-            else {
-                panic!()
-            };
+            ref left,
+            ref operator,
+            ref right,
+            ..
+        }) = result[0]
+        else {
+            panic!()
+        };
 
         let Literal(LiteralNode::Number(node)) = left.deref() else {
             panic!()
@@ -234,14 +234,14 @@ mod tests {
         assert_eq!(result.len(), 1);
 
         let Infix(InfixNode {
-                      ref left,
-                      ref operator,
-                      ref right,
-                      ..
-                  }) = result[0]
-            else {
-                panic!()
-            };
+            ref left,
+            ref operator,
+            ref right,
+            ..
+        }) = result[0]
+        else {
+            panic!()
+        };
 
         let Literal(LiteralNode::Number(node)) = left.deref() else {
             panic!()
@@ -264,14 +264,14 @@ mod tests {
         assert_eq!(result.len(), 1);
 
         let Infix(InfixNode {
-                      ref left,
-                      ref operator,
-                      ref right,
-                      ..
-                  }) = result[0]
-            else {
-                panic!()
-            };
+            ref left,
+            ref operator,
+            ref right,
+            ..
+        }) = result[0]
+        else {
+            panic!()
+        };
 
         let Literal(LiteralNode::Number(node)) = left.deref() else {
             panic!()
@@ -294,14 +294,14 @@ mod tests {
         assert_eq!(result.len(), 1);
 
         let Infix(InfixNode {
-                      ref left,
-                      ref operator,
-                      ref right,
-                      ..
-                  }) = result[0]
-            else {
-                panic!()
-            };
+            ref left,
+            ref operator,
+            ref right,
+            ..
+        }) = result[0]
+        else {
+            panic!()
+        };
 
         let Literal(LiteralNode::Number(node)) = left.deref() else {
             panic!()
@@ -324,14 +324,14 @@ mod tests {
         assert_eq!(result.len(), 1);
 
         let Infix(InfixNode {
-                      ref left,
-                      ref operator,
-                      ref right,
-                      ..
-                  }) = result[0]
-            else {
-                panic!()
-            };
+            ref left,
+            ref operator,
+            ref right,
+            ..
+        }) = result[0]
+        else {
+            panic!()
+        };
 
         let Literal(LiteralNode::Number(node)) = left.deref() else {
             panic!()
@@ -354,14 +354,14 @@ mod tests {
         assert_eq!(result.len(), 1);
 
         let Infix(InfixNode {
-                      ref left,
-                      ref operator,
-                      ref right,
-                      ..
-                  }) = result[0]
-            else {
-                panic!()
-            };
+            ref left,
+            ref operator,
+            ref right,
+            ..
+        }) = result[0]
+        else {
+            panic!()
+        };
 
         let Literal(LiteralNode::Number(node)) = left.deref() else {
             panic!()
@@ -384,14 +384,14 @@ mod tests {
         assert_eq!(result.len(), 1);
 
         let Infix(InfixNode {
-                      ref left,
-                      ref operator,
-                      ref right,
-                      ..
-                  }) = result[0]
-            else {
-                panic!()
-            };
+            ref left,
+            ref operator,
+            ref right,
+            ..
+        }) = result[0]
+        else {
+            panic!()
+        };
 
         let Literal(LiteralNode::Number(node)) = left.deref() else {
             panic!()
@@ -414,14 +414,14 @@ mod tests {
         assert_eq!(result.len(), 1);
 
         let Infix(InfixNode {
-                      ref left,
-                      ref operator,
-                      ref right,
-                      ..
-                  }) = result[0]
-            else {
-                panic!()
-            };
+            ref left,
+            ref operator,
+            ref right,
+            ..
+        }) = result[0]
+        else {
+            panic!()
+        };
 
         let Literal(LiteralNode::Number(node)) = left.deref() else {
             panic!()

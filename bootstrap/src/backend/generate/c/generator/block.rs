@@ -1,6 +1,6 @@
 use crate::backend::generate::c;
-use crate::backend::generate::c::{BlockStatement, Indent};
 use crate::backend::generate::c::generator::Generator;
+use crate::backend::generate::c::{BlockStatement, Indent};
 use crate::frontend::ast::AstBlockNode;
 
 impl Generator {

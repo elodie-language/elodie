@@ -2,9 +2,9 @@ use crate::common::is_pascal_snake_case;
 use crate::frontend::lex::token::OperatorToken::{Arrow, CloseParen, Colon, OpenParen};
 use crate::frontend::lex::token::SeparatorToken::Comma;
 use crate::frontend::lex::token::TokenKind::{Operator, Separator};
-use crate::frontend::parse::{ObjectTypeNode, Parser};
-use crate::frontend::parse::Error::InvalidType;
 use crate::frontend::parse::node::{TypeFunctionArgumentNode, TypeFunctionNode, TypeNode};
+use crate::frontend::parse::Error::InvalidType;
+use crate::frontend::parse::{ObjectTypeNode, Parser};
 
 impl<'a> Parser<'a> {
     pub(crate) fn parse_type(&mut self) -> crate::frontend::parse::Result<TypeNode> {
@@ -71,9 +71,9 @@ impl<'a> Parser<'a> {
 mod tests {
     use crate::frontend::context::Context;
     use crate::frontend::lex::lex;
-    use crate::frontend::parse::{ObjectTypeNode, Parser};
-    use crate::frontend::parse::Error::InvalidType;
     use crate::frontend::parse::node::{TypeFunctionArgumentNode, TypeNode};
+    use crate::frontend::parse::Error::InvalidType;
+    use crate::frontend::parse::{ObjectTypeNode, Parser};
 
     #[test]
     fn not_a_type() {

@@ -98,7 +98,7 @@ mod tests {
             &mut ctx,
             "external function magic(arg_1: String, arg_2: Number)",
         )
-            .unwrap();
+        .unwrap();
         let result = parse(&mut ctx, tokens).unwrap();
         assert_eq!(result.len(), 1);
 
@@ -131,7 +131,7 @@ mod tests {
             &mut ctx,
             "export external function magic(arg_1: String, arg_2: Number) -> Bool",
         )
-            .unwrap();
+        .unwrap();
         let result = parse(&mut ctx, tokens).unwrap();
         assert_eq!(result.len(), 1);
 

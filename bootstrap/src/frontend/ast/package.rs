@@ -4,11 +4,15 @@ use std::io::Read;
 use std::ops::Deref;
 use std::path::PathBuf;
 
-use crate::common::node::{Node, Source};
 use crate::common::node::Node::{Block, ExportPackage};
-use crate::frontend::{ast, ast_from_str, parse};
-use crate::frontend::ast::{AstBlockNode, AstDeclareExternalFunctionNode, AstDeclareFunctionNode, AstDeclarePackageNode, AstDefineTypeNode, AstExportPackageNode, AstIdentifier, AstTreeNode, Generator, SPAN_NOT_IMPLEMENTED};
+use crate::common::node::{Node, Source};
+use crate::frontend::ast::{
+    AstBlockNode, AstDeclareExternalFunctionNode, AstDeclareFunctionNode, AstDeclarePackageNode,
+    AstDefineTypeNode, AstExportPackageNode, AstIdentifier, AstTreeNode, Generator,
+    SPAN_NOT_IMPLEMENTED,
+};
 use crate::frontend::parse::LiteralNode;
+use crate::frontend::{ast, ast_from_str, parse};
 
 impl<'a> Generator<'a> {
     pub(crate) fn generate_from(&mut self, node: &parse::FromNode) -> ast::Result<AstTreeNode> {
@@ -23,13 +27,14 @@ impl<'a> Generator<'a> {
         &mut self,
         node: &parse::FromExportNode,
     ) -> ast::Result<AstTreeNode> {
-        let source = if let parse::Node::Literal(LiteralNode::String(from)) = &node.from_node.deref() {
-            Source::LocalFile {
-                path: self.ctx.get_str(from.value()).to_string(),
-            }
-        } else {
-            todo!()
-        };
+        let source =
+            if let parse::Node::Literal(LiteralNode::String(from)) = &node.from_node.deref() {
+                Source::LocalFile {
+                    path: self.ctx.get_str(from.value()).to_string(),
+                }
+            } else {
+                todo!()
+            };
 
         let package = if let parse::Node::Identifier(identifier) = &node.what_node.deref() {
             // at this point in time it should be clear what identifier refers to at the moment in can only be package
@@ -38,14 +43,19 @@ impl<'a> Generator<'a> {
             todo!()
         };
 
-        return Ok(AstTreeNode::new(Block(AstBlockNode {
-            nodes: vec![AstTreeNode::new(ExportPackage(AstExportPackageNode {
-                package: AstIdentifier(package.0.clone()),
-                source,
-            }), SPAN_NOT_IMPLEMENTED.clone())],
-        }), SPAN_NOT_IMPLEMENTED.clone()));
+        return Ok(AstTreeNode::new(
+            Block(AstBlockNode {
+                nodes: vec![AstTreeNode::new(
+                    ExportPackage(AstExportPackageNode {
+                        package: AstIdentifier(package.0.clone()),
+                        source,
+                    }),
+                    SPAN_NOT_IMPLEMENTED.clone(),
+                )],
+            }),
+            SPAN_NOT_IMPLEMENTED.clone(),
+        ));
     }
-
 
     pub(crate) fn generate_declare_package(
         &mut self,
@@ -107,14 +117,17 @@ impl<'a> Generator<'a> {
             }
         }
 
-        Ok(AstTreeNode::new(Node::DeclarePackage(AstDeclarePackageNode {
-            package: AstIdentifier(node.identifier.value()),
-            modifiers: node.modifiers.clone(),
-            functions,
-            packages,
-            definitions: definitions,
-            external_functions,
-        }), SPAN_NOT_IMPLEMENTED.clone()))
+        Ok(AstTreeNode::new(
+            Node::DeclarePackage(AstDeclarePackageNode {
+                package: AstIdentifier(node.identifier.value()),
+                modifiers: node.modifiers.clone(),
+                functions,
+                packages,
+                definitions: definitions,
+                external_functions,
+            }),
+            SPAN_NOT_IMPLEMENTED.clone(),
+        ))
     }
 
     fn load_declared_packages(&mut self, name: &str) -> Vec<AstDeclarePackageNode> {
@@ -131,7 +144,6 @@ impl<'a> Generator<'a> {
         result
     }
 }
-
 
 fn load_library_file(filename: &str) -> io::Result<String> {
     // Get the path to the project root directory

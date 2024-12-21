@@ -1,7 +1,7 @@
 use crate::frontend::lex::token::KeywordToken;
 use crate::frontend::lex::token::KeywordToken::Export;
-use crate::frontend::parse::{FromExportNode, FromNode, Parser};
 use crate::frontend::parse::precedence::Precedence;
+use crate::frontend::parse::{FromExportNode, FromNode, Parser};
 
 impl<'a> Parser<'a> {
     pub(crate) fn parse_from(&mut self) -> crate::frontend::parse::Result<FromNode> {
@@ -29,7 +29,7 @@ impl<'a> Parser<'a> {
 mod tests {
     use crate::frontend::context::Context;
     use crate::frontend::lex::lex;
-    use crate::frontend::parse::{FromNode, LiteralNode, parse};
+    use crate::frontend::parse::{parse, FromNode, LiteralNode};
 
     #[test]
     fn export_single_package_from_local_file() {

@@ -38,7 +38,7 @@ impl Symbol {
             Symbol::Function { id, .. } => id.clone(),
             Symbol::Package { id, .. } => id.clone(),
             Symbol::Type { id, .. } => id.clone(),
-            Symbol::Variable { id, .. } => id.clone()
+            Symbol::Variable { id, .. } => id.clone(),
         }
     }
 
@@ -81,31 +81,46 @@ impl SymbolTable {
 
     pub(crate) fn register_argument(&mut self, name: SymbolName) -> SymbolId {
         let new_id = SymbolId(self.len() + 1);
-        self.symbols.push(Symbol::Argument { id: new_id.clone(), name });
+        self.symbols.push(Symbol::Argument {
+            id: new_id.clone(),
+            name,
+        });
         new_id
     }
 
     pub(crate) fn register_function(&mut self, name: SymbolName) -> SymbolId {
         let new_id = SymbolId(self.len() + 1);
-        self.symbols.push(Symbol::Function { id: new_id.clone(), name });
+        self.symbols.push(Symbol::Function {
+            id: new_id.clone(),
+            name,
+        });
         new_id
     }
 
     pub(crate) fn register_package(&mut self, name: SymbolName) -> SymbolId {
         let new_id = SymbolId(self.len() + 1);
-        self.symbols.push(Symbol::Package { id: new_id.clone(), name });
+        self.symbols.push(Symbol::Package {
+            id: new_id.clone(),
+            name,
+        });
         new_id
     }
 
     pub(crate) fn register_type(&mut self, name: SymbolName) -> SymbolId {
         let new_id = SymbolId(self.len() + 1);
-        self.symbols.push(Symbol::Type { id: new_id.clone(), name });
+        self.symbols.push(Symbol::Type {
+            id: new_id.clone(),
+            name,
+        });
         new_id
     }
 
     pub(crate) fn register_variable(&mut self, name: SymbolName) -> SymbolId {
         let new_id = SymbolId(self.len() + 1);
-        self.symbols.push(Symbol::Variable { id: new_id.clone(), name });
+        self.symbols.push(Symbol::Variable {
+            id: new_id.clone(),
+            name,
+        });
         new_id
     }
 }
@@ -201,7 +216,6 @@ mod tests {
         assert_eq!(symbol.id(), SymbolId(1));
         assert_eq!(symbol.name_str(&ctx), "variable");
     }
-
 
     #[test]
     fn register_multiple_symbols() {

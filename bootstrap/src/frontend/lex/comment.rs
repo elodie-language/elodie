@@ -14,8 +14,8 @@ impl Lexer<'_> {
 #[cfg(test)]
 mod test {
     use crate::frontend::context::Context;
-    use crate::frontend::lex::Lexer;
     use crate::frontend::lex::token::TokenKind;
+    use crate::frontend::lex::Lexer;
 
     #[test]
     fn comment() {

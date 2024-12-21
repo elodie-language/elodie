@@ -27,7 +27,6 @@ pub struct TypeTable {
     types: HashMap<TypeId, Type>,
 }
 
-
 impl TypeTable {
     // FIXME nobody should ever rely on a concrete type id value => therefore make it random
     pub fn new() -> Self {

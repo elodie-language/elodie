@@ -2,8 +2,8 @@ use crate::backend::generate::c;
 use crate::backend::generate::c::generator::Generator;
 use crate::backend::generate::c::{InfixExpression, InfixOperator, Statement};
 use crate::common::node::{CalculationOperator, CompareOperator};
-use crate::frontend::ast::{AstCalculateNode, AstCompareNode};
 use crate::frontend::ast::node::AstNode;
+use crate::frontend::ast::{AstCalculateNode, AstCompareNode};
 
 impl Generator {
     pub(crate) fn generate_compare(

@@ -3,8 +3,8 @@ use SeparatorToken::NewLine;
 
 use crate::frontend::lex::token::{KeywordToken, OperatorToken, SeparatorToken};
 use crate::frontend::parse::node::{BreakNode, ContinueNode, LoopNode};
-use crate::frontend::parse::Parser;
 use crate::frontend::parse::precedence::Precedence;
+use crate::frontend::parse::Parser;
 
 impl<'a> Parser<'a> {
     pub(crate) fn parse_loop(&mut self) -> crate::frontend::parse::Result<LoopNode> {

@@ -1,19 +1,19 @@
 use SeparatorToken::NewLine;
 
 use crate::common::{is_pascal_snake_case, is_snake_case};
-use crate::frontend::lex::token::{KeywordToken, OperatorToken, SeparatorToken};
 use crate::frontend::lex::token::LiteralToken::{False, Number, String, True};
 use crate::frontend::lex::token::TokenKind::{Keyword, Operator};
-use crate::frontend::parse::{Error, Parser};
-use crate::frontend::parse::Error::UnsupportedToken;
-use crate::frontend::parse::node::{Node, PrefixNode, PrefixOperator};
-use crate::frontend::parse::Node::{
-    DefineDeclaration, ExternalFunctionDeclaration, Itself, PackageDeclaration, TypeDeclaration,
-};
+use crate::frontend::lex::token::{KeywordToken, OperatorToken, SeparatorToken};
 use crate::frontend::parse::node::Node::{
     Break, Continue, FunctionDeclaration, If, Loop, Return, VariableDeclaration,
 };
+use crate::frontend::parse::node::{Node, PrefixNode, PrefixOperator};
 use crate::frontend::parse::precedence::Precedence;
+use crate::frontend::parse::Error::UnsupportedToken;
+use crate::frontend::parse::Node::{
+    DefineDeclaration, ExternalFunctionDeclaration, Itself, PackageDeclaration, TypeDeclaration,
+};
+use crate::frontend::parse::{Error, Parser};
 
 impl<'a> Parser<'a> {
     pub(crate) fn parse_primary(&mut self) -> crate::frontend::parse::Result<Node> {
@@ -103,9 +103,9 @@ mod tests {
 
     use crate::frontend::context::Context;
     use crate::frontend::lex::lex;
-    use crate::frontend::parse::{LiteralNode, Node, parse};
     use crate::frontend::parse::node::{PrefixNode, PrefixOperator};
     use crate::frontend::parse::Node::Literal;
+    use crate::frontend::parse::{parse, LiteralNode, Node};
 
     #[test]
     fn plus() {
@@ -115,12 +115,12 @@ mod tests {
         assert_eq!(result.len(), 1);
 
         let Node::Prefix(PrefixNode {
-                             ref operator,
-                             ref node,
-                         }) = result[0]
-            else {
-                panic!()
-            };
+            ref operator,
+            ref node,
+        }) = result[0]
+        else {
+            panic!()
+        };
         assert!(matches!(*operator, PrefixOperator::Plus(_)));
 
         let Literal(LiteralNode::Number(node)) = node.deref() else {
@@ -137,12 +137,12 @@ mod tests {
         assert_eq!(result.len(), 1);
 
         let Node::Prefix(PrefixNode {
-                             ref operator,
-                             ref node,
-                         }) = result[0]
-            else {
-                panic!()
-            };
+            ref operator,
+            ref node,
+        }) = result[0]
+        else {
+            panic!()
+        };
         assert!(matches!(*operator, PrefixOperator::Negate(_)));
 
         let Literal(LiteralNode::Number(node)) = node.deref() else {
@@ -159,12 +159,12 @@ mod tests {
         assert_eq!(result.len(), 1);
 
         let Node::Prefix(PrefixNode {
-                             ref operator,
-                             ref node,
-                         }) = result[0]
-            else {
-                panic!()
-            };
+            ref operator,
+            ref node,
+        }) = result[0]
+        else {
+            panic!()
+        };
         assert!(matches!(*operator, PrefixOperator::Not(_)));
 
         let Literal(LiteralNode::Boolean(node)) = node.deref() else {

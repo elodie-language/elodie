@@ -1,15 +1,15 @@
 use std::ops::Deref;
 
-use crate::common::{StringTable, WithSpan};
 use crate::common::node::Node::{DeclareVariable, LiteralBoolean, LiteralNumber, LiteralString};
+use crate::common::{StringTable, WithSpan};
 use crate::frontend;
 use crate::frontend::ast::AstTreeNode;
 use crate::ir::analyse::AnalyseTreeNode;
 use crate::ir::context::Context;
 use crate::ir::symbol::{SymbolId, SymbolName, SymbolTable};
 
-mod literal;
 mod declare;
+mod literal;
 mod r#type;
 
 pub(crate) struct Inference<'a> {
@@ -25,7 +25,10 @@ impl<'a> Inference<'a> {
         }
     }
 
-    pub(crate) fn infer(&mut self, ast: frontend::Ast) -> crate::ir::analyse::Result<Vec<AnalyseTreeNode>> {
+    pub(crate) fn infer(
+        &mut self,
+        ast: frontend::Ast,
+    ) -> crate::ir::analyse::Result<Vec<AnalyseTreeNode>> {
         let mut nodes = vec![];
         for node in &ast.nodes {
             nodes.push(self.infer_node(node)?);
@@ -39,7 +42,7 @@ impl<'a> Inference<'a> {
             LiteralBoolean(node) => self.infer_literal_boolean(ast.span(), node),
             LiteralNumber(node) => self.infer_literal_number(ast.span(), node),
             LiteralString(node) => self.infer_literal_string(ast.span(), node),
-            _ => unimplemented!("{ast:#?}")
+            _ => unimplemented!("{ast:#?}"),
         }
     }
 

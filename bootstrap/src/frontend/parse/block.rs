@@ -2,8 +2,8 @@ use OperatorToken::{CloseCurly, OpenCurly};
 
 use crate::frontend::lex::token::{OperatorToken, Token};
 use crate::frontend::parse::node::BlockNode;
-use crate::frontend::parse::Parser;
 use crate::frontend::parse::precedence::Precedence;
+use crate::frontend::parse::Parser;
 
 impl<'a> Parser<'a> {
     pub(crate) fn parse_block(&mut self) -> crate::frontend::parse::Result<BlockNode> {
@@ -33,11 +33,11 @@ impl<'a> Parser<'a> {
 mod tests {
     use crate::frontend::context::Context;
     use crate::frontend::lex::lex;
-    use crate::frontend::lex::token::{LiteralToken, test_token_with_offset, TokenKind};
+    use crate::frontend::lex::token::{test_token_with_offset, LiteralToken, TokenKind};
+    use crate::frontend::parse::node::Node::Literal;
     use crate::frontend::parse::node::{
         InfixNode, InfixOperator, LiteralBooleanNode, LiteralNode, TupleNode,
     };
-    use crate::frontend::parse::node::Node::Literal;
     use crate::frontend::parse::parse;
 
     #[test]
@@ -130,7 +130,7 @@ mod tests {
 
         }"#,
         )
-            .unwrap();
+        .unwrap();
         let result = parse(&mut ctx, tokens).unwrap();
         assert_eq!(result.len(), 1);
 
@@ -147,7 +147,7 @@ mod tests {
         {      }
         }"#,
         )
-            .unwrap();
+        .unwrap();
         let result = parse(&mut ctx, tokens).unwrap();
         assert_eq!(result.len(), 1);
 
@@ -169,7 +169,7 @@ mod tests {
         // after
         }"#,
         )
-            .unwrap();
+        .unwrap();
         let result = parse(&mut ctx, tokens).unwrap();
         assert_eq!(result.len(), 1);
 

@@ -4,7 +4,7 @@ use crate::common::Span;
 use crate::frontend::lex::lex;
 use crate::frontend::lex::token::{LiteralToken, Token, TokenKind};
 use crate::frontend::parse::{
-    LiteralNode, LiteralStringNode, Node, parse, Parser, StringInterpolationNode,
+    parse, LiteralNode, LiteralStringNode, Node, Parser, StringInterpolationNode,
 };
 
 impl<'a> Parser<'a> {
@@ -71,12 +71,12 @@ impl<'a> Parser<'a> {
 mod tests {
     use crate::frontend::context::Context;
     use crate::frontend::lex::lex;
-    use crate::frontend::parse::{
-        InfixNode, InfixOperator, parse, StringInterpolationNode, TupleNode,
-    };
     use crate::frontend::parse::node::LiteralNode;
     use crate::frontend::parse::node::Node::Literal;
     use crate::frontend::parse::Node::StringInterpolation;
+    use crate::frontend::parse::{
+        parse, InfixNode, InfixOperator, StringInterpolationNode, TupleNode,
+    };
 
     #[test]
     fn string_literal() {

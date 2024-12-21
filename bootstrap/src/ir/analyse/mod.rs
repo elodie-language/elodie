@@ -8,8 +8,8 @@ use crate::frontend::Ast;
 use crate::ir::analyse::infer::Inference;
 use crate::ir::Context;
 
-mod node;
 mod infer;
+mod node;
 
 #[derive(Debug, Clone, PartialEq)]
 pub enum InferredType {
@@ -23,7 +23,6 @@ pub enum InferredType {
 
     OneOf(Vec<InferredType>),
     AllOf(Vec<InferredType>),
-
 }
 
 impl InferredType {}
@@ -50,4 +49,3 @@ pub(crate) fn analyse(ctx: &mut Context, ast: Ast) -> Result<Analyse> {
 
     Ok(Analyse { nodes: inferred })
 }
-

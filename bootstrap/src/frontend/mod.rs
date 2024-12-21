@@ -6,10 +6,10 @@ use crate::frontend::lex::lex;
 use crate::frontend::parse::parse;
 
 pub mod ast;
-pub mod lex;
-pub mod parse;
-pub mod modifier;
 pub mod context;
+pub mod lex;
+pub mod modifier;
+pub mod parse;
 
 #[derive(Debug)]
 pub enum Error {
@@ -37,7 +37,6 @@ impl From<ast::Error> for Error {
 }
 
 pub type Result<T, E = Error> = core::result::Result<T, E>;
-
 
 #[derive(Debug)]
 pub struct Ast {

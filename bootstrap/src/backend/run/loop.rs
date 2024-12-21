@@ -1,5 +1,5 @@
-use crate::backend::run::{Interrupt, Runner};
 use crate::backend::run::value::Value;
+use crate::backend::run::{Interrupt, Runner};
 use crate::frontend::ast::{AstBreakLoopNode, AstContinueLoopNode, AstLoopNode};
 
 impl<'a> Runner<'a> {

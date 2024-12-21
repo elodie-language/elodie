@@ -1,14 +1,15 @@
 use crate::backend::generate::c;
-use crate::backend::generate::c::{
-    CallFunctionStatement, CallFunctionStatementResult, DeclareFunctionNode
-    , Expression, Indent,
-    Statement, VariableExpression,
-};
 use crate::backend::generate::c::generator::Generator;
 use crate::backend::generate::c::Statement::CallFunction;
+use crate::backend::generate::c::{
+    CallFunctionStatement, CallFunctionStatementResult, DeclareFunctionNode, Expression, Indent,
+    Statement, VariableExpression,
+};
 use crate::common::node::Node;
-use crate::frontend::ast::{AstAccessVariableNode, AStCallFunctionNode, AstCallFunctionOfPackageNode, AstTreeNode};
 use crate::frontend::ast::node::AstNode;
+use crate::frontend::ast::{
+    AStCallFunctionNode, AstAccessVariableNode, AstCallFunctionOfPackageNode, AstTreeNode,
+};
 
 impl Generator {
     pub(crate) fn generate_declare_function(

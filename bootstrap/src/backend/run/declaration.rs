@@ -2,10 +2,13 @@ use std::collections::HashMap;
 use std::ops::Deref;
 use std::rc::Rc;
 
-use crate::backend::run::Runner;
 use crate::backend::run::value::{FunctionValue, IntrinsicFunctionValue, PackageValue, Value};
+use crate::backend::run::Runner;
 use crate::common::node::Node;
-use crate::frontend::ast::{AstDeclareFunctionNode, AstDeclarePackageNode, AstDeclareVariableNode, AstTreeNode, SPAN_NOT_IMPLEMENTED};
+use crate::frontend::ast::{
+    AstDeclareFunctionNode, AstDeclarePackageNode, AstDeclareVariableNode, AstTreeNode,
+    SPAN_NOT_IMPLEMENTED,
+};
 use crate::ir::TypeId;
 
 impl<'a> Runner<'a> {
@@ -75,7 +78,10 @@ impl<'a> Runner<'a> {
         }
 
         for node in &node.definitions {
-            self.run_node(&AstTreeNode::new(Node::DefineType(node.clone()), SPAN_NOT_IMPLEMENTED.clone()))?;
+            self.run_node(&AstTreeNode::new(
+                Node::DefineType(node.clone()),
+                SPAN_NOT_IMPLEMENTED.clone(),
+            ))?;
 
             for func in &node.functions {
                 let func_ident = func.function.0;

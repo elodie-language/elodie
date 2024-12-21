@@ -1,15 +1,15 @@
-use std::{env, io};
 use std::collections::HashMap;
 use std::fs::File;
 use std::io::Read;
 use std::path::PathBuf;
 use std::process::exit;
+use std::{env, io};
 
-use crate::backend::{build, generate};
-use crate::backend::run::{run, run_file};
 use crate::backend::run::scope::Scope;
 use crate::backend::run::type_definitions::TypeDefinitions;
+use crate::backend::run::{run, run_file};
 use crate::backend::test::test_files;
+use crate::backend::{build, generate};
 use crate::frontend::ast_from_str;
 use crate::frontend::context::Context;
 
@@ -51,7 +51,7 @@ fn main() {
                 std_file,
                 true,
             )
-                .unwrap()
+            .unwrap()
         };
 
         let mut path = PathBuf::from(file.clone());
@@ -59,10 +59,13 @@ fn main() {
 
         let source_file = ast_from_str(&mut ctx, content.as_str()).unwrap();
 
-        let code = generate::generate_c_code(frontend::Context {
-            string_table: ctx.string_table,
-        }, source_file)
-            .unwrap();
+        let code = generate::generate_c_code(
+            frontend::Context {
+                string_table: ctx.string_table,
+            },
+            source_file,
+        )
+        .unwrap();
 
         // println!("{}",code);
 
@@ -75,7 +78,7 @@ fn main() {
                 .as_str(),
             &code,
         )
-            .unwrap();
+        .unwrap();
 
         return;
     }

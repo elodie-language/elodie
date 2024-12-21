@@ -2,8 +2,8 @@ pub use node::*;
 
 use crate::backend::generate::c::emitter::emit;
 use crate::backend::generate::c::generator::generate;
-use crate::{frontend, ir};
 use crate::frontend::Ast;
+use crate::{frontend, ir};
 
 mod emitter;
 mod generator;

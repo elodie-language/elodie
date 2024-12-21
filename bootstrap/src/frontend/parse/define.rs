@@ -69,7 +69,7 @@ mod tests {
             &mut ctx,
             "export define Magic { export function some_fn() {} }",
         )
-            .unwrap();
+        .unwrap();
         let result = parse(&mut ctx, tokens).unwrap();
         assert_eq!(result.len(), 1);
 

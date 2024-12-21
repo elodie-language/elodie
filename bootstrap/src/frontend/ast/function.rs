@@ -3,8 +3,11 @@ use std::rc::Rc;
 
 use crate::common::node::Node;
 use crate::common::node::Node::ReturnFromFunction;
+use crate::frontend::ast::{
+    AstBlockNode, AstDeclareExternalFunctionNode, AstDeclareFunctionNode, AstFunctionArgument,
+    AstIdentifier, AstReturnFromFunctionNode, AstTreeNode, Generator, SPAN_NOT_IMPLEMENTED,
+};
 use crate::frontend::{ast, parse};
-use crate::frontend::ast::{AstBlockNode, AstDeclareExternalFunctionNode, AstDeclareFunctionNode, AstFunctionArgument, AstIdentifier, AstReturnFromFunctionNode, AstTreeNode, Generator, SPAN_NOT_IMPLEMENTED};
 
 impl<'a> Generator<'a> {
     pub(crate) fn generate_declare_external_function(
@@ -16,15 +19,15 @@ impl<'a> Generator<'a> {
             arguments.push(self.generate_declare_function_argument(arg)?)
         }
 
-        Ok(AstTreeNode::new(Node::DeclareExternalFunction(
-            AstDeclareExternalFunctionNode {
+        Ok(AstTreeNode::new(
+            Node::DeclareExternalFunction(AstDeclareExternalFunctionNode {
                 function: AstIdentifier(node.identifier.value()),
                 arguments,
                 return_type: None,
-            },
-        ), SPAN_NOT_IMPLEMENTED.clone()))
+            }),
+            SPAN_NOT_IMPLEMENTED.clone(),
+        ))
     }
-
 
     pub(crate) fn generate_declare_function(
         &mut self,
@@ -46,12 +49,15 @@ impl<'a> Generator<'a> {
             None
         };
 
-        Ok(AstTreeNode::new(Node::DeclareFunction(AstDeclareFunctionNode {
-            function: AstIdentifier(node.identifier.value()),
-            arguments,
-            return_type,
-            nodes: Rc::new(AstBlockNode { nodes }),
-        }), SPAN_NOT_IMPLEMENTED.clone()))
+        Ok(AstTreeNode::new(
+            Node::DeclareFunction(AstDeclareFunctionNode {
+                function: AstIdentifier(node.identifier.value()),
+                arguments,
+                return_type,
+                nodes: Rc::new(AstBlockNode { nodes }),
+            }),
+            SPAN_NOT_IMPLEMENTED.clone(),
+        ))
     }
 
     pub(crate) fn generate_declare_function_argument(
@@ -80,8 +86,9 @@ impl<'a> Generator<'a> {
             None
         };
 
-        Ok(AstTreeNode::new(ReturnFromFunction(AstReturnFromFunctionNode {
-            node
-        }), SPAN_NOT_IMPLEMENTED.clone()))
+        Ok(AstTreeNode::new(
+            ReturnFromFunction(AstReturnFromFunctionNode { node }),
+            SPAN_NOT_IMPLEMENTED.clone(),
+        ))
     }
 }

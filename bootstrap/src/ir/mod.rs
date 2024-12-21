@@ -1,20 +1,20 @@
 use std::ops::Index;
 
-pub use r#type::{Type, TypeId, TypeName, TypeTable, TypeVariable};
 pub use context::Context;
+pub use r#type::{Type, TypeId, TypeName, TypeTable, TypeVariable};
 
-use crate::{frontend, ir};
 use crate::frontend::ast_from_str;
+use crate::{frontend, ir};
 
 use crate::ir::analyse::analyse;
 use crate::ir::generate::generate;
 
 mod analyse;
+mod context;
+mod generate;
 pub(crate) mod node;
 mod symbol;
 mod r#type;
-mod generate;
-mod context;
 
 #[derive(Debug)]
 pub enum Error {

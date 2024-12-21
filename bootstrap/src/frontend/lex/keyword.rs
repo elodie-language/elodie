@@ -1,8 +1,8 @@
 use std::collections::HashMap;
 
 use crate::common::Span;
-use crate::frontend::lex::Lexer;
 use crate::frontend::lex::token::{KeywordToken, Token, TokenKind};
+use crate::frontend::lex::Lexer;
 
 impl Lexer<'_> {
     pub(crate) fn is_keyword(&self, c: char) -> bool {
@@ -79,9 +79,9 @@ mod test {
     use KeywordToken::*;
 
     use crate::frontend::context::Context;
-    use crate::frontend::lex::Lexer;
-    use crate::frontend::lex::token::{identifier, keyword, KeywordToken};
     use crate::frontend::lex::token::KeywordToken::If;
+    use crate::frontend::lex::token::{identifier, keyword, KeywordToken};
+    use crate::frontend::lex::Lexer;
 
     #[test]
     fn r#break() {

@@ -8,16 +8,16 @@ use std::path::PathBuf;
 use std::process::exit;
 use std::rc::Rc;
 
-use crate::{frontend, load_library_file};
 use crate::backend::run::scope::Scope;
 use crate::backend::run::type_definitions::TypeDefinitions;
-use crate::backend::run::value::{IntrinsicFunctionValue, ListValue, ObjectValue, Value};
 use crate::backend::run::value::Value::{IntrinsicFunction, Unit};
+use crate::backend::run::value::{IntrinsicFunctionValue, ListValue, ObjectValue, Value};
 use crate::common::node::{CalculationOperator, CompareOperator, Node};
-use crate::frontend::{ast, ast_from_str};
 use crate::frontend::ast::AstTreeNode;
 use crate::frontend::context::Context;
+use crate::frontend::{ast, ast_from_str};
 use crate::ir::{Type, TypeId, TypeName, TypeVariable};
+use crate::{frontend, load_library_file};
 
 mod block;
 mod call;
@@ -150,7 +150,7 @@ pub fn run_file(file: &String, print_colors: bool) {
             std_file,
             true,
         )
-            .unwrap()
+        .unwrap()
     };
 
     let (scope, definitions) = {
@@ -218,11 +218,11 @@ impl<'a> Runner<'a> {
             }
 
             Node::CallFunctionOfObject(ast::AstCallFunctionOfObjectNode {
-                                           object,
-                                           function,
-                                           arguments,
-                                           ..
-                                       }) => {
+                object,
+                function,
+                arguments,
+                ..
+            }) => {
                 // let some_arg_value = if let Node::CallFunction(arg_1) = &arguments[0] {
                 //     let value = self.run_call_function(arg_1)?.clone();
                 //     Some(value)
@@ -251,13 +251,12 @@ impl<'a> Runner<'a> {
 
                     let mut counter = 0;
 
-                    let func = if let Some(Value::Function(func)) =
-                        self.scope.get_value(&function.0)
-                    {
-                        func.clone()
-                    } else {
-                        todo!()
-                    };
+                    let func =
+                        if let Some(Value::Function(func)) = self.scope.get_value(&function.0) {
+                            func.clone()
+                        } else {
+                            todo!()
+                        };
 
                     for arg in arguments {
                         let arg_node = func.arguments.get(counter).unwrap();
@@ -272,9 +271,7 @@ impl<'a> Runner<'a> {
 
                     // args.extend(&direct_args);
 
-                    let func = self
-                        .type_definitions
-                        .get_function(&TypeId(99), &function.0);
+                    let func = self.type_definitions.get_function(&TypeId(99), &function.0);
                     self.scope.enter();
 
                     let result = self.run_node_call(func.clone(), args);
@@ -291,7 +288,9 @@ impl<'a> Runner<'a> {
                 // FIXME
                 if obj_name == "intrinsics" {
                     // println!("{}", self.ctx.get_str(function.0));
-                    let func = object.get_property_host_function(&function.clone()).unwrap();
+                    let func = object
+                        .get_property_host_function(&function.clone())
+                        .unwrap();
 
                     let mut args = Vec::with_capacity(arguments.len());
                     for arg in arguments {
@@ -305,7 +304,9 @@ impl<'a> Runner<'a> {
                         } else if let Node::LiteralString(node) = arg.node() {
                             args.push(Value::String(self.ctx.get_str(node.0.value).to_string()));
                         } else if let Node::LiteralNumber(node) = arg.node() {
-                            args.push(Value::Number(self.ctx.get_str(node.0.value()).parse().unwrap()));
+                            args.push(Value::Number(
+                                self.ctx.get_str(node.0.value()).parse().unwrap(),
+                            ));
                         } else {
                             unimplemented!("{:#?}", arg);
                         }
@@ -319,9 +320,7 @@ impl<'a> Runner<'a> {
                         Value::Object(object.clone()),
                     );
 
-                    let func = self
-                        .type_definitions
-                        .get_function(&TypeId(99), &function.0);
+                    let func = self.type_definitions.get_function(&TypeId(99), &function.0);
                     self.scope.enter();
 
                     let result = self.run_node_call(func.clone(), args);
@@ -333,19 +332,19 @@ impl<'a> Runner<'a> {
             }
 
             Node::CallFunctionOfPackage(ast::AstCallFunctionOfPackageNode {
-                                            package: packages,
-                                            function,
-                                            arguments,
-                                            ..
-                                        }) => {
+                package: packages,
+                function,
+                arguments,
+                ..
+            }) => {
                 let mut args = HashMap::with_capacity(arguments.len());
 
                 let mut packages = packages.clone();
                 let mut root = packages.first().unwrap();
                 let Value::Package(root_package) = self.scope.get_value(&root).unwrap().clone()
-                    else {
-                        panic!()
-                    };
+                else {
+                    panic!()
+                };
 
                 let mut target_package = root_package;
                 loop {
@@ -382,7 +381,9 @@ impl<'a> Runner<'a> {
                         } else if let Node::LiteralString(node) = arg.node() {
                             args.push(Value::String(self.ctx.get_str(node.0.value).to_string()));
                         } else if let Node::LiteralNumber(node) = arg.node() {
-                            args.push(Value::Number(self.ctx.get_str(node.0.value()).parse().unwrap()))
+                            args.push(Value::Number(
+                                self.ctx.get_str(node.0.value()).parse().unwrap(),
+                            ))
                         } else {
                             unimplemented!("{:#?}", arg);
                         }
@@ -428,9 +429,7 @@ impl<'a> Runner<'a> {
             }
 
             Node::CallFunction(function_node) => self.run_node_call_function(function_node),
-            Node::CallFunctionWithLambda(lambda) => {
-                self.run_node_call_function_with_lambda(lambda)
-            }
+            Node::CallFunctionWithLambda(lambda) => self.run_node_call_function_with_lambda(lambda),
             Node::ReturnFromFunction(node) => {
                 if let Some(node) = &node.node {
                     let value = self.run_node(node)?;
@@ -441,8 +440,12 @@ impl<'a> Runner<'a> {
                     Ok(Unit)
                 }
             }
-            Node::LiteralString(node) => Ok(Value::String(self.ctx.get_str(node.0.value).to_string())),
-            Node::LiteralNumber(node) => Ok(Value::Number(self.ctx.get_str(node.0.value).parse().unwrap())),
+            Node::LiteralString(node) => {
+                Ok(Value::String(self.ctx.get_str(node.0.value).to_string()))
+            }
+            Node::LiteralNumber(node) => Ok(Value::Number(
+                self.ctx.get_str(node.0.value).parse().unwrap(),
+            )),
             Node::LiteralBoolean(node) => Ok(Value::Bool(self.ctx.get_str(node.0.value) == "true")),
 
             Node::Loop(loop_node) => self.run_loop(loop_node),
@@ -502,11 +505,7 @@ impl<'a> Runner<'a> {
                 Ok(value)
             }
             Node::AccessVariableOfObject(load) => {
-                let value = self
-                    .scope
-                    .get_value(&load.object.0)
-                    .unwrap()
-                    .clone();
+                let value = self.scope.get_value(&load.object.0).unwrap().clone();
                 let Value::Object(object_value) = value else {
                     panic!("not object")
                 };
@@ -528,8 +527,7 @@ impl<'a> Runner<'a> {
                     variables: properties,
                 };
 
-                self.scope
-                    .insert_type(decl.r#type.0, r#type);
+                self.scope.insert_type(decl.r#type.0, r#type);
                 Ok(Value::Unit)
             }
             Node::InstantiateType(node) => {

@@ -2,14 +2,14 @@ use std::cmp::PartialOrd;
 use std::collections::HashMap;
 
 use crate::frontend::context::Context;
+use crate::frontend::lex::token::SeparatorToken::NewLine;
+use crate::frontend::lex::token::TokenKind::{Keyword, Literal, Operator, Separator};
 use crate::frontend::lex::token::{
     KeywordToken, LiteralToken, OperatorToken, SeparatorToken, Token, TokenKind,
 };
-use crate::frontend::lex::token::SeparatorToken::NewLine;
-use crate::frontend::lex::token::TokenKind::{Keyword, Literal, Operator, Separator};
-use crate::frontend::parse::Error::UnexpectedEndOfFile;
 pub use crate::frontend::parse::node::*;
 use crate::frontend::parse::precedence::Precedence;
+use crate::frontend::parse::Error::UnexpectedEndOfFile;
 
 mod block;
 mod define;
@@ -254,12 +254,12 @@ mod tests {
 
     use crate::frontend::context::Context;
     use crate::frontend::lex::lex;
-    use crate::frontend::lex::token::{literal, LiteralToken, OperatorToken, separator};
     use crate::frontend::lex::token::LiteralToken::{Number, True};
     use crate::frontend::lex::token::SeparatorToken::Semicolon;
-    use crate::frontend::parse::{Error, Parser};
+    use crate::frontend::lex::token::{literal, separator, LiteralToken, OperatorToken};
     use crate::frontend::parse::precedence::Precedence;
     use crate::frontend::parse::precedence::Precedence::Term;
+    use crate::frontend::parse::{Error, Parser};
 
     #[test]
     fn advance_but_eof() {

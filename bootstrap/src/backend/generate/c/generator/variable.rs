@@ -1,12 +1,15 @@
 use crate::backend::generate::c;
+use crate::backend::generate::c::generator::Generator;
 use crate::backend::generate::c::{
     DeclareVariableStatement, Indent, InitialiseStructExpression, InitialiseStructField, Statement,
     VariableExpression,
 };
-use crate::backend::generate::c::generator::Generator;
 use crate::common::node::Node;
 use crate::common::node::Node::{LiteralBoolean, LiteralNumber, LiteralString};
-use crate::frontend::ast::{AstAccessVariableNode, AstAccessVariableOfSelfNode, AstDeclareVariableNode, AstLiteralBooleanNode, AstLiteralNumberNode, AstLiteralStringNode};
+use crate::frontend::ast::{
+    AstAccessVariableNode, AstAccessVariableOfSelfNode, AstDeclareVariableNode,
+    AstLiteralBooleanNode, AstLiteralNumberNode, AstLiteralStringNode,
+};
 
 impl Generator {
     pub(crate) fn generate_declare_variable(
@@ -80,10 +83,7 @@ impl Generator {
             statements.push(Statement::DeclareVariable(DeclareVariableStatement {
                 indent: Indent::none(),
                 identifier: variable.to_string(&self.string_table),
-                r#type: format!(
-                    "struct {}",
-                    self.string_table.get(instantiate.r#type.0)
-                ),
+                r#type: format!("struct {}", self.string_table.get(instantiate.r#type.0)),
                 expression: c::Expression::StructInitialisation(InitialiseStructExpression {
                     fields: fields.into_boxed_slice(),
                 }),
