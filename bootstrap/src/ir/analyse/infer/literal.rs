@@ -1,31 +1,31 @@
 use std::str::FromStr;
 
 use bigdecimal::BigDecimal;
+use crate::common::node::Node::{LiteralBoolean, LiteralNumber, LiteralString};
 
 use crate::common::Span;
 use crate::frontend::ast::{AstLiteralBooleanNode, AstLiteralNumberNode, AstLiteralStringNode};
-use crate::ir::analyse::{AnalysedNode, InferredType, LiteralBooleanNode, LiteralNumberNode, LiteralStringNode};
+use crate::ir::analyse::{AnalyseLiteralBooleanNode, AnalyseLiteralNumberNode, AnalyseLiteralStringNode, AnalyseTreeNode, InferredType};
 use crate::ir::analyse::infer::Inference;
-use crate::ir::analyse::Node::{LiteralBoolean, LiteralNumber, LiteralString};
 
 // FIXME no unwrap
 impl<'a> Inference<'a> {
-    pub(crate) fn infer_literal_boolean(&mut self, span: Span, node: &AstLiteralBooleanNode) -> crate::ir::analyse::Result<AnalysedNode> {
+    pub(crate) fn infer_literal_boolean(&mut self, span: Span, node: &AstLiteralBooleanNode) -> crate::ir::analyse::Result<AnalyseTreeNode> {
         let str = self.string_table.get(node.0.value());
 
-        Ok(AnalysedNode::new(LiteralBoolean(LiteralBooleanNode { value: bool::from_str(str).unwrap() }), span, InferredType::Boolean))
+        Ok(AnalyseTreeNode::new(LiteralBoolean(AnalyseLiteralBooleanNode { value: bool::from_str(str).unwrap() }), span, InferredType::Boolean))
     }
 
-    pub(crate) fn infer_literal_number(&mut self, span: Span, node: &AstLiteralNumberNode) -> crate::ir::analyse::Result<AnalysedNode> {
+    pub(crate) fn infer_literal_number(&mut self, span: Span, node: &AstLiteralNumberNode) -> crate::ir::analyse::Result<AnalyseTreeNode> {
         let str = self.string_table.get(node.0.value());
 
-        Ok(AnalysedNode::new(LiteralNumber(LiteralNumberNode {
+        Ok(AnalyseTreeNode::new(LiteralNumber(AnalyseLiteralNumberNode {
             value: BigDecimal::from_str(str).unwrap()
         }), span, InferredType::Number))
     }
 
-    pub(crate) fn infer_literal_string(&mut self, span: Span, node: &AstLiteralStringNode) -> crate::ir::analyse::Result<AnalysedNode> {
-        Ok(AnalysedNode::new(LiteralString(LiteralStringNode { value: node.0.value() }), span, InferredType::String))
+    pub(crate) fn infer_literal_string(&mut self, span: Span, node: &AstLiteralStringNode) -> crate::ir::analyse::Result<AnalyseTreeNode> {
+        Ok(AnalyseTreeNode::new(LiteralString(AnalyseLiteralStringNode { value: node.0.value() }), span, InferredType::String))
     }
 }
 

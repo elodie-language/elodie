@@ -34,20 +34,20 @@ pub enum Error {}
 pub(crate) type Result<T, E = Error> = core::result::Result<T, E>;
 
 #[derive(Debug)]
-pub struct Analysed {
-    pub nodes: Vec<AnalysedNode>,
+pub struct Analyse {
+    pub nodes: Vec<AnalyseTreeNode>,
 }
 
-impl Index<usize> for Analysed {
-    type Output = AnalysedNode;
+impl Index<usize> for Analyse {
+    type Output = AnalyseTreeNode;
     fn index(&self, index: usize) -> &Self::Output {
         self.nodes.index(index)
     }
 }
 
-pub(crate) fn analyse(ctx: &mut Context, ast: Ast) -> Result<Analysed> {
+pub(crate) fn analyse(ctx: &mut Context, ast: Ast) -> Result<Analyse> {
     let inferred = Inference::new(ctx).infer(ast)?;
 
-    Ok(Analysed { nodes: inferred })
+    Ok(Analyse { nodes: inferred })
 }
 

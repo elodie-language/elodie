@@ -1,14 +1,14 @@
 use std::rc::Rc;
+use crate::common::node::Node::DeclareVariable;
 
 use crate::common::Span;
 use crate::frontend::ast::{AstDeclareVariableNode, AstVariant};
-use crate::ir::analyse::{AnalysedNode, DeclareVariableNode};
+use crate::ir::analyse::{AnalyseDeclareVariableNode, AnalyseNode, AnalyseTreeNode};
 use crate::ir::analyse::infer::Inference;
-use crate::ir::analyse::Node::DeclareVariable;
 use crate::ir::symbol::SymbolName;
 
 impl<'a> Inference<'a> {
-    pub(crate) fn infer_declare_variable(&mut self, span: Span, node: &AstDeclareVariableNode) -> crate::ir::analyse::Result<AnalysedNode> {
+    pub(crate) fn infer_declare_variable(&mut self, span: Span, node: &AstDeclareVariableNode) -> crate::ir::analyse::Result<AnalyseTreeNode> {
         let symbol = self.register_variable(SymbolName::from(&node.variable));
 
         let mut value = Rc::new(self.infer_node(&node.value)?);
@@ -19,7 +19,7 @@ impl<'a> Inference<'a> {
             value.inferred_type.clone()
         };
 
-        Ok(AnalysedNode::new(DeclareVariable(DeclareVariableNode { symbol, value }), span, inferred_type))
+        Ok(AnalyseTreeNode::new(DeclareVariable(AnalyseDeclareVariableNode { symbol, value }), span, inferred_type))
     }
 }
 
