@@ -13,9 +13,10 @@ use crate::backend::generate::c::DirectiveNode::{IncludeLocalDirective, IncludeS
 use crate::backend::generate::c::generator::scope::Scope;
 use crate::backend::generate::c::Node::DefineFunction;
 use crate::common::StringTable;
+use crate::common::tree::{Node, Tree, TreeNode};
 use crate::frontend;
-use crate::frontend::ast::{DefineTypeNode, Node};
-use crate::frontend::ast::node::{Ast, AstNode};
+use crate::frontend::ast::AstDefineTypeNode;
+use crate::frontend::ast::node::AstVariant;
 
 mod block;
 mod control;
@@ -59,7 +60,7 @@ pub(crate) struct Generator {
 }
 
 impl Generator {
-    pub(crate) fn generate(mut self, nodes: Vec<AstNode>) -> Result<Vec<c::Node>> {
+    pub(crate) fn generate(mut self, nodes: Vec<TreeNode<AstVariant>>) -> Result<Vec<c::Node>> {
         for node in &nodes {
             match node.node() {
                 Node::DeclareFunction(_) => {}
@@ -151,7 +152,7 @@ impl Generator {
         Ok(result)
     }
 
-    pub(crate) fn generate_nodes(&mut self, node: &AstNode) -> Result<()> {
+    pub(crate) fn generate_nodes(&mut self, node: &TreeNode<AstVariant>) -> Result<()> {
         let _ = match node.node() {
             Node::Block(node) => {
                 let stmts = self.generate_block(node)?;
@@ -267,7 +268,7 @@ impl Generator {
                 })
             }
             Node::InstantiateType(_) => unimplemented!(),
-            Node::DefineType(DefineTypeNode {
+            Node::DefineType(AstDefineTypeNode {
                                  r#type,
                                  modifiers,
                                  functions,
@@ -312,7 +313,7 @@ impl Generator {
         Ok(())
     }
 
-    pub(crate) fn generate_statements(&mut self, node: &AstNode) -> Result<Vec<c::Statement>> {
+    pub(crate) fn generate_statements(&mut self, node: &TreeNode<AstVariant>) -> Result<Vec<c::Statement>> {
         match node.node() {
             Node::Block(node) => Ok(vec![Statement::Block(self.generate_block(node)?)]),
             Node::BreakLoop(_) => unimplemented!(),

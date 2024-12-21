@@ -7,7 +7,7 @@ use crate::backend::generate::c::{
     Statement, VariableExpression,
 };
 use crate::frontend::ast::{AccessVariableNode, AccessVariableOfObjectNode, CallFunctionNode, CallFunctionOfPackageNode, Node};
-use crate::frontend::ast::node::{Ast, AstNode};
+use crate::frontend::ast::node::{AstVariant, AstNode};
 
 impl Generator {
     pub(crate) fn generate_declare_function(

@@ -1,17 +1,19 @@
+use std::rc::Rc;
+
+use crate::common::tree::{Node, TreeNode};
 use crate::frontend::{ast, parse};
-use crate::frontend::ast::{Generator, Node, SPAN_NOT_IMPLEMENTED};
-use crate::frontend::ast::node::{AstNode, BlockNode};
+use crate::frontend::ast::{AstBlockNode, AstVariant, Generator, SPAN_NOT_IMPLEMENTED};
 
 impl<'a> Generator<'a> {
-    pub(crate) fn generate_block(&mut self, node: &parse::BlockNode) -> ast::Result<AstNode> {
+    pub(crate) fn generate_block(&mut self, node: &parse::BlockNode) -> ast::Result<TreeNode<AstVariant>> {
         let mut nodes = Vec::with_capacity(node.nodes.len());
 
         for node in &node.nodes {
             nodes.push(self.generate_node(node)?)
         }
 
-        Ok(AstNode::new(Node::Block(BlockNode {
+        Ok(TreeNode::new(Node::Block(Rc::new(AstBlockNode {
             nodes
-        }), SPAN_NOT_IMPLEMENTED.clone()))
+        })), SPAN_NOT_IMPLEMENTED.clone()))
     }
 }

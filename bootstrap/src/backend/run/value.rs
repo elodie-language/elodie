@@ -4,7 +4,7 @@ use std::fmt::{Debug, Formatter};
 use std::rc::Rc;
 
 use crate::common::StringTableId;
-use crate::frontend::ast::{BlockNode, FunctionArgument, Identifier};
+use crate::frontend::ast::{BlockNode, FunctionArgument, AstIdentifier};
 use crate::frontend::ast::node::AstNode;
 
 #[derive(Debug, Clone)]
@@ -105,7 +105,7 @@ impl ObjectValue {
     #[deprecated]
     pub fn get_property_host_function(
         &self,
-        identifier: &Identifier,
+        identifier: &AstIdentifier,
     ) -> Option<&IntrinsicFunctionValue> {
         if let Some(Value::IntrinsicFunction(result)) = &self.properties.get(&identifier.0)
         {

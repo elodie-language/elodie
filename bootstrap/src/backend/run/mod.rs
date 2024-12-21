@@ -13,8 +13,9 @@ use crate::backend::run::scope::Scope;
 use crate::backend::run::type_definitions::TypeDefinitions;
 use crate::backend::run::value::{IntrinsicFunctionValue, ListValue, ObjectValue, Value};
 use crate::backend::run::value::Value::{IntrinsicFunction, Unit};
+use crate::common::tree::CalculationOperator;
 use crate::frontend::{ast, ast_from_str};
-use crate::frontend::ast::node::{Ast, AstNode};
+use crate::frontend::ast::node::{AstVariant, AstNode};
 use crate::frontend::context::Context;
 use crate::ir::{Type, TypeId, TypeName, TypeVariable};
 
@@ -478,14 +479,14 @@ impl<'a> Runner<'a> {
 
                 if let (Value::Number(l), Value::Number(r)) = (&left, &right) {
                     return match calculation_node.operator {
-                        ast::CalculationOperator::Multiply => Ok(Value::Number(l * r)),
-                        ast::CalculationOperator::Add => Ok(Value::Number(l + r)),
+                        CalculationOperator::Multiply => Ok(Value::Number(l * r)),
+                        CalculationOperator::Add => Ok(Value::Number(l + r)),
                     };
                 }
 
                 if let (Value::String(l), Value::String(r)) = (&left, &right) {
                     return match calculation_node.operator {
-                        ast::CalculationOperator::Add => Ok(Value::String(l.clone() + r)),
+                        CalculationOperator::Add => Ok(Value::String(l.clone() + r)),
                         _ => todo!(),
                     };
                 }

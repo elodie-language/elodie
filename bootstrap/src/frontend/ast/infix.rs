@@ -2,14 +2,15 @@ use std::ops::Deref;
 use std::rc::Rc;
 
 use crate::common::PackagePath;
+use crate::common::tree::{CalculationOperator, CompareOperator, Tree, TreeNode};
+use crate::common::tree::Node::{AccessVariableOfObject, AccessVariableOfSelf, Block, Calculate, CallFunction, CallFunctionOfPackage, Compare, InstantiateType};
 use crate::frontend::{ast, parse};
-use crate::frontend::ast::{AccessVariableOfObjectNode, AccessVariableOfSelfNode,  Generator, NamedArgument, SPAN_NOT_IMPLEMENTED};
-use crate::frontend::ast::node::{Ast, AstNode, CalculateNode, CalculationOperator, CallFunctionNode, CallFunctionOfObjectNode, CallFunctionOfPackageNode, CallFunctionWithLambdaNode, CompareNode, CompareOperator, Identifier};
+use crate::frontend::ast::{AstAccessVariableOfObjectNode, AstAccessVariableOfSelfNode, AstCalculateNode, AStCallFunctionNode, AstCallFunctionOfPackageNode, AstCompareNode, AstIdentifier, AstInstantiateTypeNode, AstNamedArgument, AstVariant, Generator, SPAN_NOT_IMPLEMENTED};
 use crate::frontend::parse::{InfixNode, InfixOperator, Node, TypeNode};
 use crate::frontend::parse::Node::Type;
 
 impl<'a> Generator<'a> {
-    pub(crate) fn generate_infix(&mut self, node: &parse::InfixNode) -> ast::Result<AstNode> {
+    pub(crate) fn generate_infix(&mut self, node: &parse::InfixNode) -> ast::Result<TreeNode<AstVariant>> {
         let InfixNode {
             left,
             operator,
@@ -27,10 +28,10 @@ impl<'a> Generator<'a> {
                 todo!()
             };
             let arguments = self.generate_arguments(right.as_tuple())?;
-            return Ok(AstNode::new(ast::Node::CallFunction(CallFunctionNode {
-                function: Identifier(function_identifier.0.value),
+            return Ok(TreeNode::new(CallFunction(Rc::new(AStCallFunctionNode {
+                function: AstIdentifier(function_identifier.0.value),
                 arguments,
-            }), SPAN_NOT_IMPLEMENTED.clone()));
+            })), SPAN_NOT_IMPLEMENTED.clone()));
         }
 
         // call function of object / self
@@ -38,22 +39,23 @@ impl<'a> Generator<'a> {
             && matches!(left.as_infix().operator, InfixOperator::AccessProperty(_))
             && matches!(operator, InfixOperator::Call(_))
         {
-            let ast::Node::AccessVariableOfObject(AccessVariableOfObjectNode {
-                                                      object,
-                                                      variable,
-                                                  }) = self.generate_access_variable(left.as_infix())?.node_to_owned()
-                else {
-                    panic!()
-                };
-
-            let arguments = self.generate_arguments(right.as_tuple())?;
-
-            // FIXME add type information
-            return Ok(AstNode::new(ast::Node::CallFunctionOfObject(CallFunctionOfObjectNode {
-                object: ast::Identifier(object.0.clone()),
-                function: ast::Identifier(variable.0.clone()),
-                arguments,
-            }), SPAN_NOT_IMPLEMENTED.clone()));
+            // let AccessVariableOfObject(AstAccessVariableOfObjectNode {
+            //                                object,
+            //                                variable,
+            //                            }) = self.generate_access_variable(left.as_infix())?.node_to_owned()
+            //     else {
+            //         panic!()
+            //     };
+            //
+            // let arguments = self.generate_arguments(right.as_tuple())?;
+            //
+            // // FIXME add type information
+            // return Ok(TreeNode::new(CallFunctionOfObject(Rc::new(AstCallFunctionOfObjectNode {
+            //     object: ast::AstIdentifier(object.0.clone()),
+            //     function: ast::AstIdentifier(variable.0.clone()),
+            //     arguments,
+            // })), SPAN_NOT_IMPLEMENTED.clone()));
+            todo!()
         };
 
         // lambda call
@@ -61,20 +63,21 @@ impl<'a> Generator<'a> {
             let left = self.generate_node(left.deref())?;
             let right = self.generate_node(right.deref())?;
 
-            let ast::Node::CallFunction(call_function) = left.node_to_owned() else {
-                panic!()
-            };
-            let ast::Node::Block(lambda) = right.node_to_owned() else {
-                panic!()
-            };
+            // let CallFunction(call_function) = left.node_to_owned() else {
+            //     panic!()
+            // };
+            // let Block(lambda) = right.node_to_owned() else {
+            //     panic!()
+            // };
 
-            return Ok(AstNode::new(ast::Node::CallFunctionWithLambda(
-                CallFunctionWithLambdaNode {
-                    function: call_function.function,
-                    lambda: Rc::new(lambda),
-                    arguments: call_function.arguments,
-                },
-            ), SPAN_NOT_IMPLEMENTED.clone()));
+            // return Ok(TreeNode::new(CallFunctionWithLambda(
+            //     Rc::new(AstCallFunctionWithLambdaNode {
+            //         function: call_function.function,
+            //         lambda: Rc::new(lambda),
+            //         arguments: call_function.arguments,
+            //     },
+            //     )), SPAN_NOT_IMPLEMENTED.clone()));
+            todo!()
         }
 
         // call function of package
@@ -94,21 +97,21 @@ impl<'a> Generator<'a> {
                 {
                     self.package_path(left.as_infix())
                 } else {
-                    vec![Identifier(left.as_infix().left.as_identifier().0.value)]
+                    vec![AstIdentifier(left.as_infix().left.as_identifier().0.value)]
                 }
             };
 
             let function_identifier = left.as_infix().right.as_identifier();
 
-            return Ok(AstNode::new(ast::Node::CallFunctionOfPackage(
-                CallFunctionOfPackageNode {
+            return Ok(TreeNode::new(CallFunctionOfPackage(
+                Rc::new(AstCallFunctionOfPackageNode {
                     package: PackagePath::from(
                         paths.into_iter().map(|p| p.0).collect::<Vec<_>>(),
                     ),
-                    function: Identifier(function_identifier.value()),
+                    function: AstIdentifier(function_identifier.value()),
                     arguments,
                 },
-            ), SPAN_NOT_IMPLEMENTED.clone()));
+                )), SPAN_NOT_IMPLEMENTED.clone()));
         }
 
         // self.variable
@@ -117,9 +120,9 @@ impl<'a> Generator<'a> {
             && right.is_identifier()
         {
             let variable = right.as_identifier();
-            return Ok(AstNode::new(ast::Node::AccessVariableOfSelf(AccessVariableOfSelfNode {
-                variable: ast::Identifier(variable.value()),
-            }), SPAN_NOT_IMPLEMENTED.clone()));
+            return Ok(TreeNode::new(AccessVariableOfSelf(Rc::new(AstAccessVariableOfSelfNode {
+                variable: ast::AstIdentifier(variable.value()),
+            })), SPAN_NOT_IMPLEMENTED.clone()));
         }
 
         // variable.variable
@@ -131,70 +134,70 @@ impl<'a> Generator<'a> {
             let object = left.as_identifier();
             let variable = right.as_identifier();
 
-            return Ok(AstNode::new(ast::Node::AccessVariableOfObject(AccessVariableOfObjectNode {
-                object: ast::Identifier(object.value()),
-                variable: ast::Identifier(variable.value()),
-            }), SPAN_NOT_IMPLEMENTED.clone()));
+            return Ok(TreeNode::new(AccessVariableOfObject(Rc::new(AstAccessVariableOfObjectNode {
+                object: ast::AstIdentifier(object.value()),
+                variable: ast::AstIdentifier(variable.value()),
+            })), SPAN_NOT_IMPLEMENTED.clone()));
         }
 
         if let InfixOperator::Add(_) = operator {
             let left = Rc::new(self.generate_node(left.deref())?);
             let right = Rc::new(self.generate_node(right.deref())?);
-            return Ok(AstNode::new(ast::Node::Calculate(CalculateNode {
+            return Ok(TreeNode::new(Calculate(Rc::new(AstCalculateNode {
                 left,
                 operator: CalculationOperator::Add,
                 right,
-            }), SPAN_NOT_IMPLEMENTED.clone()));
+            })), SPAN_NOT_IMPLEMENTED.clone()));
         }
 
         if let InfixOperator::Equal(_) = operator {
             let left = Rc::new(self.generate_node(left.deref())?);
             let right = Rc::new(self.generate_node(right.deref())?);
 
-            return Ok(AstNode::new(ast::Node::Compare(CompareNode {
+            return Ok(TreeNode::new(Compare(Rc::new(AstCompareNode {
                 left,
                 operator: CompareOperator::Equal,
                 right,
-            }), SPAN_NOT_IMPLEMENTED.clone()));
+            })), SPAN_NOT_IMPLEMENTED.clone()));
         }
 
         if let InfixOperator::NotEqual(_) = operator {
             let left = Rc::new(self.generate_node(left.deref())?);
             let right = Rc::new(self.generate_node(right.deref())?);
 
-            return Ok(AstNode::new(ast::Node::Compare(CompareNode {
+            return Ok(TreeNode::new(Compare(Rc::new(AstCompareNode {
                 left,
                 operator: CompareOperator::NotEqual,
                 right,
-            }), SPAN_NOT_IMPLEMENTED.clone()));
+            })), SPAN_NOT_IMPLEMENTED.clone()));
         }
 
         if let InfixOperator::GreaterThan(_) = operator {
             let left = Rc::new(self.generate_node(left.deref())?);
             let right = Rc::new(self.generate_node(right.deref())?);
 
-            return Ok(AstNode::new(ast::Node::Compare(CompareNode {
+            return Ok(TreeNode::new(Compare(Rc::new(AstCompareNode {
                 left,
                 operator: CompareOperator::GreaterThan,
                 right,
-            }), SPAN_NOT_IMPLEMENTED.clone()));
+            })), SPAN_NOT_IMPLEMENTED.clone()));
         }
 
         if let InfixOperator::Multiply(_) = operator {
             let left = Rc::new(self.generate_node(left.deref())?);
             let right = Rc::new(self.generate_node(right.deref())?);
 
-            return Ok(AstNode::new(ast::Node::Calculate(CalculateNode {
+            return Ok(TreeNode::new(Calculate(Rc::new(AstCalculateNode {
                 left,
                 operator: CalculationOperator::Multiply,
                 right,
-            }), SPAN_NOT_IMPLEMENTED.clone()));
+            })), SPAN_NOT_IMPLEMENTED.clone()));
         }
 
         unimplemented!("{:#?}", node);
     }
 
-    fn generate_access_variable(&mut self, node: &parse::InfixNode) -> ast::Result<AstNode> {
+    fn generate_access_variable(&mut self, node: &parse::InfixNode) -> ast::Result<TreeNode<AstVariant>> {
         let InfixNode {
             left,
             operator,
@@ -204,9 +207,9 @@ impl<'a> Generator<'a> {
 
         if let Node::Itself(_) = left.deref() {
             if let Node::Identifier(variable) = right.deref() {
-                return Ok(AstNode::new(ast::Node::AccessVariableOfSelf(AccessVariableOfSelfNode {
-                    variable: Identifier(variable.0.value),
-                }), SPAN_NOT_IMPLEMENTED.clone()));
+                return Ok(TreeNode::new(AccessVariableOfSelf(Rc::new(AstAccessVariableOfSelfNode {
+                    variable: AstIdentifier(variable.0.value),
+                })), SPAN_NOT_IMPLEMENTED.clone()));
             }
         }
 
@@ -218,13 +221,13 @@ impl<'a> Generator<'a> {
             todo!()
         };
 
-        return Ok(AstNode::new(ast::Node::AccessVariableOfObject(AccessVariableOfObjectNode {
-            object: ast::Identifier(object_identifier.0.value),
-            variable: ast::Identifier(variable.0.value),
-        }), SPAN_NOT_IMPLEMENTED.clone()));
+        return Ok(TreeNode::new(AccessVariableOfObject(Rc::new(AstAccessVariableOfObjectNode {
+            object: ast::AstIdentifier(object_identifier.0.value),
+            variable: ast::AstIdentifier(variable.0.value),
+        })), SPAN_NOT_IMPLEMENTED.clone()));
     }
 
-    fn generate_type_instantiation(&mut self, node: &parse::InfixNode) -> ast::Result<AstNode> {
+    fn generate_type_instantiation(&mut self, node: &parse::InfixNode) -> ast::Result<TreeNode<AstVariant>> {
         let InfixNode {
             left,
             operator,
@@ -241,13 +244,13 @@ impl<'a> Generator<'a> {
 
         let mut arguments = self.generate_named_arguments(arguments_node)?;
 
-        return Ok(AstNode::new(ast::Node::InstantiateType(ast::InstantiateTypeNode {
-            r#type: Identifier(type_node.token.value),
+        return Ok(TreeNode::new(InstantiateType(Rc::new(AstInstantiateTypeNode {
+            r#type: AstIdentifier(type_node.token.value),
             arguments,
-        }), SPAN_NOT_IMPLEMENTED.clone()));
+        })), SPAN_NOT_IMPLEMENTED.clone()));
     }
 
-    fn generate_arguments(&mut self, node: &parse::TupleNode) -> ast::Result<Vec<AstNode>> {
+    fn generate_arguments(&mut self, node: &parse::TupleNode) -> ast::Result<Vec<TreeNode<AstVariant>>> {
         let mut result = Vec::with_capacity(node.nodes.len());
         for node in &node.nodes {
             result.push(self.generate_node(node)?)
@@ -258,7 +261,7 @@ impl<'a> Generator<'a> {
     fn generate_named_arguments(
         &mut self,
         node: &parse::TupleNode,
-    ) -> ast::Result<Vec<NamedArgument<AstNode>>> {
+    ) -> ast::Result<Vec<AstNamedArgument>> {
         let mut result = Vec::with_capacity(node.nodes.len());
 
         for node in &node.nodes {
@@ -276,8 +279,8 @@ impl<'a> Generator<'a> {
                 panic!()
             };
             let right = self.generate_node(right)?;
-            result.push(NamedArgument {
-                identifier: Identifier(identifier.0.value),
+            result.push(AstNamedArgument {
+                identifier: AstIdentifier(identifier.0.value),
                 value: right,
             })
         }
@@ -285,7 +288,7 @@ impl<'a> Generator<'a> {
         Ok(result)
     }
 
-    fn package_path(&self, node: &parse::InfixNode) -> Vec<Identifier> {
+    fn package_path(&self, node: &parse::InfixNode) -> Vec<AstIdentifier> {
         let mut paths = vec![];
 
         let mut current = node.left.as_infix();
@@ -299,11 +302,11 @@ impl<'a> Generator<'a> {
             } = current;
 
             if let parse::Node::Identifier(identifier) = right.deref() {
-                paths.push(Identifier(identifier.0.value))
+                paths.push(AstIdentifier(identifier.0.value))
             }
 
             if let parse::Node::Identifier(identifier) = left.deref() {
-                paths.push(Identifier(identifier.0.value))
+                paths.push(AstIdentifier(identifier.0.value))
             }
 
             if !left.is_infix() {

@@ -3,14 +3,17 @@ use std::io;
 use std::io::Read;
 use std::ops::Deref;
 use std::path::PathBuf;
+use std::rc::Rc;
+use crate::common::tree::{Node, Source, Tree, TreeNode};
+use crate::common::tree::Node::{Block, ExportPackage};
 use crate::frontend::{ast, ast_from_str, parse};
+use crate::frontend::ast::{AstBlockNode, AstDeclareExternalFunctionNode, AstDeclareFunctionNode, AstDeclarePackageNode, AstDefineTypeNode, AstExportPackageNode, AstIdentifier, Generator, SPAN_NOT_IMPLEMENTED};
 
-use crate::frontend::ast::{BlockNode, DeclareExternalFunctionNode, DeclareFunctionNode, DeclarePackageNode, DeclareTypeNode, DefineTypeNode, ExportPackageNode, Generator, Identifier, Node, Source, SPAN_NOT_IMPLEMENTED};
-use crate::frontend::ast::node::{Ast, AstNode};
+use crate::frontend::ast::node::{AstVariant};
 use crate::frontend::parse::LiteralNode;
 
 impl<'a> Generator<'a> {
-    pub(crate) fn generate_from(&mut self, node: &parse::FromNode) -> ast::Result<AstNode> {
+    pub(crate) fn generate_from(&mut self, node: &parse::FromNode) -> ast::Result<TreeNode<AstVariant>> {
         if let parse::FromNode::Export(export_node) = node {
             return self.generate_from_export(export_node);
         }
@@ -21,7 +24,7 @@ impl<'a> Generator<'a> {
     pub(crate) fn generate_from_export(
         &mut self,
         node: &parse::FromExportNode,
-    ) -> ast::Result<AstNode> {
+    ) -> ast::Result<TreeNode<AstVariant>> {
         let source = if let parse::Node::Literal(LiteralNode::String(from)) = &node.from_node.deref() {
             Source::LocalFile {
                 path: self.ctx.get_str(from.value()).to_string(),
@@ -32,102 +35,104 @@ impl<'a> Generator<'a> {
 
         let package = if let parse::Node::Identifier(identifier) = &node.what_node.deref() {
             // at this point in time it should be clear what identifier refers to at the moment in can only be package
-            ast::Identifier(identifier.value())
+            ast::AstIdentifier(identifier.value())
         } else {
             todo!()
         };
 
-        return Ok(AstNode::new(ast::Node::Block(BlockNode {
-            nodes: vec![AstNode::new(Node::ExportPackage(ExportPackageNode {
-                package: Identifier(package.0.clone()),
+        return Ok(TreeNode::new(Block(Rc::new(AstBlockNode {
+            nodes: vec![TreeNode::new(ExportPackage(Rc::new(AstExportPackageNode {
+                package: AstIdentifier(package.0.clone()),
                 source,
-            }), SPAN_NOT_IMPLEMENTED.clone())],
-        }), SPAN_NOT_IMPLEMENTED.clone()));
+            })), SPAN_NOT_IMPLEMENTED.clone())],
+        })), SPAN_NOT_IMPLEMENTED.clone()));
     }
 
 
     pub(crate) fn generate_declare_package(
         &mut self,
         node: &parse::PackageDeclarationNode,
-    ) -> ast::Result<AstNode> {
+    ) -> ast::Result<TreeNode<AstVariant>> {
         let mut compiled_body = vec![];
 
         for node in &node.block.nodes {
             compiled_body.push(self.generate_node(node)?);
         }
 
-        let mut external_functions: Vec<DeclareExternalFunctionNode> = vec![];
-        let mut functions: Vec<DeclareFunctionNode<AstNode>> = vec![];
-        let mut definitions: Vec<DefineTypeNode<AstNode>> = vec![];
-        let mut packages: Vec<DeclarePackageNode<AstNode>> = vec![];
+        let mut external_functions: Vec<AstDeclareExternalFunctionNode> = vec![];
+        let mut functions: Vec<AstDeclareFunctionNode> = vec![];
+        let mut definitions: Vec<AstDefineTypeNode> = vec![];
+        let mut packages: Vec<AstDeclarePackageNode> = vec![];
 
         for node in compiled_body.into_iter() {
-            if let Node::Block(block) = node.node() {
-                for node in &block.nodes {
-                    if let Node::ExportPackage(ExportPackageNode { package, .. }) = node.node() {
-                        let package = self.ctx.get_str(package.0).to_string();
-
-                        // FIXME temporary hack to load std packages
-                        // FIXME compiler needs to track scope so that the parent package can easily be determined
-
-                        match package.as_str() {
-                            "io" => packages.extend(self.load_declared_packages("std/io/index.ec")),
-                            "collection" => packages
-                                .extend(self.load_declared_packages("std/collection/index.ec")),
-                            "list" => packages.extend(
-                                self.load_declared_packages("std/collection/list/index.ec"),
-                            ),
-                            "math" => {
-                                packages.extend(self.load_declared_packages("std/math/index.ec"))
-                            }
-                            "process" => {
-                                packages.extend(self.load_declared_packages("std/process/index.ec"))
-                            }
-                            "intrinsics" => packages
-                                .extend(self.load_declared_packages("core/intrinsics/index.ec")),
-                            _ => unimplemented!(),
-                        }
-                    } else if let Node::DeclareFunction(declare_function) = node.node() {
-                        functions.push(declare_function.clone())
-                    } else if let Node::DefineType(define_type) = node.node() {
-                        definitions.push(define_type.clone());
-                    }
-                }
-            } else if let Node::DeclareFunction(declare_function) = node.node() {
-                functions.push(declare_function.clone())
-            } else if let Node::DefineType(define_type) = node.node() {
-                definitions.push(define_type.clone());
-            } else if let Node::DeclarePackage(package) = node.node() {
-                packages.push(package.clone());
-            } else if let Node::DeclareExternalFunction(external) = node.node() {
-                external_functions.push(external.clone());
-            } else {
-                // unimplemented!("{:?}", node)
-            }
+            // if let Node::Block(block) = node.node() {
+            //     for node in &block.nodes {
+            //         if let Node::ExportPackage(ExportPackageNode { package, .. }) = node.node() {
+            //             let package = self.ctx.get_str(package.0).to_string();
+            //
+            //             // FIXME temporary hack to load std packages
+            //             // FIXME compiler needs to track scope so that the parent package can easily be determined
+            //
+            //             match package.as_str() {
+            //                 "io" => packages.extend(self.load_declared_packages("std/io/index.ec")),
+            //                 "collection" => packages
+            //                     .extend(self.load_declared_packages("std/collection/index.ec")),
+            //                 "list" => packages.extend(
+            //                     self.load_declared_packages("std/collection/list/index.ec"),
+            //                 ),
+            //                 "math" => {
+            //                     packages.extend(self.load_declared_packages("std/math/index.ec"))
+            //                 }
+            //                 "process" => {
+            //                     packages.extend(self.load_declared_packages("std/process/index.ec"))
+            //                 }
+            //                 "intrinsics" => packages
+            //                     .extend(self.load_declared_packages("core/intrinsics/index.ec")),
+            //                 _ => unimplemented!(),
+            //             }
+            //         } else if let Node::DeclareFunction(declare_function) = node.node() {
+            //             functions.push(declare_function.clone())
+            //         } else if let Node::DefineType(define_type) = node.node() {
+            //             definitions.push(define_type.clone());
+            //         }
+            //     }
+            // } else if let Node::DeclareFunction(declare_function) = node.node() {
+            //     functions.push(declare_function.clone())
+            // } else if let Node::DefineType(define_type) = node.node() {
+            //     definitions.push(define_type.clone());
+            // } else if let Node::DeclarePackage(package) = node.node() {
+            //     packages.push(package.clone());
+            // } else if let Node::DeclareExternalFunction(external) = node.node() {
+            //     external_functions.push(external.clone());
+            // } else {
+            //     unimplemented!("{:?}", node)
+            unimplemented!()
+            // }
         }
 
-        Ok(AstNode::new(Node::DeclarePackage(DeclarePackageNode {
-            package: Identifier(node.identifier.value()),
+        Ok(TreeNode::new(Node::DeclarePackage(Rc::new(AstDeclarePackageNode {
+            package: AstIdentifier(node.identifier.value()),
             modifiers: node.modifiers.clone(),
             functions,
             packages,
             definitions: definitions,
             external_functions,
-        }), SPAN_NOT_IMPLEMENTED.clone()))
+        })), SPAN_NOT_IMPLEMENTED.clone()))
     }
 
-    fn load_declared_packages(&mut self, name: &str) -> Vec<DeclarePackageNode<AstNode>> {
-        let content = crate::load_library_file(name).unwrap();
-        let ast = ast_from_str(&mut self.ctx, content.as_str()).unwrap();
-
-        let mut result = vec![];
-
-        for node in ast.nodes {
-            if let Node::DeclarePackage(package_node) = node.node_to_owned(){
-                result.push(package_node);
-            }
-        }
-        result
+    fn load_declared_packages(&mut self, name: &str) -> Vec<AstDeclarePackageNode> {
+        // let content = crate::load_library_file(name).unwrap();
+        // let ast = ast_from_str(&mut self.ctx, content.as_str()).unwrap();
+        //
+        // let mut result = vec![];
+        //
+        // for node in ast.nodes {
+        //     if let Node::DeclarePackage(package_node) = node.node_to_owned(){
+        //         result.push(package_node);
+        //     }
+        // }
+        // result
+        todo!()
     }
 }
 

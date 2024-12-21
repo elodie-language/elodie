@@ -16,8 +16,8 @@ impl AsRef<SymbolId> for SymbolId {
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
 pub struct SymbolName(pub StringTableId);
 
-impl From<&ast::Identifier> for SymbolName {
-    fn from(value: &ast::Identifier) -> Self {
+impl From<&ast::AstIdentifier> for SymbolName {
+    fn from(value: &ast::AstIdentifier) -> Self {
         SymbolName(value.0)
     }
 }

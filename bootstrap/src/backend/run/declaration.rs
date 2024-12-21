@@ -76,7 +76,7 @@ impl<'a> Runner<'a> {
         }
 
         for node in &node.definitions {
-            self.run_node(&AstNode::new(Node::DefineType(node.clone()), SPAN_NOT_IMPLEMENTED.clone()))?;
+            self.run_node(&TreeNode::new(Node::DefineType(node.clone()), SPAN_NOT_IMPLEMENTED.clone()))?;
             for func in &node.functions {
                 let func_ident = func.function.0;
                 let func = func;

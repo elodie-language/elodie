@@ -1,17 +1,17 @@
 use std::collections::HashMap;
 
 use crate::common::StringTable;
-use crate::frontend::ast::Identifier;
+use crate::frontend::ast::AstIdentifier;
 
 pub(crate) struct Scope {
-    pub variables: Vec<HashMap<Identifier, Variable>>,
+    pub variables: Vec<HashMap<AstIdentifier, Variable>>,
     pub next_arguments: Vec<Argument>,
     pub next_temps: Vec<Temp>,
 }
 
 #[derive(Clone, Debug)]
 pub struct Variable {
-    pub identifier: Identifier,
+    pub identifier: AstIdentifier,
     pub id: u64,
 }
 
@@ -66,7 +66,7 @@ impl Scope {
         self.next_temps.pop().unwrap();
     }
 
-    pub(crate) fn get_variable(&self, identifier: &Identifier) -> Option<&Variable> {
+    pub(crate) fn get_variable(&self, identifier: &AstIdentifier) -> Option<&Variable> {
         for scope in self.variables.iter().rev() {
             if let Some(value) = scope.get(identifier) {
                 return Some(value);
@@ -75,7 +75,7 @@ impl Scope {
         None
     }
 
-    pub(crate) fn push_variable(&mut self, identifier: &Identifier) -> Variable {
+    pub(crate) fn push_variable(&mut self, identifier: &AstIdentifier) -> Variable {
         let result = self
             .get_variable(&identifier)
             .cloned()

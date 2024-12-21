@@ -7,3 +7,4 @@ mod package;
 mod span;
 mod string;
 mod util;
+pub mod tree;

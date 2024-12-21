@@ -1,8 +1,9 @@
 use std::ops::Index;
 
+use crate::common::tree::TreeNode;
+use crate::frontend::ast::AstVariant;
 pub use crate::frontend::context::Context;
 use crate::frontend::lex::lex;
-use crate::frontend::ast::node::AstNode;
 use crate::frontend::parse::parse;
 
 pub mod ast;
@@ -41,18 +42,18 @@ pub type Result<T, E = Error> = core::result::Result<T, E>;
 
 #[derive(Debug)]
 pub struct Ast {
-    pub nodes: Vec<AstNode>,
+    pub nodes: Vec<TreeNode<AstVariant>>,
 }
 
 impl Index<usize> for Ast {
-    type Output = AstNode;
+    type Output = TreeNode<AstVariant>;
     fn index(&self, index: usize) -> &Self::Output {
         self.nodes.index(index)
     }
 }
 
-impl From<Vec<AstNode>> for Ast {
-    fn from(value: Vec<AstNode>) -> Self {
+impl From<Vec<TreeNode<AstVariant>>> for Ast {
+    fn from(value: Vec<TreeNode<AstVariant>>) -> Self {
         Self { nodes: value }
     }
 }

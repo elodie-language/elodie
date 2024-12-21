@@ -7,7 +7,7 @@ use crate::backend::generate::c::{
 use crate::backend::generate::c::Expression::{Literal, Variable};
 use crate::backend::generate::c::generator::Generator;
 use crate::frontend::ast::{AccessVariableNode, AccessVariableOfObjectNode, InterpolateStringNode, LiteralStringNode, Node};
-use crate::frontend::ast::node::{Ast, AstNode};
+use crate::frontend::ast::node::{AstVariant, AstNode};
 use crate::frontend::ast::Node::CallFunction;
 
 impl Generator {

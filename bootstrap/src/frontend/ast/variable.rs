@@ -1,16 +1,16 @@
 use std::ops::Deref;
 use std::rc::Rc;
 
+use crate::common::tree::{Node, TreeNode};
 use crate::frontend::{ast, parse};
-use crate::frontend::ast::{DeclareVariableNode, Generator, Identifier, Node, SPAN_NOT_IMPLEMENTED};
-use crate::frontend::ast::node::AstNode;
+use crate::frontend::ast::{AstDeclareVariableNode, AstIdentifier, AstVariant, Generator, SPAN_NOT_IMPLEMENTED};
 
 impl<'a> Generator<'a> {
     pub(crate) fn generate_declare_variable(
         &mut self,
         node: &parse::VariableDeclarationNode,
-    ) -> ast::Result<AstNode> {
-        let variable = Identifier(node.identifier.value());
+    ) -> ast::Result<TreeNode<AstVariant>> {
+        let variable = AstIdentifier(node.identifier.value());
 
         let node_type = if let Some(type_node) = node.r#type.as_ref() {
             Some(self.to_ast_type(type_node))
@@ -19,10 +19,10 @@ impl<'a> Generator<'a> {
         };
 
         let node = Rc::new(self.generate_node(node.node.deref())?);
-        Ok(AstNode::new(Node::DeclareVariable(DeclareVariableNode {
+        Ok(TreeNode::new(Node::DeclareVariable(Rc::new(AstDeclareVariableNode {
             variable,
             value: node,
             value_type: node_type,
-        }), SPAN_NOT_IMPLEMENTED.clone()))
+        })), SPAN_NOT_IMPLEMENTED.clone()))
     }
 }

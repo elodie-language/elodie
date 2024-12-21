@@ -7,7 +7,7 @@ use crate::backend::generate::c::{
 };
 use crate::backend::generate::c::generator::Generator;
 use crate::frontend::ast::{AccessVariableNode, AccessVariableOfSelfNode, DeclareVariableNode, LiteralBooleanNode, LiteralNumberNode, LiteralStringNode, Node};
-use crate::frontend::ast::node::{Ast, AstNode};
+use crate::frontend::ast::node::{AstVariant, AstNode};
 use crate::frontend::ast::Node::{LiteralNumber, LiteralString};
 
 impl Generator {

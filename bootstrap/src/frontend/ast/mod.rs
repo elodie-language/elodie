@@ -1,6 +1,6 @@
-use crate::frontend::{Context, Ast, parse};
+use crate::common::tree::TreeNode;
+use crate::frontend::{Ast, Context, parse};
 pub use crate::frontend::ast::node::*;
-use crate::frontend::ast::node::AstNode;
 
 mod block;
 mod control;
@@ -47,7 +47,7 @@ impl<'a> Generator<'a> {
         Ok(Ast { nodes: result })
     }
 
-    pub(crate) fn generate_node(&mut self, node: &parse::Node) -> Result<AstNode> {
+    pub(crate) fn generate_node(&mut self, node: &parse::Node) -> Result<TreeNode<AstVariant>> {
         match node {
             parse::Node::Block(block_node) => Ok(self.generate_block(block_node)?),
             parse::Node::Break(break_node) => Ok(self.generate_break(break_node)?),

@@ -1,19 +1,21 @@
+use std::rc::Rc;
+
+use crate::common::tree::Node::InterpolateString;
+use crate::common::tree::TreeNode;
 use crate::frontend::{ast, parse};
-use crate::frontend::ast::{Generator, SPAN_NOT_IMPLEMENTED};
-use crate::frontend::ast::node::{AstNode, InterpolateStringNode};
-use crate::frontend::ast::node::Node::InterpolateString;
+use crate::frontend::ast::{AstInterpolateStringNode, AstVariant, Generator, SPAN_NOT_IMPLEMENTED};
 
 impl<'a> Generator<'a> {
     pub(crate) fn generate_interpolate_string(
         &mut self,
         node: &parse::StringInterpolationNode,
-    ) -> ast::Result<AstNode> {
+    ) -> ast::Result<TreeNode<AstVariant>> {
         let mut nodes = Vec::with_capacity(node.nodes.len());
         for node in &node.nodes {
             nodes.push(self.generate_node(node)?);
         }
-        Ok(AstNode::new(InterpolateString(InterpolateStringNode {
+        Ok(TreeNode::new(InterpolateString(Rc::new(AstInterpolateStringNode {
             nodes,
-        }), SPAN_NOT_IMPLEMENTED.clone()))
+        })), SPAN_NOT_IMPLEMENTED.clone()))
     }
 }

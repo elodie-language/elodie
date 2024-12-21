@@ -1,7 +1,11 @@
+use std::ops::Deref;
+use Node::DeclareVariable;
+
 use crate::common::{StringTable, WithSpan};
+use crate::common::tree::{Node, Tree, TreeNode};
+use crate::common::tree::Node::{LiteralBoolean, LiteralNumber, LiteralString};
 use crate::frontend;
-use crate::frontend::{ast};
-use crate::frontend::ast::node::{Ast, AstNode};
+use crate::frontend::ast::AstVariant;
 use crate::ir::analyse::AnalysedNode;
 use crate::ir::context::Context;
 use crate::ir::symbol::{SymbolId, SymbolName, SymbolTable};
@@ -31,15 +35,15 @@ impl<'a> Inference<'a> {
         Ok(nodes)
     }
 
-    fn infer_node(&mut self, ast: &AstNode) -> crate::ir::analyse::Result<AnalysedNode> {
-        match ast.node() {
-            ast::Node::DeclareVariable(node) => self.infer_declare_variable(ast.span(), node),
-            ast::Node::LiteralBoolean(node) => self.infer_literal_boolean(ast.span(), node),
-            ast::Node::LiteralNumber(node) => self.infer_literal_number(ast.span(), node),
-            ast::Node::LiteralString(node) => self.infer_literal_string(ast.span(), node),
-            // ast::Node::Literal(node) => self.infer_literal(node),
-            _ => unimplemented!("{ast:#?}")
-        }
+    fn infer_node(&mut self, ast: &TreeNode<AstVariant>) -> crate::ir::analyse::Result<AnalysedNode> {
+        todo!()
+        // match ast.node() {
+        //     // DeclareVariable(node) => self.infer_declare_variable(ast.span(), node),
+        //     // LiteralBoolean(node) => self.infer_literal_boolean(ast.span(), node.as_ref()),
+        //     // LiteralNumber(node) => self.infer_literal_number(ast.span(), node.as_ref()),
+        //     // LiteralString(node) => self.infer_literal_string(ast.span(), node.as_ref()),
+        //     _ => unimplemented!("{ast:#?}")
+        // }
     }
 
     fn register_argument(&mut self, name: SymbolName) -> SymbolId {
