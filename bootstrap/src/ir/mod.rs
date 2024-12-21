@@ -3,11 +3,11 @@ use std::ops::Index;
 pub use context::Context;
 pub use r#type::{Type, TypeId, TypeName, TypeTable, TypeVariable};
 
-use crate::frontend::ast_from_str;
 use crate::{frontend, ir};
-
+use crate::frontend::ast_from_str;
 use crate::ir::analyse::analyse;
 use crate::ir::generate::generate;
+use crate::ir::node::IrTreeNode;
 
 mod analyse;
 mod context;
@@ -37,11 +37,11 @@ impl From<analyse::Error> for Error {
 pub(crate) type Result<T, E = Error> = core::result::Result<T, E>;
 
 pub struct Ir {
-    pub nodes: Vec<ir::node::Node>,
+    pub nodes: Vec<IrTreeNode>,
 }
 
 impl Index<usize> for Ir {
-    type Output = node::Node;
+    type Output = IrTreeNode;
     fn index(&self, index: usize) -> &Self::Output {
         self.nodes.index(index)
     }
@@ -60,7 +60,5 @@ pub fn ir_from_str(str: &str) -> Result<ir::Ir> {
     let mut ctx = ir::Context::new(ctx);
     let analysed = analyse(&mut ctx, ast)?;
 
-    // let mut ctx = generate::Context::new(ctx, analysed);
-    // generate(&mut ctx, &analysed);
-    todo!()
+    generate(&mut ctx, analysed)
 }
