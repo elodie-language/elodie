@@ -1,10 +1,11 @@
+use std::fmt::Debug;
 use std::hash::Hash;
 use std::rc::Rc;
 
-use tree::CalculateNode;
+use node::CalculateNode;
 
-use crate::common::{Column, Index, PackagePath, Position, Row, Span, StringTableId, tree};
-use crate::common::tree::{AccessVariableNode, AccessVariableOfObjectNode, AccessVariableOfSelfNode, BlockNode, BreakLoopNode, CallFunctionNode, CallFunctionOfObjectNode, CallFunctionOfPackageNode, CallFunctionWithLambdaNode, CompareNode, CompareOperator, ContinueLoopNode, DeclareExternalFunctionNode, DeclareFunctionNode, DeclarePackageNode, DeclareTypeNode, DeclareVariableNode, DefineTypeNode, ExportPackageNode, IfNode, InstantiateTypeNode, InterpolateStringNode, LiteralBooleanNode, LiteralNumberNode, LiteralStringNode, LoopNode, ReturnFromFunctionNode, Source, TreeNode, Variant};
+use crate::common::{Column, Index, node, PackagePath, Position, Row, Span, StringTableId, WithSpan};
+use crate::common::node::{AccessVariableNode, AccessVariableOfObjectNode, AccessVariableOfSelfNode, BlockNode, BreakLoopNode, CallFunctionNode, CallFunctionOfObjectNode, CallFunctionOfPackageNode, CallFunctionWithLambdaNode, CompareNode, CompareOperator, ContinueLoopNode, DeclareExternalFunctionNode, DeclareFunctionNode, DeclarePackageNode, DeclareTypeNode, DeclareVariableNode, DefineTypeNode, ExportPackageNode, IfNode, InstantiateTypeNode, InterpolateStringNode, LiteralBooleanNode, LiteralNumberNode, LiteralStringNode, LoopNode, Node, ReturnFromFunctionNode, Source, Variant};
 use crate::frontend::lex::token::Token;
 use crate::frontend::modifier::Modifiers;
 
@@ -12,6 +13,60 @@ use crate::frontend::modifier::Modifiers;
 pub struct AstVariant {}
 
 impl Variant for AstVariant {}
+
+pub type AstNode = Node<
+    AstVariant,
+    AstAccessVariableNode,
+    AstAccessVariableOfObjectNode,
+    AstAccessVariableOfSelfNode,
+    AstBlockNode,
+    AstBreakLoopNode,
+    AstCalculateNode,
+    AStCallFunctionNode,
+    AstCallFunctionWithLambdaNode,
+    AstCallFunctionOfObjectNode,
+    AstCallFunctionOfPackageNode,
+    AstCompareNode,
+    AstContinueLoopNode,
+    AstDeclareExternalFunctionNode,
+    AstDeclareFunctionNode,
+    AstDeclarePackageNode,
+    AstDeclareTypeNode,
+    AstDeclareVariableNode,
+    AstDefineTypeNode,
+    AstExportPackageNode,
+    AstIfNode,
+    AstInterpolateStringNode,
+    AstInstantiateTypeNode,
+    AstLiteralBooleanNode,
+    AstLiteralNumberNode,
+    AstLiteralStringNode,
+    AstLoopNode,
+    AstReturnFromFunctionNode
+>;
+
+#[derive(Debug, Clone, PartialEq)]
+pub struct AstTreeNode {
+    node: AstNode,
+    span: Span,
+}
+
+impl AstTreeNode {
+    pub fn node(&self) -> &AstNode { &self.node }
+    pub fn node_to_owned(self) -> AstNode { self.node }
+}
+
+impl AstTreeNode {
+    pub fn new(node: AstNode, span: Span) -> AstTreeNode {
+        AstTreeNode { node, span }
+    }
+}
+
+impl WithSpan for AstTreeNode {
+    fn span(&self) -> Span {
+        self.span.clone()
+    }
+}
 
 pub static SPAN_NOT_IMPLEMENTED: Span = Span {
     start: Position {
@@ -50,23 +105,23 @@ impl AccessVariableOfSelfNode<AstVariant> for AstAccessVariableOfSelfNode {}
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct AstBlockNode {
-    pub nodes: Vec<TreeNode<AstVariant>>,
+    pub nodes: Vec<AstTreeNode>,
 }
 
 impl BlockNode<AstVariant> for AstBlockNode {}
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct AstBreakLoopNode {
-    pub node: Option<Rc<TreeNode<AstVariant>>>,
+    pub node: Option<Rc<AstTreeNode>>,
 }
 
 impl BreakLoopNode<AstVariant> for AstBreakLoopNode {}
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct AstCalculateNode {
-    pub left: Rc<TreeNode<AstVariant>>,
-    pub operator: tree::CalculationOperator,
-    pub right: Rc<TreeNode<AstVariant>>,
+    pub left: Rc<AstTreeNode>,
+    pub operator: node::CalculationOperator,
+    pub right: Rc<AstTreeNode>,
 }
 
 impl CalculateNode<AstVariant> for AstCalculateNode {}
@@ -74,7 +129,7 @@ impl CalculateNode<AstVariant> for AstCalculateNode {}
 #[derive(Debug, Clone, PartialEq)]
 pub struct AStCallFunctionNode {
     pub function: AstIdentifier,
-    pub arguments: Vec<TreeNode<AstVariant>>,
+    pub arguments: Vec<AstTreeNode>,
 }
 
 impl CallFunctionNode<AstVariant> for AStCallFunctionNode {}
@@ -82,7 +137,7 @@ impl CallFunctionNode<AstVariant> for AStCallFunctionNode {}
 #[derive(Debug, Clone, PartialEq)]
 pub struct AstCallFunctionWithLambdaNode {
     pub function: AstIdentifier,
-    pub arguments: Vec<TreeNode<AstVariant>>,
+    pub arguments: Vec<AstTreeNode>,
     pub lambda: Rc<AstBlockNode>,
 }
 
@@ -92,7 +147,7 @@ impl CallFunctionWithLambdaNode<AstVariant> for AstCallFunctionWithLambdaNode {}
 pub struct AstCallFunctionOfObjectNode {
     pub object: AstIdentifier,
     pub function: AstIdentifier,
-    pub arguments: Vec<TreeNode<AstVariant>>,
+    pub arguments: Vec<AstTreeNode>,
 }
 
 impl CallFunctionOfObjectNode<AstVariant> for AstCallFunctionOfObjectNode {}
@@ -101,16 +156,16 @@ impl CallFunctionOfObjectNode<AstVariant> for AstCallFunctionOfObjectNode {}
 pub struct AstCallFunctionOfPackageNode {
     pub package: PackagePath,
     pub function: AstIdentifier,
-    pub arguments: Vec<TreeNode<AstVariant>>,
+    pub arguments: Vec<AstTreeNode>,
 }
 
 impl CallFunctionOfPackageNode<AstVariant> for AstCallFunctionOfPackageNode {}
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct AstCompareNode {
-    pub left: Rc<TreeNode<AstVariant>>,
+    pub left: Rc<AstTreeNode>,
     pub operator: CompareOperator,
-    pub right: Rc<TreeNode<AstVariant>>,
+    pub right: Rc<AstTreeNode>,
 }
 
 impl CompareNode<AstVariant> for AstCompareNode {}
@@ -172,7 +227,7 @@ impl DefineTypeNode<AstVariant> for AstDefineTypeNode {}
 #[derive(Debug, Clone, PartialEq)]
 pub struct AstDeclareVariableNode {
     pub variable: AstIdentifier,
-    pub value: Rc<TreeNode<AstVariant>>,
+    pub value: Rc<AstTreeNode>,
     pub value_type: Option<AstType>,
 }
 
@@ -188,7 +243,7 @@ impl ExportPackageNode<AstVariant> for AstExportPackageNode {}
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct AstIfNode {
-    pub condition: Rc<TreeNode<AstVariant>>,
+    pub condition: Rc<AstTreeNode>,
     pub then: Rc<AstBlockNode>,
     pub otherwise: Option<Rc<AstBlockNode>>,
 }
@@ -197,7 +252,7 @@ impl IfNode<AstVariant> for AstIfNode {}
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct AstInterpolateStringNode {
-    pub nodes: Vec<TreeNode<AstVariant>>,
+    pub nodes: Vec<AstTreeNode>,
 }
 
 impl InterpolateStringNode<AstVariant> for AstInterpolateStringNode {}
@@ -227,14 +282,14 @@ impl LiteralStringNode<AstVariant> for AstLiteralStringNode {}
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct AstLoopNode {
-    pub nodes: Vec<TreeNode<AstVariant>>,
+    pub nodes: Vec<AstTreeNode>,
 }
 
 impl LoopNode<AstVariant> for AstLoopNode {}
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct AstReturnFromFunctionNode {
-    pub node: Option<Rc<TreeNode<AstVariant>>>,
+    pub node: Option<Rc<AstTreeNode>>,
 }
 
 impl ReturnFromFunctionNode<AstVariant> for AstReturnFromFunctionNode {}
@@ -251,7 +306,7 @@ pub struct AstIdentifier(pub StringTableId);
 #[derive(Clone, Debug, PartialEq)]
 pub struct AstNamedArgument {
     pub identifier: AstIdentifier,
-    pub value: TreeNode<AstVariant>,
+    pub value: AstTreeNode,
 }
 
 #[derive(Debug, Clone, PartialEq)]

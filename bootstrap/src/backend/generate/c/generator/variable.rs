@@ -1,23 +1,21 @@
-use std::ops::Deref;
-
 use crate::backend::generate::c;
 use crate::backend::generate::c::{
     DeclareVariableStatement, Indent, InitialiseStructExpression, InitialiseStructField, Statement,
     VariableExpression,
 };
 use crate::backend::generate::c::generator::Generator;
-use crate::frontend::ast::{AccessVariableNode, AccessVariableOfSelfNode, DeclareVariableNode, LiteralBooleanNode, LiteralNumberNode, LiteralStringNode, Node};
-use crate::frontend::ast::node::{AstVariant, AstNode};
-use crate::frontend::ast::Node::{LiteralNumber, LiteralString};
+use crate::common::node::Node;
+use crate::common::node::Node::{LiteralBoolean, LiteralNumber, LiteralString};
+use crate::frontend::ast::{AstAccessVariableNode, AstAccessVariableOfSelfNode, AstDeclareVariableNode, AstLiteralBooleanNode, AstLiteralNumberNode, AstLiteralStringNode};
 
 impl Generator {
     pub(crate) fn generate_declare_variable(
         &mut self,
-        node: &DeclareVariableNode<AstNode>,
+        node: &AstDeclareVariableNode,
     ) -> crate::backend::generate::c::generator::Result<Vec<Statement>> {
         let variable = self.scope.push_variable(&node.variable);
 
-        if let LiteralString(LiteralStringNode(string)) = &node.value.node() {
+        if let LiteralString(AstLiteralStringNode(string)) = &node.value.node() {
             return Ok(vec![Statement::DeclareVariable(DeclareVariableStatement {
                 indent: Indent::none(),
                 identifier: variable.to_string(&self.string_table),
@@ -31,7 +29,7 @@ impl Generator {
             })]);
         }
 
-        if let LiteralNumber(LiteralNumberNode(number)) = &node.value.node() {
+        if let LiteralNumber(AstLiteralNumberNode(number)) = &node.value.node() {
             return Ok(vec![Statement::DeclareVariable(DeclareVariableStatement {
                 indent: Indent::none(),
                 identifier: variable.to_string(&self.string_table),
@@ -49,7 +47,7 @@ impl Generator {
             })]);
         }
 
-        if let Node::LiteralBoolean(LiteralBooleanNode(boolean)) = &node.value.node() {
+        if let LiteralBoolean(AstLiteralBooleanNode(boolean)) = &node.value.node() {
             return Ok(vec![Statement::DeclareVariable(DeclareVariableStatement {
                 indent: Indent::none(),
                 identifier: variable.to_string(&self.string_table),
@@ -99,7 +97,7 @@ impl Generator {
 
     pub(crate) fn generate_load_value(
         &mut self,
-        node: &AccessVariableNode,
+        node: &AstAccessVariableNode,
     ) -> c::generator::Result<c::Expression> {
         Ok(c::Expression::Variable(VariableExpression {
             indent: Indent::none(),
@@ -113,7 +111,7 @@ impl Generator {
 
     pub(crate) fn generate_load_self_value(
         &mut self,
-        node: &AccessVariableOfSelfNode,
+        node: &AstAccessVariableOfSelfNode,
     ) -> c::generator::Result<c::Expression> {
         Ok(c::Expression::Variable(VariableExpression {
             indent: Indent::none(),

@@ -6,21 +6,21 @@ use crate::backend::generate::c::{
 };
 use crate::backend::generate::c::Expression::{Literal, Variable};
 use crate::backend::generate::c::generator::Generator;
-use crate::frontend::ast::{AccessVariableNode, AccessVariableOfObjectNode, InterpolateStringNode, LiteralStringNode, Node};
-use crate::frontend::ast::node::{AstVariant, AstNode};
-use crate::frontend::ast::Node::CallFunction;
+use crate::common::node::Node;
+use crate::common::node::Node::CallFunction;
+use crate::frontend::ast::{AstAccessVariableNode, AstAccessVariableOfObjectNode, AstInterpolateStringNode, AstLiteralStringNode};
 
 impl Generator {
     pub(crate) fn interpolate_string(
         &mut self,
-        node: &InterpolateStringNode<AstNode>,
+        node: &AstInterpolateStringNode,
     ) -> c::generator::Result<(Vec<Statement>, Expression)> {
         let mut statements = Vec::new();
 
         let mut temp_variables = Vec::new();
 
         for node in &node.nodes {
-            if let Node::LiteralString(LiteralStringNode(string_node)) = &node.node() {
+            if let Node::LiteralString(AstLiteralStringNode(string_node)) = &node.node() {
                 let temp = self.scope.push_temp();
                 // statements.push(c::Statement::DeclareVariable(DeclareVariableStatement {
                 //     indent: Indent::none(),
@@ -47,7 +47,7 @@ impl Generator {
                     }),
                 }));
                 temp_variables.push(temp)
-            } else if let Node::AccessVariable(AccessVariableNode { variable, .. }) = node.node() {
+            } else if let Node::AccessVariable(AstAccessVariableNode { variable, .. }) = node.node() {
                 let temp = self.scope.push_temp();
                 //
                 // if self.type_table.is_number(ty) {
@@ -105,7 +105,7 @@ impl Generator {
                 // }
                 //
                 // temp_variables.push(temp);
-            } else if let Node::AccessVariableOfObject(AccessVariableOfObjectNode {
+            } else if let Node::AccessVariableOfObject(AstAccessVariableOfObjectNode {
                                                            object,
                                                            variable,
                                                            ..

@@ -1,13 +1,14 @@
 use crate::backend::generate::c;
-use crate::backend::generate::c::generator::Generator;
-use crate::backend::generate::c::Statement::CallFunction;
 use crate::backend::generate::c::{
-    CallFunctionStatement, CallFunctionStatementResult, DeclareFunctionNode,
-    DeclareVariableStatement, Expression, Indent, LiteralExpression, LiteralStringExpression,
+    CallFunctionStatement, CallFunctionStatementResult, DeclareFunctionNode
+    , Expression, Indent,
     Statement, VariableExpression,
 };
-use crate::frontend::ast::{AccessVariableNode, AccessVariableOfObjectNode, CallFunctionNode, CallFunctionOfPackageNode, Node};
-use crate::frontend::ast::node::{AstVariant, AstNode};
+use crate::backend::generate::c::generator::Generator;
+use crate::backend::generate::c::Statement::CallFunction;
+use crate::common::node::Node;
+use crate::frontend::ast::{AstAccessVariableNode, AStCallFunctionNode, AstCallFunctionOfPackageNode, AstTreeNode};
+use crate::frontend::ast::node::AstNode;
 
 impl Generator {
     pub(crate) fn generate_declare_function(
@@ -19,7 +20,7 @@ impl Generator {
 
     pub(crate) fn generate_call_function(
         &mut self,
-        node: &CallFunctionNode<AstNode>,
+        node: &AStCallFunctionNode,
     ) -> c::generator::Result<Vec<Statement>> {
         let function = self.string_table.get(node.function.0).to_string();
 
@@ -44,7 +45,7 @@ impl Generator {
 
     pub(crate) fn generate_call_function_with_result(
         &mut self,
-        node: &CallFunctionNode<AstNode>,
+        node: &AStCallFunctionNode,
         call_result: CallFunctionStatementResult,
     ) -> c::generator::Result<Vec<Statement>> {
         let function = self.string_table.get(node.function.0).to_string();
@@ -66,7 +67,7 @@ impl Generator {
 
     pub(crate) fn generate_call_function_of_package(
         &mut self,
-        node: &CallFunctionOfPackageNode<AstNode>,
+        node: &AstCallFunctionOfPackageNode,
     ) -> c::generator::Result<Vec<Statement>> {
         let mut result = vec![];
 
@@ -89,7 +90,7 @@ impl Generator {
 
     fn generate_call_arguments(
         &mut self,
-        args: &[AstNode],
+        args: &[AstTreeNode],
     ) -> c::generator::Result<(Vec<Statement>, Vec<Expression>)> {
         let mut statements = vec![];
         let mut arguments = vec![];
@@ -97,7 +98,7 @@ impl Generator {
         for arg in args {
             let arg_identifier = self.scope.push_argument();
 
-            if let Node::AccessVariable(AccessVariableNode { variable, .. }) = arg.node() {
+            if let Node::AccessVariable(AstAccessVariableNode { variable, .. }) = arg.node() {
                 // if self.type_table.is_string(ty) {
                 //     statements.push(Statement::DeclareVariable(DeclareVariableStatement {
                 //         indent: Indent::none(),
@@ -125,10 +126,10 @@ impl Generator {
             //         )),
             //     }));
 
-                // arguments.push(c::Expression::Variable(VariableExpression {
-                //     indent: Indent::none(),
-                //     identifier: arg_identifier.to_string(),
-                // }));
+            // arguments.push(c::Expression::Variable(VariableExpression {
+            //     indent: Indent::none(),
+            //     identifier: arg_identifier.to_string(),
+            // }));
             //     continue;
             // }
 

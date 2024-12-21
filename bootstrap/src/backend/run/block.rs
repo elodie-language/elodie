@@ -1,12 +1,11 @@
-use crate::backend::run::value::Value;
 use crate::backend::run::{Interrupt, Runner};
-use crate::frontend::ast;
-use crate::frontend::ast::node::AstNode;
+use crate::backend::run::value::Value;
+use crate::frontend::ast::AstBlockNode;
 
 impl<'a> Runner<'a> {
     pub(crate) fn run_block(
         &mut self,
-        node: &ast::BlockNode<AstNode>,
+        node: &AstBlockNode,
     ) -> crate::backend::run::Result<Value> {
         let mut value = Value::Unit;
         self.scope.enter();

@@ -2,24 +2,23 @@ use std::collections::HashMap;
 use std::ops::Deref;
 use std::rc::Rc;
 
-use crate::backend::run::value::{FunctionValue, IntrinsicFunctionValue, PackageValue, Value};
 use crate::backend::run::Runner;
-use crate::frontend::ast;
-use crate::frontend::ast::{Node, SPAN_NOT_IMPLEMENTED};
-use crate::frontend::ast::node::AstNode;
+use crate::backend::run::value::{FunctionValue, IntrinsicFunctionValue, PackageValue, Value};
+use crate::common::node::Node;
+use crate::frontend::ast::{AstDeclareFunctionNode, AstDeclarePackageNode, AstDeclareVariableNode, AstTreeNode, SPAN_NOT_IMPLEMENTED};
 use crate::ir::TypeId;
 
 impl<'a> Runner<'a> {
     pub(crate) fn run_external_function_declaration(
         &mut self,
-        node: &ast::DeclareExternalFunctionNode,
+        node: &AstDeclareFunctionNode,
     ) -> crate::backend::run::Result<Value> {
         unimplemented!()
     }
 
     pub(crate) fn run_variable_declaration(
         &mut self,
-        node: &ast::DeclareVariableNode<AstNode>,
+        node: &AstDeclareVariableNode,
     ) -> crate::backend::run::Result<Value> {
         let name = node.variable.0;
         let value = self.run_node(node.value.deref())?;
@@ -29,7 +28,7 @@ impl<'a> Runner<'a> {
 
     pub(crate) fn run_function_declaration(
         &mut self,
-        node: &ast::DeclareFunctionNode<AstNode>,
+        node: &AstDeclareFunctionNode,
     ) -> crate::backend::run::Result<Value> {
         let name = node.function.0.clone();
 
@@ -49,7 +48,7 @@ impl<'a> Runner<'a> {
 
     pub(crate) fn run_package_declaration(
         &mut self,
-        node: &ast::DeclarePackageNode<AstNode>,
+        node: &AstDeclarePackageNode,
     ) -> crate::backend::run::Result<Value> {
         let mut functions = HashMap::new();
         for node in &node.functions {
@@ -76,7 +75,8 @@ impl<'a> Runner<'a> {
         }
 
         for node in &node.definitions {
-            self.run_node(&TreeNode::new(Node::DefineType(node.clone()), SPAN_NOT_IMPLEMENTED.clone()))?;
+            self.run_node(&AstTreeNode::new(Node::DefineType(node.clone()), SPAN_NOT_IMPLEMENTED.clone()))?;
+
             for func in &node.functions {
                 let func_ident = func.function.0;
                 let func = func;
@@ -88,7 +88,6 @@ impl<'a> Runner<'a> {
                 self.type_definitions
                     .add_function(TypeId(99), func_ident, func);
             }
-
         }
 
         let mut external_functions = HashMap::new();

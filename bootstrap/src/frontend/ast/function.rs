@@ -1,35 +1,35 @@
 use std::ops::Deref;
 use std::rc::Rc;
 
-use crate::common::tree::{Node, TreeNode};
-use crate::common::tree::Node::ReturnFromFunction;
+use crate::common::node::Node;
+use crate::common::node::Node::ReturnFromFunction;
 use crate::frontend::{ast, parse};
-use crate::frontend::ast::{AstBlockNode, AstDeclareExternalFunctionNode, AstDeclareFunctionNode, AstFunctionArgument, AstIdentifier, AstReturnFromFunctionNode, AstVariant, Generator, SPAN_NOT_IMPLEMENTED};
+use crate::frontend::ast::{AstBlockNode, AstDeclareExternalFunctionNode, AstDeclareFunctionNode, AstFunctionArgument, AstIdentifier, AstReturnFromFunctionNode, AstTreeNode, Generator, SPAN_NOT_IMPLEMENTED};
 
 impl<'a> Generator<'a> {
     pub(crate) fn generate_declare_external_function(
         &mut self,
         node: &parse::ExternalFunctionDeclarationNode,
-    ) -> ast::Result<TreeNode<AstVariant>> {
+    ) -> ast::Result<AstTreeNode> {
         let mut arguments = Vec::with_capacity(node.arguments.len());
         for arg in &node.arguments {
             arguments.push(self.generate_declare_function_argument(arg)?)
         }
 
-        Ok(TreeNode::new(Node::DeclareExternalFunction(
-            Rc::new(AstDeclareExternalFunctionNode {
+        Ok(AstTreeNode::new(Node::DeclareExternalFunction(
+            AstDeclareExternalFunctionNode {
                 function: AstIdentifier(node.identifier.value()),
                 arguments,
                 return_type: None,
             },
-            )), SPAN_NOT_IMPLEMENTED.clone()))
+        ), SPAN_NOT_IMPLEMENTED.clone()))
     }
 
 
     pub(crate) fn generate_declare_function(
         &mut self,
         node: &parse::FunctionDeclarationNode,
-    ) -> ast::Result<TreeNode<AstVariant>> {
+    ) -> ast::Result<AstTreeNode> {
         let mut arguments = Vec::with_capacity(node.arguments.len());
         for arg in &node.arguments {
             arguments.push(self.generate_declare_function_argument(arg)?)
@@ -46,12 +46,12 @@ impl<'a> Generator<'a> {
             None
         };
 
-        Ok(TreeNode::new(Node::DeclareFunction(Rc::new(AstDeclareFunctionNode {
+        Ok(AstTreeNode::new(Node::DeclareFunction(AstDeclareFunctionNode {
             function: AstIdentifier(node.identifier.value()),
             arguments,
             return_type,
             nodes: Rc::new(AstBlockNode { nodes }),
-        })), SPAN_NOT_IMPLEMENTED.clone()))
+        }), SPAN_NOT_IMPLEMENTED.clone()))
     }
 
     pub(crate) fn generate_declare_function_argument(
@@ -73,15 +73,15 @@ impl<'a> Generator<'a> {
     pub(crate) fn generate_function_return(
         &mut self,
         node: &parse::ReturnNode,
-    ) -> ast::Result<TreeNode<AstVariant>> {
+    ) -> ast::Result<AstTreeNode> {
         let node = if let Some(ref node) = node.result {
             Some(Rc::new(self.generate_node(node.deref())?))
         } else {
             None
         };
 
-        Ok(TreeNode::new(ReturnFromFunction(Rc::new(AstReturnFromFunctionNode {
+        Ok(AstTreeNode::new(ReturnFromFunction(AstReturnFromFunctionNode {
             node
-        })), SPAN_NOT_IMPLEMENTED.clone()))
+        }), SPAN_NOT_IMPLEMENTED.clone()))
     }
 }

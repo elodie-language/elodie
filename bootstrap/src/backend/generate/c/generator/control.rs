@@ -3,13 +3,12 @@ use std::ops::Deref;
 use crate::backend::generate::c;
 use crate::backend::generate::c::{IfStatement, Statement};
 use crate::backend::generate::c::generator::Generator;
-use crate::frontend::ast::IfNode;
-use crate::frontend::ast::node::AstNode;
+use crate::frontend::ast::AstIfNode;
 
 impl Generator {
     pub(crate) fn generate_if(
         &mut self,
-        node: &IfNode<AstNode>,
+        node: &AstIfNode,
     ) -> c::generator::Result<Vec<Statement>> {
         let mut result = vec![];
 

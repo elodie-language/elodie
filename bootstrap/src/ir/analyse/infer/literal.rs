@@ -3,7 +3,7 @@ use std::str::FromStr;
 use bigdecimal::BigDecimal;
 
 use crate::common::Span;
-use crate::frontend::ast::{AstLiteralBooleanNode, AstLiteralNumberNode};
+use crate::frontend::ast::{AstLiteralBooleanNode, AstLiteralNumberNode, AstLiteralStringNode};
 use crate::ir::analyse::{AnalysedNode, InferredType, LiteralBooleanNode, LiteralNumberNode, LiteralStringNode};
 use crate::ir::analyse::infer::Inference;
 use crate::ir::analyse::Node::{LiteralBoolean, LiteralNumber, LiteralString};
@@ -24,7 +24,7 @@ impl<'a> Inference<'a> {
         }), span, InferredType::Number))
     }
 
-    pub(crate) fn infer_literal_string(&mut self, span: Span, node: &AstLiteralBooleanNode) -> crate::ir::analyse::Result<AnalysedNode> {
+    pub(crate) fn infer_literal_string(&mut self, span: Span, node: &AstLiteralStringNode) -> crate::ir::analyse::Result<AnalysedNode> {
         Ok(AnalysedNode::new(LiteralString(LiteralStringNode { value: node.0.value() }), span, InferredType::String))
     }
 }

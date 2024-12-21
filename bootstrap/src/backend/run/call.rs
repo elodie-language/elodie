@@ -1,16 +1,14 @@
 use std::collections::HashMap;
 
-use crate::backend::run::value::{FunctionValue, Value};
 use crate::backend::run::Runner;
+use crate::backend::run::value::{FunctionValue, Value};
 use crate::common::StringTableId;
-use crate::frontend::ast;
-use crate::frontend::ast::CallFunctionWithLambdaNode;
-use crate::frontend::ast::node::AstNode;
+use crate::frontend::ast::{AStCallFunctionNode, AstCallFunctionWithLambdaNode};
 
 impl<'a> Runner<'a> {
     pub(crate) fn run_node_call_function(
         &mut self,
-        node: &ast::CallFunctionNode<AstNode>,
+        node: &AStCallFunctionNode,
     ) -> crate::backend::run::Result<Value> {
         self.reset_interrupt();
 
@@ -56,7 +54,7 @@ impl<'a> Runner<'a> {
 
     pub(crate) fn run_node_call_function_with_lambda(
         &mut self,
-        node: &CallFunctionWithLambdaNode<AstNode>,
+        node: &AstCallFunctionWithLambdaNode,
     ) -> crate::backend::run::Result<Value> {
         self.reset_interrupt();
 

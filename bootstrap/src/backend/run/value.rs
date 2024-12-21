@@ -4,7 +4,7 @@ use std::fmt::{Debug, Formatter};
 use std::rc::Rc;
 
 use crate::common::StringTableId;
-use crate::frontend::ast::{BlockNode, FunctionArgument, AstIdentifier};
+use crate::frontend::ast::{AstBlockNode, AstFunctionArgument, AstIdentifier};
 use crate::frontend::ast::node::AstNode;
 
 #[derive(Debug, Clone)]
@@ -54,8 +54,8 @@ impl Debug for IntrinsicFunctionValue {
 
 #[derive(Debug, Clone)]
 pub struct FunctionValue {
-    pub arguments: Vec<Rc<FunctionArgument>>,
-    pub body: Rc<BlockNode<AstNode>>,
+    pub arguments: Vec<Rc<AstFunctionArgument>>,
+    pub body: Rc<AstBlockNode>,
 }
 
 #[derive(Debug, Clone)]

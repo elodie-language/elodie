@@ -12,11 +12,10 @@ use crate::backend::generate::c::{
 use crate::backend::generate::c::DirectiveNode::{IncludeLocalDirective, IncludeSystemDirective};
 use crate::backend::generate::c::generator::scope::Scope;
 use crate::backend::generate::c::Node::DefineFunction;
+use crate::common::node::Node;
 use crate::common::StringTable;
-use crate::common::tree::{Node, Tree, TreeNode};
 use crate::frontend;
-use crate::frontend::ast::AstDefineTypeNode;
-use crate::frontend::ast::node::AstVariant;
+use crate::frontend::ast::{AstDefineTypeNode, AstNode, AstTreeNode};
 
 mod block;
 mod control;
@@ -60,7 +59,7 @@ pub(crate) struct Generator {
 }
 
 impl Generator {
-    pub(crate) fn generate(mut self, nodes: Vec<TreeNode<AstVariant>>) -> Result<Vec<c::Node>> {
+    pub(crate) fn generate(mut self, nodes: Vec<AstTreeNode>) -> Result<Vec<c::Node>> {
         for node in &nodes {
             match node.node() {
                 Node::DeclareFunction(_) => {}
@@ -152,7 +151,7 @@ impl Generator {
         Ok(result)
     }
 
-    pub(crate) fn generate_nodes(&mut self, node: &TreeNode<AstVariant>) -> Result<()> {
+    pub(crate) fn generate_nodes(&mut self, node: &AstTreeNode) -> Result<()> {
         let _ = match node.node() {
             Node::Block(node) => {
                 let stmts = self.generate_block(node)?;
@@ -309,11 +308,12 @@ impl Generator {
             Node::LiteralBoolean(_) => {}
             Node::LiteralNumber(_) => {}
             Node::LiteralString(_) => {}
+            AstNode::Marker(_) => {}
         };
         Ok(())
     }
 
-    pub(crate) fn generate_statements(&mut self, node: &TreeNode<AstVariant>) -> Result<Vec<c::Statement>> {
+    pub(crate) fn generate_statements(&mut self, node: &AstTreeNode) -> Result<Vec<c::Statement>> {
         match node.node() {
             Node::Block(node) => Ok(vec![Statement::Block(self.generate_block(node)?)]),
             Node::BreakLoop(_) => unimplemented!(),
@@ -327,7 +327,7 @@ impl Generator {
                 let mut result = vec![];
 
 
-                let (statements, expression) = self.generate_expression(&node.node.clone().unwrap().as_ref())?;
+                let (statements, expression) = self.generate_expression(&node.node.clone().unwrap())?;
 
                 result.extend(statements);
 
@@ -387,12 +387,13 @@ impl Generator {
             Node::LiteralBoolean(_) => unimplemented!(),
             Node::LiteralNumber(_) => unimplemented!(),
             Node::LiteralString(_) => unimplemented!(),
+            AstNode::Marker(_) => unreachable!()
         }
     }
 
     pub(crate) fn generate_expression(
         &mut self,
-        node: &AstNode,
+        node: &AstTreeNode,
     ) -> Result<(Vec<c::Statement>, c::Expression)> {
         match node.node() {
             Node::LiteralString(node) => Ok((vec![], c::Expression::Literal(self.generate_literal_string(node)?))),

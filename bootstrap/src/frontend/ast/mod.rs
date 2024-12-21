@@ -1,4 +1,3 @@
-use crate::common::tree::TreeNode;
 use crate::frontend::{Ast, Context, parse};
 pub use crate::frontend::ast::node::*;
 
@@ -47,7 +46,7 @@ impl<'a> Generator<'a> {
         Ok(Ast { nodes: result })
     }
 
-    pub(crate) fn generate_node(&mut self, node: &parse::Node) -> Result<TreeNode<AstVariant>> {
+    pub(crate) fn generate_node(&mut self, node: &parse::Node) -> Result<AstTreeNode> {
         match node {
             parse::Node::Block(block_node) => Ok(self.generate_block(block_node)?),
             parse::Node::Break(break_node) => Ok(self.generate_break(break_node)?),

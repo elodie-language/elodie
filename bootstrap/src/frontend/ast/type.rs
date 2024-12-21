@@ -1,20 +1,16 @@
 use std::ops::Deref;
-use std::rc::Rc;
-use crate::common::tree::Node::{DeclareType, DefineType};
-use crate::common::tree::{Node, Tree, TreeNode};
 
+use crate::common::node::Node;
+use crate::common::node::Node::{DeclareType, DefineType};
 use crate::frontend::{ast, parse};
-use crate::frontend::ast::{AstType, Generator, AstIdentifier, SPAN_NOT_IMPLEMENTED, TypeVariable, AstDeclareTypeNode, AstDefineTypeNode};
-use crate::frontend::ast::node::{AstVariant};
+use crate::frontend::ast::{AstDeclareTypeNode, AstDefineTypeNode, AstIdentifier, AstTreeNode, AstType, Generator, SPAN_NOT_IMPLEMENTED, TypeVariable};
 use crate::frontend::parse::{InfixNode, InfixOperator, TypeFunctionNode, TypeNode};
 
 impl<'a> Generator<'a> {
-
     pub(crate) fn generate_declare_type(
         &mut self,
         node: &parse::TypeDeclarationNode,
-    ) -> ast::Result<TreeNode<AstVariant>> {
-
+    ) -> ast::Result<AstTreeNode> {
         let mut variables = Vec::with_capacity(node.properties.nodes.len());
         for node in &node.properties.nodes {
             let parse::Node::Infix(InfixNode { left, right, operator, token, }) = node else { panic!() };
@@ -27,11 +23,11 @@ impl<'a> Generator<'a> {
             })
         }
 
-        Ok(TreeNode::new(DeclareType(Rc::new(AstDeclareTypeNode {
+        Ok(AstTreeNode::new(DeclareType(AstDeclareTypeNode {
             r#type: AstIdentifier(node.identifier.value()),
             modifiers: node.modifiers.clone(),
             variables,
-        })), SPAN_NOT_IMPLEMENTED.clone()))
+        }), SPAN_NOT_IMPLEMENTED.clone()))
     }
 
 
@@ -51,27 +47,26 @@ impl<'a> Generator<'a> {
     pub(crate) fn generate_define_type(
         &mut self,
         node: &parse::DefineDeclarationNode,
-    ) -> ast::Result<TreeNode<AstVariant>> {
+    ) -> ast::Result<AstTreeNode> {
         let mut compiled_body = vec![];
 
         for node in &node.block.nodes {
             compiled_body.push(self.generate_node(node)?);
         }
 
-        // Ok(TreeNode::new(DefineType(Rc::new(AstDefineTypeNode {
-        //     r#type: AstIdentifier(node.identifier.value()),
-        //     modifiers: node.modifiers.clone(),
-        //     functions: compiled_body
-        //         .into_iter()
-        //         .filter_map(|n| {
-        //             if let Node::DeclareFunction(declare_function) = n.node_to_owned() {
-        //                 Some(declare_function)
-        //             } else {
-        //                 None
-        //             }
-        //         })
-        //         .collect(),
-        // })), SPAN_NOT_IMPLEMENTED.clone()))
-        todo!()
+        Ok(AstTreeNode::new(DefineType(AstDefineTypeNode {
+            r#type: AstIdentifier(node.identifier.value()),
+            modifiers: node.modifiers.clone(),
+            functions: compiled_body
+                .into_iter()
+                .filter_map(|n| {
+                    if let Node::DeclareFunction(declare_function) = n.node_to_owned() {
+                        Some(declare_function.clone())
+                    } else {
+                        None
+                    }
+                })
+                .collect(),
+        }), SPAN_NOT_IMPLEMENTED.clone()))
     }
 }
