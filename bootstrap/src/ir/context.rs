@@ -11,11 +11,12 @@ pub struct Context {
 }
 
 impl Context {
-    pub fn new(ctx: frontend::Context) -> Self {
+    pub fn new(mut ctx: frontend::Context) -> Self {
+        let type_table = TypeTable::new(&mut ctx.string_table, 0);
         Self {
             string_table: ctx.string_table,
             symbol_table: SymbolTable::new(),
-            type_table: TypeTable::new(),
+            type_table,
         }
     }
 
@@ -30,10 +31,12 @@ impl Context {
 
 impl Default for Context {
     fn default() -> Self {
+        let mut string_table = StringTable::new();
+        let type_table = TypeTable::new(&mut string_table, 0);
         Self {
-            string_table: StringTable::new(),
+            string_table,
             symbol_table: SymbolTable::new(),
-            type_table: TypeTable::new(),
+            type_table,
         }
     }
 }

@@ -9,6 +9,6 @@ mod tests {
         assert_eq!(ir.len(), 1);
 
         let result = &ir[0];
-        assert_eq!(result.as_literal_number().value, BigDecimal::from(9924))
+        assert_eq!(result.as_literal_number().value, BigDecimal::from(9924));
     }
 }

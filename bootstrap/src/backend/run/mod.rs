@@ -515,19 +515,23 @@ impl<'a> Runner<'a> {
                     .unwrap())
             }
             Node::DeclareType(decl) => {
-                let mut properties = HashMap::new();
-
-                for prop in &decl.variables {
-                    properties.insert(prop.variable.0, TypeVariable {});
-                }
-
-                let r#type = Type {
-                    id: TypeId(0),
-                    name: TypeName(self.ctx.get_str(decl.r#type.0).to_string()),
-                    variables: properties,
-                };
-
-                self.scope.insert_type(decl.r#type.0, r#type);
+                // let mut properties = HashMap::new();
+                //
+                // for prop in &decl.variables {
+                //     properties.insert(prop.variable.0, TypeVariable {});
+                // }
+                //
+                //
+                // let name = TypeName(decl.r#type.0);
+                //
+                //
+                // // let r#type = Type {
+                // //     id: TypeId(0),
+                // //     name,
+                // //     variables: properties,
+                // // };
+                //
+                // self.scope.insert_type(decl.r#type.0, r#type);
                 Ok(Value::Unit)
             }
             Node::InstantiateType(node) => {
