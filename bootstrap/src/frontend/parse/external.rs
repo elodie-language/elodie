@@ -64,7 +64,7 @@ mod tests {
         assert_eq!(result.len(), 1);
 
         let node = result[0].as_external_function_declaration();
-        assert_eq!(ctx.get_str(node.identifier.value()), "magic");
+        assert_eq!(ctx.str_get(node.identifier.value()), "magic");
         assert_eq!(node.arguments, vec![]);
         assert_eq!(node.return_type, None);
         assert!(!node.modifiers.is_exported());
@@ -78,12 +78,12 @@ mod tests {
         assert_eq!(result.len(), 1);
 
         let node = result[0].as_external_function_declaration();
-        assert_eq!(ctx.get_str(node.identifier.value()), "magic");
+        assert_eq!(ctx.str_get(node.identifier.value()), "magic");
         assert!(!node.modifiers.is_exported());
         assert_eq!(node.arguments.len(), 1);
 
         let arg = &node.arguments[0];
-        assert_eq!(ctx.get_str(arg.identifier.value()), "arg_1");
+        assert_eq!(ctx.str_get(arg.identifier.value()), "arg_1");
 
         let TypeNode::String(_) = arg.as_type() else {
             panic!("not string")
@@ -103,19 +103,19 @@ mod tests {
         assert_eq!(result.len(), 1);
 
         let node = result[0].as_external_function_declaration();
-        assert_eq!(ctx.get_str(node.identifier.value()), "magic");
+        assert_eq!(ctx.str_get(node.identifier.value()), "magic");
         assert!(!node.modifiers.is_exported());
         assert_eq!(node.arguments.len(), 2);
 
         let arg_1 = &node.arguments[0];
-        assert_eq!(ctx.get_str(arg_1.identifier.value()), "arg_1");
+        assert_eq!(ctx.str_get(arg_1.identifier.value()), "arg_1");
 
         let TypeNode::String(_) = arg_1.as_type() else {
             panic!("not string")
         };
 
         let arg_2 = node.arguments.last().unwrap();
-        assert_eq!(ctx.get_str(arg_2.identifier.value()), "arg_2");
+        assert_eq!(ctx.str_get(arg_2.identifier.value()), "arg_2");
 
         let TypeNode::Number(_) = arg_2.as_type() else {
             panic!("not number")
@@ -136,19 +136,19 @@ mod tests {
         assert_eq!(result.len(), 1);
 
         let node = result[0].as_external_function_declaration();
-        assert_eq!(ctx.get_str(node.identifier.value()), "magic");
+        assert_eq!(ctx.str_get(node.identifier.value()), "magic");
         assert!(node.modifiers.is_exported());
         assert_eq!(node.arguments.len(), 2);
 
         let arg_1 = &node.arguments[0];
-        assert_eq!(ctx.get_str(arg_1.identifier.value()), "arg_1");
+        assert_eq!(ctx.str_get(arg_1.identifier.value()), "arg_1");
 
         let TypeNode::String(_) = arg_1.as_type() else {
             panic!("not string")
         };
 
         let arg_2 = node.arguments.last().unwrap();
-        assert_eq!(ctx.get_str(arg_2.identifier.value()), "arg_2");
+        assert_eq!(ctx.str_get(arg_2.identifier.value()), "arg_2");
 
         let TypeNode::Number(_) = arg_2.as_type() else {
             panic!("not number")

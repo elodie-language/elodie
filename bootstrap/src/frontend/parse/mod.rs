@@ -280,13 +280,13 @@ mod tests {
         let token_two = parser.advance().unwrap();
         let token_three = parser.advance().unwrap();
 
-        assert_eq!(ctx.get_str(token_one.value()), "1");
+        assert_eq!(ctx.str_get(token_one.value()), "1");
         assert!(token_one.is_literal(Number));
 
         assert!(token_two.is_operator(Plus));
 
         assert!(token_three.is_literal(Number));
-        assert_eq!(ctx.get_str(token_three.value()), "2");
+        assert_eq!(ctx.str_get(token_three.value()), "2");
     }
 
     #[test]
@@ -374,10 +374,10 @@ mod tests {
         let token_two = parser.current().unwrap().clone();
 
         assert!(token_one.is_literal(True));
-        assert_eq!(ctx.get_str(token_one.value()), "true");
+        assert_eq!(ctx.str_get(token_one.value()), "true");
 
         assert!(token_two.is_literal(False));
-        assert_eq!(ctx.get_str(token_two.value()), "false");
+        assert_eq!(ctx.str_get(token_two.value()), "false");
     }
 
     #[test]
@@ -466,10 +466,10 @@ mod tests {
         let token_two = parser.peek().unwrap().clone();
 
         assert!(token_one.is_literal(False));
-        assert_eq!(ctx.get_str(token_one.value()), "false");
+        assert_eq!(ctx.str_get(token_one.value()), "false");
 
         assert!(token_two.is_literal(Number));
-        assert_eq!(ctx.get_str(token_two.value()), "1");
+        assert_eq!(ctx.str_get(token_two.value()), "1");
     }
 
     #[test]

@@ -30,7 +30,7 @@ impl<'a> Generator<'a> {
         let source =
             if let parse::Node::Literal(LiteralNode::String(from)) = &node.from_node.deref() {
                 Source::LocalFile {
-                    path: self.ctx.get_str(from.value()).to_string(),
+                    path: self.ctx.str_get(from.value()).to_string(),
                 }
             } else {
                 todo!()
@@ -76,7 +76,7 @@ impl<'a> Generator<'a> {
             if let Block(block) = node.node() {
                 for node in &block.nodes {
                     if let ExportPackage(AstExportPackageNode { package, .. }) = node.node() {
-                        let package = self.ctx.get_str(package.0).to_string();
+                        let package = self.ctx.str_get(package.0).to_string();
 
                         // FIXME temporary hack to load std packages
                         // FIXME compiler needs to track scope so that the parent package can easily be determined

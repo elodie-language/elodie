@@ -15,7 +15,7 @@ impl<'a> Inference<'a> {
     ) -> crate::ir::analyse::Result<TypedTreeNode> {
         let symbol = self.register_variable(SymbolName::from(&node.variable));
 
-        let mut value = Rc::new(self.infer_node(&node.value)?);
+        let mut value = Rc::new(self.node(&node.value)?);
 
         let inferred_type = if let Some(type_node) = &node.value_type {
             self.type_from_type_node(type_node)?
@@ -79,7 +79,7 @@ mod tests {
         let inner = result.as_declared_variable();
         assert_eq!(result.inferred_type, InferredType::String);
         assert_eq!(inner.symbol, SymbolId(1));
-        assert_eq!(ctx.get_str(inner.value.as_literal_string().value), "Elo")
+        assert_eq!(ctx.str_get(inner.value.as_literal_string().value), "Elo")
     }
 
     #[test]

@@ -39,7 +39,7 @@ mod tests {
         let Literal(LiteralNode::String(node)) = &result[0] else {
             panic!()
         };
-        assert_eq!(ctx.get_str(node.value()), "ElodiE");
+        assert_eq!(ctx.str_get(node.value()), "ElodiE");
     }
 
     #[test]
@@ -52,7 +52,7 @@ mod tests {
         let Literal(LiteralNode::Number(node)) = &result[0] else {
             panic!()
         };
-        assert_eq!(ctx.get_str(node.value()), "42");
+        assert_eq!(ctx.str_get(node.value()), "42");
     }
 
     #[test]

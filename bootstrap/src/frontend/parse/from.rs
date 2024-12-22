@@ -43,9 +43,9 @@ mod tests {
         let LiteralNode::String(literal) = &node.from_node.as_literal() else {
             panic!("not string literal")
         };
-        assert_eq!(ctx.get_str(literal.value()), "./io");
+        assert_eq!(ctx.str_get(literal.value()), "./io");
 
         let identifier = node.what_node.as_identifier();
-        assert_eq!(ctx.get_str(identifier.value()), "io");
+        assert_eq!(ctx.str_get(identifier.value()), "io");
     }
 }

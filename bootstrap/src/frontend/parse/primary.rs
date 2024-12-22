@@ -68,9 +68,9 @@ impl<'a> Parser<'a> {
                 _ if current.is_literal(False) => Ok(Node::Literal(self.parse_literal_false()?)),
                 _ if current.is_literal(String) => Ok(self.parse_string()?),
                 _ if current.is_identifier() => {
-                    if is_snake_case(self.ctx.get_str(current.value())) {
+                    if is_snake_case(self.ctx.str_get(current.value())) {
                         Ok(Node::Identifier(self.parse_identifier()?))
-                    } else if is_pascal_snake_case(self.ctx.get_str(current.value())) {
+                    } else if is_pascal_snake_case(self.ctx.str_get(current.value())) {
                         Ok(Node::Type(self.parse_type()?))
                     } else {
                         unreachable!()
@@ -126,7 +126,7 @@ mod tests {
         let Literal(LiteralNode::Number(node)) = node.deref() else {
             panic!()
         };
-        assert_eq!(ctx.get_str(node.value()), "2");
+        assert_eq!(ctx.str_get(node.value()), "2");
     }
 
     #[test]
@@ -148,7 +148,7 @@ mod tests {
         let Literal(LiteralNode::Number(node)) = node.deref() else {
             panic!()
         };
-        assert_eq!(ctx.get_str(node.value()), "2");
+        assert_eq!(ctx.str_get(node.value()), "2");
     }
 
     #[test]

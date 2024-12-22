@@ -54,11 +54,11 @@ impl Symbol {
 
     pub fn name_str<'a>(&self, ctx: &'a Context) -> &'a str {
         match self {
-            Symbol::Argument { name, .. } => ctx.get_str(name.0),
-            Symbol::Function { name, .. } => ctx.get_str(name.0),
-            Symbol::Package { name, .. } => ctx.get_str(name.0),
-            Symbol::Type { name, .. } => ctx.get_str(name.0),
-            Symbol::Variable { name, .. } => ctx.get_str(name.0),
+            Symbol::Argument { name, .. } => ctx.str_get(name.0),
+            Symbol::Function { name, .. } => ctx.str_get(name.0),
+            Symbol::Package { name, .. } => ctx.str_get(name.0),
+            Symbol::Type { name, .. } => ctx.str_get(name.0),
+            Symbol::Variable { name, .. } => ctx.str_get(name.0),
         }
     }
 }
@@ -137,7 +137,7 @@ impl Index<usize> for SymbolTable {
     type Output = Symbol;
 
     fn index(&self, index: usize) -> &Self::Output {
-        &self.symbols[index]
+        &self.symbols[index -1]
     }
 }
 
@@ -151,11 +151,11 @@ mod tests {
         let mut ctx = Context::testing();
         let mut table = SymbolTable::new();
 
-        let id = table.register_argument(SymbolName(ctx.push_str("argument")));
+        let id = table.register_argument(SymbolName(ctx.str_push("argument")));
         assert_eq!(id, SymbolId(1));
         assert_eq!(table.len(), 1);
 
-        let symbol = &table[0];
+        let symbol = &table[1];
         assert_eq!(symbol.id(), SymbolId(1));
         assert_eq!(symbol.name_str(&ctx), "argument");
     }
@@ -165,11 +165,11 @@ mod tests {
         let mut ctx = Context::testing();
         let mut table = SymbolTable::new();
 
-        let id = table.register_function(SymbolName(ctx.push_str("function")));
+        let id = table.register_function(SymbolName(ctx.str_push("function")));
         assert_eq!(id, SymbolId(1));
         assert_eq!(table.len(), 1);
 
-        let symbol = &table[0];
+        let symbol = &table[1];
         assert_eq!(symbol.id(), SymbolId(1));
         assert_eq!(symbol.name_str(&ctx), "function");
     }
@@ -179,11 +179,11 @@ mod tests {
         let mut ctx = Context::testing();
         let mut table = SymbolTable::new();
 
-        let id = table.register_package(SymbolName(ctx.push_str("package")));
+        let id = table.register_package(SymbolName(ctx.str_push("package")));
         assert_eq!(id, SymbolId(1));
         assert_eq!(table.len(), 1);
 
-        let symbol = &table[0];
+        let symbol = &table[1];
         assert_eq!(symbol.id(), SymbolId(1));
         assert_eq!(symbol.name_str(&ctx), "package");
     }
@@ -193,11 +193,11 @@ mod tests {
         let mut ctx = Context::testing();
         let mut table = SymbolTable::new();
 
-        let id = table.register_type(SymbolName(ctx.push_str("type")));
+        let id = table.register_type(SymbolName(ctx.str_push("type")));
         assert_eq!(id, SymbolId(1));
         assert_eq!(table.len(), 1);
 
-        let symbol = &table[0];
+        let symbol = &table[1];
         assert_eq!(symbol.id(), SymbolId(1));
         assert_eq!(symbol.name_str(&ctx), "type");
     }
@@ -207,11 +207,11 @@ mod tests {
         let mut ctx = Context::testing();
         let mut table = SymbolTable::new();
 
-        let id = table.register_variable(SymbolName(ctx.push_str("variable")));
+        let id = table.register_variable(SymbolName(ctx.str_push("variable")));
         assert_eq!(id, SymbolId(1));
         assert_eq!(table.len(), 1);
 
-        let symbol = &table[0];
+        let symbol = &table[1];
         assert_eq!(symbol.id(), SymbolId(1));
         assert_eq!(symbol.name_str(&ctx), "variable");
     }
@@ -221,9 +221,9 @@ mod tests {
         let mut ctx = Context::testing();
         let mut table = SymbolTable::new();
 
-        let arg_id = table.register_argument(SymbolName(ctx.push_str("argument")));
-        let func_id = table.register_function(SymbolName(ctx.push_str("function")));
-        let var_id = table.register_variable(SymbolName(ctx.push_str("variable")));
+        let arg_id = table.register_argument(SymbolName(ctx.str_push("argument")));
+        let func_id = table.register_function(SymbolName(ctx.str_push("function")));
+        let var_id = table.register_variable(SymbolName(ctx.str_push("variable")));
 
         assert_eq!(arg_id, SymbolId(1));
         assert_eq!(func_id, SymbolId(2));
@@ -231,15 +231,15 @@ mod tests {
 
         assert_eq!(table.len(), 3);
 
-        let symbol = &table[0];
+        let symbol = &table[1];
         assert_eq!(symbol.id(), SymbolId(1));
         assert_eq!(symbol.name_str(&ctx), "argument");
 
-        let symbol = &table[1];
+        let symbol = &table[2];
         assert_eq!(symbol.id(), SymbolId(2));
         assert_eq!(symbol.name_str(&ctx), "function");
 
-        let symbol = &table[2];
+        let symbol = &table[3];
         assert_eq!(symbol.id(), SymbolId(3));
         assert_eq!(symbol.name_str(&ctx), "variable");
     }

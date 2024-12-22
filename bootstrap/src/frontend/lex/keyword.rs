@@ -92,7 +92,7 @@ mod test {
         assert!(result.is_keyword(Break));
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 6, 5));
-        assert_eq!(ctx.get_str(result.value()), "break");
+        assert_eq!(ctx.str_get(result.value()), "break");
     }
 
     #[test]
@@ -104,7 +104,7 @@ mod test {
         assert_eq!(result.kind, identifier());
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 8, 7));
-        assert_eq!(ctx.get_str(result.value()), "breaker");
+        assert_eq!(ctx.str_get(result.value()), "breaker");
     }
 
     #[test]
@@ -116,7 +116,7 @@ mod test {
         assert!(result.is_keyword(Const));
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 6, 5));
-        assert_eq!(ctx.get_str(result.value()), "const");
+        assert_eq!(ctx.str_get(result.value()), "const");
     }
 
     #[test]
@@ -128,7 +128,7 @@ mod test {
         assert_eq!(result.kind, identifier());
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 9, 8));
-        assert_eq!(ctx.get_str(result.value()), "constant");
+        assert_eq!(ctx.str_get(result.value()), "constant");
     }
 
     #[test]
@@ -140,7 +140,7 @@ mod test {
         assert!(result.is_keyword(Continue));
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 9, 8));
-        assert_eq!(ctx.get_str(result.value()), "continue");
+        assert_eq!(ctx.str_get(result.value()), "continue");
     }
 
     #[test]
@@ -152,7 +152,7 @@ mod test {
         assert_eq!(result.kind, identifier());
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 13, 12));
-        assert_eq!(ctx.get_str(result.value()), "continuation");
+        assert_eq!(ctx.str_get(result.value()), "continuation");
     }
 
     #[test]
@@ -164,7 +164,7 @@ mod test {
         assert!(result.is_keyword(Define));
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 7, 6));
-        assert_eq!(ctx.get_str(result.value()), "define");
+        assert_eq!(ctx.str_get(result.value()), "define");
     }
 
     #[test]
@@ -176,7 +176,7 @@ mod test {
         assert_eq!(result.kind, identifier());
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 8, 7));
-        assert_eq!(ctx.get_str(result.value()), "defined");
+        assert_eq!(ctx.str_get(result.value()), "defined");
     }
 
     #[test]
@@ -188,7 +188,7 @@ mod test {
         assert!(result.is_keyword(Else));
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 5, 4));
-        assert_eq!(ctx.get_str(result.value()), "else");
+        assert_eq!(ctx.str_get(result.value()), "else");
     }
 
     #[test]
@@ -200,7 +200,7 @@ mod test {
         assert_eq!(result.kind, identifier());
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 10, 9));
-        assert_eq!(ctx.get_str(result.value()), "elsewhere");
+        assert_eq!(ctx.str_get(result.value()), "elsewhere");
     }
 
     #[test]
@@ -212,7 +212,7 @@ mod test {
         assert!(result.is_keyword(External));
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 9, 8));
-        assert_eq!(ctx.get_str(result.value()), "external");
+        assert_eq!(ctx.str_get(result.value()), "external");
     }
 
     #[test]
@@ -224,7 +224,7 @@ mod test {
         assert!(result.is_identifier());
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 10, 9));
-        assert_eq!(ctx.get_str(result.value()), "externald");
+        assert_eq!(ctx.str_get(result.value()), "externald");
     }
 
     #[test]
@@ -236,7 +236,7 @@ mod test {
         assert!(result.is_keyword(Export));
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 7, 6));
-        assert_eq!(ctx.get_str(result.value()), "export");
+        assert_eq!(ctx.str_get(result.value()), "export");
     }
 
     #[test]
@@ -248,7 +248,7 @@ mod test {
         assert_eq!(result.kind, identifier());
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 10, 9));
-        assert_eq!(ctx.get_str(result.value()), "exporting");
+        assert_eq!(ctx.str_get(result.value()), "exporting");
     }
 
     #[test]
@@ -260,7 +260,7 @@ mod test {
         assert!(result.is_keyword(From));
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 5, 4));
-        assert_eq!(ctx.get_str(result.value()), "from");
+        assert_eq!(ctx.str_get(result.value()), "from");
     }
 
     #[test]
@@ -272,7 +272,7 @@ mod test {
         assert_eq!(result.kind, identifier());
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 8, 7));
-        assert_eq!(ctx.get_str(result.value()), "fromage");
+        assert_eq!(ctx.str_get(result.value()), "fromage");
     }
 
     #[test]
@@ -284,7 +284,7 @@ mod test {
         assert!(result.is_keyword(For));
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 4, 3));
-        assert_eq!(ctx.get_str(result.value()), "for");
+        assert_eq!(ctx.str_get(result.value()), "for");
     }
 
     #[test]
@@ -296,7 +296,7 @@ mod test {
         assert_eq!(result.kind, identifier());
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 7, 6));
-        assert_eq!(ctx.get_str(result.value()), "formal");
+        assert_eq!(ctx.str_get(result.value()), "formal");
     }
 
     #[test]
@@ -308,7 +308,7 @@ mod test {
         assert!(result.is_keyword(Function));
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 9, 8));
-        assert_eq!(ctx.get_str(result.value()), "function");
+        assert_eq!(ctx.str_get(result.value()), "function");
     }
 
     #[test]
@@ -320,7 +320,7 @@ mod test {
         assert_eq!(result.kind, identifier());
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 11, 10));
-        assert_eq!(ctx.get_str(result.value()), "functionio");
+        assert_eq!(ctx.str_get(result.value()), "functionio");
     }
 
     #[test]
@@ -332,7 +332,7 @@ mod test {
         assert_eq!(result.kind, keyword(If));
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 3, 2));
-        assert_eq!(ctx.get_str(result.value()), "if");
+        assert_eq!(ctx.str_get(result.value()), "if");
     }
 
     #[test]
@@ -344,7 +344,7 @@ mod test {
         assert_eq!(result.kind, identifier());
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 5, 4));
-        assert_eq!(ctx.get_str(result.value()), "iffy");
+        assert_eq!(ctx.str_get(result.value()), "iffy");
     }
 
     #[test]
@@ -356,7 +356,7 @@ mod test {
         assert!(result.is_keyword(Import));
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 7, 6));
-        assert_eq!(ctx.get_str(result.value()), "import");
+        assert_eq!(ctx.str_get(result.value()), "import");
     }
 
     #[test]
@@ -368,7 +368,7 @@ mod test {
         assert_eq!(result.kind, identifier());
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 11, 10));
-        assert_eq!(ctx.get_str(result.value()), "importance");
+        assert_eq!(ctx.str_get(result.value()), "importance");
     }
 
     #[test]
@@ -380,7 +380,7 @@ mod test {
         assert!(result.is_keyword(In));
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 3, 2));
-        assert_eq!(ctx.get_str(result.value()), "in");
+        assert_eq!(ctx.str_get(result.value()), "in");
     }
 
     #[test]
@@ -392,7 +392,7 @@ mod test {
         assert_eq!(result.kind, identifier());
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 6, 5));
-        assert_eq!(ctx.get_str(result.value()), "inner");
+        assert_eq!(ctx.str_get(result.value()), "inner");
     }
 
     #[test]
@@ -404,7 +404,7 @@ mod test {
         assert!(result.is_keyword(Let));
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 4, 3));
-        assert_eq!(ctx.get_str(result.value()), "let");
+        assert_eq!(ctx.str_get(result.value()), "let");
     }
 
     #[test]
@@ -416,7 +416,7 @@ mod test {
         assert_eq!(result.kind, identifier());
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 7, 6));
-        assert_eq!(ctx.get_str(result.value()), "letter");
+        assert_eq!(ctx.str_get(result.value()), "letter");
     }
 
     #[test]
@@ -428,7 +428,7 @@ mod test {
         assert!(result.is_keyword(Loop));
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 5, 4));
-        assert_eq!(ctx.get_str(result.value()), "loop");
+        assert_eq!(ctx.str_get(result.value()), "loop");
     }
 
     #[test]
@@ -440,7 +440,7 @@ mod test {
         assert_eq!(result.kind, identifier());
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 9, 8));
-        assert_eq!(ctx.get_str(result.value()), "loophole");
+        assert_eq!(ctx.str_get(result.value()), "loophole");
     }
 
     #[test]
@@ -452,7 +452,7 @@ mod test {
         assert!(result.is_keyword(Package));
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 8, 7));
-        assert_eq!(ctx.get_str(result.value()), "package");
+        assert_eq!(ctx.str_get(result.value()), "package");
     }
 
     #[test]
@@ -464,7 +464,7 @@ mod test {
         assert_eq!(result.kind, identifier());
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 9, 8));
-        assert_eq!(ctx.get_str(result.value()), "packaged");
+        assert_eq!(ctx.str_get(result.value()), "packaged");
     }
 
     #[test]
@@ -476,7 +476,7 @@ mod test {
         assert!(result.is_keyword(Readonly));
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 9, 8));
-        assert_eq!(ctx.get_str(result.value()), "readonly");
+        assert_eq!(ctx.str_get(result.value()), "readonly");
     }
 
     #[test]
@@ -488,7 +488,7 @@ mod test {
         assert_eq!(result.kind, identifier());
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 13, 12));
-        assert_eq!(ctx.get_str(result.value()), "readonlyness");
+        assert_eq!(ctx.str_get(result.value()), "readonlyness");
     }
 
     #[test]
@@ -500,7 +500,7 @@ mod test {
         assert!(result.is_keyword(Return));
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 7, 6));
-        assert_eq!(ctx.get_str(result.value()), "return");
+        assert_eq!(ctx.str_get(result.value()), "return");
     }
 
     #[test]
@@ -512,7 +512,7 @@ mod test {
         assert_eq!(result.kind, identifier());
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 8, 7));
-        assert_eq!(ctx.get_str(result.value()), "returns");
+        assert_eq!(ctx.str_get(result.value()), "returns");
     }
 
     #[test]
@@ -524,7 +524,7 @@ mod test {
         assert!(result.is_keyword(Itself));
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 5, 4));
-        assert_eq!(ctx.get_str(result.value()), "self");
+        assert_eq!(ctx.str_get(result.value()), "self");
     }
 
     #[test]
@@ -536,7 +536,7 @@ mod test {
         assert_eq!(result.kind, identifier());
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 9, 8));
-        assert_eq!(ctx.get_str(result.value()), "selfmade");
+        assert_eq!(ctx.str_get(result.value()), "selfmade");
     }
 
     #[test]
@@ -548,7 +548,7 @@ mod test {
         assert!(result.is_keyword(Trait));
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 6, 5));
-        assert_eq!(ctx.get_str(result.value()), "trait");
+        assert_eq!(ctx.str_get(result.value()), "trait");
     }
 
     #[test]
@@ -560,7 +560,7 @@ mod test {
         assert_eq!(result.kind, identifier());
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 8, 7));
-        assert_eq!(ctx.get_str(result.value()), "traitor");
+        assert_eq!(ctx.str_get(result.value()), "traitor");
     }
 
     #[test]
@@ -572,7 +572,7 @@ mod test {
         assert!(result.is_keyword(Type));
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 5, 4));
-        assert_eq!(ctx.get_str(result.value()), "type");
+        assert_eq!(ctx.str_get(result.value()), "type");
     }
 
     #[test]
@@ -584,6 +584,6 @@ mod test {
         assert_eq!(result.kind, identifier());
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 8, 7));
-        assert_eq!(ctx.get_str(result.value()), "typeset");
+        assert_eq!(ctx.str_get(result.value()), "typeset");
     }
 }

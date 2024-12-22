@@ -39,7 +39,7 @@ mod tests {
         assert_eq!(result.len(), 1);
 
         let decl = result[0].as_type_declaration();
-        assert_eq!(ctx.get_str(decl.identifier.value()), "New_Type");
+        assert_eq!(ctx.str_get(decl.identifier.value()), "New_Type");
         assert_eq!(decl.properties.nodes, vec![]);
         assert!(!decl.modifiers.is_exported());
     }
@@ -63,12 +63,12 @@ mod tests {
         assert_eq!(result.len(), 1);
 
         let decl = result[0].as_type_declaration();
-        assert_eq!(ctx.get_str(decl.identifier.value()), "New_Type");
+        assert_eq!(ctx.str_get(decl.identifier.value()), "New_Type");
         assert_eq!(decl.properties.nodes.len(), 1);
 
         let prop = decl.properties.nodes.get(0).unwrap().as_infix();
         let prop_ident = prop.left.as_identifier();
-        assert_eq!(ctx.get_str(prop_ident.value()), "p_1");
+        assert_eq!(ctx.str_get(prop_ident.value()), "p_1");
         assert!(matches!(prop.operator, InfixOperator::TypeAscription(_)));
         assert!(matches!(prop.right.as_type(), TypeNode::Number(_)));
 
@@ -83,18 +83,18 @@ mod tests {
         assert_eq!(result.len(), 1);
 
         let decl = result[0].as_type_declaration();
-        assert_eq!(ctx.get_str(decl.identifier.value()), "New_Type");
+        assert_eq!(ctx.str_get(decl.identifier.value()), "New_Type");
         assert_eq!(decl.properties.nodes.len(), 2);
 
         let prop = decl.properties.nodes.get(0).unwrap().as_infix();
         let prop_ident = prop.left.as_identifier();
-        assert_eq!(ctx.get_str(prop_ident.value()), "p_1");
+        assert_eq!(ctx.str_get(prop_ident.value()), "p_1");
         assert!(matches!(prop.operator, InfixOperator::TypeAscription(_)));
         assert!(matches!(prop.right.as_type(), TypeNode::Number(_)));
 
         let prop = decl.properties.nodes.get(1).unwrap().as_infix();
         let prop_ident = prop.left.as_identifier();
-        assert_eq!(ctx.get_str(prop_ident.value()), "p_2");
+        assert_eq!(ctx.str_get(prop_ident.value()), "p_2");
         assert!(matches!(prop.operator, InfixOperator::TypeAscription(_)));
         assert!(matches!(prop.right.as_type(), TypeNode::Boolean(_)));
 
@@ -116,18 +116,18 @@ mod tests {
         assert_eq!(result.len(), 1);
 
         let decl = result[0].as_type_declaration();
-        assert_eq!(ctx.get_str(decl.identifier.value()), "New_Type");
+        assert_eq!(ctx.str_get(decl.identifier.value()), "New_Type");
         assert_eq!(decl.properties.nodes.len(), 2);
 
         let prop = decl.properties.nodes.get(0).unwrap().as_infix();
         let prop_ident = prop.left.as_identifier();
-        assert_eq!(ctx.get_str(prop_ident.value()), "p_1");
+        assert_eq!(ctx.str_get(prop_ident.value()), "p_1");
         assert!(matches!(prop.operator, InfixOperator::TypeAscription(_)));
         assert!(matches!(prop.right.as_type(), TypeNode::Number(_)));
 
         let prop = decl.properties.nodes.get(1).unwrap().as_infix();
         let prop_ident = prop.left.as_identifier();
-        assert_eq!(ctx.get_str(prop_ident.value()), "p_2");
+        assert_eq!(ctx.str_get(prop_ident.value()), "p_2");
         assert!(matches!(prop.operator, InfixOperator::TypeAscription(_)));
         assert!(matches!(prop.right.as_type(), TypeNode::Boolean(_)));
 

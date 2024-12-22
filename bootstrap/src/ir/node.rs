@@ -1,3 +1,5 @@
+use std::rc::Rc;
+
 use bigdecimal::BigDecimal;
 
 use crate::common::{Span, StringTableId, WithSpan};
@@ -10,7 +12,7 @@ use crate::common::node::{
     InterpolateStringNode, LiteralBooleanNode, LiteralNumberNode, LiteralStringNode, LoopNode,
     Node, ReturnFromFunctionNode, Variant,
 };
-use crate::ir::TypeId;
+use crate::ir::{SymbolId, TypeId};
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct IrVariant {}
@@ -56,7 +58,7 @@ pub struct IrTreeNode {
 }
 
 impl IrTreeNode {
-    pub fn as_declared_variable(&self) -> &IrDeclareVariableNode {
+    pub fn as_declare_variable(&self) -> &IrDeclareVariableNode {
         if let Node::DeclareVariable(result) = &self.node {
             result
         } else {
@@ -200,7 +202,10 @@ pub struct IrDefineTypeNode {}
 impl DefineTypeNode<IrVariant> for IrDefineTypeNode {}
 
 #[derive(Debug, Clone, PartialEq)]
-pub struct IrDeclareVariableNode {}
+pub struct IrDeclareVariableNode {
+    pub symbol: SymbolId,
+    pub value: Rc<IrTreeNode>,
+}
 
 impl DeclareVariableNode<IrVariant> for IrDeclareVariableNode {}
 

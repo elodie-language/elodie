@@ -2,12 +2,13 @@ use std::ops::Index;
 
 use crate::common::{StringTable, WithSpan};
 use crate::common::context::Context;
-use crate::common::node::Node::LiteralNumber;
+use crate::common::node::Node::{DeclareVariable, LiteralBoolean, LiteralNumber, LiteralString};
 use crate::ir::{Ir, SymbolTable, TypeTable};
 use crate::ir::analyse::{TypedAst, TypedTreeNode};
 use crate::ir::node::IrTreeNode;
 
 mod literal;
+mod declare;
 
 #[derive(Debug)]
 pub enum Error {}
@@ -39,7 +40,10 @@ impl<'a> Generator<'a> {
 
     pub(crate) fn node(&mut self, node: &TypedTreeNode) -> Result<IrTreeNode> {
         match &node.node {
+            DeclareVariable(inner) => self.declare_variable(inner, node.span()),
+            LiteralBoolean(inner) => self.literal_boolean(inner, node.span()),
             LiteralNumber(inner) => self.literal_number(inner, node.span()),
+            LiteralString(inner) => self.literal_string(inner, node.span()),
             _ => unimplemented!("{node:#?}")
         }
     }

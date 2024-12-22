@@ -9,7 +9,7 @@ use crate::frontend::parse::{ObjectTypeNode, Parser};
 impl<'a> Parser<'a> {
     pub(crate) fn parse_type(&mut self) -> crate::frontend::parse::Result<TypeNode> {
         let token = self.advance()?;
-        let value = self.ctx.get_str(token.value());
+        let value = self.ctx.str_get(token.value());
         if !(is_pascal_snake_case(value) || value == "function") {
             return Err(InvalidType(token));
         }
@@ -95,7 +95,7 @@ mod tests {
         let TypeNode::Object(ObjectTypeNode { token }) = result else {
             panic!()
         };
-        assert_eq!(ctx.get_str(token.value()), "Point");
+        assert_eq!(ctx.str_get(token.value()), "Point");
     }
 
     #[test]
@@ -183,7 +183,7 @@ mod tests {
         let Some(identifier) = identifier else {
             panic!()
         };
-        assert_eq!(ctx.get_str(identifier.value()), "arg_1");
+        assert_eq!(ctx.str_get(identifier.value()), "arg_1");
 
         let arg_type = r#type.as_ref();
         let TypeNode::Boolean(_) = arg_type else {

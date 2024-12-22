@@ -10,7 +10,7 @@ use crate::frontend::parse::{ItselfNode, Parser};
 impl<'a> Parser<'a> {
     pub(crate) fn parse_identifier(&mut self) -> crate::frontend::parse::Result<IdentifierNode> {
         let token = self.consume(TokenKind::Identifier)?;
-        if !is_snake_case(self.ctx.get_str(token.value())) {
+        if !is_snake_case(self.ctx.str_get(token.value())) {
             Err(InvalidIdentifier(token))
         } else {
             Ok(IdentifierNode(token))
@@ -21,7 +21,7 @@ impl<'a> Parser<'a> {
         &mut self,
     ) -> crate::frontend::parse::Result<IdentifierNode> {
         let token = self.consume(TokenKind::Identifier)?;
-        if !is_pascal_snake_case(self.ctx.get_str(token.value())) {
+        if !is_pascal_snake_case(self.ctx.str_get(token.value())) {
             Err(InvalidIdentifier(token))
         } else {
             Ok(IdentifierNode(token))
@@ -48,7 +48,7 @@ mod tests {
         assert_eq!(result.len(), 1);
 
         let node = result[0].as_identifier();
-        assert_eq!(ctx.get_str(node.value()), "x")
+        assert_eq!(ctx.str_get(node.value()), "x")
     }
 
     #[test]
@@ -59,7 +59,7 @@ mod tests {
         assert_eq!(result.len(), 1);
 
         let node = result[0].as_identifier();
-        assert_eq!(ctx.get_str(node.value()), "some_identifier")
+        assert_eq!(ctx.str_get(node.value()), "some_identifier")
     }
 
     #[test]
@@ -70,6 +70,6 @@ mod tests {
         assert_eq!(result.len(), 1);
 
         let node = result[0].as_itself();
-        assert_eq!(ctx.get_str(node.value()), "self")
+        assert_eq!(ctx.str_get(node.value()), "self")
     }
 }

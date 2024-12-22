@@ -102,7 +102,7 @@ impl<'a> Runner<'a> {
             // dbg!(node);
             // println!("{}", self.ctx.get_str(node.identifier.0));
 
-            let function = self.ctx.get_str(node.function.0);
+            let function = self.ctx.str_get(node.function.0);
             // FIXME load
 
             let print_colors = self.print_colors.clone();

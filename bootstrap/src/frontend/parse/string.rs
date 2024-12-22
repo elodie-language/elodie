@@ -10,7 +10,7 @@ use crate::frontend::parse::{
 impl<'a> Parser<'a> {
     pub(crate) fn parse_string(&mut self) -> crate::frontend::parse::Result<Node> {
         let token = self.consume_literal(LiteralToken::String)?;
-        let value = self.ctx.get_str(token.value());
+        let value = self.ctx.str_get(token.value());
         if value.contains("${") {
             let parts = Self::extract_and_split_interpolations(value);
             let mut nodes = Vec::with_capacity(parts.len());
@@ -88,7 +88,7 @@ mod tests {
         let Literal(LiteralNode::String(node)) = &result[0] else {
             panic!()
         };
-        assert_eq!(ctx.get_str(node.value()), "Elodie");
+        assert_eq!(ctx.str_get(node.value()), "Elodie");
     }
 
     #[test]
@@ -106,10 +106,10 @@ mod tests {
         let Literal(LiteralNode::String(node)) = &nodes[0] else {
             panic!()
         };
-        assert_eq!(ctx.get_str(node.value()), "The value is: ");
+        assert_eq!(ctx.str_get(node.value()), "The value is: ");
 
         let node = nodes[1].as_identifier();
-        assert_eq!(ctx.get_str(node.value()), "value")
+        assert_eq!(ctx.str_get(node.value()), "value")
     }
 
     #[test]
@@ -127,12 +127,12 @@ mod tests {
         let Literal(LiteralNode::String(node)) = &nodes[0] else {
             panic!()
         };
-        assert_eq!(ctx.get_str(node.value()), "The value is: ");
+        assert_eq!(ctx.str_get(node.value()), "The value is: ");
 
         let Literal(LiteralNode::Number(node)) = &nodes[1] else {
             panic!()
         };
-        assert_eq!(ctx.get_str(node.value()), "9924");
+        assert_eq!(ctx.str_get(node.value()), "9924");
     }
 
     #[test]
@@ -150,7 +150,7 @@ mod tests {
         let Literal(LiteralNode::String(node)) = &nodes[0] else {
             panic!()
         };
-        assert_eq!(ctx.get_str(node.value()), "The value is: ");
+        assert_eq!(ctx.str_get(node.value()), "The value is: ");
 
         let Literal(LiteralNode::Boolean(node)) = &nodes[1] else {
             panic!()
@@ -173,7 +173,7 @@ mod tests {
         let Literal(LiteralNode::String(node)) = &nodes[0] else {
             panic!()
         };
-        assert_eq!(ctx.get_str(node.value()), "The value is: ");
+        assert_eq!(ctx.str_get(node.value()), "The value is: ");
 
         let InfixNode {
             left,
@@ -182,7 +182,7 @@ mod tests {
             ..
         } = &nodes[1].as_infix();
         let identifier = left.as_identifier();
-        assert_eq!(ctx.get_str(identifier.value()), "some_function");
+        assert_eq!(ctx.str_get(identifier.value()), "some_function");
 
         let InfixOperator::Call(_) = operator else {
             panic!()
@@ -194,6 +194,6 @@ mod tests {
         let Some(Literal(LiteralNode::String(arg_1))) = &nodes.first() else {
             panic!()
         };
-        assert_eq!(ctx.get_str(arg_1.value()), "elodie");
+        assert_eq!(ctx.str_get(arg_1.value()), "elodie");
     }
 }

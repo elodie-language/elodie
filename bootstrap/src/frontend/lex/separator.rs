@@ -69,7 +69,7 @@ mod test {
         assert_eq!(result.kind, TokenKind::EOF);
         assert_eq!(result.span.start, (1, 2, 1));
         assert_eq!(result.span.end, (1, 2, 1));
-        assert_eq!(ctx.get_str(result.value()), "")
+        assert_eq!(ctx.str_get(result.value()), "")
     }
 
     #[test]
@@ -81,7 +81,7 @@ mod test {
         assert_eq!(result.kind, TokenKind::EOF);
         assert_eq!(result.span.start, (1, 6, 5));
         assert_eq!(result.span.end, (1, 6, 5));
-        assert_eq!(ctx.get_str(result.value()), "")
+        assert_eq!(ctx.str_get(result.value()), "")
     }
 
     #[test]
@@ -93,7 +93,7 @@ mod test {
         assert_eq!(result.kind, TokenKind::Separator(Comma));
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 2, 1));
-        assert_eq!(ctx.get_str(result.value()), ",");
+        assert_eq!(ctx.str_get(result.value()), ",");
     }
 
     #[test]
@@ -105,7 +105,7 @@ mod test {
         assert_eq!(result.kind, TokenKind::Separator(Semicolon));
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 2, 1));
-        assert_eq!(ctx.get_str(result.value()), ";");
+        assert_eq!(ctx.str_get(result.value()), ";");
     }
 
     #[test]
@@ -117,6 +117,6 @@ mod test {
         assert_eq!(result.kind, TokenKind::Separator(NewLine));
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (3, 1, 3));
-        assert_eq!(ctx.get_str(result.value()), "\n\n\n");
+        assert_eq!(ctx.str_get(result.value()), "\n\n\n");
     }
 }

@@ -89,7 +89,7 @@ mod tests {
         let result = &typed[0];
         let inner = result.as_literal_string();
         assert_eq!(result.inferred_type, InferredType::String);
-        assert_eq!(ctx.get_str(inner.value), "Elodie");
+        assert_eq!(ctx.str_get(inner.value), "Elodie");
     }
 
     #[test]

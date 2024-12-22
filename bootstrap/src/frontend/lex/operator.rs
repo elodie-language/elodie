@@ -159,7 +159,7 @@ mod test {
         assert_eq!(result.kind, TokenKind::Operator(OpenParen));
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 2, 1));
-        assert_eq!(ctx.get_str(result.value()), "(");
+        assert_eq!(ctx.str_get(result.value()), "(");
     }
 
     #[test]
@@ -171,7 +171,7 @@ mod test {
         assert_eq!(result.kind, TokenKind::Operator(CloseParen));
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 2, 1));
-        assert_eq!(ctx.get_str(result.value()), ")");
+        assert_eq!(ctx.str_get(result.value()), ")");
     }
 
     #[test]
@@ -183,7 +183,7 @@ mod test {
         assert_eq!(result.kind, TokenKind::Operator(OpenCurly));
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 2, 1));
-        assert_eq!(ctx.get_str(result.value()), "{");
+        assert_eq!(ctx.str_get(result.value()), "{");
     }
 
     #[test]
@@ -195,7 +195,7 @@ mod test {
         assert_eq!(result.kind, TokenKind::Operator(CloseCurly));
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 2, 1));
-        assert_eq!(ctx.get_str(result.value()), "}");
+        assert_eq!(ctx.str_get(result.value()), "}");
     }
 
     #[test]
@@ -207,7 +207,7 @@ mod test {
         assert_eq!(result.kind, TokenKind::Operator(OpenBracket));
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 2, 1));
-        assert_eq!(ctx.get_str(result.value()), "[");
+        assert_eq!(ctx.str_get(result.value()), "[");
     }
 
     #[test]
@@ -219,7 +219,7 @@ mod test {
         assert_eq!(result.kind, TokenKind::Operator(CloseBracket));
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 2, 1));
-        assert_eq!(ctx.get_str(result.value()), "]");
+        assert_eq!(ctx.str_get(result.value()), "]");
     }
 
     #[test]
@@ -231,7 +231,7 @@ mod test {
         assert_eq!(result.kind, TokenKind::Operator(LeftAngle));
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 2, 1));
-        assert_eq!(ctx.get_str(result.value()), "<");
+        assert_eq!(ctx.str_get(result.value()), "<");
     }
 
     #[test]
@@ -243,7 +243,7 @@ mod test {
         assert_eq!(result.kind, TokenKind::Operator(DoubleLeftAngle));
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 3, 2));
-        assert_eq!(ctx.get_str(result.value()), "<<");
+        assert_eq!(ctx.str_get(result.value()), "<<");
     }
 
     #[test]
@@ -255,7 +255,7 @@ mod test {
         assert_eq!(result.kind, TokenKind::Operator(LeftAngleEqual));
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 3, 2));
-        assert_eq!(ctx.get_str(result.value()), "<=");
+        assert_eq!(ctx.str_get(result.value()), "<=");
     }
 
     #[test]
@@ -267,7 +267,7 @@ mod test {
         assert_eq!(result.kind, TokenKind::Operator(RightAngle));
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 2, 1));
-        assert_eq!(ctx.get_str(result.value()), ">");
+        assert_eq!(ctx.str_get(result.value()), ">");
     }
 
     #[test]
@@ -279,7 +279,7 @@ mod test {
         assert_eq!(result.kind, TokenKind::Operator(DoubleRightAngle));
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 3, 2));
-        assert_eq!(ctx.get_str(result.value()), ">>");
+        assert_eq!(ctx.str_get(result.value()), ">>");
     }
 
     #[test]
@@ -291,7 +291,7 @@ mod test {
         assert_eq!(result.kind, TokenKind::Operator(RightAngleEqual));
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 3, 2));
-        assert_eq!(ctx.get_str(result.value()), ">=");
+        assert_eq!(ctx.str_get(result.value()), ">=");
     }
 
     #[test]
@@ -303,7 +303,7 @@ mod test {
         assert_eq!(result.kind, TokenKind::Operator(Dot));
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 2, 1));
-        assert_eq!(ctx.get_str(result.value()), ".");
+        assert_eq!(ctx.str_get(result.value()), ".");
     }
 
     #[test]
@@ -315,7 +315,7 @@ mod test {
         assert_eq!(result.kind, TokenKind::Operator(DoubleDot));
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 3, 2));
-        assert_eq!(ctx.get_str(result.value()), "..");
+        assert_eq!(ctx.str_get(result.value()), "..");
     }
 
     #[test]
@@ -327,7 +327,7 @@ mod test {
         assert_eq!(result.kind, TokenKind::Operator(Colon));
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 2, 1));
-        assert_eq!(ctx.get_str(result.value()), ":");
+        assert_eq!(ctx.str_get(result.value()), ":");
     }
 
     #[test]
@@ -339,7 +339,7 @@ mod test {
         assert_eq!(result.kind, TokenKind::Operator(DoubleColon));
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 3, 2));
-        assert_eq!(ctx.get_str(result.value()), "::");
+        assert_eq!(ctx.str_get(result.value()), "::");
     }
 
     #[test]
@@ -351,7 +351,7 @@ mod test {
         assert_eq!(result.kind, TokenKind::Operator(Minus));
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 2, 1));
-        assert_eq!(ctx.get_str(result.value()), "-");
+        assert_eq!(ctx.str_get(result.value()), "-");
     }
 
     #[test]
@@ -363,7 +363,7 @@ mod test {
         assert_eq!(result.kind, TokenKind::Operator(Arrow));
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 3, 2));
-        assert_eq!(ctx.get_str(result.value()), "->");
+        assert_eq!(ctx.str_get(result.value()), "->");
     }
 
     #[test]
@@ -375,7 +375,7 @@ mod test {
         assert_eq!(result.kind, TokenKind::Operator(Plus));
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 2, 1));
-        assert_eq!(ctx.get_str(result.value()), "+");
+        assert_eq!(ctx.str_get(result.value()), "+");
     }
 
     #[test]
@@ -387,7 +387,7 @@ mod test {
         assert_eq!(result.kind, TokenKind::Operator(Asterisk));
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 2, 1));
-        assert_eq!(ctx.get_str(result.value()), "*");
+        assert_eq!(ctx.str_get(result.value()), "*");
     }
 
     #[test]
@@ -399,7 +399,7 @@ mod test {
         assert_eq!(result.kind, TokenKind::Operator(Slash));
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 2, 1));
-        assert_eq!(ctx.get_str(result.value()), "/");
+        assert_eq!(ctx.str_get(result.value()), "/");
     }
 
     #[test]
@@ -411,7 +411,7 @@ mod test {
         assert_eq!(result.kind, TokenKind::Operator(Ampersand));
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 2, 1));
-        assert_eq!(ctx.get_str(result.value()), "&");
+        assert_eq!(ctx.str_get(result.value()), "&");
     }
 
     #[test]
@@ -423,7 +423,7 @@ mod test {
         assert_eq!(result.kind, TokenKind::Operator(DoubleAmpersand));
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 3, 2));
-        assert_eq!(ctx.get_str(result.value()), "&&");
+        assert_eq!(ctx.str_get(result.value()), "&&");
     }
 
     #[test]
@@ -435,7 +435,7 @@ mod test {
         assert_eq!(result.kind, TokenKind::Operator(Pipe));
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 2, 1));
-        assert_eq!(ctx.get_str(result.value()), "|");
+        assert_eq!(ctx.str_get(result.value()), "|");
     }
 
     #[test]
@@ -447,7 +447,7 @@ mod test {
         assert_eq!(result.kind, TokenKind::Operator(DoublePipe));
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 3, 2));
-        assert_eq!(ctx.get_str(result.value()), "||");
+        assert_eq!(ctx.str_get(result.value()), "||");
     }
 
     #[test]
@@ -459,7 +459,7 @@ mod test {
         assert_eq!(result.kind, TokenKind::Operator(Caret));
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 2, 1));
-        assert_eq!(ctx.get_str(result.value()), "^");
+        assert_eq!(ctx.str_get(result.value()), "^");
     }
 
     #[test]
@@ -471,7 +471,7 @@ mod test {
         assert_eq!(result.kind, TokenKind::Operator(Percent));
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 2, 1));
-        assert_eq!(ctx.get_str(result.value()), "%");
+        assert_eq!(ctx.str_get(result.value()), "%");
     }
 
     #[test]
@@ -483,7 +483,7 @@ mod test {
         assert_eq!(result.kind, TokenKind::Operator(Equal));
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 2, 1));
-        assert_eq!(ctx.get_str(result.value()), "=");
+        assert_eq!(ctx.str_get(result.value()), "=");
     }
 
     #[test]
@@ -495,7 +495,7 @@ mod test {
         assert_eq!(result.kind, TokenKind::Operator(DoubleEqual));
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 3, 2));
-        assert_eq!(ctx.get_str(result.value()), "==");
+        assert_eq!(ctx.str_get(result.value()), "==");
     }
 
     #[test]
@@ -507,7 +507,7 @@ mod test {
         assert_eq!(result.kind, TokenKind::Operator(Bang));
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 2, 1));
-        assert_eq!(ctx.get_str(result.value()), "!");
+        assert_eq!(ctx.str_get(result.value()), "!");
     }
 
     #[test]
@@ -519,6 +519,6 @@ mod test {
         assert_eq!(result.kind, TokenKind::Operator(BangEqual));
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 3, 2));
-        assert_eq!(ctx.get_str(result.value()), "!=");
+        assert_eq!(ctx.str_get(result.value()), "!=");
     }
 }

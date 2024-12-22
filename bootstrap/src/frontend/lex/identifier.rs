@@ -34,7 +34,7 @@ mod test {
         assert_eq!(result.kind, TokenKind::Identifier);
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 9, 8));
-        assert_eq!(ctx.get_str(result.value()), "some_var");
+        assert_eq!(ctx.str_get(result.value()), "some_var");
     }
 
     #[test]
@@ -46,7 +46,7 @@ mod test {
         assert_eq!(result.kind, TokenKind::Identifier);
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 4, 3));
-        assert_eq!(ctx.get_str(result.value()), "var");
+        assert_eq!(ctx.str_get(result.value()), "var");
     }
 
     #[test]
@@ -66,17 +66,17 @@ mod test {
         assert_eq!(token_one.kind, TokenKind::Identifier);
         assert_eq!(token_one.span.start, (1, 1, 0));
         assert_eq!(token_one.span.end, (1, 8, 7));
-        assert_eq!(ctx.get_str(token_one.value()), "console");
+        assert_eq!(ctx.str_get(token_one.value()), "console");
 
         assert_eq!(token_two.kind, TokenKind::Operator(OperatorToken::Dot));
         assert_eq!(token_two.span.start, (1, 8, 7));
         assert_eq!(token_two.span.end, (1, 9, 8));
-        assert_eq!(ctx.get_str(token_two.value()), ".");
+        assert_eq!(ctx.str_get(token_two.value()), ".");
 
         assert_eq!(token_three.kind, TokenKind::Identifier);
         assert_eq!(token_three.span.start, (1, 9, 8));
         assert_eq!(token_three.span.end, (1, 12, 11));
-        assert_eq!(ctx.get_str(token_three.value()), "log");
+        assert_eq!(ctx.str_get(token_three.value()), "log");
 
         assert_eq!(
             token_four.kind,
@@ -84,12 +84,12 @@ mod test {
         );
         assert_eq!(token_four.span.start, (1, 12, 11));
         assert_eq!(token_four.span.end, (1, 13, 12));
-        assert_eq!(ctx.get_str(token_four.value()), "(");
+        assert_eq!(ctx.str_get(token_four.value()), "(");
 
         assert_eq!(token_five.kind, TokenKind::Literal(LiteralToken::String));
         assert_eq!(token_five.span.start, (1, 13, 12));
         assert_eq!(token_five.span.end, (1, 19, 18));
-        assert_eq!(ctx.get_str(token_five.value()), "test");
+        assert_eq!(ctx.str_get(token_five.value()), "test");
 
         assert_eq!(
             token_six.kind,
@@ -97,11 +97,11 @@ mod test {
         );
         assert_eq!(token_six.span.start, (1, 19, 18));
         assert_eq!(token_six.span.end, (1, 20, 19));
-        assert_eq!(ctx.get_str(token_six.value()), ")");
+        assert_eq!(ctx.str_get(token_six.value()), ")");
 
         assert_eq!(token_seven.kind, TokenKind::EOF);
         assert_eq!(token_seven.span.start, (1, 20, 19));
         assert_eq!(token_seven.span.end, (1, 20, 19));
-        assert_eq!(ctx.get_str(token_seven.value()), "");
+        assert_eq!(ctx.str_get(token_seven.value()), "");
     }
 }

@@ -94,7 +94,7 @@ mod tests {
         assert_eq!(nodes.len(), 1);
 
         let arg_1 = nodes[0].as_identifier();
-        assert_eq!(ctx.get_str(arg_1.value()), "arg_1");
+        assert_eq!(ctx.str_get(arg_1.value()), "arg_1");
 
         let InfixOperator::Arrow(_) = operator else {
             panic!()

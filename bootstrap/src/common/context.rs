@@ -1,5 +1,5 @@
 use crate::common::{StringTable, StringTableId};
-use crate::ir::{SymbolTable, TypeId, TypeTable};
+use crate::ir::{SymbolId, SymbolTable, TypeId, TypeTable};
 
 #[derive(Debug)]
 pub struct Context {
@@ -11,11 +11,15 @@ pub struct Context {
 impl Context {
     pub fn new() -> Self { Self::default() }
 
-    pub fn push_str(&mut self, s: &str) -> StringTableId {
+    pub fn str_push(&mut self, s: &str) -> StringTableId {
         self.string_table.push_str(s)
     }
-    pub fn get_str(&self, idx: StringTableId) -> &str {
+    pub fn str_get(&self, idx: StringTableId) -> &str {
         self.string_table.get(idx)
+    }
+
+    pub fn symbol_name(&self, id: SymbolId) -> &str {
+        self.symbol_table[id].name_str(self)
     }
 
     pub fn type_id_boolean(&self) -> TypeId { self.type_table.type_id_boolean() }

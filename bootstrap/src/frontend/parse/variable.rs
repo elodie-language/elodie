@@ -51,14 +51,14 @@ mod tests {
         assert_eq!(result.len(), 1);
 
         let node = result[0].as_declare_variable();
-        assert_eq!(ctx.get_str(node.identifier.value()), "value");
+        assert_eq!(ctx.str_get(node.identifier.value()), "value");
 
         assert_eq!(node.r#type, None);
 
         let Literal(LiteralNode::String(result)) = &node.node.deref() else {
             panic!()
         };
-        assert_eq!(ctx.get_str(result.value()), "Elodie");
+        assert_eq!(ctx.str_get(result.value()), "Elodie");
     }
 
     #[test]
@@ -69,7 +69,7 @@ mod tests {
         assert_eq!(result.len(), 1);
 
         let node = result[0].as_declare_variable();
-        assert_eq!(ctx.get_str(node.identifier.value()), "value");
+        assert_eq!(ctx.str_get(node.identifier.value()), "value");
 
         let Some(TypeNode::String(_)) = node.r#type else {
             panic!()
@@ -78,7 +78,7 @@ mod tests {
         let Literal(LiteralNode::String(result)) = &node.node.deref() else {
             panic!()
         };
-        assert_eq!(ctx.get_str(result.value()), "Elodie");
+        assert_eq!(ctx.str_get(result.value()), "Elodie");
     }
 
     #[test]
@@ -89,14 +89,14 @@ mod tests {
         assert_eq!(result.len(), 1);
 
         let node = result[0].as_declare_variable();
-        assert_eq!(ctx.get_str(node.identifier.value()), "value");
+        assert_eq!(ctx.str_get(node.identifier.value()), "value");
 
         assert_eq!(node.r#type, None);
 
         let Literal(LiteralNode::Number(result)) = &node.node.deref() else {
             panic!()
         };
-        assert_eq!(ctx.get_str(result.value()), "9924");
+        assert_eq!(ctx.str_get(result.value()), "9924");
     }
 
     #[test]
@@ -107,7 +107,7 @@ mod tests {
         assert_eq!(result.len(), 1);
 
         let node = &result[0].as_declare_variable();
-        assert_eq!(ctx.get_str(node.identifier.value()), "value");
+        assert_eq!(ctx.str_get(node.identifier.value()), "value");
         assert_eq!(node.r#type, None);
 
         let Literal(LiteralNode::Boolean(result)) = &node.node.deref() else {

@@ -69,7 +69,7 @@ mod tests {
         let Literal(LiteralNode::Number(number)) = &node.block.nodes[0] else {
             panic!()
         };
-        assert_eq!(ctx.get_str(number.value()), "42");
+        assert_eq!(ctx.str_get(number.value()), "42");
     }
 
     #[test]
@@ -88,7 +88,7 @@ mod tests {
         let Literal(LiteralNode::Number(number)) = &inner_loop.block.nodes[0] else {
             panic!()
         };
-        assert_eq!(ctx.get_str(number.value()), "42");
+        assert_eq!(ctx.str_get(number.value()), "42");
     }
 
     #[test]
@@ -138,6 +138,6 @@ mod tests {
         let Literal(LiteralNode::Number(node)) = &node.deref() else {
             panic!()
         };
-        assert_eq!(ctx.get_str(node.value()), "9924");
+        assert_eq!(ctx.str_get(node.value()), "9924");
     }
 }

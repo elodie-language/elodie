@@ -31,12 +31,12 @@ impl<'a> Inference<'a> {
     ) -> crate::ir::analyse::Result<Vec<TypedTreeNode>> {
         let mut nodes = vec![];
         for node in &ast.nodes {
-            nodes.push(self.infer_node(node)?);
+            nodes.push(self.node(node)?);
         }
         Ok(nodes)
     }
 
-    fn infer_node(&mut self, ast: &AstTreeNode) -> crate::ir::analyse::Result<TypedTreeNode> {
+    fn node(&mut self, ast: &AstTreeNode) -> crate::ir::analyse::Result<TypedTreeNode> {
         match ast.node() {
             DeclareVariable(node) => self.declare_variable(ast.span(), node),
             LiteralBoolean(node) => self.literal_boolean(ast.span(), node),

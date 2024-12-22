@@ -168,7 +168,7 @@ mod test {
         assert_eq!(result.kind, TokenKind::Literal(String));
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 3, 2));
-        assert_eq!(ctx.get_str(result.value()), "");
+        assert_eq!(ctx.str_get(result.value()), "");
     }
 
     #[test]
@@ -180,7 +180,7 @@ mod test {
         assert_eq!(result.kind, TokenKind::Literal(String));
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 15, 14));
-        assert_eq!(ctx.get_str(result.value()), "Hello Elodie");
+        assert_eq!(ctx.str_get(result.value()), "Hello Elodie");
     }
 
     #[test]
@@ -192,7 +192,7 @@ mod test {
         assert_eq!(result.kind, TokenKind::Literal(String));
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 12, 11));
-        assert_eq!(ctx.get_str(result.value()), "${'test'}");
+        assert_eq!(ctx.str_get(result.value()), "${'test'}");
     }
 
     #[test]
@@ -204,7 +204,7 @@ mod test {
         assert_eq!(result.kind, TokenKind::Literal(String));
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 24, 23));
-        assert_eq!(ctx.get_str(result.value()), "{'hello':'world'}");
+        assert_eq!(ctx.str_get(result.value()), "{'hello':'world'}");
     }
 
     #[test]
@@ -216,7 +216,7 @@ mod test {
         assert_eq!(result.kind, TokenKind::Literal(Number));
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 3, 2));
-        assert_eq!(ctx.get_str(result.value()), "42");
+        assert_eq!(ctx.str_get(result.value()), "42");
     }
 
     #[test]
@@ -228,7 +228,7 @@ mod test {
         assert_eq!(result.kind, TokenKind::Literal(Number));
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 6, 5));
-        assert_eq!(ctx.get_str(result.value()), "42.24");
+        assert_eq!(ctx.str_get(result.value()), "42.24");
     }
 
     #[test]
@@ -240,7 +240,7 @@ mod test {
         assert_eq!(result.kind, TokenKind::Literal(Number));
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 11, 10));
-        assert_eq!(ctx.get_str(result.value()), "0xDEADBEEF");
+        assert_eq!(ctx.str_get(result.value()), "0xDEADBEEF");
     }
 
     #[test]
@@ -252,7 +252,7 @@ mod test {
         assert_eq!(result.kind, TokenKind::Literal(Number));
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 5, 4));
-        assert_eq!(ctx.get_str(result.value()), "0o10");
+        assert_eq!(ctx.str_get(result.value()), "0o10");
     }
 
     #[test]
@@ -264,7 +264,7 @@ mod test {
         assert_eq!(result.kind, TokenKind::Literal(Number));
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 8, 7));
-        assert_eq!(ctx.get_str(result.value()), "0b10101");
+        assert_eq!(ctx.str_get(result.value()), "0b10101");
     }
 
     #[test]
@@ -276,7 +276,7 @@ mod test {
         assert_eq!(result.kind, TokenKind::Literal(True));
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 5, 4));
-        assert_eq!(ctx.get_str(result.value()), "true");
+        assert_eq!(ctx.str_get(result.value()), "true");
     }
 
     #[test]
@@ -288,7 +288,7 @@ mod test {
         assert_eq!(result.kind, TokenKind::Identifier);
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 6, 5));
-        assert_eq!(ctx.get_str(result.value()), "true_");
+        assert_eq!(ctx.str_get(result.value()), "true_");
     }
 
     #[test]
@@ -300,7 +300,7 @@ mod test {
         assert_eq!(result.kind, TokenKind::Literal(False));
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 6, 5));
-        assert_eq!(ctx.get_str(result.value()), "false");
+        assert_eq!(ctx.str_get(result.value()), "false");
     }
 
     #[test]
@@ -312,6 +312,6 @@ mod test {
         assert_eq!(result.kind, TokenKind::Identifier);
         assert_eq!(result.span.start, (1, 1, 0));
         assert_eq!(result.span.end, (1, 7, 6));
-        assert_eq!(ctx.get_str(result.value()), "false_");
+        assert_eq!(ctx.str_get(result.value()), "false_");
     }
 }

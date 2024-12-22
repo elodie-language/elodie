@@ -235,7 +235,7 @@ impl<'a> Runner<'a> {
                 //     direct_args.push(self.run_node(arg)?);/
                 // }
 
-                let obj_name = self.ctx.get_str(object.0).to_string();
+                let obj_name = self.ctx.str_get(object.0).to_string();
 
                 let mut args: Vec<Value> = Vec::with_capacity(arguments.len());
                 for arg in arguments {
@@ -302,10 +302,10 @@ impl<'a> Runner<'a> {
                                 .clone();
                             args.push(value);
                         } else if let Node::LiteralString(node) = arg.node() {
-                            args.push(Value::String(self.ctx.get_str(node.0.value).to_string()));
+                            args.push(Value::String(self.ctx.str_get(node.0.value).to_string()));
                         } else if let Node::LiteralNumber(node) = arg.node() {
                             args.push(Value::Number(
-                                self.ctx.get_str(node.0.value()).parse().unwrap(),
+                                self.ctx.str_get(node.0.value()).parse().unwrap(),
                             ));
                         } else {
                             unimplemented!("{:#?}", arg);
@@ -354,8 +354,8 @@ impl<'a> Runner<'a> {
                             None => {
                                 panic!(
                                     "package {} not found in {}",
-                                    self.ctx.get_str(p),
-                                    self.ctx.get_str(root)
+                                    self.ctx.str_get(p),
+                                    self.ctx.str_get(root)
                                 )
                             }
                             Some(p) => p.clone(),
@@ -379,10 +379,10 @@ impl<'a> Runner<'a> {
                                 .clone();
                             args.push(value);
                         } else if let Node::LiteralString(node) = arg.node() {
-                            args.push(Value::String(self.ctx.get_str(node.0.value).to_string()));
+                            args.push(Value::String(self.ctx.str_get(node.0.value).to_string()));
                         } else if let Node::LiteralNumber(node) = arg.node() {
                             args.push(Value::Number(
-                                self.ctx.get_str(node.0.value()).parse().unwrap(),
+                                self.ctx.str_get(node.0.value()).parse().unwrap(),
                             ))
                         } else {
                             unimplemented!("{:#?}", arg);
@@ -441,12 +441,12 @@ impl<'a> Runner<'a> {
                 }
             }
             Node::LiteralString(node) => {
-                Ok(Value::String(self.ctx.get_str(node.0.value).to_string()))
+                Ok(Value::String(self.ctx.str_get(node.0.value).to_string()))
             }
             Node::LiteralNumber(node) => Ok(Value::Number(
-                self.ctx.get_str(node.0.value).parse().unwrap(),
+                self.ctx.str_get(node.0.value).parse().unwrap(),
             )),
-            Node::LiteralBoolean(node) => Ok(Value::Bool(self.ctx.get_str(node.0.value) == "true")),
+            Node::LiteralBoolean(node) => Ok(Value::Bool(self.ctx.str_get(node.0.value) == "true")),
 
             Node::Loop(loop_node) => self.run_loop(loop_node),
             Node::If(if_node) => self.run_if(if_node),
@@ -541,7 +541,7 @@ impl<'a> Runner<'a> {
                     properties.insert(arg.identifier.0, self.run_node(&arg.value)?);
                 }
 
-                let type_name = self.ctx.get_str(node.r#type.0);
+                let type_name = self.ctx.str_get(node.r#type.0);
 
                 // FIXME dirty hack to make lists works as quick as possible
                 if type_name == "List" {

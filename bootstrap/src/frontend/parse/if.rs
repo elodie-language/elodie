@@ -173,12 +173,12 @@ mod tests {
         let Some(Literal(LiteralNode::Number(first))) = then.nodes.first() else {
             panic!("not a number node")
         };
-        assert_eq!(ctx.get_str(first.value()), "99");
+        assert_eq!(ctx.str_get(first.value()), "99");
 
         let Some(Literal(LiteralNode::Number(last))) = then.nodes.last() else {
             panic!("not a number node")
         };
-        assert_eq!(ctx.get_str(last.value()), "24");
+        assert_eq!(ctx.str_get(last.value()), "24");
 
         assert_eq!(*otherwise, None);
     }
@@ -242,12 +242,12 @@ mod tests {
         let Some(Literal(LiteralNode::Number(first))) = then.nodes.first() else {
             panic!("not a number node")
         };
-        assert_eq!(ctx.get_str(first.value()), "1");
+        assert_eq!(ctx.str_get(first.value()), "1");
 
         let Some(Literal(LiteralNode::Number(last))) = then.nodes.last() else {
             panic!("not a number node")
         };
-        assert_eq!(ctx.get_str(last.value()), "2");
+        assert_eq!(ctx.str_get(last.value()), "2");
 
         let Some(otherwise) = otherwise else {
             panic!("no else node")
@@ -257,11 +257,11 @@ mod tests {
         let Some(Literal(LiteralNode::Number(first))) = otherwise.block.nodes.first() else {
             panic!("not a number node")
         };
-        assert_eq!(ctx.get_str(first.value()), "3");
+        assert_eq!(ctx.str_get(first.value()), "3");
 
         let Some(Literal(LiteralNode::Number(last))) = otherwise.block.nodes.last() else {
             panic!("not a number node")
         };
-        assert_eq!(ctx.get_str(last.value()), "4");
+        assert_eq!(ctx.str_get(last.value()), "4");
     }
 }

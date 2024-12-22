@@ -70,7 +70,7 @@ mod tests {
         let Literal(Number(number)) = &node else {
             panic!()
         };
-        assert_eq!(ctx.get_str(number.value()), "9924");
+        assert_eq!(ctx.str_get(number.value()), "9924");
     }
 
     #[test]
@@ -97,7 +97,7 @@ mod tests {
         let Literal(Number(left)) = &left.as_ref() else {
             panic!()
         };
-        assert_eq!(ctx.get_str(left.value()), "1");
+        assert_eq!(ctx.str_get(left.value()), "1");
 
         let node = right.as_tuple();
         let Some(node) = node.nodes.first() else {
@@ -113,12 +113,12 @@ mod tests {
         let Literal(Number(left)) = &left.as_ref() else {
             panic!()
         };
-        assert_eq!(ctx.get_str(left.value()), "2");
+        assert_eq!(ctx.str_get(left.value()), "2");
 
         let Literal(Number(right)) = &right.as_ref() else {
             panic!()
         };
-        assert_eq!(ctx.get_str(right.value()), "3");
+        assert_eq!(ctx.str_get(right.value()), "3");
     }
 
     #[test]
@@ -133,7 +133,7 @@ mod tests {
             panic!()
         };
         let Identifier(node) = node else { panic!() };
-        assert_eq!(ctx.get_str(node.value()), "u");
+        assert_eq!(ctx.str_get(node.value()), "u");
     }
 
     #[test]
@@ -158,7 +158,7 @@ mod tests {
         };
 
         let identifier = &left.as_identifier();
-        assert_eq!(ctx.get_str(identifier.value()), "u");
+        assert_eq!(ctx.str_get(identifier.value()), "u");
 
         let Type(TypeNode::Boolean(_)) = right.as_ref() else {
             panic!()
@@ -177,12 +177,12 @@ mod tests {
         let Some(Identifier(u_node)) = &node.nodes.first() else {
             panic!()
         };
-        assert_eq!(ctx.get_str(u_node.value()), "u");
+        assert_eq!(ctx.str_get(u_node.value()), "u");
 
         let Some(Identifier(v_node)) = &node.nodes.last() else {
             panic!()
         };
-        assert_eq!(ctx.get_str(v_node.value()), "v");
+        assert_eq!(ctx.str_get(v_node.value()), "v");
     }
 
     #[test]
@@ -209,7 +209,7 @@ mod tests {
         let Identifier(identifier) = &left.as_ref() else {
             panic!()
         };
-        assert_eq!(ctx.get_str(identifier.value()), "u");
+        assert_eq!(ctx.str_get(identifier.value()), "u");
         let Type(TypeNode::Boolean(_)) = right.as_ref() else {
             panic!()
         };
@@ -229,7 +229,7 @@ mod tests {
         let Identifier(identifier) = &left.as_ref() else {
             panic!()
         };
-        assert_eq!(ctx.get_str(identifier.value()), "v");
+        assert_eq!(ctx.str_get(identifier.value()), "v");
         let Type(TypeNode::String(_)) = right.as_ref() else {
             panic!()
         };
@@ -259,12 +259,12 @@ mod tests {
         let Identifier(identifier) = &left.as_ref() else {
             panic!()
         };
-        assert_eq!(ctx.get_str(identifier.value()), "u");
+        assert_eq!(ctx.str_get(identifier.value()), "u");
         assert!(matches!(operator, InfixOperator::Assign(_)));
         let Literal(LiteralNode::Number(number)) = right.as_ref() else {
             panic!()
         };
-        assert_eq!(ctx.get_str(number.value()), "1");
+        assert_eq!(ctx.str_get(number.value()), "1");
 
         let Some(v_node) = node.nodes.last() else {
             panic!()
@@ -281,12 +281,12 @@ mod tests {
         let Identifier(identifier) = &left.as_ref() else {
             panic!()
         };
-        assert_eq!(ctx.get_str(identifier.value()), "v");
+        assert_eq!(ctx.str_get(identifier.value()), "v");
         assert!(matches!(operator, InfixOperator::Assign(_)));
         let Literal(LiteralNode::Number(number)) = right.as_ref() else {
             panic!()
         };
-        assert_eq!(ctx.get_str(number.value()), "2");
+        assert_eq!(ctx.str_get(number.value()), "2");
     }
 
     #[test]
@@ -320,7 +320,7 @@ mod tests {
         let Identifier(identifier) = &left.as_ref() else {
             panic!()
         };
-        assert_eq!(ctx.get_str(identifier.value()), "u");
+        assert_eq!(ctx.str_get(identifier.value()), "u");
         let Type(TypeNode::Boolean(_)) = right.as_ref() else {
             panic!()
         };
@@ -340,7 +340,7 @@ mod tests {
         let Identifier(identifier) = &left.as_ref() else {
             panic!()
         };
-        assert_eq!(ctx.get_str(identifier.value()), "v");
+        assert_eq!(ctx.str_get(identifier.value()), "v");
         let Type(TypeNode::String(_)) = right.as_ref() else {
             panic!()
         };

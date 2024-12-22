@@ -40,7 +40,7 @@ mod tests {
         assert_eq!(result.len(), 1);
 
         let node = result[0].as_define_declaration();
-        assert_eq!(ctx.get_str(node.identifier.value()), "Magic");
+        assert_eq!(ctx.str_get(node.identifier.value()), "Magic");
         assert_eq!(node.block.nodes, vec![]);
         assert!(!node.modifiers.is_exported());
     }
@@ -53,12 +53,12 @@ mod tests {
         assert_eq!(result.len(), 1);
 
         let node = result[0].as_define_declaration();
-        assert_eq!(ctx.get_str(node.identifier.value()), "Magic");
+        assert_eq!(ctx.str_get(node.identifier.value()), "Magic");
         assert_eq!(node.block.nodes.len(), 1);
         assert!(!node.modifiers.is_exported());
 
         let fn_decl = unsafe { node.block.nodes.get_unchecked(0) }.as_function_declaration();
-        assert_eq!(ctx.get_str(fn_decl.identifier.value()), "some_fn");
+        assert_eq!(ctx.str_get(fn_decl.identifier.value()), "some_fn");
         assert!(fn_decl.modifiers.is_exported());
     }
 
@@ -74,12 +74,12 @@ mod tests {
         assert_eq!(result.len(), 1);
 
         let node = result[0].as_define_declaration();
-        assert_eq!(ctx.get_str(node.identifier.value()), "Magic");
+        assert_eq!(ctx.str_get(node.identifier.value()), "Magic");
         assert_eq!(node.block.nodes.len(), 1);
         assert!(node.modifiers.is_exported());
 
         let fn_decl = unsafe { node.block.nodes.get_unchecked(0) }.as_function_declaration();
-        assert_eq!(ctx.get_str(fn_decl.identifier.value()), "some_fn");
+        assert_eq!(ctx.str_get(fn_decl.identifier.value()), "some_fn");
         assert!(fn_decl.modifiers.is_exported());
     }
 }

@@ -96,7 +96,7 @@ mod tests {
         let Identifier(identifier) = left.as_ref() else {
             panic!()
         };
-        assert_eq!(ctx.get_str(identifier.value()), "u");
+        assert_eq!(ctx.str_get(identifier.value()), "u");
 
         let Type(type_node) = right.as_ref() else {
             panic!()
@@ -126,14 +126,14 @@ mod tests {
         let Literal(LiteralNode::Number(node)) = left.deref() else {
             panic!()
         };
-        assert_eq!(ctx.get_str(node.value()), "1");
+        assert_eq!(ctx.str_get(node.value()), "1");
 
         assert!(matches!(operator, InfixOperator::Add(_)));
 
         let Literal(LiteralNode::Number(node)) = right.deref() else {
             panic!()
         };
-        assert_eq!(ctx.get_str(node.value()), "2");
+        assert_eq!(ctx.str_get(node.value()), "2");
     }
 
     #[test]
@@ -156,14 +156,14 @@ mod tests {
         let Literal(LiteralNode::Number(node)) = left.deref() else {
             panic!()
         };
-        assert_eq!(ctx.get_str(node.value()), "1");
+        assert_eq!(ctx.str_get(node.value()), "1");
 
         assert!(matches!(operator, InfixOperator::Subtract(_)));
 
         let Literal(LiteralNode::Number(node)) = right.deref() else {
             panic!()
         };
-        assert_eq!(ctx.get_str(node.value()), "2");
+        assert_eq!(ctx.str_get(node.value()), "2");
     }
 
     #[test]
@@ -186,14 +186,14 @@ mod tests {
         let Literal(LiteralNode::Number(node)) = left.deref() else {
             panic!()
         };
-        assert_eq!(ctx.get_str(node.value()), "1");
+        assert_eq!(ctx.str_get(node.value()), "1");
 
         assert!(matches!(operator, InfixOperator::Multiply(_)));
 
         let Literal(LiteralNode::Number(node)) = right.deref() else {
             panic!()
         };
-        assert_eq!(ctx.get_str(node.value()), "2");
+        assert_eq!(ctx.str_get(node.value()), "2");
     }
 
     #[test]
@@ -216,14 +216,14 @@ mod tests {
         let Literal(LiteralNode::Number(node)) = left.deref() else {
             panic!()
         };
-        assert_eq!(ctx.get_str(node.value()), "1");
+        assert_eq!(ctx.str_get(node.value()), "1");
 
         assert!(matches!(operator, InfixOperator::Divide(_)));
 
         let Literal(LiteralNode::Number(node)) = right.deref() else {
             panic!()
         };
-        assert_eq!(ctx.get_str(node.value()), "2");
+        assert_eq!(ctx.str_get(node.value()), "2");
     }
 
     #[test]
@@ -246,14 +246,14 @@ mod tests {
         let Literal(LiteralNode::Number(node)) = left.deref() else {
             panic!()
         };
-        assert_eq!(ctx.get_str(node.value()), "1");
+        assert_eq!(ctx.str_get(node.value()), "1");
 
         assert!(matches!(operator, InfixOperator::Modulo(_)));
 
         let Literal(LiteralNode::Number(node)) = right.deref() else {
             panic!()
         };
-        assert_eq!(ctx.get_str(node.value()), "2");
+        assert_eq!(ctx.str_get(node.value()), "2");
     }
 
     #[test]
@@ -276,14 +276,14 @@ mod tests {
         let Literal(LiteralNode::Number(node)) = left.deref() else {
             panic!()
         };
-        assert_eq!(ctx.get_str(node.value()), "1");
+        assert_eq!(ctx.str_get(node.value()), "1");
 
         assert!(matches!(operator, InfixOperator::GreaterThan(_)));
 
         let Literal(LiteralNode::Number(node)) = right.deref() else {
             panic!()
         };
-        assert_eq!(ctx.get_str(node.value()), "2");
+        assert_eq!(ctx.str_get(node.value()), "2");
     }
 
     #[test]
@@ -306,14 +306,14 @@ mod tests {
         let Literal(LiteralNode::Number(node)) = left.deref() else {
             panic!()
         };
-        assert_eq!(ctx.get_str(node.value()), "1");
+        assert_eq!(ctx.str_get(node.value()), "1");
 
         assert!(matches!(operator, InfixOperator::GreaterThanOrEqual(_)));
 
         let Literal(LiteralNode::Number(node)) = right.deref() else {
             panic!()
         };
-        assert_eq!(ctx.get_str(node.value()), "2");
+        assert_eq!(ctx.str_get(node.value()), "2");
     }
 
     #[test]
@@ -336,14 +336,14 @@ mod tests {
         let Literal(LiteralNode::Number(node)) = left.deref() else {
             panic!()
         };
-        assert_eq!(ctx.get_str(node.value()), "1");
+        assert_eq!(ctx.str_get(node.value()), "1");
 
         assert!(matches!(operator, InfixOperator::LessThan(_)));
 
         let Literal(LiteralNode::Number(node)) = right.deref() else {
             panic!()
         };
-        assert_eq!(ctx.get_str(node.value()), "2");
+        assert_eq!(ctx.str_get(node.value()), "2");
     }
 
     #[test]
@@ -366,14 +366,14 @@ mod tests {
         let Literal(LiteralNode::Number(node)) = left.deref() else {
             panic!()
         };
-        assert_eq!(ctx.get_str(node.value()), "1");
+        assert_eq!(ctx.str_get(node.value()), "1");
 
         assert!(matches!(operator, InfixOperator::LessThanOrEqual(_)));
 
         let Literal(LiteralNode::Number(node)) = right.deref() else {
             panic!()
         };
-        assert_eq!(ctx.get_str(node.value()), "2");
+        assert_eq!(ctx.str_get(node.value()), "2");
     }
 
     #[test]
@@ -396,14 +396,14 @@ mod tests {
         let Literal(LiteralNode::Number(node)) = left.deref() else {
             panic!()
         };
-        assert_eq!(ctx.get_str(node.value()), "1");
+        assert_eq!(ctx.str_get(node.value()), "1");
 
         assert!(matches!(operator, InfixOperator::Equal(_)));
 
         let Literal(LiteralNode::Number(node)) = right.deref() else {
             panic!()
         };
-        assert_eq!(ctx.get_str(node.value()), "2");
+        assert_eq!(ctx.str_get(node.value()), "2");
     }
 
     #[test]
@@ -426,14 +426,14 @@ mod tests {
         let Literal(LiteralNode::Number(node)) = left.deref() else {
             panic!()
         };
-        assert_eq!(ctx.get_str(node.value()), "1");
+        assert_eq!(ctx.str_get(node.value()), "1");
 
         assert!(matches!(operator, InfixOperator::NotEqual(_)));
 
         let Literal(LiteralNode::Number(node)) = right.deref() else {
             panic!()
         };
-        assert_eq!(ctx.get_str(node.value()), "2");
+        assert_eq!(ctx.str_get(node.value()), "2");
     }
 
     #[test]
@@ -458,12 +458,12 @@ mod tests {
             } = left.as_infix();
 
             let package = left.as_identifier();
-            assert_eq!(ctx.get_str(package.value()), "console");
+            assert_eq!(ctx.str_get(package.value()), "console");
 
             assert!(matches!(operator, InfixOperator::AccessProperty(_)));
 
             let function = right.as_identifier();
-            assert_eq!(ctx.get_str(function.value()), "log");
+            assert_eq!(ctx.str_get(function.value()), "log");
         }
 
         assert!(matches!(operator, InfixOperator::Call(_)));
@@ -486,7 +486,7 @@ mod tests {
             ..
         } = &result[0].as_infix();
         let identifier = left.as_identifier();
-        assert_eq!(ctx.get_str(identifier.value()), "test");
+        assert_eq!(ctx.str_get(identifier.value()), "test");
 
         let InfixOperator::Call(_) = operator else {
             panic!()
@@ -510,7 +510,7 @@ mod tests {
             ..
         } = &result[0].as_infix();
         let identifier = left.as_identifier();
-        assert_eq!(ctx.get_str(identifier.value()), "test");
+        assert_eq!(ctx.str_get(identifier.value()), "test");
 
         let InfixOperator::Call(_) = operator else {
             panic!()
@@ -522,7 +522,7 @@ mod tests {
         let Some(Literal(LiteralNode::String(arg_1))) = &nodes.first() else {
             panic!()
         };
-        assert_eq!(ctx.get_str(arg_1.value()), "elodie");
+        assert_eq!(ctx.str_get(arg_1.value()), "elodie");
     }
 
     #[test]
@@ -547,12 +547,12 @@ mod tests {
             } = left.as_infix();
 
             let package = left.as_identifier();
-            assert_eq!(ctx.get_str(package.value()), "some_package");
+            assert_eq!(ctx.str_get(package.value()), "some_package");
 
             assert!(matches!(operator, InfixOperator::AccessPackage(_)));
 
             let function = right.as_identifier();
-            assert_eq!(ctx.get_str(function.value()), "some_function");
+            assert_eq!(ctx.str_get(function.value()), "some_function");
         }
 
         assert!(matches!(operator, InfixOperator::Call(_)));
@@ -589,18 +589,18 @@ mod tests {
                     ..
                 } = left.as_infix();
                 let root_package = left.as_identifier();
-                assert_eq!(ctx.get_str(root_package.value()), "std");
+                assert_eq!(ctx.str_get(root_package.value()), "std");
 
                 assert!(matches!(operator, InfixOperator::AccessPackage(_)));
 
                 let root_package = right.as_identifier();
-                assert_eq!(ctx.get_str(root_package.value()), "io");
+                assert_eq!(ctx.str_get(root_package.value()), "io");
             }
 
             assert!(matches!(operator, InfixOperator::AccessPackage(_)));
 
             let function = right.as_identifier();
-            assert_eq!(ctx.get_str(function.value()), "println");
+            assert_eq!(ctx.str_get(function.value()), "println");
         }
 
         assert!(matches!(operator, InfixOperator::Call(_)));
@@ -611,7 +611,7 @@ mod tests {
         let Literal(LiteralNode::String(node)) = &nodes[0] else {
             panic!()
         };
-        assert_eq!(ctx.get_str(node.value()), "Elodie");
+        assert_eq!(ctx.str_get(node.value()), "Elodie");
     }
 
     #[test]
@@ -646,7 +646,7 @@ mod tests {
                 ..
             } = call;
             let identifier = left.as_identifier();
-            assert_eq!(ctx.get_str(identifier.value()), "test");
+            assert_eq!(ctx.str_get(identifier.value()), "test");
             let InfixOperator::Call(_) = operator else {
                 panic!()
             };
@@ -656,7 +656,7 @@ mod tests {
             let Some(Literal(LiteralNode::String(arg_1))) = &nodes.first() else {
                 panic!()
             };
-            assert_eq!(ctx.get_str(arg_1.value()), "elodie");
+            assert_eq!(ctx.str_get(arg_1.value()), "elodie");
         }
 
         let InfixOperator::LambdaCall(_) = operator else {
@@ -693,12 +693,12 @@ mod tests {
                 ..
             } = left.as_infix();
             let left = left.as_identifier();
-            assert_eq!(ctx.get_str(left.value()), "p");
+            assert_eq!(ctx.str_get(left.value()), "p");
 
             assert!(matches!(operator, InfixOperator::AccessProperty(_)));
 
             let right = right.as_identifier();
-            assert_eq!(ctx.get_str(right.value()), "x");
+            assert_eq!(ctx.str_get(right.value()), "x");
         }
 
         assert!(matches!(operator, InfixOperator::Equal(_)));
@@ -706,6 +706,6 @@ mod tests {
         let LiteralNode::Number(right) = right.as_literal() else {
             panic!()
         };
-        assert_eq!(ctx.get_str(right.value()), "1");
+        assert_eq!(ctx.str_get(right.value()), "1");
     }
 }
