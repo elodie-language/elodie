@@ -38,10 +38,10 @@ impl<'a> Inference<'a> {
 
     fn infer_node(&mut self, ast: &AstTreeNode) -> crate::ir::analyse::Result<TypedTreeNode> {
         match ast.node() {
-            DeclareVariable(node) => self.infer_declare_variable(ast.span(), node),
-            LiteralBoolean(node) => self.infer_literal_boolean(ast.span(), node),
-            LiteralNumber(node) => self.infer_literal_number(ast.span(), node),
-            LiteralString(node) => self.infer_literal_string(ast.span(), node),
+            DeclareVariable(node) => self.declare_variable(ast.span(), node),
+            LiteralBoolean(node) => self.literal_boolean(ast.span(), node),
+            LiteralNumber(node) => self.literal_number(ast.span(), node),
+            LiteralString(node) => self.literal_string(ast.span(), node),
             _ => unimplemented!("{ast:#?}"),
         }
     }

@@ -46,8 +46,10 @@ pub struct TypeTable {
 pub enum BuiltinType {
     Any,
     Boolean,
+    Never,
     Number,
     String,
+    Unit,
 }
 
 impl AsRef<BuiltinType> for BuiltinType {
@@ -75,11 +77,17 @@ impl TypeTable {
         let boolean = result.register(any_id.clone(), TypeName(string_table.push_str("Boolean")));
         result.builtin.insert(BuiltinType::Boolean, boolean);
 
+        let never = result.register(any_id.clone(), TypeName(string_table.push_str("Never")));
+        result.builtin.insert(BuiltinType::Never, never);
+
         let number = result.register(any_id.clone(), TypeName(string_table.push_str("Number")));
         result.builtin.insert(BuiltinType::Number, number);
 
         let string = result.register(any_id.clone(), TypeName(string_table.push_str("String")));
         result.builtin.insert(BuiltinType::String, string);
+
+        let unit = result.register(any_id.clone(), TypeName(string_table.push_str("Unit")));
+        result.builtin.insert(BuiltinType::Unit, unit);
 
         result
     }
@@ -87,6 +95,11 @@ impl TypeTable {
     pub fn builtin(&self, builtin_type: impl AsRef<BuiltinType>) -> TypeId {
         self.builtin[builtin_type.as_ref()].clone()
     }
+
+    pub fn type_id_boolean(&self) -> TypeId { self.builtin(BuiltinType::Boolean) }
+    pub fn type_id_number(&self) -> TypeId { self.builtin(BuiltinType::Number) }
+    pub fn type_id_string(&self) -> TypeId { self.builtin(BuiltinType::String) }
+
 
     pub fn register(&mut self, parent_id: TypeId, name: TypeName) -> TypeId {
         let id = TypeId(self.types.len() + self.offset);

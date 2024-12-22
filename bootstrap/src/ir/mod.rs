@@ -1,6 +1,6 @@
 use std::ops::Index;
 
-pub use r#type::{Type, TypeId, TypeTable, BuiltinType};
+pub use r#type::{BuiltinType, Type, TypeId, TypeTable};
 pub use symbol::*;
 
 use crate::{frontend, ir};
@@ -20,6 +20,7 @@ mod r#type;
 pub enum Error {
     Frontend(frontend::Error),
     Analyse(analyse::Error),
+    Generate(generate::Error),
 }
 
 impl From<frontend::Error> for Error {
@@ -32,6 +33,10 @@ impl From<analyse::Error> for Error {
     fn from(value: analyse::Error) -> Self {
         Self::Analyse(value)
     }
+}
+
+impl From<generate::Error> for Error {
+    fn from(value: generate::Error) -> Self { Self::Generate(value) }
 }
 
 pub(crate) type Result<T, E = Error> = core::result::Result<T, E>;
@@ -56,5 +61,5 @@ impl Ir {
 pub fn ir_from_str(ctx: &mut Context, str: &str) -> Result<ir::Ir> {
     let ast = ast_from_str(ctx, str)?;
     let typed = analyse(ctx, ast)?;
-    generate(ctx, typed)
+    Ok(generate(ctx, typed)?)
 }

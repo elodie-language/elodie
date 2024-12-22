@@ -1,5 +1,5 @@
 use crate::common::{StringTable, StringTableId};
-use crate::ir::{BuiltinType, SymbolTable, TypeId, TypeTable};
+use crate::ir::{SymbolTable, TypeId, TypeTable};
 
 #[derive(Debug)]
 pub struct Context {
@@ -18,9 +18,9 @@ impl Context {
         self.string_table.get(idx)
     }
 
-    pub fn type_id_boolean(&self) -> TypeId { self.type_table.builtin(BuiltinType::Boolean) }
-    pub fn type_id_number(&self) -> TypeId { self.type_table.builtin(BuiltinType::Number) }
-    pub fn type_id_string(&self) -> TypeId { self.type_table.builtin(BuiltinType::String) }
+    pub fn type_id_boolean(&self) -> TypeId { self.type_table.type_id_boolean() }
+    pub fn type_id_number(&self) -> TypeId { self.type_table.type_id_number() }
+    pub fn type_id_string(&self) -> TypeId { self.type_table.type_id_string() }
 
 
     #[cfg(test)]

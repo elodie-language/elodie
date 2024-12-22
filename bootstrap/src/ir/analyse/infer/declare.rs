@@ -1,14 +1,14 @@
-use crate::common::node::Node::DeclareVariable;
 use std::rc::Rc;
 
+use crate::common::node::Node::DeclareVariable;
 use crate::common::Span;
-use crate::frontend::ast::{AstDeclareVariableNode, AstVariant};
-use crate::ir::analyse::infer::Inference;
+use crate::frontend::ast::AstDeclareVariableNode;
 use crate::ir::analyse::{TypeDeclareVariableNode, TypedTreeNode};
+use crate::ir::analyse::infer::Inference;
 use crate::ir::symbol::SymbolName;
 
 impl<'a> Inference<'a> {
-    pub(crate) fn infer_declare_variable(
+    pub(crate) fn declare_variable(
         &mut self,
         span: Span,
         node: &AstDeclareVariableNode,
@@ -35,10 +35,9 @@ impl<'a> Inference<'a> {
 mod tests {
     use bigdecimal::BigDecimal;
 
-    use crate::frontend;
+    use crate::common::context::Context;
     use crate::frontend::ast_from_str;
     use crate::ir::analyse::{analyse, InferredType};
-    use crate::common::context::Context;
     use crate::ir::symbol::SymbolId;
 
     #[test]

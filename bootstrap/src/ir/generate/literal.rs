@@ -1,3 +1,21 @@
+use crate::common::node::Node::LiteralNumber;
+use crate::common::Span;
+use crate::ir::analyse::TypeLiteralNumberNode;
+use crate::ir::generate::Generator;
+use crate::ir::node::{IrLiteralNumberNode, IrTreeNode};
+
+impl<'a> Generator<'a> {
+
+    pub(crate) fn literal_number(&mut self, node: &TypeLiteralNumberNode, span: Span) -> crate::ir::generate::Result<IrTreeNode> {
+        Ok(IrTreeNode::new(
+            LiteralNumber(IrLiteralNumberNode { value: node.value.clone() }),
+            span,
+            self.type_table.type_id_number())
+        )
+    }
+
+}
+
 mod tests {
     use bigdecimal::BigDecimal;
 

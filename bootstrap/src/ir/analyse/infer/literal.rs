@@ -10,7 +10,7 @@ use crate::ir::analyse::infer::Inference;
 
 // FIXME no unwrap
 impl<'a> Inference<'a> {
-    pub(crate) fn infer_literal_boolean(
+    pub(crate) fn literal_boolean(
         &mut self,
         span: Span,
         node: &AstLiteralBooleanNode,
@@ -26,7 +26,7 @@ impl<'a> Inference<'a> {
         ))
     }
 
-    pub(crate) fn infer_literal_number(
+    pub(crate) fn literal_number(
         &mut self,
         span: Span,
         node: &AstLiteralNumberNode,
@@ -42,7 +42,7 @@ impl<'a> Inference<'a> {
         ))
     }
 
-    pub(crate) fn infer_literal_string(
+    pub(crate) fn literal_string(
         &mut self,
         span: Span,
         node: &AstLiteralStringNode,
