@@ -5,7 +5,7 @@ use crate::common::node::Node::{DeclareVariable, LiteralBoolean, LiteralNumber, 
 use crate::frontend;
 use crate::frontend::ast::AstTreeNode;
 use crate::ir::analyse::TypedTreeNode;
-use crate::ir::context::Context;
+use crate::common::context::Context;
 use crate::ir::symbol::{SymbolId, SymbolName, SymbolTable};
 
 mod declare;

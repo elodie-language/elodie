@@ -1,7 +1,7 @@
 use std::cmp::PartialOrd;
 use std::collections::HashMap;
 
-use crate::frontend::context::Context;
+use crate::common::context::Context;
 use crate::frontend::lex::token::SeparatorToken::NewLine;
 use crate::frontend::lex::token::TokenKind::{Keyword, Literal, Operator, Separator};
 use crate::frontend::lex::token::{
@@ -252,7 +252,7 @@ mod tests {
     use LiteralToken::False;
     use OperatorToken::Plus;
 
-    use crate::frontend::context::Context;
+    use crate::common::context::Context;
     use crate::frontend::lex::lex;
     use crate::frontend::lex::token::LiteralToken::{Number, True};
     use crate::frontend::lex::token::SeparatorToken::Semicolon;

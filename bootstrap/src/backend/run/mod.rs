@@ -8,16 +8,16 @@ use std::path::PathBuf;
 use std::process::exit;
 use std::rc::Rc;
 
+use crate::{frontend, load_library_file};
 use crate::backend::run::scope::Scope;
 use crate::backend::run::type_definitions::TypeDefinitions;
-use crate::backend::run::value::Value::{IntrinsicFunction, Unit};
 use crate::backend::run::value::{IntrinsicFunctionValue, ListValue, ObjectValue, Value};
+use crate::backend::run::value::Value::{IntrinsicFunction, Unit};
+use crate::common::context::Context;
 use crate::common::node::{CalculationOperator, CompareOperator, Node};
-use crate::frontend::ast::AstTreeNode;
-use crate::frontend::context::Context;
 use crate::frontend::{ast, ast_from_str};
-use crate::ir::{Type, TypeId, TypeName, TypeVariable};
-use crate::{frontend, load_library_file};
+use crate::frontend::ast::AstTreeNode;
+use crate::ir::TypeId;
 
 mod block;
 mod call;
@@ -150,7 +150,7 @@ pub fn run_file(file: &String, print_colors: bool) {
             std_file,
             true,
         )
-        .unwrap()
+            .unwrap()
     };
 
     let (scope, definitions) = {
@@ -218,11 +218,11 @@ impl<'a> Runner<'a> {
             }
 
             Node::CallFunctionOfObject(ast::AstCallFunctionOfObjectNode {
-                object,
-                function,
-                arguments,
-                ..
-            }) => {
+                                           object,
+                                           function,
+                                           arguments,
+                                           ..
+                                       }) => {
                 // let some_arg_value = if let Node::CallFunction(arg_1) = &arguments[0] {
                 //     let value = self.run_call_function(arg_1)?.clone();
                 //     Some(value)
@@ -332,19 +332,19 @@ impl<'a> Runner<'a> {
             }
 
             Node::CallFunctionOfPackage(ast::AstCallFunctionOfPackageNode {
-                package: packages,
-                function,
-                arguments,
-                ..
-            }) => {
+                                            package: packages,
+                                            function,
+                                            arguments,
+                                            ..
+                                        }) => {
                 let mut args = HashMap::with_capacity(arguments.len());
 
                 let mut packages = packages.clone();
                 let mut root = packages.first().unwrap();
                 let Value::Package(root_package) = self.scope.get_value(&root).unwrap().clone()
-                else {
-                    panic!()
-                };
+                    else {
+                        panic!()
+                    };
 
                 let mut target_package = root_package;
                 loop {

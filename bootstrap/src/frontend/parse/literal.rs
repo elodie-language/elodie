@@ -23,7 +23,7 @@ impl<'a> Parser<'a> {
 
 #[cfg(test)]
 mod tests {
-    use crate::frontend::context::Context;
+    use crate::common::context::Context;
     use crate::frontend::lex::lex;
     use crate::frontend::parse::node::LiteralNode;
     use crate::frontend::parse::node::Node::Literal;

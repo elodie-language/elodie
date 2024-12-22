@@ -61,17 +61,15 @@ impl<'a> Inference<'a> {
 mod tests {
     use bigdecimal::BigDecimal;
 
-    use crate::frontend;
+    use crate::common::context::Context;
     use crate::frontend::ast_from_str;
     use crate::ir::analyse;
     use crate::ir::analyse::InferredType;
 
     #[test]
     fn number_literal() {
-        let mut ctx = frontend::Context::new();
+        let mut ctx = Context::new();
         let ast = ast_from_str(&mut ctx, "9924").unwrap();
-
-        let mut ctx = analyse::Context::new(ctx);
         let typed = analyse(&mut ctx, ast).unwrap();
         assert_eq!(typed.nodes.len(), 1);
 
@@ -83,10 +81,8 @@ mod tests {
 
     #[test]
     fn string_literal() {
-        let mut ctx = frontend::Context::new();
+        let mut ctx = Context::new();
         let ast = ast_from_str(&mut ctx, "'Elodie'").unwrap();
-
-        let mut ctx = analyse::Context::new(ctx);
         let typed = analyse(&mut ctx, ast).unwrap();
         assert_eq!(typed.nodes.len(), 1);
 
@@ -98,10 +94,8 @@ mod tests {
 
     #[test]
     fn true_literal() {
-        let mut ctx = frontend::Context::new();
+        let mut ctx = Context::new();
         let ast = ast_from_str(&mut ctx, "true").unwrap();
-
-        let mut ctx = analyse::Context::new(ctx);
         let typed = analyse(&mut ctx, ast).unwrap();
         assert_eq!(typed.nodes.len(), 1);
 
@@ -113,10 +107,8 @@ mod tests {
 
     #[test]
     fn false_literal() {
-        let mut ctx = frontend::Context::new();
+        let mut ctx = Context::new();
         let ast = ast_from_str(&mut ctx, "false").unwrap();
-
-        let mut ctx = analyse::Context::new(ctx);
         let typed = analyse(&mut ctx, ast).unwrap();
         assert_eq!(typed.nodes.len(), 1);
 

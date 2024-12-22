@@ -1,16 +1,16 @@
 use std::ops::Index;
 
-pub use context::Context;
-pub use r#type::{Type, TypeId, TypeName, TypeTable, TypeVariable};
+pub use r#type::{Type, TypeId, TypeTable};
+pub use symbol::*;
 
 use crate::{frontend, ir};
+use crate::common::context::Context;
 use crate::frontend::ast_from_str;
 use crate::ir::analyse::analyse;
 use crate::ir::generate::generate;
 use crate::ir::node::IrTreeNode;
 
 mod analyse;
-mod context;
 mod generate;
 pub(crate) mod node;
 mod symbol;
@@ -53,12 +53,8 @@ impl Ir {
     }
 }
 
-pub fn ir_from_str(str: &str) -> Result<ir::Ir> {
-    let mut ctx = frontend::Context::new();
-    let ast = ast_from_str(&mut ctx, str)?;
-
-    let mut ctx = ir::Context::new(ctx);
-    let typed = analyse(&mut ctx, ast)?;
-
-    generate(&mut ctx, typed)
+pub fn ir_from_str(ctx: &mut Context, str: &str) -> Result<ir::Ir> {
+    let ast = ast_from_str(ctx, str)?;
+    let typed = analyse(ctx, ast)?;
+    generate(ctx, typed)
 }

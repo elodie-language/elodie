@@ -1,8 +1,8 @@
 use std::ops::Index;
 
+use crate::common::context::Context;
 use crate::common::StringTableId;
 use crate::frontend::ast;
-use crate::ir::Context;
 
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
 pub struct SymbolId(pub usize);
@@ -143,7 +143,6 @@ impl Index<usize> for SymbolTable {
 
 #[cfg(test)]
 mod tests {
-    use crate::ir::Context;
 
     use super::*;
 

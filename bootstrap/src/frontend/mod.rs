@@ -1,12 +1,11 @@
 use std::ops::Index;
+use crate::common::context::Context;
 
 use crate::frontend::ast::AstTreeNode;
-pub use crate::frontend::context::Context;
 use crate::frontend::lex::lex;
 use crate::frontend::parse::parse;
 
 pub mod ast;
-pub mod context;
 pub mod lex;
 pub mod modifier;
 pub mod parse;

@@ -12,6 +12,7 @@ use crate::backend::generate::c::{
     IncludeLocalDirectiveNode, IncludeSystemDirectiveNode, Indent, ReturnFromFunctionStatement,
     Statement, VariableExpression,
 };
+use crate::common::context::Context;
 use crate::common::node::Node;
 use crate::common::StringTable;
 use crate::frontend;
@@ -30,7 +31,7 @@ pub enum Error {}
 
 type Result<T> = core::result::Result<T, Error>;
 
-pub(crate) fn generate(ctx: frontend::Context, ast: frontend::Ast) -> Result<Vec<c::Node>> {
+pub(crate) fn generate(ctx: Context, ast: frontend::Ast) -> Result<Vec<c::Node>> {
     let mut generator = Generator {
         string_table: ctx.string_table,
         // type_table: ctx.type_table,

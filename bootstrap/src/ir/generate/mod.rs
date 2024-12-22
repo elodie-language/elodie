@@ -1,11 +1,12 @@
 use std::ops::Index;
 
+use crate::common::context::Context;
 use crate::common::node::Node::LiteralNumber;
 use crate::frontend::ast::SPAN_NOT_IMPLEMENTED;
-use crate::ir::{Context, TypeId};
 use crate::ir::analyse::{TypedAst, TypeLiteralNumberNode};
 use crate::ir::Ir;
 use crate::ir::node::{IrLiteralNumberNode, IrTreeNode};
+use crate::ir::TypeId;
 
 mod literal;
 

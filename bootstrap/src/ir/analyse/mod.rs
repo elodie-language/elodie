@@ -3,10 +3,10 @@ use std::ops::Index;
 
 pub use node::*;
 
+use crate::common::context::Context;
 use crate::common::StringTableId;
 use crate::frontend::Ast;
 use crate::ir::analyse::infer::Inference;
-use crate::ir::Context;
 
 mod infer;
 mod node;

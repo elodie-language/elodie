@@ -101,7 +101,7 @@ impl<'a> Parser<'a> {
 mod tests {
     use std::ops::Deref;
 
-    use crate::frontend::context::Context;
+    use crate::common::context::Context;
     use crate::frontend::lex::lex;
     use crate::frontend::parse::node::{PrefixNode, PrefixOperator};
     use crate::frontend::parse::Node::Literal;

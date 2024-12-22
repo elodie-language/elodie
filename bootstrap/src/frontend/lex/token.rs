@@ -1,5 +1,5 @@
 use crate::common::{Column, Index, Position, Row, Span, StringTableId};
-use crate::frontend::context::Context;
+use crate::common::context::Context;
 use crate::frontend::lex::token::TokenKind::{Identifier, EOF};
 
 #[derive(Debug, Clone, PartialEq)]

@@ -78,7 +78,7 @@ impl Lexer<'_> {
 mod test {
     use KeywordToken::*;
 
-    use crate::frontend::context::Context;
+    use crate::common::context::Context;
     use crate::frontend::lex::token::KeywordToken::If;
     use crate::frontend::lex::token::{identifier, keyword, KeywordToken};
     use crate::frontend::lex::Lexer;

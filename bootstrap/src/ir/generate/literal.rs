@@ -1,11 +1,13 @@
 mod tests {
     use bigdecimal::BigDecimal;
 
+    use crate::common::context::Context;
     use crate::ir::ir_from_str;
 
     #[test]
     fn number_literal() {
-        let ir = ir_from_str("9924").unwrap();
+        let mut ctx = Context::new();
+        let ir = ir_from_str(&mut ctx, "9924").unwrap();
         assert_eq!(ir.len(), 1);
 
         let result = &ir[0];

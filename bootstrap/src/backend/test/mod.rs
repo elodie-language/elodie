@@ -13,7 +13,7 @@ use crate::backend::run::type_definitions::TypeDefinitions;
 use crate::backend::run::value::Value::IntrinsicFunction;
 use crate::backend::run::value::{IntrinsicFunctionValue, ObjectValue, Value};
 use crate::frontend::ast_from_str;
-use crate::frontend::context::Context;
+use crate::common::context::Context;
 use crate::{load_library_file, load_test_runner};
 
 pub fn test_files(files: Vec<PathBuf>, print_colors: bool, fails_at_the_end: bool) {
