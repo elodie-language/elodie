@@ -1,3 +1,5 @@
+use std::collections::HashMap;
+
 use crate::common::{StringTable, StringTableId};
 
 #[derive(Debug, Eq, Hash, PartialEq, Clone, Copy)]
@@ -37,14 +39,28 @@ pub struct TypeVariableName(pub StringTableId);
 pub struct TypeTable {
     offset: usize,
     types: Vec<Type>,
+    builtin: HashMap<BuiltinType, TypeId>,
 }
 
+#[derive(Debug, Eq, Hash, PartialEq)]
+pub enum BuiltinType {
+    Any,
+    Boolean,
+    Number,
+    String,
+}
+
+impl AsRef<BuiltinType> for BuiltinType {
+    fn as_ref(&self) -> &BuiltinType {
+        self
+    }
+}
 
 impl TypeTable {
     pub fn new(string_table: &mut StringTable, seed: usize) -> Self {
-        let mut result = Self { types: Vec::new(), offset: seed };
+        let mut result = Self { types: Vec::new(), offset: seed, builtin: HashMap::new() };
 
-        let any_id = TypeId(result.offset + 1);
+        let any_id = TypeId(result.offset);
 
         result.types.push(Type {
             id: any_id.clone(),
@@ -53,11 +69,23 @@ impl TypeTable {
             variables: vec![],
         });
 
-        result.register(any_id.clone(), TypeName(string_table.push_str("Boolean")));
-        result.register(any_id.clone(), TypeName(string_table.push_str("Number")));
-        result.register(any_id.clone(), TypeName(string_table.push_str("String")));
+        result.builtin.insert(BuiltinType::Any, any_id.clone());
+
+
+        let boolean = result.register(any_id.clone(), TypeName(string_table.push_str("Boolean")));
+        result.builtin.insert(BuiltinType::Boolean, boolean);
+
+        let number = result.register(any_id.clone(), TypeName(string_table.push_str("Number")));
+        result.builtin.insert(BuiltinType::Number, number);
+
+        let string = result.register(any_id.clone(), TypeName(string_table.push_str("String")));
+        result.builtin.insert(BuiltinType::String, string);
 
         result
+    }
+
+    pub fn builtin(&self, builtin_type: impl AsRef<BuiltinType>) -> TypeId {
+        self.builtin[builtin_type.as_ref()].clone()
     }
 
     pub fn register(&mut self, parent_id: TypeId, name: TypeName) -> TypeId {

@@ -80,7 +80,7 @@ mod tests {
 
     #[test]
     fn string_literal() {
-        let mut ctx = Context::new();
+        let mut ctx = Context::testing();
         let tokens = lex(&mut ctx, "'Elodie'").unwrap();
         let result = parse(&mut ctx, tokens).unwrap();
         assert_eq!(result.len(), 1);
@@ -93,7 +93,7 @@ mod tests {
 
     #[test]
     fn interpolation_with_single_identifier() {
-        let mut ctx = Context::new();
+        let mut ctx = Context::testing();
         let tokens = lex(&mut ctx, "'The value is: ${value}'").unwrap();
         let result = parse(&mut ctx, tokens).unwrap();
         assert_eq!(result.len(), 1);
@@ -114,7 +114,7 @@ mod tests {
 
     #[test]
     fn interpolation_with_number() {
-        let mut ctx = Context::new();
+        let mut ctx = Context::testing();
         let tokens = lex(&mut ctx, "'The value is: ${9924}'").unwrap();
         let result = parse(&mut ctx, tokens).unwrap();
         assert_eq!(result.len(), 1);
@@ -137,7 +137,7 @@ mod tests {
 
     #[test]
     fn interpolation_with_bool() {
-        let mut ctx = Context::new();
+        let mut ctx = Context::testing();
         let tokens = lex(&mut ctx, "'The value is: ${true}'").unwrap();
         let result = parse(&mut ctx, tokens).unwrap();
         assert_eq!(result.len(), 1);
@@ -160,7 +160,7 @@ mod tests {
 
     #[test]
     fn interpolation_with_function_call() {
-        let mut ctx = Context::new();
+        let mut ctx = Context::testing();
         let tokens = lex(&mut ctx, "'The value is: ${some_function('elodie')}'").unwrap();
         let result = parse(&mut ctx, tokens).unwrap();
         assert_eq!(result.len(), 1);

@@ -75,7 +75,7 @@ mod tests {
 
     #[test]
     fn identifier_with_type() {
-        let mut ctx = Context::new();
+        let mut ctx = Context::testing();
         let tokens = lex(&mut ctx, "u: Bool").unwrap();
         let result = parse(&mut ctx, tokens).unwrap();
         assert_eq!(result.len(), 1);
@@ -108,7 +108,7 @@ mod tests {
 
     #[test]
     fn add() {
-        let mut ctx = Context::new();
+        let mut ctx = Context::testing();
         let tokens = lex(&mut ctx, "1 + 2").unwrap();
         let result = parse(&mut ctx, tokens).unwrap();
         assert_eq!(result.len(), 1);
@@ -138,7 +138,7 @@ mod tests {
 
     #[test]
     fn substract() {
-        let mut ctx = Context::new();
+        let mut ctx = Context::testing();
         let tokens = lex(&mut ctx, "1 - 2").unwrap();
         let result = parse(&mut ctx, tokens).unwrap();
         assert_eq!(result.len(), 1);
@@ -168,7 +168,7 @@ mod tests {
 
     #[test]
     fn multiply() {
-        let mut ctx = Context::new();
+        let mut ctx = Context::testing();
         let tokens = lex(&mut ctx, "1 * 2").unwrap();
         let result = parse(&mut ctx, tokens).unwrap();
         assert_eq!(result.len(), 1);
@@ -198,7 +198,7 @@ mod tests {
 
     #[test]
     fn divide() {
-        let mut ctx = Context::new();
+        let mut ctx = Context::testing();
         let tokens = lex(&mut ctx, "1 / 2").unwrap();
         let result = parse(&mut ctx, tokens).unwrap();
         assert_eq!(result.len(), 1);
@@ -228,7 +228,7 @@ mod tests {
 
     #[test]
     fn modulo() {
-        let mut ctx = Context::new();
+        let mut ctx = Context::testing();
         let tokens = lex(&mut ctx, "1 % 2").unwrap();
         let result = parse(&mut ctx, tokens).unwrap();
         assert_eq!(result.len(), 1);
@@ -258,7 +258,7 @@ mod tests {
 
     #[test]
     fn greater_than() {
-        let mut ctx = Context::new();
+        let mut ctx = Context::testing();
         let tokens = lex(&mut ctx, "1 > 2").unwrap();
         let result = parse(&mut ctx, tokens).unwrap();
         assert_eq!(result.len(), 1);
@@ -288,7 +288,7 @@ mod tests {
 
     #[test]
     fn greater_than_or_equal() {
-        let mut ctx = Context::new();
+        let mut ctx = Context::testing();
         let tokens = lex(&mut ctx, "1 >= 2").unwrap();
         let result = parse(&mut ctx, tokens).unwrap();
         assert_eq!(result.len(), 1);
@@ -318,7 +318,7 @@ mod tests {
 
     #[test]
     fn less_than() {
-        let mut ctx = Context::new();
+        let mut ctx = Context::testing();
         let tokens = lex(&mut ctx, "1 < 2").unwrap();
         let result = parse(&mut ctx, tokens).unwrap();
         assert_eq!(result.len(), 1);
@@ -348,7 +348,7 @@ mod tests {
 
     #[test]
     fn less_than_or_equal() {
-        let mut ctx = Context::new();
+        let mut ctx = Context::testing();
         let tokens = lex(&mut ctx, "1 <= 2").unwrap();
         let result = parse(&mut ctx, tokens).unwrap();
         assert_eq!(result.len(), 1);
@@ -378,7 +378,7 @@ mod tests {
 
     #[test]
     fn equal() {
-        let mut ctx = Context::new();
+        let mut ctx = Context::testing();
         let tokens = lex(&mut ctx, "1 == 2").unwrap();
         let result = parse(&mut ctx, tokens).unwrap();
         assert_eq!(result.len(), 1);
@@ -408,7 +408,7 @@ mod tests {
 
     #[test]
     fn not_equal() {
-        let mut ctx = Context::new();
+        let mut ctx = Context::testing();
         let tokens = lex(&mut ctx, "1 != 2").unwrap();
         let result = parse(&mut ctx, tokens).unwrap();
         assert_eq!(result.len(), 1);
@@ -438,7 +438,7 @@ mod tests {
 
     #[test]
     fn call_function_of_object() {
-        let mut ctx = Context::new();
+        let mut ctx = Context::testing();
         let tokens = lex(&mut ctx, "console.log()").unwrap();
         let result = parse(&mut ctx, tokens).unwrap();
         assert_eq!(result.len(), 1);
@@ -474,7 +474,7 @@ mod tests {
 
     #[test]
     fn call_without_arguments() {
-        let mut ctx = Context::new();
+        let mut ctx = Context::testing();
         let tokens = lex(&mut ctx, "test()").unwrap();
         let result = parse(&mut ctx, tokens).unwrap();
         assert_eq!(result.len(), 1);
@@ -498,7 +498,7 @@ mod tests {
 
     #[test]
     fn call_with_argument() {
-        let mut ctx = Context::new();
+        let mut ctx = Context::testing();
         let tokens = lex(&mut ctx, "test('elodie')").unwrap();
         let result = parse(&mut ctx, tokens).unwrap();
         assert_eq!(result.len(), 1);
@@ -527,7 +527,7 @@ mod tests {
 
     #[test]
     fn call_package_function() {
-        let mut ctx = Context::new();
+        let mut ctx = Context::testing();
         let tokens = lex(&mut ctx, "some_package::some_function()").unwrap();
         let result = parse(&mut ctx, tokens).unwrap();
         assert_eq!(result.len(), 1);
@@ -563,7 +563,7 @@ mod tests {
 
     #[test]
     fn call_nested_package_function() {
-        let mut ctx = Context::new();
+        let mut ctx = Context::testing();
         let tokens = lex(&mut ctx, "std::io::println('Elodie')").unwrap();
         let result = parse(&mut ctx, tokens).unwrap();
         assert_eq!(result.len(), 1);
@@ -616,7 +616,7 @@ mod tests {
 
     #[test]
     fn instantiate_type_without_properties() {
-        let mut ctx = Context::new();
+        let mut ctx = Context::testing();
         let tokens = lex(&mut ctx, "Point()").unwrap();
         let result = parse(&mut ctx, tokens).unwrap();
         assert_eq!(result.len(), 1);
@@ -626,7 +626,7 @@ mod tests {
 
     #[test]
     fn call_function_with_lambda() {
-        let mut ctx = Context::new();
+        let mut ctx = Context::testing();
         let tokens = lex(&mut ctx, "test('elodie'){ true }").unwrap();
         let result = parse(&mut ctx, tokens).unwrap();
         assert_eq!(result.len(), 1);
@@ -674,7 +674,7 @@ mod tests {
 
     #[test]
     fn property_access_and_comparison() {
-        let mut ctx = Context::new();
+        let mut ctx = Context::testing();
         let tokens = lex(&mut ctx, "p.x == 1").unwrap();
         let result = parse(&mut ctx, tokens).unwrap();
         assert_eq!(result.len(), 1);

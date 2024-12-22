@@ -34,7 +34,7 @@ mod tests {
 
     #[test]
     fn empty_package() {
-        let mut ctx = Context::new();
+        let mut ctx = Context::testing();
         let tokens = lex(&mut ctx, "package magic{ }").unwrap();
         let result = parse(&mut ctx, tokens).unwrap();
         assert_eq!(result.len(), 1);
@@ -47,7 +47,7 @@ mod tests {
 
     #[test]
     fn package_with_exported_function() {
-        let mut ctx = Context::new();
+        let mut ctx = Context::testing();
         let tokens = lex(&mut ctx, "package magic { export function some_fn() {} }").unwrap();
         let result = parse(&mut ctx, tokens).unwrap();
         assert_eq!(result.len(), 1);
@@ -64,7 +64,7 @@ mod tests {
 
     #[test]
     fn exported_package_with_exported_function() {
-        let mut ctx = Context::new();
+        let mut ctx = Context::testing();
         let tokens = lex(
             &mut ctx,
             "export package magic{ export function some_fn() {} }",

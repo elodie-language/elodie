@@ -68,7 +68,7 @@ mod tests {
 
     #[test]
     fn number_literal() {
-        let mut ctx = Context::new();
+        let mut ctx = Context::testing();
         let ast = ast_from_str(&mut ctx, "9924").unwrap();
         let typed = analyse(&mut ctx, ast).unwrap();
         assert_eq!(typed.nodes.len(), 1);
@@ -81,7 +81,7 @@ mod tests {
 
     #[test]
     fn string_literal() {
-        let mut ctx = Context::new();
+        let mut ctx = Context::testing();
         let ast = ast_from_str(&mut ctx, "'Elodie'").unwrap();
         let typed = analyse(&mut ctx, ast).unwrap();
         assert_eq!(typed.nodes.len(), 1);
@@ -94,7 +94,7 @@ mod tests {
 
     #[test]
     fn true_literal() {
-        let mut ctx = Context::new();
+        let mut ctx = Context::testing();
         let ast = ast_from_str(&mut ctx, "true").unwrap();
         let typed = analyse(&mut ctx, ast).unwrap();
         assert_eq!(typed.nodes.len(), 1);
@@ -107,7 +107,7 @@ mod tests {
 
     #[test]
     fn false_literal() {
-        let mut ctx = Context::new();
+        let mut ctx = Context::testing();
         let ast = ast_from_str(&mut ctx, "false").unwrap();
         let typed = analyse(&mut ctx, ast).unwrap();
         assert_eq!(typed.nodes.len(), 1);

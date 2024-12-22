@@ -1,6 +1,6 @@
 use std::ops::Index;
 
-pub use r#type::{Type, TypeId, TypeTable};
+pub use r#type::{Type, TypeId, TypeTable, BuiltinType};
 pub use symbol::*;
 
 use crate::{frontend, ir};

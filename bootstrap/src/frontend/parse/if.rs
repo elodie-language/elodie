@@ -81,7 +81,7 @@ mod tests {
 
     #[test]
     fn empty_if_no_else() {
-        let mut ctx = Context::new();
+        let mut ctx = Context::testing();
         let tokens = lex(&mut ctx, "if true {}").unwrap();
         let result = parse(&mut ctx, tokens).unwrap();
         assert_eq!(result.len(), 1);
@@ -103,7 +103,7 @@ mod tests {
 
     #[test]
     fn if_true_equals_true() {
-        let mut ctx = Context::new();
+        let mut ctx = Context::testing();
         let tokens = lex(&mut ctx, "if true == false {}").unwrap();
         let result = parse(&mut ctx, tokens).unwrap();
         assert_eq!(result.len(), 1);
@@ -145,7 +145,7 @@ mod tests {
 
     #[test]
     fn if_multiple_then_nodes() {
-        let mut ctx = Context::new();
+        let mut ctx = Context::testing();
         let tokens = lex(
             &mut ctx,
             r#"if true {
@@ -185,7 +185,7 @@ mod tests {
 
     #[test]
     fn empty_if_and_else() {
-        let mut ctx = Context::new();
+        let mut ctx = Context::testing();
         let tokens = lex(&mut ctx, "if true {} else {}").unwrap();
         let result = parse(&mut ctx, tokens).unwrap();
         assert_eq!(result.len(), 1);
@@ -211,7 +211,7 @@ mod tests {
 
     #[test]
     fn if_else_multiple_nodes() {
-        let mut ctx = Context::new();
+        let mut ctx = Context::testing();
         let tokens = lex(
             &mut ctx,
             r#"if true {

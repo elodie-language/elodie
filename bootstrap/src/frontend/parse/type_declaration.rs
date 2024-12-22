@@ -33,7 +33,7 @@ mod tests {
 
     #[test]
     fn parse_empty_type_declaration() {
-        let mut ctx = Context::new();
+        let mut ctx = Context::testing();
         let tokens = lex(&mut ctx, "type New_Type()").unwrap();
         let result = parse(&mut ctx, tokens).unwrap();
         assert_eq!(result.len(), 1);
@@ -46,7 +46,7 @@ mod tests {
 
     #[test]
     fn parse_invalid_type_declaration() {
-        let mut ctx = Context::new();
+        let mut ctx = Context::testing();
         let tokens = lex(&mut ctx, "type new_type()").unwrap();
         let result = parse(&mut ctx, tokens);
         assert!(result.is_err());
@@ -57,7 +57,7 @@ mod tests {
 
     #[test]
     fn parse_type_declaration_with_single_property() {
-        let mut ctx = Context::new();
+        let mut ctx = Context::testing();
         let tokens = lex(&mut ctx, "type New_Type(p_1: Number)").unwrap();
         let result = parse(&mut ctx, tokens).unwrap();
         assert_eq!(result.len(), 1);
@@ -77,7 +77,7 @@ mod tests {
 
     #[test]
     fn parse_type_declaration_with_multiple_properties() {
-        let mut ctx = Context::new();
+        let mut ctx = Context::testing();
         let tokens = lex(&mut ctx, "export type New_Type(p_1: Number, p_2: Bool)").unwrap();
         let result = parse(&mut ctx, tokens).unwrap();
         assert_eq!(result.len(), 1);
@@ -103,7 +103,7 @@ mod tests {
 
     #[test]
     fn parse_multiline_type_declaration() {
-        let mut ctx = Context::new();
+        let mut ctx = Context::testing();
         let tokens = lex(
             &mut ctx,
             r#"export type New_Type(

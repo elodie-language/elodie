@@ -86,7 +86,7 @@ mod test {
     #[test]
     fn r#break() {
         let text = "break";
-        let mut ctx = Context::new();
+        let mut ctx = Context::testing();
         let mut lexer = Lexer::new(&mut ctx, text);
         let result = lexer.advance().unwrap();
         assert!(result.is_keyword(Break));
@@ -98,7 +98,7 @@ mod test {
     #[test]
     fn not_break() {
         let text = "breaker";
-        let mut ctx = Context::new();
+        let mut ctx = Context::testing();
         let mut lexer = Lexer::new(&mut ctx, text);
         let result = lexer.advance().unwrap();
         assert_eq!(result.kind, identifier());
@@ -110,7 +110,7 @@ mod test {
     #[test]
     fn r#const() {
         let text = "const";
-        let mut ctx = Context::new();
+        let mut ctx = Context::testing();
         let mut lexer = Lexer::new(&mut ctx, text);
         let result = lexer.advance().unwrap();
         assert!(result.is_keyword(Const));
@@ -122,7 +122,7 @@ mod test {
     #[test]
     fn not_const() {
         let text = "constant";
-        let mut ctx = Context::new();
+        let mut ctx = Context::testing();
         let mut lexer = Lexer::new(&mut ctx, text);
         let result = lexer.advance().unwrap();
         assert_eq!(result.kind, identifier());
@@ -134,7 +134,7 @@ mod test {
     #[test]
     fn r#continue() {
         let text = "continue";
-        let mut ctx = Context::new();
+        let mut ctx = Context::testing();
         let mut lexer = Lexer::new(&mut ctx, text);
         let result = lexer.advance().unwrap();
         assert!(result.is_keyword(Continue));
@@ -146,7 +146,7 @@ mod test {
     #[test]
     fn not_continue() {
         let text = "continuation";
-        let mut ctx = Context::new();
+        let mut ctx = Context::testing();
         let mut lexer = Lexer::new(&mut ctx, text);
         let result = lexer.advance().unwrap();
         assert_eq!(result.kind, identifier());
@@ -158,7 +158,7 @@ mod test {
     #[test]
     fn define() {
         let text = "define";
-        let mut ctx = Context::new();
+        let mut ctx = Context::testing();
         let mut lexer = Lexer::new(&mut ctx, text);
         let result = lexer.advance().unwrap();
         assert!(result.is_keyword(Define));
@@ -170,7 +170,7 @@ mod test {
     #[test]
     fn not_define() {
         let text = "defined";
-        let mut ctx = Context::new();
+        let mut ctx = Context::testing();
         let mut lexer = Lexer::new(&mut ctx, text);
         let result = lexer.advance().unwrap();
         assert_eq!(result.kind, identifier());
@@ -182,7 +182,7 @@ mod test {
     #[test]
     fn r#else() {
         let text = "else";
-        let mut ctx = Context::new();
+        let mut ctx = Context::testing();
         let mut lexer = Lexer::new(&mut ctx, text);
         let result = lexer.advance().unwrap();
         assert!(result.is_keyword(Else));
@@ -194,7 +194,7 @@ mod test {
     #[test]
     fn not_else() {
         let text = "elsewhere";
-        let mut ctx = Context::new();
+        let mut ctx = Context::testing();
         let mut lexer = Lexer::new(&mut ctx, text);
         let result = lexer.advance().unwrap();
         assert_eq!(result.kind, identifier());
@@ -206,7 +206,7 @@ mod test {
     #[test]
     fn external() {
         let text = "external";
-        let mut ctx = Context::new();
+        let mut ctx = Context::testing();
         let mut lexer = Lexer::new(&mut ctx, text);
         let result = lexer.advance().unwrap();
         assert!(result.is_keyword(External));
@@ -218,7 +218,7 @@ mod test {
     #[test]
     fn not_external() {
         let text = "externald";
-        let mut ctx = Context::new();
+        let mut ctx = Context::testing();
         let mut lexer = Lexer::new(&mut ctx, text);
         let result = lexer.advance().unwrap();
         assert!(result.is_identifier());
@@ -230,7 +230,7 @@ mod test {
     #[test]
     fn r#export() {
         let text = "export";
-        let mut ctx = Context::new();
+        let mut ctx = Context::testing();
         let mut lexer = Lexer::new(&mut ctx, text);
         let result = lexer.advance().unwrap();
         assert!(result.is_keyword(Export));
@@ -242,7 +242,7 @@ mod test {
     #[test]
     fn not_export() {
         let text = "exporting";
-        let mut ctx = Context::new();
+        let mut ctx = Context::testing();
         let mut lexer = Lexer::new(&mut ctx, text);
         let result = lexer.advance().unwrap();
         assert_eq!(result.kind, identifier());
@@ -254,7 +254,7 @@ mod test {
     #[test]
     fn r#from() {
         let text = "from";
-        let mut ctx = Context::new();
+        let mut ctx = Context::testing();
         let mut lexer = Lexer::new(&mut ctx, text);
         let result = lexer.advance().unwrap();
         assert!(result.is_keyword(From));
@@ -266,7 +266,7 @@ mod test {
     #[test]
     fn not_from() {
         let text = "fromage";
-        let mut ctx = Context::new();
+        let mut ctx = Context::testing();
         let mut lexer = Lexer::new(&mut ctx, text);
         let result = lexer.advance().unwrap();
         assert_eq!(result.kind, identifier());
@@ -278,7 +278,7 @@ mod test {
     #[test]
     fn r#for() {
         let text = "for";
-        let mut ctx = Context::new();
+        let mut ctx = Context::testing();
         let mut lexer = Lexer::new(&mut ctx, text);
         let result = lexer.advance().unwrap();
         assert!(result.is_keyword(For));
@@ -290,7 +290,7 @@ mod test {
     #[test]
     fn not_for() {
         let text = "formal";
-        let mut ctx = Context::new();
+        let mut ctx = Context::testing();
         let mut lexer = Lexer::new(&mut ctx, text);
         let result = lexer.advance().unwrap();
         assert_eq!(result.kind, identifier());
@@ -302,7 +302,7 @@ mod test {
     #[test]
     fn r#function() {
         let text = "function";
-        let mut ctx = Context::new();
+        let mut ctx = Context::testing();
         let mut lexer = Lexer::new(&mut ctx, text);
         let result = lexer.advance().unwrap();
         assert!(result.is_keyword(Function));
@@ -314,7 +314,7 @@ mod test {
     #[test]
     fn not_function() {
         let text = "functionio";
-        let mut ctx = Context::new();
+        let mut ctx = Context::testing();
         let mut lexer = Lexer::new(&mut ctx, text);
         let result = lexer.advance().unwrap();
         assert_eq!(result.kind, identifier());
@@ -326,7 +326,7 @@ mod test {
     #[test]
     fn r#if() {
         let text = "if";
-        let mut ctx = Context::new();
+        let mut ctx = Context::testing();
         let mut lexer = Lexer::new(&mut ctx, text);
         let result = lexer.advance().unwrap();
         assert_eq!(result.kind, keyword(If));
@@ -338,7 +338,7 @@ mod test {
     #[test]
     fn not_if() {
         let text = "iffy";
-        let mut ctx = Context::new();
+        let mut ctx = Context::testing();
         let mut lexer = Lexer::new(&mut ctx, text);
         let result = lexer.advance().unwrap();
         assert_eq!(result.kind, identifier());
@@ -350,7 +350,7 @@ mod test {
     #[test]
     fn r#import() {
         let text = "import";
-        let mut ctx = Context::new();
+        let mut ctx = Context::testing();
         let mut lexer = Lexer::new(&mut ctx, text);
         let result = lexer.advance().unwrap();
         assert!(result.is_keyword(Import));
@@ -362,7 +362,7 @@ mod test {
     #[test]
     fn not_import() {
         let text = "importance";
-        let mut ctx = Context::new();
+        let mut ctx = Context::testing();
         let mut lexer = Lexer::new(&mut ctx, text);
         let result = lexer.advance().unwrap();
         assert_eq!(result.kind, identifier());
@@ -374,7 +374,7 @@ mod test {
     #[test]
     fn r#in() {
         let text = "in";
-        let mut ctx = Context::new();
+        let mut ctx = Context::testing();
         let mut lexer = Lexer::new(&mut ctx, text);
         let result = lexer.advance().unwrap();
         assert!(result.is_keyword(In));
@@ -386,7 +386,7 @@ mod test {
     #[test]
     fn not_in() {
         let text = "inner";
-        let mut ctx = Context::new();
+        let mut ctx = Context::testing();
         let mut lexer = Lexer::new(&mut ctx, text);
         let result = lexer.advance().unwrap();
         assert_eq!(result.kind, identifier());
@@ -398,7 +398,7 @@ mod test {
     #[test]
     fn r#let() {
         let text = "let";
-        let mut ctx = Context::new();
+        let mut ctx = Context::testing();
         let mut lexer = Lexer::new(&mut ctx, text);
         let result = lexer.advance().unwrap();
         assert!(result.is_keyword(Let));
@@ -410,7 +410,7 @@ mod test {
     #[test]
     fn not_let() {
         let text = "letter";
-        let mut ctx = Context::new();
+        let mut ctx = Context::testing();
         let mut lexer = Lexer::new(&mut ctx, text);
         let result = lexer.advance().unwrap();
         assert_eq!(result.kind, identifier());
@@ -422,7 +422,7 @@ mod test {
     #[test]
     fn r#loop() {
         let text = "loop";
-        let mut ctx = Context::new();
+        let mut ctx = Context::testing();
         let mut lexer = Lexer::new(&mut ctx, text);
         let result = lexer.advance().unwrap();
         assert!(result.is_keyword(Loop));
@@ -434,7 +434,7 @@ mod test {
     #[test]
     fn not_loop() {
         let text = "loophole";
-        let mut ctx = Context::new();
+        let mut ctx = Context::testing();
         let mut lexer = Lexer::new(&mut ctx, text);
         let result = lexer.advance().unwrap();
         assert_eq!(result.kind, identifier());
@@ -446,7 +446,7 @@ mod test {
     #[test]
     fn package() {
         let text = "package";
-        let mut ctx = Context::new();
+        let mut ctx = Context::testing();
         let mut lexer = Lexer::new(&mut ctx, text);
         let result = lexer.advance().unwrap();
         assert!(result.is_keyword(Package));
@@ -458,7 +458,7 @@ mod test {
     #[test]
     fn not_package() {
         let text = "packaged";
-        let mut ctx = Context::new();
+        let mut ctx = Context::testing();
         let mut lexer = Lexer::new(&mut ctx, text);
         let result = lexer.advance().unwrap();
         assert_eq!(result.kind, identifier());
@@ -470,7 +470,7 @@ mod test {
     #[test]
     fn readonly() {
         let text = "readonly";
-        let mut ctx = Context::new();
+        let mut ctx = Context::testing();
         let mut lexer = Lexer::new(&mut ctx, text);
         let result = lexer.advance().unwrap();
         assert!(result.is_keyword(Readonly));
@@ -482,7 +482,7 @@ mod test {
     #[test]
     fn not_readonly() {
         let text = "readonlyness";
-        let mut ctx = Context::new();
+        let mut ctx = Context::testing();
         let mut lexer = Lexer::new(&mut ctx, text);
         let result = lexer.advance().unwrap();
         assert_eq!(result.kind, identifier());
@@ -494,7 +494,7 @@ mod test {
     #[test]
     fn r#return() {
         let text = "return";
-        let mut ctx = Context::new();
+        let mut ctx = Context::testing();
         let mut lexer = Lexer::new(&mut ctx, text);
         let result = lexer.advance().unwrap();
         assert!(result.is_keyword(Return));
@@ -506,7 +506,7 @@ mod test {
     #[test]
     fn not_return() {
         let text = "returns";
-        let mut ctx = Context::new();
+        let mut ctx = Context::testing();
         let mut lexer = Lexer::new(&mut ctx, text);
         let result = lexer.advance().unwrap();
         assert_eq!(result.kind, identifier());
@@ -518,7 +518,7 @@ mod test {
     #[test]
     fn itself() {
         let text = "self";
-        let mut ctx = Context::new();
+        let mut ctx = Context::testing();
         let mut lexer = Lexer::new(&mut ctx, text);
         let result = lexer.advance().unwrap();
         assert!(result.is_keyword(Itself));
@@ -530,7 +530,7 @@ mod test {
     #[test]
     fn not_self() {
         let text = "selfmade";
-        let mut ctx = Context::new();
+        let mut ctx = Context::testing();
         let mut lexer = Lexer::new(&mut ctx, text);
         let result = lexer.advance().unwrap();
         assert_eq!(result.kind, identifier());
@@ -542,7 +542,7 @@ mod test {
     #[test]
     fn r#trait() {
         let text = "trait";
-        let mut ctx = Context::new();
+        let mut ctx = Context::testing();
         let mut lexer = Lexer::new(&mut ctx, text);
         let result = lexer.advance().unwrap();
         assert!(result.is_keyword(Trait));
@@ -554,7 +554,7 @@ mod test {
     #[test]
     fn not_trait() {
         let text = "traitor";
-        let mut ctx = Context::new();
+        let mut ctx = Context::testing();
         let mut lexer = Lexer::new(&mut ctx, text);
         let result = lexer.advance().unwrap();
         assert_eq!(result.kind, identifier());
@@ -566,7 +566,7 @@ mod test {
     #[test]
     fn r#type() {
         let text = "type";
-        let mut ctx = Context::new();
+        let mut ctx = Context::testing();
         let mut lexer = Lexer::new(&mut ctx, text);
         let result = lexer.advance().unwrap();
         assert!(result.is_keyword(Type));
@@ -578,7 +578,7 @@ mod test {
     #[test]
     fn not_type() {
         let text = "typeset";
-        let mut ctx = Context::new();
+        let mut ctx = Context::testing();
         let mut lexer = Lexer::new(&mut ctx, text);
         let result = lexer.advance().unwrap();
         assert_eq!(result.kind, identifier());

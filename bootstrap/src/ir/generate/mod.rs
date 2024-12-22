@@ -6,7 +6,6 @@ use crate::frontend::ast::SPAN_NOT_IMPLEMENTED;
 use crate::ir::analyse::{TypedAst, TypeLiteralNumberNode};
 use crate::ir::Ir;
 use crate::ir::node::{IrLiteralNumberNode, IrTreeNode};
-use crate::ir::TypeId;
 
 mod literal;
 
@@ -16,7 +15,7 @@ pub(crate) fn generate(ctx: &mut Context, typed: TypedAst) -> crate::ir::Result<
         Ir {
             nodes: vec![
                 IrTreeNode::new(
-                    LiteralNumber(IrLiteralNumberNode { value: value.clone() }), SPAN_NOT_IMPLEMENTED.clone(), TypeId(1))
+                    LiteralNumber(IrLiteralNumberNode { value: value.clone() }), SPAN_NOT_IMPLEMENTED.clone(), ctx.type_id_number())
             ]
         }
     )

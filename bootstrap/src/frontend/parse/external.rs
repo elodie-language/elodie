@@ -58,7 +58,7 @@ mod tests {
 
     #[test]
     fn external_function_without_args_and_with_return() {
-        let mut ctx = Context::new();
+        let mut ctx = Context::testing();
         let tokens = lex(&mut ctx, "external function magic()").unwrap();
         let result = parse(&mut ctx, tokens).unwrap();
         assert_eq!(result.len(), 1);
@@ -72,7 +72,7 @@ mod tests {
 
     #[test]
     fn external_function_with_single_arg() {
-        let mut ctx = Context::new();
+        let mut ctx = Context::testing();
         let tokens = lex(&mut ctx, "external function magic(arg_1: String)").unwrap();
         let result = parse(&mut ctx, tokens).unwrap();
         assert_eq!(result.len(), 1);
@@ -93,7 +93,7 @@ mod tests {
 
     #[test]
     fn external_function_with_multiple_args() {
-        let mut ctx = Context::new();
+        let mut ctx = Context::testing();
         let tokens = lex(
             &mut ctx,
             "external function magic(arg_1: String, arg_2: Number)",
@@ -126,7 +126,7 @@ mod tests {
 
     #[test]
     fn exported_external_function() {
-        let mut ctx = Context::new();
+        let mut ctx = Context::testing();
         let tokens = lex(
             &mut ctx,
             "export external function magic(arg_1: String, arg_2: Number) -> Bool",

@@ -45,7 +45,7 @@ mod tests {
 
     #[test]
     fn let_without_type_string() {
-        let mut ctx = Context::new();
+        let mut ctx = Context::testing();
         let tokens = lex(&mut ctx, "let value = 'Elodie'").unwrap();
         let result = parse(&mut ctx, tokens).unwrap();
         assert_eq!(result.len(), 1);
@@ -63,7 +63,7 @@ mod tests {
 
     #[test]
     fn let_with_type_string() {
-        let mut ctx = Context::new();
+        let mut ctx = Context::testing();
         let tokens = lex(&mut ctx, "let value : String = 'Elodie'").unwrap();
         let result = parse(&mut ctx, tokens).unwrap();
         assert_eq!(result.len(), 1);
@@ -83,7 +83,7 @@ mod tests {
 
     #[test]
     fn let_without_type_number() {
-        let mut ctx = Context::new();
+        let mut ctx = Context::testing();
         let tokens = lex(&mut ctx, "let value = 9924").unwrap();
         let result = parse(&mut ctx, tokens).unwrap();
         assert_eq!(result.len(), 1);
@@ -101,7 +101,7 @@ mod tests {
 
     #[test]
     fn let_without_type_boolean() {
-        let mut ctx = Context::new();
+        let mut ctx = Context::testing();
         let tokens = lex(&mut ctx, "let value = false").unwrap();
         let result = parse(&mut ctx, tokens).unwrap();
         assert_eq!(result.len(), 1);

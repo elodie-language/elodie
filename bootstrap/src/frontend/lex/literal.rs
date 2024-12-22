@@ -162,7 +162,7 @@ mod test {
     #[test]
     fn empty_string() {
         let text = "''";
-        let mut ctx = Context::new();
+        let mut ctx = Context::testing();
         let mut lexer = Lexer::new(&mut ctx, text);
         let result = lexer.advance().unwrap();
         assert_eq!(result.kind, TokenKind::Literal(String));
@@ -174,7 +174,7 @@ mod test {
     #[test]
     fn hello_elodie() {
         let text = "'Hello Elodie'";
-        let mut ctx = Context::new();
+        let mut ctx = Context::testing();
         let mut lexer = Lexer::new(&mut ctx, text);
         let result = lexer.advance().unwrap();
         assert_eq!(result.kind, TokenKind::Literal(String));
@@ -186,7 +186,7 @@ mod test {
     #[test]
     fn string_with_interpolation() {
         let text = "'${'test'}'";
-        let mut ctx = Context::new();
+        let mut ctx = Context::testing();
         let mut lexer = Lexer::new(&mut ctx, text);
         let result = lexer.advance().unwrap();
         assert_eq!(result.kind, TokenKind::Literal(String));
@@ -198,7 +198,7 @@ mod test {
     #[test]
     fn escaped_string() {
         let text = "'{\\'hello\\':\\'world\\'}'";
-        let mut ctx = Context::new();
+        let mut ctx = Context::testing();
         let mut lexer = Lexer::new(&mut ctx, text);
         let result = lexer.advance().unwrap();
         assert_eq!(result.kind, TokenKind::Literal(String));
@@ -210,7 +210,7 @@ mod test {
     #[test]
     fn nat() {
         let text = "42";
-        let mut ctx = Context::new();
+        let mut ctx = Context::testing();
         let mut lexer = Lexer::new(&mut ctx, text);
         let result = lexer.advance().unwrap();
         assert_eq!(result.kind, TokenKind::Literal(Number));
@@ -222,7 +222,7 @@ mod test {
     #[test]
     fn float() {
         let text = "42.24";
-        let mut ctx = Context::new();
+        let mut ctx = Context::testing();
         let mut lexer = Lexer::new(&mut ctx, text);
         let result = lexer.advance().unwrap();
         assert_eq!(result.kind, TokenKind::Literal(Number));
@@ -234,7 +234,7 @@ mod test {
     #[test]
     fn hex() {
         let text = "0xDEADBEEF";
-        let mut ctx = Context::new();
+        let mut ctx = Context::testing();
         let mut lexer = Lexer::new(&mut ctx, text);
         let result = lexer.advance().unwrap();
         assert_eq!(result.kind, TokenKind::Literal(Number));
@@ -246,7 +246,7 @@ mod test {
     #[test]
     fn octal() {
         let text = "0o10";
-        let mut ctx = Context::new();
+        let mut ctx = Context::testing();
         let mut lexer = Lexer::new(&mut ctx, text);
         let result = lexer.advance().unwrap();
         assert_eq!(result.kind, TokenKind::Literal(Number));
@@ -258,7 +258,7 @@ mod test {
     #[test]
     fn binary() {
         let text = "0b10101";
-        let mut ctx = Context::new();
+        let mut ctx = Context::testing();
         let mut lexer = Lexer::new(&mut ctx, text);
         let result = lexer.advance().unwrap();
         assert_eq!(result.kind, TokenKind::Literal(Number));
@@ -270,7 +270,7 @@ mod test {
     #[test]
     fn r#true() {
         let text = "true";
-        let mut ctx = Context::new();
+        let mut ctx = Context::testing();
         let mut lexer = Lexer::new(&mut ctx, text);
         let result = lexer.advance().unwrap();
         assert_eq!(result.kind, TokenKind::Literal(True));
@@ -282,7 +282,7 @@ mod test {
     #[test]
     fn not_true() {
         let text = "true_";
-        let mut ctx = Context::new();
+        let mut ctx = Context::testing();
         let mut lexer = Lexer::new(&mut ctx, text);
         let result = lexer.advance().unwrap();
         assert_eq!(result.kind, TokenKind::Identifier);
@@ -294,7 +294,7 @@ mod test {
     #[test]
     fn r#false() {
         let text = "false";
-        let mut ctx = Context::new();
+        let mut ctx = Context::testing();
         let mut lexer = Lexer::new(&mut ctx, text);
         let result = lexer.advance().unwrap();
         assert_eq!(result.kind, TokenKind::Literal(False));
@@ -306,7 +306,7 @@ mod test {
     #[test]
     fn not_false() {
         let text = "false_";
-        let mut ctx = Context::new();
+        let mut ctx = Context::testing();
         let mut lexer = Lexer::new(&mut ctx, text);
         let result = lexer.advance().unwrap();
         assert_eq!(result.kind, TokenKind::Identifier);

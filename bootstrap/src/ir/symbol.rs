@@ -148,7 +148,7 @@ mod tests {
 
     #[test]
     fn register_argument() {
-        let mut ctx = Context::default();
+        let mut ctx = Context::testing();
         let mut table = SymbolTable::new();
 
         let id = table.register_argument(SymbolName(ctx.push_str("argument")));
@@ -162,7 +162,7 @@ mod tests {
 
     #[test]
     fn register_function() {
-        let mut ctx = Context::default();
+        let mut ctx = Context::testing();
         let mut table = SymbolTable::new();
 
         let id = table.register_function(SymbolName(ctx.push_str("function")));
@@ -176,7 +176,7 @@ mod tests {
 
     #[test]
     fn register_package() {
-        let mut ctx = Context::default();
+        let mut ctx = Context::testing();
         let mut table = SymbolTable::new();
 
         let id = table.register_package(SymbolName(ctx.push_str("package")));
@@ -190,7 +190,7 @@ mod tests {
 
     #[test]
     fn register_type() {
-        let mut ctx = Context::default();
+        let mut ctx = Context::testing();
         let mut table = SymbolTable::new();
 
         let id = table.register_type(SymbolName(ctx.push_str("type")));
@@ -204,7 +204,7 @@ mod tests {
 
     #[test]
     fn register_variable() {
-        let mut ctx = Context::default();
+        let mut ctx = Context::testing();
         let mut table = SymbolTable::new();
 
         let id = table.register_variable(SymbolName(ctx.push_str("variable")));
@@ -218,7 +218,7 @@ mod tests {
 
     #[test]
     fn register_multiple_symbols() {
-        let mut ctx = Context::default();
+        let mut ctx = Context::testing();
         let mut table = SymbolTable::new();
 
         let arg_id = table.register_argument(SymbolName(ctx.push_str("argument")));

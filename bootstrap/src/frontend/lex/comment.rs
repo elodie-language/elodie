@@ -20,7 +20,7 @@ mod test {
     #[test]
     fn comment() {
         let text = "// some comment";
-        let mut ctx = Context::new();
+        let mut ctx = Context::testing();
         let mut lexer = Lexer::new(&mut ctx, text);
         let result = lexer.advance().unwrap();
         assert_eq!(result.kind, TokenKind::EOF);

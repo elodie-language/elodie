@@ -77,7 +77,7 @@ mod tests {
 
     #[test]
     fn not_a_type() {
-        let mut ctx = Context::new();
+        let mut ctx = Context::testing();
         let tokens = lex(&mut ctx, "something_different").unwrap();
         let mut parser = Parser::new(&mut ctx, tokens);
         let result = parser.parse_type();
@@ -88,7 +88,7 @@ mod tests {
 
     #[test]
     fn object_type_point() {
-        let mut ctx = Context::new();
+        let mut ctx = Context::testing();
         let tokens = lex(&mut ctx, "Point").unwrap();
         let mut parser = Parser::new(&mut ctx, tokens);
         let result = parser.parse_type().unwrap();
@@ -100,7 +100,7 @@ mod tests {
 
     #[test]
     fn type_boolean() {
-        let mut ctx = Context::new();
+        let mut ctx = Context::testing();
         let tokens = lex(&mut ctx, "Bool").unwrap();
         let mut parser = Parser::new(&mut ctx, tokens);
         let result = parser.parse_type().unwrap();
@@ -111,7 +111,7 @@ mod tests {
 
     #[test]
     fn type_number() {
-        let mut ctx = Context::new();
+        let mut ctx = Context::testing();
         let tokens = lex(&mut ctx, "Number").unwrap();
         let mut parser = Parser::new(&mut ctx, tokens);
         let result = parser.parse_type().unwrap();
@@ -122,7 +122,7 @@ mod tests {
 
     #[test]
     fn type_string() {
-        let mut ctx = Context::new();
+        let mut ctx = Context::testing();
         let tokens = lex(&mut ctx, "String").unwrap();
         let mut parser = Parser::new(&mut ctx, tokens);
         let result = parser.parse_type().unwrap();
@@ -133,7 +133,7 @@ mod tests {
 
     #[test]
     fn type_function_without_args_and_without_result() {
-        let mut ctx = Context::new();
+        let mut ctx = Context::testing();
         let tokens = lex(&mut ctx, "function()").unwrap();
         let mut parser = Parser::new(&mut ctx, tokens);
         let result = parser.parse_type().unwrap();
@@ -147,7 +147,7 @@ mod tests {
 
     #[test]
     fn type_function_without_args_and_with_result() {
-        let mut ctx = Context::new();
+        let mut ctx = Context::testing();
         let tokens = lex(&mut ctx, "function() -> Number").unwrap();
         let mut parser = Parser::new(&mut ctx, tokens);
         let result = parser.parse_type().unwrap();
@@ -167,7 +167,7 @@ mod tests {
 
     #[test]
     fn type_function_single_named_arg_and_with_result() {
-        let mut ctx = Context::new();
+        let mut ctx = Context::testing();
         let tokens = lex(&mut ctx, "function(arg_1: Bool) -> Number").unwrap();
         let mut parser = Parser::new(&mut ctx, tokens);
         let result = parser.parse_type().unwrap();
@@ -200,7 +200,7 @@ mod tests {
 
     #[test]
     fn type_function_single_arg_and_with_result() {
-        let mut ctx = Context::new();
+        let mut ctx = Context::testing();
         let tokens = lex(&mut ctx, "function(Bool) -> Number").unwrap();
         let mut parser = Parser::new(&mut ctx, tokens);
         let result = parser.parse_type().unwrap();

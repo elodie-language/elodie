@@ -63,7 +63,7 @@ mod test {
     #[test]
     fn tab() {
         let text = "\t";
-        let mut ctx = Context::new();
+        let mut ctx = Context::testing();
         let mut lexer = Lexer::new(&mut ctx, text);
         let result = lexer.advance().unwrap();
         assert_eq!(result.kind, TokenKind::EOF);
@@ -75,7 +75,7 @@ mod test {
     #[test]
     fn whitespace() {
         let text = "     ";
-        let mut ctx = Context::new();
+        let mut ctx = Context::testing();
         let mut lexer = Lexer::new(&mut ctx, text);
         let result = lexer.advance().unwrap();
         assert_eq!(result.kind, TokenKind::EOF);
@@ -87,7 +87,7 @@ mod test {
     #[test]
     fn comma() {
         let text = ",";
-        let mut ctx = Context::new();
+        let mut ctx = Context::testing();
         let mut lexer = Lexer::new(&mut ctx, text);
         let result = lexer.advance().unwrap();
         assert_eq!(result.kind, TokenKind::Separator(Comma));
@@ -99,7 +99,7 @@ mod test {
     #[test]
     fn semicolon() {
         let text = ";";
-        let mut ctx = Context::new();
+        let mut ctx = Context::testing();
         let mut lexer = Lexer::new(&mut ctx, text);
         let result = lexer.advance().unwrap();
         assert_eq!(result.kind, TokenKind::Separator(Semicolon));
@@ -111,7 +111,7 @@ mod test {
     #[test]
     fn new_line() {
         let text = "\n\n\n";
-        let mut ctx = Context::new();
+        let mut ctx = Context::testing();
         let mut lexer = Lexer::new(&mut ctx, text);
         let result = lexer.advance().unwrap();
         assert_eq!(result.kind, TokenKind::Separator(NewLine));

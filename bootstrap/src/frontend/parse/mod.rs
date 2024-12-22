@@ -263,7 +263,7 @@ mod tests {
 
     #[test]
     fn advance_but_eof() {
-        let mut ctx = Context::new();
+        let mut ctx = Context::testing();
         let tokens = lex(&mut ctx, "").unwrap();
         let mut parser = Parser::new(&mut ctx, tokens);
         let result = parser.advance();
@@ -272,7 +272,7 @@ mod tests {
 
     #[test]
     fn advance() {
-        let mut ctx = Context::new();
+        let mut ctx = Context::testing();
         let tokens = lex(&mut ctx, "1 + 2").unwrap();
         let mut parser = Parser::new(&mut ctx, tokens);
 
@@ -291,7 +291,7 @@ mod tests {
 
     #[test]
     fn consume_but_eof() {
-        let mut ctx = Context::new();
+        let mut ctx = Context::testing();
         let tokens = lex(&mut ctx, "").unwrap();
         let mut parser = Parser::new(&mut ctx, tokens);
         let result = parser.consume(literal(True));
@@ -300,7 +300,7 @@ mod tests {
 
     #[test]
     fn consume_but_unexpected_token() {
-        let mut ctx = Context::new();
+        let mut ctx = Context::testing();
         let tokens = lex(&mut ctx, "false").unwrap();
         let mut parser = Parser::new(&mut ctx, tokens);
         let result = parser.consume(literal(True));
@@ -314,7 +314,7 @@ mod tests {
 
     #[test]
     fn consume() {
-        let mut ctx = Context::new();
+        let mut ctx = Context::testing();
         let tokens = lex(&mut ctx, "true 99").unwrap();
         let mut parser = Parser::new(&mut ctx, tokens);
         let result = parser.consume(literal(True)).unwrap();
@@ -326,7 +326,7 @@ mod tests {
 
     #[test]
     fn consume_if_but_eof() {
-        let mut ctx = Context::new();
+        let mut ctx = Context::testing();
         let tokens = lex(&mut ctx, "").unwrap();
         let mut parser = Parser::new(&mut ctx, tokens);
         let result = parser.consume_if(literal(True));
@@ -335,7 +335,7 @@ mod tests {
 
     #[test]
     fn consume_if_but_unexpected_token() {
-        let mut ctx = Context::new();
+        let mut ctx = Context::testing();
         let tokens = lex(&mut ctx, "false").unwrap();
         let mut parser = Parser::new(&mut ctx, tokens);
         let result = parser.consume_if(literal(True));
@@ -344,7 +344,7 @@ mod tests {
 
     #[test]
     fn consume_if() {
-        let mut ctx = Context::new();
+        let mut ctx = Context::testing();
         let tokens = lex(&mut ctx, "true 99").unwrap();
         let mut parser = Parser::new(&mut ctx, tokens);
         let result = parser.consume_if(literal(True)).unwrap().unwrap();
@@ -356,7 +356,7 @@ mod tests {
 
     #[test]
     fn current_but_eof() {
-        let mut ctx = Context::new();
+        let mut ctx = Context::testing();
         let tokens = lex(&mut ctx, "").unwrap();
         let mut parser = Parser::new(&mut ctx, tokens);
         let result = parser.current();
@@ -365,7 +365,7 @@ mod tests {
 
     #[test]
     fn current() {
-        let mut ctx = Context::new();
+        let mut ctx = Context::testing();
         let tokens = lex(&mut ctx, "true false").unwrap();
         let mut parser = Parser::new(&mut ctx, tokens);
 
@@ -382,7 +382,7 @@ mod tests {
 
     #[test]
     fn current_expect_but_eof() {
-        let mut ctx = Context::new();
+        let mut ctx = Context::testing();
         let tokens = lex(&mut ctx, "").unwrap();
         let mut parser = Parser::new(&mut ctx, tokens);
         let result = parser.current_expect(separator(Semicolon));
@@ -391,7 +391,7 @@ mod tests {
 
     #[test]
     fn current_expect() {
-        let mut ctx = Context::new();
+        let mut ctx = Context::testing();
         let tokens = lex(&mut ctx, "true false").unwrap();
         let mut parser = Parser::new(&mut ctx, tokens);
 
@@ -406,7 +406,7 @@ mod tests {
 
     #[test]
     fn current_expect_but_different() {
-        let mut ctx = Context::new();
+        let mut ctx = Context::testing();
         let tokens = lex(&mut ctx, "true").unwrap();
         let mut parser = Parser::new(&mut ctx, tokens);
 
@@ -421,7 +421,7 @@ mod tests {
 
     #[test]
     fn current_precedence_but_eof() {
-        let mut ctx = Context::new();
+        let mut ctx = Context::testing();
         let tokens = lex(&mut ctx, "").unwrap();
         let mut parser = Parser::new(&mut ctx, tokens);
         let result = parser.current_precedence();
@@ -430,7 +430,7 @@ mod tests {
 
     #[test]
     fn current_precedence() {
-        let mut ctx = Context::new();
+        let mut ctx = Context::testing();
         let tokens = lex(&mut ctx, "+").unwrap();
         let mut parser = Parser::new(&mut ctx, tokens);
         let result = parser.current_precedence();
@@ -439,7 +439,7 @@ mod tests {
 
     #[test]
     fn peek_but_eof() {
-        let mut ctx = Context::new();
+        let mut ctx = Context::testing();
         let tokens = lex(&mut ctx, "").unwrap();
         let mut parser = Parser::new(&mut ctx, tokens);
         let result = parser.peek();
@@ -448,7 +448,7 @@ mod tests {
 
     #[test]
     fn peek_but_nothing_to_peek() {
-        let mut ctx = Context::new();
+        let mut ctx = Context::testing();
         let tokens = lex(&mut ctx, "true").unwrap();
         let mut parser = Parser::new(&mut ctx, tokens);
         let result = parser.peek();
@@ -457,7 +457,7 @@ mod tests {
 
     #[test]
     fn peek() {
-        let mut ctx = Context::new();
+        let mut ctx = Context::testing();
         let tokens = lex(&mut ctx, "true false 1").unwrap();
         let mut parser = Parser::new(&mut ctx, tokens);
 
@@ -474,7 +474,7 @@ mod tests {
 
     #[test]
     fn peek_expect_but_eof() {
-        let mut ctx = Context::new();
+        let mut ctx = Context::testing();
         let tokens = lex(&mut ctx, "").unwrap();
         let mut parser = Parser::new(&mut ctx, tokens);
         let result = parser.peek_expect(separator(Semicolon));
@@ -483,7 +483,7 @@ mod tests {
 
     #[test]
     fn peek_expect_but_nothing_to_peek() {
-        let mut ctx = Context::new();
+        let mut ctx = Context::testing();
         let tokens = lex(&mut ctx, "true").unwrap();
         let mut parser = Parser::new(&mut ctx, tokens);
 
@@ -493,7 +493,7 @@ mod tests {
 
     #[test]
     fn peek_expect() {
-        let mut ctx = Context::new();
+        let mut ctx = Context::testing();
         let tokens = lex(&mut ctx, "true false 99").unwrap();
         let mut parser = Parser::new(&mut ctx, tokens);
 
@@ -508,7 +508,7 @@ mod tests {
 
     #[test]
     fn peek_expect_but_different() {
-        let mut ctx = Context::new();
+        let mut ctx = Context::testing();
         let tokens = lex(&mut ctx, "true 99").unwrap();
         let mut parser = Parser::new(&mut ctx, tokens);
 

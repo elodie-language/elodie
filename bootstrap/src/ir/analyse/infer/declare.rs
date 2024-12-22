@@ -43,7 +43,7 @@ mod tests {
 
     #[test]
     fn declare_number_variable() {
-        let mut ctx = Context::new();
+        let mut ctx = Context::testing();
         let ast = ast_from_str(&mut ctx, "let value = 23").unwrap();
         let typed = analyse(&mut ctx, ast).unwrap();
         assert_eq!(typed.nodes.len(), 1);
@@ -57,7 +57,7 @@ mod tests {
 
     #[test]
     fn declare_number_variable_with_explicit_type() {
-        let mut ctx = Context::new();
+        let mut ctx = Context::testing();
         let ast = ast_from_str(&mut ctx, "let value: Number = 23").unwrap();
         let typed = analyse(&mut ctx, ast).unwrap();
         assert_eq!(typed.nodes.len(), 1);
@@ -71,7 +71,7 @@ mod tests {
 
     #[test]
     fn declare_string_variable_with_explicit_type() {
-        let mut ctx = Context::new();
+        let mut ctx = Context::testing();
         let ast = ast_from_str(&mut ctx, "let value: String = 'Elo'").unwrap();
         let typed = analyse(&mut ctx, ast).unwrap();
         assert_eq!(typed.nodes.len(), 1);
@@ -85,7 +85,7 @@ mod tests {
 
     #[test]
     fn declare_boolean_variable() {
-        let mut ctx = Context::new();
+        let mut ctx = Context::testing();
         let ast = ast_from_str(&mut ctx, "let value = true").unwrap();
         let typed = analyse(&mut ctx, ast).unwrap();
         assert_eq!(typed.nodes.len(), 1);
