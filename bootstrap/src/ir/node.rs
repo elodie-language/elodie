@@ -52,6 +52,7 @@ pub type IrNode = Node<
 pub struct IrTreeNode {
     pub node: IrNode,
     pub span: Span,
+    pub type_id: TypeId,
 }
 
 impl IrTreeNode {
@@ -98,10 +99,11 @@ impl IrTreeNode {
 }
 
 impl IrTreeNode {
-    pub fn new(node: IrNode, span: Span) -> IrTreeNode {
+    pub fn new(node: IrNode, span: Span, type_id: TypeId) -> IrTreeNode {
         IrTreeNode {
             node,
             span,
+            type_id,
         }
     }
 }
@@ -225,7 +227,6 @@ impl InstantiateTypeNode<IrVariant> for IrInstantiateTypeNode {}
 #[derive(Debug, Clone, PartialEq)]
 pub struct IrLiteralBooleanNode {
     pub value: bool,
-    pub value_type: TypeId,
 }
 
 impl LiteralBooleanNode<IrVariant> for IrLiteralBooleanNode {}
@@ -233,7 +234,6 @@ impl LiteralBooleanNode<IrVariant> for IrLiteralBooleanNode {}
 #[derive(Debug, Clone, PartialEq)]
 pub struct IrLiteralNumberNode {
     pub value: BigDecimal,
-    pub value_type: TypeId,
 }
 
 impl LiteralNumberNode<IrVariant> for IrLiteralNumberNode {}
@@ -241,7 +241,6 @@ impl LiteralNumberNode<IrVariant> for IrLiteralNumberNode {}
 #[derive(Debug, Clone, PartialEq)]
 pub struct IrLiteralStringNode {
     pub value: StringTableId,
-    pub value_type: TypeId,
 }
 
 impl LiteralStringNode<IrVariant> for IrLiteralStringNode {}

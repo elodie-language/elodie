@@ -33,19 +33,19 @@ pub enum Error {}
 pub(crate) type Result<T, E = Error> = core::result::Result<T, E>;
 
 #[derive(Debug)]
-pub struct Analyse {
-    pub nodes: Vec<AnalyseTreeNode>,
+pub struct TypedAst {
+    pub nodes: Vec<TypedTreeNode>,
 }
 
-impl Index<usize> for Analyse {
-    type Output = AnalyseTreeNode;
+impl Index<usize> for TypedAst {
+    type Output = TypedTreeNode;
     fn index(&self, index: usize) -> &Self::Output {
         self.nodes.index(index)
     }
 }
 
-pub(crate) fn analyse(ctx: &mut Context, ast: Ast) -> Result<Analyse> {
+pub(crate) fn analyse(ctx: &mut Context, ast: Ast) -> Result<TypedAst> {
     let inferred = Inference::new(ctx).infer(ast)?;
 
-    Ok(Analyse { nodes: inferred })
+    Ok(TypedAst { nodes: inferred })
 }

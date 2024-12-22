@@ -16,50 +16,50 @@ use crate::ir::analyse::InferredType;
 use crate::ir::symbol::SymbolId;
 
 #[derive(Clone, Debug, PartialEq)]
-pub struct AnalyseVariant {}
+pub struct TypeVariant {}
 
-impl Variant for AnalyseVariant {}
+impl Variant for TypeVariant {}
 
-pub type AnalyseNode = crate::common::node::Node<
-    AnalyseVariant,
-    AnalyseAccessVariableNode,
-    AnalyseAccessVariableOfObjectNode,
-    AnalyseAccessVariableOfSelfNode,
-    AnalyseBlockNode,
-    AnalyseBreakLoopNode,
-    AnalyseCalculateNode,
-    AnalyseCallFunctionNode,
-    AnalyseCallFunctionWithLambdaNode,
-    AnalyseCallFunctionOfObjectNode,
-    AnalyseCallFunctionOfPackageNode,
-    AnalyseCompareNode,
-    AnalyseContinueLoopNode,
-    AnalyseDeclareExternalFunctionNode,
-    AnalyseDeclareFunctionNode,
-    AnalyseDeclarePackageNode,
-    AnalyseDeclareTypeNode,
-    AnalyseDeclareVariableNode,
-    AnalyseDefineTypeNode,
-    AnalyseExportPackageNode,
-    AnalyseIfNode,
-    AnalyseInterpolateStringNode,
-    AnalyseInstantiateTypeNode,
-    AnalyseLiteralBooleanNode,
-    AnalyseLiteralNumberNode,
-    AnalyseLiteralStringNode,
-    AnalyseLoopNode,
-    AnalyseReturnFromFunctionNode,
+pub type TypeNode = crate::common::node::Node<
+    TypeVariant,
+    TypeAccessVariableNode,
+    TypeAccessVariableOfObjectNode,
+    TypeAccessVariableOfSelfNode,
+    TypeBlockNode,
+    TypeBreakLoopNode,
+    TypeCalculateNode,
+    TypeCallFunctionNode,
+    TypeCallFunctionWithLambdaNode,
+    TypeCallFunctionOfObjectNode,
+    TypeCallFunctionOfPackageNode,
+    TypeCompareNode,
+    TypeContinueLoopNode,
+    TypeDeclareExternalFunctionNode,
+    TypeDeclareFunctionNode,
+    TypeDeclarePackageNode,
+    TypeDeclareTypeNode,
+    TypeDeclareVariableNode,
+    TypeDefineTypeNode,
+    TypeExportPackageNode,
+    TypeIfNode,
+    TypeInterpolateStringNode,
+    TypeInstantiateTypeNode,
+    TypeLiteralBooleanNode,
+    TypeLiteralNumberNode,
+    TypeLiteralStringNode,
+    TypeLoopNode,
+    TypeReturnFromFunctionNode,
 >;
 
 #[derive(Clone, Debug, PartialEq)]
-pub struct AnalyseTreeNode {
-    pub node: AnalyseNode,
+pub struct TypedTreeNode {
+    pub node: TypeNode,
     pub span: Span,
     pub inferred_type: InferredType,
 }
 
-impl AnalyseTreeNode {
-    pub fn as_declared_variable(&self) -> &AnalyseDeclareVariableNode {
+impl TypedTreeNode {
+    pub fn as_declared_variable(&self) -> &TypeDeclareVariableNode {
         if let Node::DeclareVariable(result) = &self.node {
             result
         } else {
@@ -67,7 +67,7 @@ impl AnalyseTreeNode {
         }
     }
 
-    pub fn as_literal_boolean(&self) -> &AnalyseLiteralBooleanNode {
+    pub fn as_literal_boolean(&self) -> &TypeLiteralBooleanNode {
         if let Node::LiteralBoolean(result) = &self.node {
             result
         } else {
@@ -75,7 +75,7 @@ impl AnalyseTreeNode {
         }
     }
 
-    pub fn as_literal_number(&self) -> &AnalyseLiteralNumberNode {
+    pub fn as_literal_number(&self) -> &TypeLiteralNumberNode {
         if let Node::LiteralNumber(result) = &self.node {
             result
         } else {
@@ -83,7 +83,7 @@ impl AnalyseTreeNode {
         }
     }
 
-    pub fn as_literal_string(&self) -> &AnalyseLiteralStringNode {
+    pub fn as_literal_string(&self) -> &TypeLiteralStringNode {
         if let Node::LiteralString(result) = &self.node {
             result
         } else {
@@ -92,18 +92,18 @@ impl AnalyseTreeNode {
     }
 }
 
-impl AnalyseTreeNode {
-    pub fn node(&self) -> &AnalyseNode {
+impl TypedTreeNode {
+    pub fn node(&self) -> &TypeNode {
         &self.node
     }
-    pub fn node_to_owned(self) -> AnalyseNode {
+    pub fn node_to_owned(self) -> TypeNode {
         self.node
     }
 }
 
-impl AnalyseTreeNode {
-    pub fn new(node: AnalyseNode, span: Span, inferred_type: InferredType) -> AnalyseTreeNode {
-        AnalyseTreeNode {
+impl TypedTreeNode {
+    pub fn new(node: TypeNode, span: Span, inferred_type: InferredType) -> TypedTreeNode {
+        TypedTreeNode {
             node,
             span,
             inferred_type,
@@ -111,152 +111,152 @@ impl AnalyseTreeNode {
     }
 }
 
-impl WithSpan for AnalyseTreeNode {
+impl WithSpan for TypedTreeNode {
     fn span(&self) -> Span {
         self.span.clone()
     }
 }
 
 #[derive(Debug, Clone, PartialEq)]
-pub struct AnalyseAccessVariableNode {}
+pub struct TypeAccessVariableNode {}
 
-impl AccessVariableNode<AnalyseVariant> for AnalyseAccessVariableNode {}
-
-#[derive(Debug, Clone, PartialEq)]
-pub struct AnalyseAccessVariableOfObjectNode {}
-
-impl AccessVariableOfObjectNode<AnalyseVariant> for AnalyseAccessVariableOfObjectNode {}
+impl AccessVariableNode<TypeVariant> for TypeAccessVariableNode {}
 
 #[derive(Debug, Clone, PartialEq)]
-pub struct AnalyseAccessVariableOfSelfNode {}
+pub struct TypeAccessVariableOfObjectNode {}
 
-impl AccessVariableOfSelfNode<AnalyseVariant> for AnalyseAccessVariableOfSelfNode {}
-
-#[derive(Debug, Clone, PartialEq)]
-pub struct AnalyseBlockNode {}
-
-impl BlockNode<AnalyseVariant> for AnalyseBlockNode {}
+impl AccessVariableOfObjectNode<TypeVariant> for TypeAccessVariableOfObjectNode {}
 
 #[derive(Debug, Clone, PartialEq)]
-pub struct AnalyseBreakLoopNode {}
+pub struct TypeAccessVariableOfSelfNode {}
 
-impl BreakLoopNode<AnalyseVariant> for AnalyseBreakLoopNode {}
-
-#[derive(Debug, Clone, PartialEq)]
-pub struct AnalyseCalculateNode {}
-
-impl CalculateNode<AnalyseVariant> for AnalyseCalculateNode {}
+impl AccessVariableOfSelfNode<TypeVariant> for TypeAccessVariableOfSelfNode {}
 
 #[derive(Debug, Clone, PartialEq)]
-pub struct AnalyseCallFunctionNode {}
+pub struct TypeBlockNode {}
 
-impl CallFunctionNode<AnalyseVariant> for AnalyseCallFunctionNode {}
-
-#[derive(Debug, Clone, PartialEq)]
-pub struct AnalyseCallFunctionWithLambdaNode {}
-
-impl CallFunctionWithLambdaNode<AnalyseVariant> for AnalyseCallFunctionWithLambdaNode {}
+impl BlockNode<TypeVariant> for TypeBlockNode {}
 
 #[derive(Debug, Clone, PartialEq)]
-pub struct AnalyseCallFunctionOfObjectNode {}
+pub struct TypeBreakLoopNode {}
 
-impl CallFunctionOfObjectNode<AnalyseVariant> for AnalyseCallFunctionOfObjectNode {}
-
-#[derive(Debug, Clone, PartialEq)]
-pub struct AnalyseCallFunctionOfPackageNode {}
-
-impl CallFunctionOfPackageNode<AnalyseVariant> for AnalyseCallFunctionOfPackageNode {}
+impl BreakLoopNode<TypeVariant> for TypeBreakLoopNode {}
 
 #[derive(Debug, Clone, PartialEq)]
-pub struct AnalyseCompareNode {}
+pub struct TypeCalculateNode {}
 
-impl CompareNode<AnalyseVariant> for AnalyseCompareNode {}
-
-#[derive(Debug, Clone, PartialEq)]
-pub struct AnalyseContinueLoopNode {}
-
-impl ContinueLoopNode<AnalyseVariant> for AnalyseContinueLoopNode {}
+impl CalculateNode<TypeVariant> for TypeCalculateNode {}
 
 #[derive(Debug, Clone, PartialEq)]
-pub struct AnalyseDeclareExternalFunctionNode {}
+pub struct TypeCallFunctionNode {}
 
-impl DeclareExternalFunctionNode<AnalyseVariant> for AnalyseDeclareExternalFunctionNode {}
-
-#[derive(Debug, Clone, PartialEq)]
-pub struct AnalyseDeclareFunctionNode {}
-
-impl DeclareFunctionNode<AnalyseVariant> for AnalyseDeclareFunctionNode {}
+impl CallFunctionNode<TypeVariant> for TypeCallFunctionNode {}
 
 #[derive(Debug, Clone, PartialEq)]
-pub struct AnalyseDeclarePackageNode {}
+pub struct TypeCallFunctionWithLambdaNode {}
 
-impl DeclarePackageNode<AnalyseVariant> for AnalyseDeclarePackageNode {}
-
-#[derive(Debug, Clone, PartialEq)]
-pub struct AnalyseDeclareTypeNode {}
-
-impl DeclareTypeNode<AnalyseVariant> for AnalyseDeclareTypeNode {}
+impl CallFunctionWithLambdaNode<TypeVariant> for TypeCallFunctionWithLambdaNode {}
 
 #[derive(Debug, Clone, PartialEq)]
-pub struct AnalyseDefineTypeNode {}
+pub struct TypeCallFunctionOfObjectNode {}
 
-impl DefineTypeNode<AnalyseVariant> for AnalyseDefineTypeNode {}
+impl CallFunctionOfObjectNode<TypeVariant> for TypeCallFunctionOfObjectNode {}
 
 #[derive(Debug, Clone, PartialEq)]
-pub struct AnalyseDeclareVariableNode {
+pub struct TypeCallFunctionOfPackageNode {}
+
+impl CallFunctionOfPackageNode<TypeVariant> for TypeCallFunctionOfPackageNode {}
+
+#[derive(Debug, Clone, PartialEq)]
+pub struct TypeCompareNode {}
+
+impl CompareNode<TypeVariant> for TypeCompareNode {}
+
+#[derive(Debug, Clone, PartialEq)]
+pub struct TypeContinueLoopNode {}
+
+impl ContinueLoopNode<TypeVariant> for TypeContinueLoopNode {}
+
+#[derive(Debug, Clone, PartialEq)]
+pub struct TypeDeclareExternalFunctionNode {}
+
+impl DeclareExternalFunctionNode<TypeVariant> for TypeDeclareExternalFunctionNode {}
+
+#[derive(Debug, Clone, PartialEq)]
+pub struct TypeDeclareFunctionNode {}
+
+impl DeclareFunctionNode<TypeVariant> for TypeDeclareFunctionNode {}
+
+#[derive(Debug, Clone, PartialEq)]
+pub struct TypeDeclarePackageNode {}
+
+impl DeclarePackageNode<TypeVariant> for TypeDeclarePackageNode {}
+
+#[derive(Debug, Clone, PartialEq)]
+pub struct TypeDeclareTypeNode {}
+
+impl DeclareTypeNode<TypeVariant> for TypeDeclareTypeNode {}
+
+#[derive(Debug, Clone, PartialEq)]
+pub struct TypeDefineTypeNode {}
+
+impl DefineTypeNode<TypeVariant> for TypeDefineTypeNode {}
+
+#[derive(Debug, Clone, PartialEq)]
+pub struct TypeDeclareVariableNode {
     pub symbol: SymbolId,
-    pub value: Rc<AnalyseTreeNode>,
+    pub value: Rc<TypedTreeNode>,
 }
 
-impl DeclareVariableNode<AnalyseVariant> for AnalyseDeclareVariableNode {}
+impl DeclareVariableNode<TypeVariant> for TypeDeclareVariableNode {}
 
 #[derive(Debug, Clone, PartialEq)]
-pub struct AnalyseExportPackageNode {}
+pub struct TypeExportPackageNode {}
 
-impl ExportPackageNode<AnalyseVariant> for AnalyseExportPackageNode {}
-
-#[derive(Debug, Clone, PartialEq)]
-pub struct AnalyseIfNode {}
-
-impl IfNode<AnalyseVariant> for AnalyseIfNode {}
+impl ExportPackageNode<TypeVariant> for TypeExportPackageNode {}
 
 #[derive(Debug, Clone, PartialEq)]
-pub struct AnalyseInterpolateStringNode {}
+pub struct TypeIfNode {}
 
-impl InterpolateStringNode<AnalyseVariant> for AnalyseInterpolateStringNode {}
-
-#[derive(Debug, Clone, PartialEq)]
-pub struct AnalyseInstantiateTypeNode {}
-
-impl InstantiateTypeNode<AnalyseVariant> for AnalyseInstantiateTypeNode {}
+impl IfNode<TypeVariant> for TypeIfNode {}
 
 #[derive(Debug, Clone, PartialEq)]
-pub struct AnalyseLiteralBooleanNode {
+pub struct TypeInterpolateStringNode {}
+
+impl InterpolateStringNode<TypeVariant> for TypeInterpolateStringNode {}
+
+#[derive(Debug, Clone, PartialEq)]
+pub struct TypeInstantiateTypeNode {}
+
+impl InstantiateTypeNode<TypeVariant> for TypeInstantiateTypeNode {}
+
+#[derive(Debug, Clone, PartialEq)]
+pub struct TypeLiteralBooleanNode {
     pub value: bool,
 }
 
-impl LiteralBooleanNode<AnalyseVariant> for AnalyseLiteralBooleanNode {}
+impl LiteralBooleanNode<TypeVariant> for TypeLiteralBooleanNode {}
 
 #[derive(Debug, Clone, PartialEq)]
-pub struct AnalyseLiteralNumberNode {
+pub struct TypeLiteralNumberNode {
     pub value: BigDecimal,
 }
 
-impl LiteralNumberNode<AnalyseVariant> for AnalyseLiteralNumberNode {}
+impl LiteralNumberNode<TypeVariant> for TypeLiteralNumberNode {}
 
 #[derive(Debug, Clone, PartialEq)]
-pub struct AnalyseLiteralStringNode {
+pub struct TypeLiteralStringNode {
     pub value: StringTableId,
 }
 
-impl LiteralStringNode<AnalyseVariant> for AnalyseLiteralStringNode {}
+impl LiteralStringNode<TypeVariant> for TypeLiteralStringNode {}
 
 #[derive(Debug, Clone, PartialEq)]
-pub struct AnalyseLoopNode {}
+pub struct TypeLoopNode {}
 
-impl LoopNode<AnalyseVariant> for AnalyseLoopNode {}
+impl LoopNode<TypeVariant> for TypeLoopNode {}
 
 #[derive(Debug, Clone, PartialEq)]
-pub struct AnalyseReturnFromFunctionNode {}
+pub struct TypeReturnFromFunctionNode {}
 
-impl ReturnFromFunctionNode<AnalyseVariant> for AnalyseReturnFromFunctionNode {}
+impl ReturnFromFunctionNode<TypeVariant> for TypeReturnFromFunctionNode {}

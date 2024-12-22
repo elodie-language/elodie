@@ -1,10 +1,10 @@
 use std::ops::Deref;
 
-use crate::common::node::Node::{DeclareVariable, LiteralBoolean, LiteralNumber, LiteralString};
 use crate::common::{StringTable, WithSpan};
+use crate::common::node::Node::{DeclareVariable, LiteralBoolean, LiteralNumber, LiteralString};
 use crate::frontend;
 use crate::frontend::ast::AstTreeNode;
-use crate::ir::analyse::AnalyseTreeNode;
+use crate::ir::analyse::TypedTreeNode;
 use crate::ir::context::Context;
 use crate::ir::symbol::{SymbolId, SymbolName, SymbolTable};
 
@@ -28,7 +28,7 @@ impl<'a> Inference<'a> {
     pub(crate) fn infer(
         &mut self,
         ast: frontend::Ast,
-    ) -> crate::ir::analyse::Result<Vec<AnalyseTreeNode>> {
+    ) -> crate::ir::analyse::Result<Vec<TypedTreeNode>> {
         let mut nodes = vec![];
         for node in &ast.nodes {
             nodes.push(self.infer_node(node)?);
@@ -36,7 +36,7 @@ impl<'a> Inference<'a> {
         Ok(nodes)
     }
 
-    fn infer_node(&mut self, ast: &AstTreeNode) -> crate::ir::analyse::Result<AnalyseTreeNode> {
+    fn infer_node(&mut self, ast: &AstTreeNode) -> crate::ir::analyse::Result<TypedTreeNode> {
         match ast.node() {
             DeclareVariable(node) => self.infer_declare_variable(ast.span(), node),
             LiteralBoolean(node) => self.infer_literal_boolean(ast.span(), node),

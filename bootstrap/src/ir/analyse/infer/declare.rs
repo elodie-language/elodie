@@ -4,7 +4,7 @@ use std::rc::Rc;
 use crate::common::Span;
 use crate::frontend::ast::{AstDeclareVariableNode, AstVariant};
 use crate::ir::analyse::infer::Inference;
-use crate::ir::analyse::{AnalyseDeclareVariableNode, AnalyseNode, AnalyseTreeNode};
+use crate::ir::analyse::{TypeDeclareVariableNode, TypedTreeNode};
 use crate::ir::symbol::SymbolName;
 
 impl<'a> Inference<'a> {
@@ -12,7 +12,7 @@ impl<'a> Inference<'a> {
         &mut self,
         span: Span,
         node: &AstDeclareVariableNode,
-    ) -> crate::ir::analyse::Result<AnalyseTreeNode> {
+    ) -> crate::ir::analyse::Result<TypedTreeNode> {
         let symbol = self.register_variable(SymbolName::from(&node.variable));
 
         let mut value = Rc::new(self.infer_node(&node.value)?);
@@ -23,8 +23,8 @@ impl<'a> Inference<'a> {
             value.inferred_type.clone()
         };
 
-        Ok(AnalyseTreeNode::new(
-            DeclareVariable(AnalyseDeclareVariableNode { symbol, value }),
+        Ok(TypedTreeNode::new(
+            DeclareVariable(TypeDeclareVariableNode { symbol, value }),
             span,
             inferred_type,
         ))
@@ -47,10 +47,10 @@ mod tests {
         let ast = ast_from_str(&mut ctx, "let value = 23").unwrap();
 
         let mut ctx = Context::new(ctx);
-        let analysed = analyse(&mut ctx, ast).unwrap();
-        assert_eq!(analysed.nodes.len(), 1);
+        let typed = analyse(&mut ctx, ast).unwrap();
+        assert_eq!(typed.nodes.len(), 1);
 
-        let result = &analysed[0];
+        let result = &typed[0];
         let inner = result.as_declared_variable();
         assert_eq!(result.inferred_type, InferredType::Number);
         assert_eq!(inner.symbol, SymbolId(1));
@@ -63,10 +63,10 @@ mod tests {
         let ast = ast_from_str(&mut ctx, "let value: Number = 23").unwrap();
 
         let mut ctx = Context::new(ctx);
-        let analysed = analyse(&mut ctx, ast).unwrap();
-        assert_eq!(analysed.nodes.len(), 1);
+        let typed = analyse(&mut ctx, ast).unwrap();
+        assert_eq!(typed.nodes.len(), 1);
 
-        let result = &analysed[0];
+        let result = &typed[0];
         let inner = result.as_declared_variable();
         assert_eq!(result.inferred_type, InferredType::Number);
         assert_eq!(inner.symbol, SymbolId(1));
@@ -79,10 +79,10 @@ mod tests {
         let ast = ast_from_str(&mut ctx, "let value: String = 'Elo'").unwrap();
 
         let mut ctx = Context::new(ctx);
-        let analysed = analyse(&mut ctx, ast).unwrap();
-        assert_eq!(analysed.nodes.len(), 1);
+        let typed = analyse(&mut ctx, ast).unwrap();
+        assert_eq!(typed.nodes.len(), 1);
 
-        let result = &analysed[0];
+        let result = &typed[0];
         let inner = result.as_declared_variable();
         assert_eq!(result.inferred_type, InferredType::String);
         assert_eq!(inner.symbol, SymbolId(1));
@@ -95,10 +95,10 @@ mod tests {
         let ast = ast_from_str(&mut ctx, "let value = true").unwrap();
 
         let mut ctx = Context::new(ctx);
-        let analysed = analyse(&mut ctx, ast).unwrap();
-        assert_eq!(analysed.nodes.len(), 1);
+        let typed = analyse(&mut ctx, ast).unwrap();
+        assert_eq!(typed.nodes.len(), 1);
 
-        let result = &analysed[0];
+        let result = &typed[0];
         let inner = result.as_declared_variable();
         assert_eq!(result.inferred_type, InferredType::Boolean);
         assert_eq!(inner.symbol, SymbolId(1));

@@ -58,7 +58,7 @@ pub fn ir_from_str(str: &str) -> Result<ir::Ir> {
     let ast = ast_from_str(&mut ctx, str)?;
 
     let mut ctx = ir::Context::new(ctx);
-    let analysed = analyse(&mut ctx, ast)?;
+    let typed = analyse(&mut ctx, ast)?;
 
-    generate(&mut ctx, analysed)
+    generate(&mut ctx, typed)
 }
