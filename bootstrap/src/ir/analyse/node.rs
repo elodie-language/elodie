@@ -1,7 +1,6 @@
-use std::rc::Rc;
-
 use bigdecimal::BigDecimal;
 
+use crate::common::{Span, StringTableId, WithSpan};
 use crate::common::node::{
     AccessVariableNode, AccessVariableOfObjectNode, AccessVariableOfSelfNode, BlockNode,
     BreakLoopNode, CalculateNode, CallFunctionNode, CallFunctionOfObjectNode,
@@ -11,7 +10,7 @@ use crate::common::node::{
     InterpolateStringNode, LiteralBooleanNode, LiteralNumberNode, LiteralStringNode, LoopNode,
     Node, ReturnFromFunctionNode, Variant,
 };
-use crate::common::{Span, StringTableId, WithSpan};
+use crate::frontend::ast::AstType;
 use crate::ir::analyse::InferredType;
 use crate::ir::symbol::SymbolId;
 
@@ -51,11 +50,16 @@ pub type TypeNode = crate::common::node::Node<
     TypeReturnFromFunctionNode,
 >;
 
+pub(crate) enum Direction {
+    Forward,
+    Backward,
+}
+
 #[derive(Clone, Debug, PartialEq)]
 pub struct TypedTreeNode {
     pub node: TypeNode,
     pub span: Span,
-    pub inferred_type: InferredType,
+    pub inferred: InferredType,
 }
 
 impl TypedTreeNode {
@@ -96,17 +100,20 @@ impl TypedTreeNode {
     pub fn node(&self) -> &TypeNode {
         &self.node
     }
+    pub fn node_mut(&mut self) -> &mut TypeNode {
+        &mut self.node
+    }
     pub fn node_to_owned(self) -> TypeNode {
         self.node
     }
 }
 
 impl TypedTreeNode {
-    pub fn new(node: TypeNode, span: Span, inferred_type: InferredType) -> TypedTreeNode {
+    pub fn new(node: TypeNode, span: Span, inferred: InferredType) -> TypedTreeNode {
         TypedTreeNode {
             node,
             span,
-            inferred_type,
+            inferred,
         }
     }
 }
@@ -205,7 +212,7 @@ impl DefineTypeNode<TypeVariant> for TypeDefineTypeNode {}
 #[derive(Debug, Clone, PartialEq)]
 pub struct TypeDeclareVariableNode {
     pub symbol: SymbolId,
-    pub value: Rc<TypedTreeNode>,
+    pub value: Box<TypedTreeNode>,
 }
 
 impl DeclareVariableNode<TypeVariant> for TypeDeclareVariableNode {}
@@ -233,6 +240,7 @@ impl InstantiateTypeNode<TypeVariant> for TypeInstantiateTypeNode {}
 #[derive(Debug, Clone, PartialEq)]
 pub struct TypeLiteralBooleanNode {
     pub value: bool,
+    pub value_ast_type: AstType,
 }
 
 impl LiteralBooleanNode<TypeVariant> for TypeLiteralBooleanNode {}
@@ -240,6 +248,7 @@ impl LiteralBooleanNode<TypeVariant> for TypeLiteralBooleanNode {}
 #[derive(Debug, Clone, PartialEq)]
 pub struct TypeLiteralNumberNode {
     pub value: BigDecimal,
+    pub value_ast_type: AstType,
 }
 
 impl LiteralNumberNode<TypeVariant> for TypeLiteralNumberNode {}
@@ -247,6 +256,7 @@ impl LiteralNumberNode<TypeVariant> for TypeLiteralNumberNode {}
 #[derive(Debug, Clone, PartialEq)]
 pub struct TypeLiteralStringNode {
     pub value: StringTableId,
+    pub value_ast_type: AstType,
 }
 
 impl LiteralStringNode<TypeVariant> for TypeLiteralStringNode {}

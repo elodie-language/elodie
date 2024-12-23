@@ -273,7 +273,7 @@ impl<'a> Generator<'a> {
             token,
         } = node;
 
-        let Type(TypeNode::Object(type_node)) = left.deref() else {
+        let Type(TypeNode::Type(type_node)) = left.deref() else {
             panic!()
         };
         let Node::Tuple(arguments_node) = right.deref() else {
@@ -284,7 +284,7 @@ impl<'a> Generator<'a> {
 
         return Ok(AstTreeNode::new(
             InstantiateType(AstInstantiateTypeNode {
-                r#type: AstIdentifier(type_node.token.value),
+                r#type: AstIdentifier(type_node.value),
                 arguments,
             }),
             SPAN_NOT_IMPLEMENTED.clone(),
@@ -321,7 +321,7 @@ impl<'a> Generator<'a> {
             };
             let right = self.generate_node(right)?;
             result.push(AstNamedArgument {
-                identifier: AstIdentifier(identifier.0.value),
+                argument: AstIdentifier(identifier.0.value),
                 value: right,
             })
         }

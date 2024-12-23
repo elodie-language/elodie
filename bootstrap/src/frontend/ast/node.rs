@@ -4,6 +4,7 @@ use std::rc::Rc;
 
 use node::CalculateNode;
 
+use crate::common::{Column, Index, node, PackagePath, Position, Row, Span, StringTable, StringTableId, WithSpan};
 use crate::common::node::{
     AccessVariableNode, AccessVariableOfObjectNode, AccessVariableOfSelfNode, BlockNode,
     BreakLoopNode, CallFunctionNode, CallFunctionOfObjectNode, CallFunctionOfPackageNode,
@@ -12,9 +13,6 @@ use crate::common::node::{
     DeclareVariableNode, DefineTypeNode, ExportPackageNode, IfNode, InstantiateTypeNode,
     InterpolateStringNode, LiteralBooleanNode, LiteralNumberNode, LiteralStringNode, LoopNode,
     Node, ReturnFromFunctionNode, Source, Variant,
-};
-use crate::common::{
-    node, Column, Index, PackagePath, Position, Row, Span, StringTableId, WithSpan,
 };
 use crate::frontend::lex::token::Token;
 use crate::frontend::modifier::Modifiers;
@@ -319,20 +317,35 @@ pub struct AstIdentifier(pub StringTableId);
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct AstNamedArgument {
-    pub identifier: AstIdentifier,
+    pub argument: AstIdentifier,
     pub value: AstTreeNode,
 }
 
 #[derive(Debug, Clone, PartialEq)]
 pub enum AstType {
     Boolean,
-    Object,
-    Number,
-    String,
     Function {
-        arguments: Vec<Box<AstType>>,
+        function: AstIdentifier,
+        arguments: Vec<AstType>,
         return_type: Option<Box<AstType>>,
     },
+    Number,
+    String,
+    Tuple(Vec<AstType>),
+    Type {
+        r#type: AstIdentifier
+    },
+}
+
+impl AstType {
+    pub fn to_string(&self, string_table: &StringTable) -> String {
+        match self {
+            AstType::Boolean => "Boolean".to_string(),
+            AstType::Number => "Number".to_string(),
+            AstType::String => "String".to_string(),
+            _ => unimplemented!("{self:#?}")
+        }
+    }
 }
 
 #[derive(Debug, Clone, PartialEq)]

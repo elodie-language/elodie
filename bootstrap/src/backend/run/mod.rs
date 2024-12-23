@@ -538,7 +538,7 @@ impl<'a> Runner<'a> {
                 let mut properties = HashMap::with_capacity(node.arguments.len());
 
                 for arg in &node.arguments {
-                    properties.insert(arg.identifier.0, self.run_node(&arg.value)?);
+                    properties.insert(arg.argument.0, self.run_node(&arg.value)?);
                 }
 
                 let type_name = self.ctx.str_get(node.r#type.0);

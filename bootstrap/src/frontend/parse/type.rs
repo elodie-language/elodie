@@ -2,9 +2,9 @@ use crate::common::is_pascal_snake_case;
 use crate::frontend::lex::token::OperatorToken::{Arrow, CloseParen, Colon, OpenParen};
 use crate::frontend::lex::token::SeparatorToken::Comma;
 use crate::frontend::lex::token::TokenKind::{Operator, Separator};
-use crate::frontend::parse::node::{TypeFunctionArgumentNode, TypeFunctionNode, TypeNode};
 use crate::frontend::parse::Error::InvalidType;
-use crate::frontend::parse::{ObjectTypeNode, Parser};
+use crate::frontend::parse::node::{TypeFunctionArgumentNode, TypeFunctionNode, TypeNode};
+use crate::frontend::parse::Parser;
 
 impl<'a> Parser<'a> {
     pub(crate) fn parse_type(&mut self) -> crate::frontend::parse::Result<TypeNode> {
@@ -18,7 +18,7 @@ impl<'a> Parser<'a> {
             "Number" => Ok(TypeNode::Number(token)),
             "String" => Ok(TypeNode::String(token)),
             "function" => Ok(TypeNode::Function(self.parse_function_type()?)),
-            _ => Ok(TypeNode::Object(ObjectTypeNode { token })),
+            _ => Ok(TypeNode::Type( token )),
         }
     }
 
@@ -71,9 +71,9 @@ impl<'a> Parser<'a> {
 mod tests {
     use crate::common::context::Context;
     use crate::frontend::lex::lex;
-    use crate::frontend::parse::node::{TypeFunctionArgumentNode, TypeNode};
+    use crate::frontend::parse::{Parser, TypeNode};
     use crate::frontend::parse::Error::InvalidType;
-    use crate::frontend::parse::{ObjectTypeNode, Parser};
+    use crate::frontend::parse::node::{TypeFunctionArgumentNode};
 
     #[test]
     fn not_a_type() {
@@ -92,7 +92,7 @@ mod tests {
         let tokens = lex(&mut ctx, "Point").unwrap();
         let mut parser = Parser::new(&mut ctx, tokens);
         let result = parser.parse_type().unwrap();
-        let TypeNode::Object(ObjectTypeNode { token }) = result else {
+        let TypeNode::Type(token) = result else {
             panic!()
         };
         assert_eq!(ctx.str_get(token.value()), "Point");

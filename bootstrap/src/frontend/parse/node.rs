@@ -66,7 +66,7 @@ impl Node {
             Node::Tuple(n) => n.token.clone(),
             Node::Type(n) => match n {
                 TypeNode::Boolean(t) => t.clone(),
-                TypeNode::Object(n) => n.token.clone(),
+                TypeNode::Type(n) => n.clone(),
                 TypeNode::Number(t) => t.clone(),
                 TypeNode::String(t) => t.clone(),
                 TypeNode::Function(n) => n.token.clone(),
@@ -602,15 +602,10 @@ pub(crate) struct TupleNode {
 #[derive(Debug, PartialEq)]
 pub(crate) enum TypeNode {
     Boolean(Token),
-    Object(ObjectTypeNode),
+    Function(TypeFunctionNode),
     Number(Token),
     String(Token),
-    Function(TypeFunctionNode),
-}
-
-#[derive(Debug, PartialEq)]
-pub(crate) struct ObjectTypeNode {
-    pub(crate) token: Token,
+    Type(Token),
 }
 
 #[derive(Debug, PartialEq)]

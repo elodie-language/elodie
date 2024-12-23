@@ -1,11 +1,12 @@
 use std::collections::HashMap;
+use std::ops::Index;
 
 use crate::common::{StringTable, StringTableId};
+use crate::frontend::ast::AstType;
+use crate::ir::analyse::InferredType;
 
 #[derive(Debug, Eq, Hash, PartialEq, Clone, Copy)]
 pub struct TypeId(pub usize);
-
-static UNKNOWN: TypeId = TypeId(0);
 
 #[derive(Debug, Clone)]
 pub struct TypeName(pub StringTableId);
@@ -100,7 +101,6 @@ impl TypeTable {
     pub fn type_id_number(&self) -> TypeId { self.builtin(BuiltinType::Number) }
     pub fn type_id_string(&self) -> TypeId { self.builtin(BuiltinType::String) }
 
-
     pub fn register(&mut self, parent_id: TypeId, name: TypeName) -> TypeId {
         let id = TypeId(self.types.len() + self.offset);
         self.types.push(Type {
@@ -132,5 +132,48 @@ impl TypeTable {
 
     // append_trait
     // ...
+}
+
+impl Index<TypeId> for TypeTable {
+    type Output = Type;
+    fn index(&self, index: TypeId) -> &Self::Output {
+        &self.index(index.0)
+    }
+}
+
+impl Index<usize> for TypeTable {
+    type Output = Type;
+
+    fn index(&self, index: usize) -> &Self::Output {
+        &self.types.index(index - 1)
+    }
+}
+
+impl Index<AstType> for TypeTable {
+    type Output = Type;
+    fn index(&self, index: AstType) -> &Self::Output {
+        let type_id = match index {
+            AstType::Boolean => self.type_id_boolean(),
+            AstType::Number => self.type_id_number(),
+            AstType::String => self.type_id_string(),
+            _ => unimplemented!()
+        };
+
+        &self.index(type_id)
+    }
+}
+
+impl Index<InferredType> for TypeTable {
+    type Output = Type;
+    fn index(&self, index: InferredType) -> &Self::Output {
+        let type_id = match index {
+            InferredType::Boolean => self.type_id_boolean(),
+            InferredType::Number => self.type_id_number(),
+            InferredType::String => self.type_id_string(),
+            _ => unimplemented!()
+        };
+
+        &self.index(type_id)
+    }
 }
 

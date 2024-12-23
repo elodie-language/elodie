@@ -1,35 +1,32 @@
-use std::rc::Rc;
+use std::ops::Deref;
 
-use crate::common::node::Node::DeclareVariable;
-use crate::common::Span;
-use crate::frontend::ast::AstDeclareVariableNode;
-use crate::ir::analyse::{TypeDeclareVariableNode, TypedTreeNode};
+use crate::ir::analyse::{InferredType, TypedTreeNode};
 use crate::ir::analyse::infer::Inference;
-use crate::ir::symbol::SymbolName;
 
 impl<'a> Inference<'a> {
-    pub(crate) fn declare_variable(
-        &mut self,
-        span: Span,
-        node: &AstDeclareVariableNode,
-    ) -> crate::ir::analyse::Result<TypedTreeNode> {
-        let symbol = self.register_variable(SymbolName::from(&node.variable));
+    pub(crate) fn declare_variable(&mut self, node: &TypedTreeNode) -> crate::ir::analyse::Result<()> {
+        let inner = node.as_declared_variable();
 
-        let mut value = Rc::new(self.node(&node.value)?);
+        let symbol = &mut self.symbol_table[inner.symbol];
+        assert_eq!(symbol.type_id(), None);
 
-        let inferred_type = if let Some(type_node) = &node.value_type {
-            self.type_from_type_node(type_node)?
-        } else {
-            value.inferred_type.clone()
-        };
+        match node.inferred {
+            InferredType::Boolean => {
+                symbol.set_type_id(self.type_table.type_id_boolean())
+            }
+            InferredType::Number => {
+                symbol.set_type_id(self.type_table.type_id_number())
+            }
+            InferredType::String => {
+                symbol.set_type_id(self.type_table.type_id_string())
+            }
+            _ => unimplemented!()
+        }
 
-        Ok(TypedTreeNode::new(
-            DeclareVariable(TypeDeclareVariableNode { symbol, value }),
-            span,
-            inferred_type,
-        ))
+        Ok(())
     }
 }
+
 
 #[cfg(test)]
 mod tests {
@@ -38,7 +35,7 @@ mod tests {
     use crate::common::context::Context;
     use crate::frontend::ast_from_str;
     use crate::ir::analyse::{analyse, InferredType};
-    use crate::ir::symbol::SymbolId;
+    use crate::ir::SymbolId;
 
     #[test]
     fn declare_number_variable() {
@@ -46,12 +43,7 @@ mod tests {
         let ast = ast_from_str(&mut ctx, "let value = 23").unwrap();
         let typed = analyse(&mut ctx, ast).unwrap();
         assert_eq!(typed.nodes.len(), 1);
-
-        let result = &typed[0];
-        let inner = result.as_declared_variable();
-        assert_eq!(result.inferred_type, InferredType::Number);
-        assert_eq!(inner.symbol, SymbolId(1));
-        assert_eq!(inner.value.as_literal_number().value, BigDecimal::from(23))
+        assert!(ctx.symbol_is_number(SymbolId(1)));
     }
 
     #[test]
@@ -63,9 +55,11 @@ mod tests {
 
         let result = &typed[0];
         let inner = result.as_declared_variable();
-        assert_eq!(result.inferred_type, InferredType::Number);
+        assert_eq!(result.inferred, InferredType::Number);
         assert_eq!(inner.symbol, SymbolId(1));
-        assert_eq!(inner.value.as_literal_number().value, BigDecimal::from(23))
+        assert_eq!(inner.value.as_literal_number().value, BigDecimal::from(23));
+
+        assert!(ctx.symbol_is_number(SymbolId(1)));
     }
 
     #[test]
@@ -77,9 +71,11 @@ mod tests {
 
         let result = &typed[0];
         let inner = result.as_declared_variable();
-        assert_eq!(result.inferred_type, InferredType::String);
+        assert_eq!(result.inferred, InferredType::String);
         assert_eq!(inner.symbol, SymbolId(1));
-        assert_eq!(ctx.str_get(inner.value.as_literal_string().value), "Elo")
+        assert_eq!(ctx.str_get(inner.value.as_literal_string().value), "Elo");
+
+        assert!(ctx.symbol_is_string(SymbolId(1)));
     }
 
     #[test]
@@ -91,8 +87,10 @@ mod tests {
 
         let result = &typed[0];
         let inner = result.as_declared_variable();
-        assert_eq!(result.inferred_type, InferredType::Boolean);
+        assert_eq!(result.inferred, InferredType::Boolean);
         assert_eq!(inner.symbol, SymbolId(1));
-        assert_eq!(inner.value.as_literal_boolean().value, true)
+        assert_eq!(inner.value.as_literal_boolean().value, true);
+
+        assert!(ctx.symbol_is_boolean(SymbolId(1)));
     }
 }

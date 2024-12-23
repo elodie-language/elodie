@@ -75,7 +75,7 @@ impl Generator {
                 statements.extend(s);
                 fields.push(InitialiseStructField {
                     indent: Indent::none(),
-                    identifier: self.string_table.get(arg.identifier.0).to_string(),
+                    identifier: self.string_table.get(arg.argument.0).to_string(),
                     expression,
                 })
             }

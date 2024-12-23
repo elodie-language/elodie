@@ -1,8 +1,9 @@
-use std::ops::Index;
+use std::ops::{Index, IndexMut};
 
 use crate::common::context::Context;
 use crate::common::StringTableId;
 use crate::frontend::ast;
+use crate::ir::TypeId;
 
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
 pub struct SymbolId(pub usize);
@@ -22,43 +23,105 @@ impl From<&ast::AstIdentifier> for SymbolName {
     }
 }
 
+pub trait SymbolInner {
+    fn id(&self) -> SymbolId;
+    fn name(&self) -> SymbolName;
+    fn name_str<'a>(&self, ctx: &'a Context) -> &'a str;
+    fn type_id(&self) -> Option<TypeId>;
+}
+
 #[derive(Debug, Clone, PartialEq)]
 pub enum Symbol {
-    Argument { id: SymbolId, name: SymbolName },
-    Function { id: SymbolId, name: SymbolName },
-    Package { id: SymbolId, name: SymbolName },
-    Type { id: SymbolId, name: SymbolName },
-    Variable { id: SymbolId, name: SymbolName },
+    Argument(ArgumentSymbol),
+    Function(FunctionSymbol),
+    Package(PackageSymbol),
+    Type(TypeSymbol),
+    Variable(VariableSymbol),
+}
+
+#[derive(Debug, Clone, PartialEq)]
+pub struct ArgumentSymbol {
+    pub id: SymbolId,
+    pub name: SymbolName,
+    pub type_id: Option<TypeId>,
+}
+
+#[derive(Debug, Clone, PartialEq)]
+pub struct FunctionSymbol {
+    pub id: SymbolId,
+    pub name: SymbolName,
+    pub type_id: Option<TypeId>,
+}
+
+
+#[derive(Debug, Clone, PartialEq)]
+pub struct PackageSymbol {
+    pub id: SymbolId,
+    pub name: SymbolName,
+    pub type_id: Option<TypeId>,
+}
+
+
+#[derive(Debug, Clone, PartialEq)]
+pub struct TypeSymbol {
+    pub id: SymbolId,
+    pub name: SymbolName,
+    pub type_id: Option<TypeId>,
+}
+
+
+#[derive(Debug, Clone, PartialEq)]
+pub struct VariableSymbol {
+    pub id: SymbolId,
+    pub name: SymbolName,
+    pub type_id: Option<TypeId>,
 }
 
 impl Symbol {
     pub fn id(&self) -> SymbolId {
         match self {
-            Symbol::Argument { id, .. } => id.clone(),
-            Symbol::Function { id, .. } => id.clone(),
-            Symbol::Package { id, .. } => id.clone(),
-            Symbol::Type { id, .. } => id.clone(),
-            Symbol::Variable { id, .. } => id.clone(),
+            Symbol::Argument(inner) => inner.id,
+            Symbol::Function(inner) => inner.id,
+            Symbol::Package(inner) => inner.id,
+            Symbol::Type(inner) => inner.id,
+            Symbol::Variable(inner) => inner.id
         }
     }
-
-    pub fn name(&self, ctx: &Context) -> SymbolName {
+    pub fn name(&self) -> SymbolName {
         match self {
-            Symbol::Argument { name, .. } => name.clone(),
-            Symbol::Function { name, .. } => name.clone(),
-            Symbol::Package { name, .. } => name.clone(),
-            Symbol::Type { name, .. } => name.clone(),
-            Symbol::Variable { name, .. } => name.clone(),
+            Symbol::Argument(inner) => inner.name,
+            Symbol::Function(inner) => inner.name,
+            Symbol::Package(inner) => inner.name,
+            Symbol::Type(inner) => inner.name,
+            Symbol::Variable(inner) => inner.name
         }
     }
-
     pub fn name_str<'a>(&self, ctx: &'a Context) -> &'a str {
         match self {
-            Symbol::Argument { name, .. } => ctx.str_get(name.0),
-            Symbol::Function { name, .. } => ctx.str_get(name.0),
-            Symbol::Package { name, .. } => ctx.str_get(name.0),
-            Symbol::Type { name, .. } => ctx.str_get(name.0),
-            Symbol::Variable { name, .. } => ctx.str_get(name.0),
+            Symbol::Argument(inner) => ctx.str_get(inner.name.0),
+            Symbol::Function(inner) => ctx.str_get(inner.name.0),
+            Symbol::Package(inner) => ctx.str_get(inner.name.0),
+            Symbol::Type(inner) => ctx.str_get(inner.name.0),
+            Symbol::Variable(inner) => ctx.str_get(inner.name.0)
+        }
+    }
+    pub fn type_id(&self) -> Option<TypeId> {
+        match self {
+            Symbol::Argument(inner) => inner.type_id,
+            Symbol::Function(inner) => inner.type_id,
+            Symbol::Package(inner) => inner.type_id,
+            Symbol::Type(inner) => inner.type_id,
+            Symbol::Variable(inner) => inner.type_id
+        }
+    }
+
+    pub fn set_type_id(&mut self, type_id: TypeId) {
+        match self {
+            Symbol::Argument(inner) => inner.type_id = Some(type_id),
+            Symbol::Function(inner) => inner.type_id = Some(type_id),
+            Symbol::Package(inner) => inner.type_id = Some(type_id),
+            Symbol::Type(inner) => inner.type_id = Some(type_id),
+            Symbol::Variable(inner) => inner.type_id = Some(type_id)
         }
     }
 }
@@ -81,46 +144,51 @@ impl SymbolTable {
 
     pub(crate) fn register_argument(&mut self, name: SymbolName) -> SymbolId {
         let new_id = SymbolId(self.len() + 1);
-        self.symbols.push(Symbol::Argument {
+        self.symbols.push(Symbol::Argument(ArgumentSymbol {
             id: new_id.clone(),
             name,
-        });
+            type_id: None,
+        }));
         new_id
     }
 
     pub(crate) fn register_function(&mut self, name: SymbolName) -> SymbolId {
         let new_id = SymbolId(self.len() + 1);
-        self.symbols.push(Symbol::Function {
+        self.symbols.push(Symbol::Function(FunctionSymbol {
             id: new_id.clone(),
             name,
-        });
+            type_id: None,
+        }));
         new_id
     }
 
     pub(crate) fn register_package(&mut self, name: SymbolName) -> SymbolId {
         let new_id = SymbolId(self.len() + 1);
-        self.symbols.push(Symbol::Package {
+        self.symbols.push(Symbol::Package(PackageSymbol {
             id: new_id.clone(),
             name,
-        });
+            type_id: None,
+        }));
         new_id
     }
 
     pub(crate) fn register_type(&mut self, name: SymbolName) -> SymbolId {
         let new_id = SymbolId(self.len() + 1);
-        self.symbols.push(Symbol::Type {
+        self.symbols.push(Symbol::Type(TypeSymbol {
             id: new_id.clone(),
             name,
-        });
+            type_id: None,
+        }));
         new_id
     }
 
     pub(crate) fn register_variable(&mut self, name: SymbolName) -> SymbolId {
         let new_id = SymbolId(self.len() + 1);
-        self.symbols.push(Symbol::Variable {
+        self.symbols.push(Symbol::Variable(VariableSymbol {
             id: new_id.clone(),
             name,
-        });
+            type_id: None,
+        }));
         new_id
     }
 }
@@ -133,17 +201,29 @@ impl Index<SymbolId> for SymbolTable {
     }
 }
 
+impl IndexMut<SymbolId> for SymbolTable {
+    fn index_mut(&mut self, index: SymbolId) -> &mut Self::Output {
+        self.index_mut(index.0)
+    }
+}
+
 impl Index<usize> for SymbolTable {
     type Output = Symbol;
 
     fn index(&self, index: usize) -> &Self::Output {
-        &self.symbols[index -1]
+        &self.symbols[index - 1]
     }
 }
 
+impl IndexMut<usize> for SymbolTable {
+    fn index_mut(&mut self, index: usize) -> &mut Self::Output {
+        &mut self.symbols[index - 1]
+    }
+}
+
+
 #[cfg(test)]
 mod tests {
-
     use super::*;
 
     #[test]

@@ -18,9 +18,12 @@ impl Context {
         self.string_table.get(idx)
     }
 
-    pub fn symbol_name(&self, id: SymbolId) -> &str {
-        self.symbol_table[id].name_str(self)
-    }
+    pub fn symbol_name(&self, id: SymbolId) -> &str { self.symbol_table[id].name_str(self) }
+    pub fn symbol_type_id(&self, id: SymbolId) -> Option<TypeId> { self.symbol_table[id].type_id().clone() }
+
+    pub fn symbol_is_boolean(&self, id: SymbolId) -> bool { self.symbol_type_id(id) == Some(self.type_id_boolean()) }
+    pub fn symbol_is_number(&self, id: SymbolId) -> bool { self.symbol_type_id(id) == Some(self.type_id_number()) }
+    pub fn symbol_is_string(&self, id: SymbolId) -> bool { self.symbol_type_id(id) == Some(self.type_id_string()) }
 
     pub fn type_id_boolean(&self) -> TypeId { self.type_table.type_id_boolean() }
     pub fn type_id_number(&self) -> TypeId { self.type_table.type_id_number() }
