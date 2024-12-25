@@ -187,12 +187,16 @@ impl ContinueLoopNode<TypeVariant> for TypeContinueLoopNode {}
 #[derive(Debug, Clone, PartialEq)]
 pub struct TypeDeclareExternalFunctionNode {}
 
-impl DeclareExternalFunctionNode<TypeVariant> for TypeDeclareExternalFunctionNode {}
+impl DeclareExternalFunctionNode<TypeVariant> for TypeDeclareExternalFunctionNode {
+
+}
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct TypeDeclareFunctionNode {}
 
-impl DeclareFunctionNode<TypeVariant> for TypeDeclareFunctionNode {}
+impl DeclareFunctionNode<TypeVariant> for TypeDeclareFunctionNode {
+
+}
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct TypeDeclarePackageNode {}

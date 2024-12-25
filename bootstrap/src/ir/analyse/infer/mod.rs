@@ -3,24 +3,27 @@ use std::ops::Deref;
 use crate::common::{StringTable, WithSpan};
 use crate::common::context::Context;
 use crate::ir::analyse::{TypedTreeNode, TypeNode};
+use crate::ir::analyse::scope::Scope;
 use crate::ir::symbol::SymbolTable;
 use crate::ir::TypeTable;
 
-mod declare;
+mod variable;
 
-pub(crate) struct Inference<'a> {
+pub(crate) struct Inferrer<'a> {
     string_table: &'a mut StringTable,
     symbol_table: &'a mut SymbolTable,
     type_table: &'a mut TypeTable,
+    scope: Scope,
 }
 
 
-impl<'a> Inference<'a> {
+impl<'a> Inferrer<'a> {
     pub(crate) fn new(ctx: &'a mut Context) -> Self {
         Self {
             string_table: &mut ctx.string_table,
             symbol_table: &mut ctx.symbol_table,
             type_table: &mut ctx.type_table,
+            scope: Scope::new(),
         }
     }
 

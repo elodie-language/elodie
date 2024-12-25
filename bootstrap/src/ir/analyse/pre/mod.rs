@@ -9,7 +9,7 @@ use crate::ir::analyse::TypedTreeNode;
 use crate::ir::symbol::{SymbolId, SymbolName, SymbolTable};
 use crate::ir::TypeTable;
 
-mod declare;
+mod variable;
 mod literal;
 
 pub(crate) struct Pre<'a> {

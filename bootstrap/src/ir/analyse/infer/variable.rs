@@ -1,14 +1,15 @@
 use std::ops::Deref;
 
 use crate::ir::analyse::{InferredType, TypedTreeNode};
-use crate::ir::analyse::infer::Inference;
+use crate::ir::analyse::infer::Inferrer;
 
-impl<'a> Inference<'a> {
+impl<'a> Inferrer<'a> {
     pub(crate) fn declare_variable(&mut self, node: &TypedTreeNode) -> crate::ir::analyse::Result<()> {
         let inner = node.as_declared_variable();
 
         let symbol = &mut self.symbol_table[inner.symbol];
-        assert_eq!(symbol.type_id(), None);
+
+        self.scope.register_symbol(symbol);
 
         match node.inferred {
             InferredType::Boolean => {

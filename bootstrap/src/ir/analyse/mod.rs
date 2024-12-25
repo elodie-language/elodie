@@ -5,13 +5,14 @@ pub use node::*;
 use crate::common::{Span, StringTable};
 use crate::common::context::Context;
 use crate::frontend::Ast;
-use crate::ir::analyse::infer::Inference;
+use crate::ir::analyse::infer::Inferrer;
 use crate::ir::analyse::pre::Pre;
 use crate::ir::TypeId;
 
 mod infer;
 mod node;
 mod pre;
+mod scope;
 
 #[derive(Debug, Clone, PartialEq)]
 pub enum InferredType {
@@ -69,7 +70,7 @@ pub(crate) fn prepare(ctx: &mut Context, ast: Ast) -> Result<TypedAst> {
 
 pub(crate) fn infer(ctx: &mut Context, ast: TypedAst) -> Result<TypedAst> {
     let mut nodes = ast.nodes;
-    Inference::new(ctx).infer_nodes(&mut nodes)?;
+    Inferrer::new(ctx).infer_nodes(&mut nodes)?;
     Ok(TypedAst { nodes })
 }
 
