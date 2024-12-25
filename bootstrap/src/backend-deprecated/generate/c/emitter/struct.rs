@@ -4,37 +4,37 @@ use crate::backend::generate::c::{
 };
 
 impl Emitter {
-    pub(crate) fn emit_declare_struct(&mut self, node: &DeclareStructNode) {
-        self.emit_token("struct");
-        self.emit_str(node.identifier.as_str());
-        self.emit_line(";");
+    pub(crate) fn declare_struct(&mut self, node: &DeclareStructNode) {
+        self.token("struct");
+        self.str(node.identifier.as_str());
+        self.line(";");
     }
 
-    pub(crate) fn emit_define_struct(&mut self, node: &DefineStructNode) {
-        self.emit_token("struct");
-        self.emit_str(node.identifier.as_str());
-        self.emit_line("{");
+    pub(crate) fn define_struct(&mut self, node: &DefineStructNode) {
+        self.token("struct");
+        self.str(node.identifier.as_str());
+        self.line("{");
 
         for field in &node.fields {
-            self.emit_token(field.ty.as_str());
-            self.emit_str(field.identifier.as_str());
-            self.emit_line(";");
+            self.token(field.ty.as_str());
+            self.str(field.identifier.as_str());
+            self.line(";");
         }
 
-        self.emit_line("};");
+        self.line("};");
     }
 
-    pub(crate) fn emit_initialise_struct(&mut self, expression: &InitialiseStructExpression) {
-        self.emit_str("{");
+    pub(crate) fn initialise_struct(&mut self, expression: &InitialiseStructExpression) {
+        self.str("{");
 
         for field in &expression.fields {
-            self.emit_str(".");
-            self.emit_token(field.identifier.as_str());
-            self.emit_token("=");
-            self.emit_expression(&field.expression);
-            self.emit_token(",")
+            self.str(".");
+            self.token(field.identifier.as_str());
+            self.token("=");
+            self.expression(&field.expression);
+            self.token(",")
         }
 
-        self.emit_str("}");
+        self.str("}");
     }
 }

@@ -5,13 +5,13 @@ use crate::build::c::{
 };
 
 impl Emitter {
-    pub(crate) fn emit_directive(&mut self, node: &c::DirectiveNode) {
+    pub(crate) fn directive(&mut self, node: &c::DirectiveNode) {
         match node {
             DirectiveNode::IncludeSystemDirective(IncludeSystemDirectiveNode { indent, path }) => {
-                self.emit_line(&format!("#include <{path}>"))
+                self.line(&format!("#include <{path}>"))
             }
             DirectiveNode::IncludeLocalDirective(IncludeLocalDirectiveNode { indent, path }) => {
-                self.emit_line(&format!("#include \"{path}\""))
+                self.line(&format!("#include \"{path}\""))
             }
         }
     }

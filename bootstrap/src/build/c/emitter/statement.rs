@@ -3,22 +3,22 @@ use crate::build::c::emitter::Emitter;
 use crate::build::c::Statement;
 
 impl Emitter {
-    pub(crate) fn emit_statement(&mut self, statement: &c::Statement) {
+    pub(crate) fn statement(&mut self, statement: &c::Statement) {
         match statement {
-            Statement::Block(statement) => self.emit_block_statement(statement),
-            Statement::CallFunction(statement) => self.emit_call_function(statement),
-            Statement::DeclareArray(statement) => self.emit_declare_array(statement),
-            Statement::DeclareVariable(statement) => self.emit_declare_variable(statement),
-            Statement::If(statement) => self.emit_if(statement),
-            Statement::ReturnFromFunction(statement) => self.emit_return_from_function(statement),
+            Statement::Block(statement) => self.block_statement(statement),
+            Statement::CallFunction(statement) => self.call_function(statement),
+            Statement::DeclareArray(statement) => self.declare_array(statement),
+            Statement::DeclareVariable(statement) => self.declare_variable(statement),
+            Statement::If(statement) => self.r#if(statement),
+            Statement::ReturnFromFunction(statement) => self.return_from_function(statement),
         }
     }
 
-    pub(crate) fn emit_block_statement(&mut self, statement: &c::BlockStatement) {
-        self.emit_line("{");
+    pub(crate) fn block_statement(&mut self, statement: &c::BlockStatement) {
+        self.line("{");
         for statement in &statement.statements {
-            self.emit_statement(statement);
+            self.statement(statement);
         }
-        self.emit_line("}");
+        self.line("}");
     }
 }

@@ -6,21 +6,21 @@ use crate::backend::generate::c::{
 };
 
 impl Emitter {
-    pub(crate) fn emit_literal(&mut self, node: &c::LiteralExpression) {
+    pub(crate) fn literal(&mut self, node: &c::LiteralExpression) {
         match node {
             LiteralExpression::Bool(LiteralBooleanExpression { indent, value }) => {
-                self.emit_str(value.to_string().as_str())
+                self.str(value.to_string().as_str())
             }
             LiteralExpression::Double(LiteralDoubleExpression { indent, value }) => {
-                self.emit_str(value.to_string().as_str())
+                self.str(value.to_string().as_str())
             }
             LiteralExpression::Int(LiteralIntExpression { indent, value }) => {
-                self.emit_str(value.to_string().as_str())
+                self.str(value.to_string().as_str())
             }
             LiteralExpression::String(LiteralStringExpression { indent, value }) => {
-                self.emit_str("\"");
-                self.emit_str(value);
-                self.emit_str("\"");
+                self.str("\"");
+                self.str(value);
+                self.str("\"");
             }
         }
     }
