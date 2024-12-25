@@ -4,7 +4,7 @@ use std::rc::Rc;
 
 use node::CalculateNode;
 
-use crate::common::{Column, Index, node, PackagePath, Position, Row, Span, StringTable, StringTableId, WithSpan};
+use crate::common::{Column, Index, node, PackagePath, Position, Row, Span, StringTable, StringTableId, Type, TypeTable, WithSpan};
 use crate::common::node::{
     AccessVariableNode, AccessVariableOfObjectNode, AccessVariableOfSelfNode, BlockNode,
     BreakLoopNode, CallFunctionNode, CallFunctionOfObjectNode, CallFunctionOfPackageNode,
@@ -347,6 +347,22 @@ impl AstType {
         }
     }
 }
+
+impl std::ops::Index<AstType> for TypeTable {
+    type Output = Type;
+    fn index(&self, index: AstType) -> &Self::Output {
+        let type_id = match index {
+            AstType::Boolean => self.type_id_boolean(),
+            AstType::Number => self.type_id_number(),
+            AstType::String => self.type_id_string(),
+            _ => unimplemented!()
+        };
+
+        &self.index(type_id)
+    }
+}
+
+
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct TypeVariable {

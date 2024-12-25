@@ -2,12 +2,11 @@ use std::ops::Index;
 
 pub use node::*;
 
-use crate::common::{Span, StringTable};
+use crate::common::{Span, StringTable, Type, TypeId, TypeTable};
 use crate::common::context::Context;
 use crate::frontend::Ast;
 use crate::ir::analyse::infer::Inferrer;
 use crate::ir::analyse::pre::Pre;
-use crate::ir::TypeId;
 
 mod infer;
 mod node;
@@ -38,6 +37,22 @@ impl InferredType {
         }
     }
 }
+
+impl Index<InferredType> for TypeTable {
+    type Output = Type;
+    fn index(&self, index: InferredType) -> &Self::Output {
+        let type_id = match index {
+            InferredType::Boolean => self.type_id_boolean(),
+            InferredType::Number => self.type_id_number(),
+            InferredType::String => self.type_id_string(),
+            _ => unimplemented!()
+        };
+
+        &self.index(type_id)
+    }
+}
+
+
 
 #[derive(Debug, PartialEq)]
 pub enum Error {

@@ -1,10 +1,10 @@
 use std::ops::Index;
 
-use crate::common::{StringTable, WithSpan};
+use crate::common::{StringTable, SymbolTable, TypeTable, WithSpan};
 use crate::common::context::Context;
 use crate::common::node::Node::{DeclareVariable, LiteralBoolean, LiteralNumber, LiteralString};
-use crate::ir::{Ir, SymbolTable, TypeTable};
 use crate::ir::analyse::{TypedAst, TypedTreeNode};
+use crate::ir::Ir;
 use crate::ir::node::IrTreeNode;
 
 mod literal;

@@ -1,5 +1,5 @@
-use crate::common::{StringTable, StringTableId};
-use crate::ir::{SymbolId, SymbolTable, TypeId, TypeTable};
+use crate::common::{StringTable, StringTableId, TypeId, TypeTable};
+use crate::common::symbol::{SymbolId, SymbolTable};
 
 #[derive(Debug)]
 pub struct Context {

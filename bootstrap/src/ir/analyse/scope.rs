@@ -1,6 +1,6 @@
 use std::collections::HashMap;
+use crate::common::{Symbol, SymbolId, SymbolName};
 
-use crate::ir::{Symbol, SymbolId, SymbolName};
 
 struct Frame {
     variables: HashMap<SymbolName, SymbolId>,

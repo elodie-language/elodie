@@ -3,7 +3,6 @@ use std::ops::Index;
 
 use crate::common::{StringTable, StringTableId};
 use crate::frontend::ast::AstType;
-use crate::ir::analyse::InferredType;
 
 #[derive(Debug, Eq, Hash, PartialEq, Clone, Copy)]
 pub struct TypeId(pub usize);
@@ -148,32 +147,3 @@ impl Index<usize> for TypeTable {
         &self.types.index(index - 1)
     }
 }
-
-impl Index<AstType> for TypeTable {
-    type Output = Type;
-    fn index(&self, index: AstType) -> &Self::Output {
-        let type_id = match index {
-            AstType::Boolean => self.type_id_boolean(),
-            AstType::Number => self.type_id_number(),
-            AstType::String => self.type_id_string(),
-            _ => unimplemented!()
-        };
-
-        &self.index(type_id)
-    }
-}
-
-impl Index<InferredType> for TypeTable {
-    type Output = Type;
-    fn index(&self, index: InferredType) -> &Self::Output {
-        let type_id = match index {
-            InferredType::Boolean => self.type_id_boolean(),
-            InferredType::Number => self.type_id_number(),
-            InferredType::String => self.type_id_string(),
-            _ => unimplemented!()
-        };
-
-        &self.index(type_id)
-    }
-}
-

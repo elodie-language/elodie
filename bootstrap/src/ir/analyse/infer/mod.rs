@@ -1,11 +1,9 @@
 use std::ops::Deref;
 
-use crate::common::{StringTable, WithSpan};
+use crate::common::{StringTable, SymbolTable, TypeTable, WithSpan};
 use crate::common::context::Context;
 use crate::ir::analyse::{TypedTreeNode, TypeNode};
 use crate::ir::analyse::scope::Scope;
-use crate::ir::symbol::SymbolTable;
-use crate::ir::TypeTable;
 
 mod variable;
 

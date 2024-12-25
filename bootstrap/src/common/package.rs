@@ -2,6 +2,15 @@ use std::ops::Deref;
 
 use crate::common::{StringTable, StringTableId};
 
+#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
+pub struct PackageId(pub usize);
+
+impl AsRef<PackageId> for PackageId {
+    fn as_ref(&self) -> &PackageId {
+        &self
+    }
+}
+
 #[derive(Clone, Debug, PartialEq)]
 pub struct PackagePath {
     pub segments: Box<[StringTableId]>,

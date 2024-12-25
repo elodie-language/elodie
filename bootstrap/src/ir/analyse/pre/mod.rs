@@ -1,16 +1,15 @@
 use std::ops::Deref;
 
-use crate::common::{StringTable, WithSpan};
+use crate::common::{StringTable, SymbolId, SymbolName, SymbolTable, TypeTable, WithSpan};
 use crate::common::context::Context;
-use crate::common::node::Node::{DeclareVariable, LiteralBoolean, LiteralNumber, LiteralString};
+use crate::common::node::Node::{CallFunctionOfPackage, DeclareVariable, LiteralBoolean, LiteralNumber, LiteralString};
 use crate::frontend;
 use crate::frontend::ast::AstTreeNode;
 use crate::ir::analyse::TypedTreeNode;
-use crate::ir::symbol::{SymbolId, SymbolName, SymbolTable};
-use crate::ir::TypeTable;
 
 mod variable;
 mod literal;
+mod call;
 
 pub(crate) struct Pre<'a> {
     string_table: &'a mut StringTable,
@@ -19,7 +18,6 @@ pub(crate) struct Pre<'a> {
 }
 
 impl<'a> Pre<'a> {
-
     pub(crate) fn new(ctx: &'a mut Context) -> Self {
         Self {
             string_table: &mut ctx.string_table,
@@ -41,6 +39,7 @@ impl<'a> Pre<'a> {
 
     fn node(&mut self, ast: &AstTreeNode) -> crate::ir::analyse::Result<TypedTreeNode> {
         match ast.node() {
+            CallFunctionOfPackage(node) => self.call_function_of_package(ast.span(), node),
             DeclareVariable(node) => self.declare_variable(ast.span(), node),
             LiteralBoolean(node) => self.literal_boolean(ast.span(), node),
             LiteralNumber(node) => self.literal_number(ast.span(), node),

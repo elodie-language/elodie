@@ -1,6 +1,6 @@
 use bigdecimal::BigDecimal;
 
-use crate::common::{Span, StringTableId, WithSpan};
+use crate::common::{Span, StringTableId, SymbolId, WithSpan};
 use crate::common::node::{
     AccessVariableNode, AccessVariableOfObjectNode, AccessVariableOfSelfNode, BlockNode,
     BreakLoopNode, CalculateNode, CallFunctionNode, CallFunctionOfObjectNode,
@@ -12,7 +12,6 @@ use crate::common::node::{
 };
 use crate::frontend::ast::AstType;
 use crate::ir::analyse::InferredType;
-use crate::ir::symbol::SymbolId;
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct TypeVariant {}

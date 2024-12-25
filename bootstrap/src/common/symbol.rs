@@ -1,9 +1,8 @@
 use std::ops::{Index, IndexMut};
 
 use crate::common::context::Context;
-use crate::common::StringTableId;
+use crate::common::{StringTableId, TypeId};
 use crate::frontend::ast;
-use crate::ir::TypeId;
 
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
 pub struct SymbolId(pub usize);

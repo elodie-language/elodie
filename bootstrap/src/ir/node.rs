@@ -2,7 +2,7 @@ use std::rc::Rc;
 
 use bigdecimal::BigDecimal;
 
-use crate::common::{Span, StringTableId, WithSpan};
+use crate::common::{Span, StringTableId, SymbolId, TypeId, WithSpan};
 use crate::common::node::{
     AccessVariableNode, AccessVariableOfObjectNode, AccessVariableOfSelfNode, BlockNode,
     BreakLoopNode, CalculateNode, CallFunctionNode, CallFunctionOfObjectNode,
@@ -12,7 +12,6 @@ use crate::common::node::{
     InterpolateStringNode, LiteralBooleanNode, LiteralNumberNode, LiteralStringNode, LoopNode,
     Node, ReturnFromFunctionNode, Variant,
 };
-use crate::ir::{SymbolId, TypeId};
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct IrVariant {}

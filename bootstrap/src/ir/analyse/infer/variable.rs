@@ -34,9 +34,9 @@ mod tests {
     use bigdecimal::BigDecimal;
 
     use crate::common::context::Context;
+    use crate::common::SymbolId;
     use crate::frontend::ast_from_str;
     use crate::ir::analyse::{analyse, InferredType};
-    use crate::ir::SymbolId;
 
     #[test]
     fn declare_number_variable() {

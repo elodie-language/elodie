@@ -2,11 +2,10 @@ use Error::TypeMissMatch;
 use TypeMissMatchError::DeclaredTypeMissMatch;
 
 use crate::common::node::Node::DeclareVariable;
-use crate::common::Span;
+use crate::common::{Span, SymbolName};
 use crate::frontend::ast::{AstDeclareVariableNode, AstType};
 use crate::ir::analyse::{Error, InferredType, TypeDeclareVariableNode, TypedTreeNode, TypeMissMatchError};
 use crate::ir::analyse::pre::Pre;
-use crate::ir::symbol::SymbolName;
 
 impl<'a> Pre<'a> {
     pub(crate) fn declare_variable(
@@ -56,10 +55,10 @@ mod tests {
     use TypeMissMatchError::DeclaredTypeMissMatch;
 
     use crate::common::context::Context;
+    use crate::common::SymbolId;
     use crate::frontend::ast_from_str;
     use crate::ir::analyse::{analyse, InferredType, prepare, TypeMissMatchError};
     use crate::ir::analyse::Error::TypeMissMatch;
-    use crate::ir::symbol::SymbolId;
 
     #[test]
     fn declare_number_variable() {

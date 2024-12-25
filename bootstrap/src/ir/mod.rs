@@ -1,7 +1,5 @@
 use std::ops::Index;
 
-pub use r#type::{BuiltinType, Type, TypeId, TypeTable};
-pub use symbol::*;
 
 use crate::{frontend, ir};
 use crate::common::context::Context;
@@ -13,8 +11,6 @@ use crate::ir::node::IrTreeNode;
 mod analyse;
 mod generate;
 pub(crate) mod node;
-mod symbol;
-mod r#type;
 
 #[derive(Debug)]
 pub enum Error {
