@@ -1,31 +1,32 @@
 use std::fs::File;
-use std::io;
+use std::{env, io};
 use std::io::Read;
 use std::path::PathBuf;
+use std::process::exit;
 
-mod backend;
+mod build;
 mod cli;
 mod common;
 mod frontend;
 mod ir;
 
 fn main() {
-    // let args: Vec<String> = env::args().collect();
-    // if args.len() == 0 {
-    //     eprintln!("Requires at least one argument");
-    //     exit(1)
-    // }
+    let args: Vec<String> = env::args().collect();
+    if args.len() == 0 {
+        eprintln!("Requires at least one argument");
+        exit(1)
+    }
     //
-    // if args.get(1).unwrap() == "build" {
-    //     let file = PathBuf::from(args.get(2).unwrap());
-    //
-    //     fn load_text_from_file(path: &str) -> io::Result<String> {
-    //         let mut file = File::open(path)?;
-    //         let mut contents = String::new();
-    //         file.read_to_string(&mut contents)?;
-    //         Ok(contents)
-    //     }
-    //
+    if args.get(1).unwrap() == "build" {
+        let file = PathBuf::from(args.get(2).unwrap());
+
+        // fn load_text_from_file(path: &str) -> io::Result<String> {
+        //     let mut file = File::open(path)?;
+        //     let mut contents = String::new();
+        //     file.read_to_string(&mut contents)?;
+        //     Ok(contents)
+        // }
+
     //     let scope = Scope::new(HashMap::new(), HashMap::new());
     //     let mut ctx = Context::new();
     //
@@ -57,19 +58,10 @@ fn main() {
     //
     //     // println!("{}",code);
     //
-    //     build::build(
-    //         file.file_name()
-    //             .unwrap()
-    //             .to_str()
-    //             .unwrap()
-    //             .replace(".ec", "")
-    //             .as_str(),
-    //         &code,
-    //     )
-    //         .unwrap();
-    //
-    //     return;
-    // }
+        build::build_c_code_from_file(file);
+
+        return;
+    }
     //
     // if args.get(1).unwrap() == "test" {
     //     test_files(

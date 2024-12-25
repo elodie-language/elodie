@@ -1,5 +1,5 @@
-use crate::backend::build::c::emitter::Emitter;
-use crate::backend::build::c::IfStatement;
+use crate::build::c::emitter::Emitter;
+use crate::build::c::IfStatement;
 
 impl Emitter {
     pub(crate) fn emit_if(&mut self, statement: &IfStatement) {

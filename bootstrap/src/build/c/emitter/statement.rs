@@ -1,6 +1,6 @@
-use crate::backend::build::c;
-use crate::backend::build::c::emitter::Emitter;
-use crate::backend::build::c::Statement;
+use crate::build::c;
+use crate::build::c::emitter::Emitter;
+use crate::build::c::Statement;
 
 impl Emitter {
     pub(crate) fn emit_statement(&mut self, statement: &c::Statement) {

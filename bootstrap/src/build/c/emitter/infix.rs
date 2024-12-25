@@ -1,5 +1,5 @@
-use crate::backend::build::c::emitter::Emitter;
-use crate::backend::build::c::{InfixExpression, InfixOperator};
+use crate::build::c::emitter::Emitter;
+use crate::build::c::{InfixExpression, InfixOperator};
 
 impl Emitter {
     pub(crate) fn emit_infix(&mut self, expression: &InfixExpression) {
