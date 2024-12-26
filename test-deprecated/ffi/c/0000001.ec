@@ -5,6 +5,6 @@
 // std::math::cos
 
 let result = core::intrinsics::math::cos_f64(1)
-std::io::println(result)
+rt::io::println(result)
 
 // out: 1

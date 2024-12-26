@@ -3,7 +3,7 @@ function receiver(fn: function()){
 }
 
 receiver() {
-    std::io::println('lambda')
+    rt::io::println('lambda')
 }
 
 // out:lambda

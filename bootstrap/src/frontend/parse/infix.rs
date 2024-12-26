@@ -564,7 +564,7 @@ mod tests {
     #[test]
     fn call_nested_package_function() {
         let mut ctx = Context::testing();
-        let tokens = lex(&mut ctx, "std::io::println('Elodie')").unwrap();
+        let tokens = lex(&mut ctx, "rt::io::println('Elodie')").unwrap();
         let result = parse(&mut ctx, tokens).unwrap();
         assert_eq!(result.len(), 1);
 
@@ -589,7 +589,7 @@ mod tests {
                     ..
                 } = left.as_infix();
                 let root_package = left.as_identifier();
-                assert_eq!(ctx.str_get(root_package.value()), "std");
+                assert_eq!(ctx.str_get(root_package.value()), "rt");
 
                 assert!(matches!(operator, InfixOperator::AccessPackage(_)));
 

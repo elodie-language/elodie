@@ -5,6 +5,6 @@ let result = loop {
     }
 }
 
-std::io::println(result)
+rt::io::println(result)
 
 // out:20

@@ -2,11 +2,11 @@ let x = true
 
 if x == true {
     if x != false {
-        std::io::println('true story')
+        rt::io::println('true story')
     }
 }
 
-if 10 != 10 { } else { std::io::println('10 == 10') }
+if 10 != 10 { } else { rt::io::println('10 == 10') }
 
 // out:true story
 // out:10 == 10

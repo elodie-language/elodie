@@ -1,6 +1,6 @@
 package my_package {
     export function hello() {
-        std::io::println('Hello, hellO')
+        rt::io::println('Hello, hellO')
     }
 }
 

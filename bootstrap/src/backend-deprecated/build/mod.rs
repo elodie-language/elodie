@@ -70,8 +70,8 @@ fn build_std(dir: PathBuf) {
 
 #include "core_intrinsics_io.h"
 
-void std_io_print(char const * message);
-void std_io_println(char const * message);
+void rt_io_print(char const * message);
+void rt_io_println(char const * message);
 
 #endif
     "#
@@ -86,13 +86,13 @@ void std_io_println(char const * message);
 #include "std_io.h"
 #include "core_intrinsics_io.h"
 
-void std_io_print(char const * message) {
+void rt_io_print(char const * message) {
     core_intrinsics_io_print(message);
 }
 
-void std_io_println(char const * message) {
-    std_io_print(message);
-    std_io_print("\n");
+void rt_io_println(char const * message) {
+    rt_io_print(message);
+    rt_io_print("\n");
 }
 
     "#

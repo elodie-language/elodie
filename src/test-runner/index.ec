@@ -1,5 +1,5 @@
 function println(message: String) {
-    std::io::println(message)
+    rt::io::println(message)
 }
 
 function print(message: String) {
@@ -45,7 +45,7 @@ function describe(description: String, body: function()) {
 
     let describe_result = Describe_Result( passed = false, it_results = std::collection::list::empty() )
     let test_result = results.get(1)
-//    std::io::println(test_result)
+//    rt::io::println(test_result)
 
     // FIXME
     // test_result.describe_results.append(describe_result)
@@ -73,15 +73,15 @@ function should(description: String, body: function() -> Bool){
         intrinsics.report_test_failure()
     }
 
-    std::io::println(description)
+    rt::io::println(description)
     // took - xyz ms
 //
 //    if passwd {
-//        std::io::println('Test passed')
+//        rt::io::println('Test passed')
 //        let result = It_Result(description = description, passed = true)
 //        temp.append(result)
 //    } else {
-//        std::io::println('Test failed')
+//        rt::io::println('Test failed')
 //        let result = It_Result(description = description, passed = false)
 //        temp.append(result)
 //    }

@@ -12,10 +12,12 @@ impl Generator {
 
         self.current_function_statements().push(CallFunction(CallFunctionStatement {
             indent: Indent::none(),
-            identifier: "std_io_println".to_string(),
+            identifier: "rt_io_println".to_string(),
             arguments: arguments.into_boxed_slice(),
             result: None,
         }));
+
+        self.include_local("core_intrinsics_io.h");
 
         return Ok(());
     }
