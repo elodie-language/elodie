@@ -1,12 +1,7 @@
 BOOTSTRAP_DIR = ./bootstrap
 
 BOOTSTRAP_SMOKE_TEST_SCRIPT = ./test/smoke/bootstrap.sh
-#
-#BOOTSTRAP_SMOKE_TEST_RUNNER_TEST_SCRIPT = ./test/smoke-test-runner/test-bootstrap.sh
-#BOOTSTRAP_REGRESSION_TEST_SCRIPT = ./test/regression/test-bootstrap.sh
-#
-#BOOTSTRAP_CORE_RUN_TEST_SCRIPT = ./src/lib/core/test-bootstrap.sh
-#BOOTSTRAP_STD_TEST_SCRIPT = ./src/lib/std/test-bootstrap.sh
+BOOTSTRAP_TCK_TEST_SCRIPT = ./test/tck/bootstrap.sh
 
 # Default target
 .PHONY: all
@@ -24,23 +19,9 @@ test-bootstrap: bootstrap
 test-smoke:
 	$(BOOTSTRAP_SMOKE_TEST_SCRIPT) ./test/smoke ./bootstrap/target/debug/bootstrap
 
-#.PHONY: test-smoke-test-runner
-#test-smoke-test-runner: bootstrap
-#	$(BOOTSTRAP_SMOKE_TEST_RUNNER_TEST_SCRIPT) ./test/smoke-test-runner ./bootstrap/target/debug/bootstrap
-#
-#.PHONY: test-regression
-#test-regression: bootstrap
-#	$(BOOTSTRAP_REGRESSION_TEST_SCRIPT) ./test/regression ./bootstrap/target/debug/bootstrap
-#
-#.PHONY: test-core
-#test-core: bootstrap
-#	$(BOOTSTRAP_CORE_RUN_TEST_SCRIPT) ./src/lib/core ./bootstrap/target/debug/bootstrap
-#
-#
-#.PHONY: test-std
-#test-std: bootstrap
-#	$(BOOTSTRAP_STD_TEST_SCRIPT) ./src/lib/std ./bootstrap/target/debug/bootstrap
-#
-# Run the tests
+.PHONY: test-tck
+test-tck:
+	$(BOOTSTRAP_TCK_TEST_SCRIPT) ./test/tck ./bootstrap/target/debug/bootstrap
+
 .PHONY: test
-test: test-bootstrap test-smoke
+test: test-bootstrap test-smoke test-tck
