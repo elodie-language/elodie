@@ -7,7 +7,7 @@ impl<'a> Inferrer<'a> {
     pub(crate) fn declare_variable(&mut self, node: &TypedTreeNode) -> crate::ir::analyse::Result<()> {
         let inner = node.as_declared_variable();
 
-        let symbol = &mut self.symbol_table[inner.symbol];
+        let symbol = &mut self.symbol_table[inner.variable];
 
         self.scope.register_symbol(symbol);
 
@@ -57,7 +57,7 @@ mod tests {
         let result = &typed[0];
         let inner = result.as_declared_variable();
         assert_eq!(result.inferred, InferredType::Number);
-        assert_eq!(inner.symbol, SymbolId(1));
+        assert_eq!(inner.variable, SymbolId(1));
         assert_eq!(inner.value.as_literal_number().value, BigDecimal::from(23));
 
         assert!(ctx.symbol_is_number(SymbolId(1)));
@@ -73,7 +73,7 @@ mod tests {
         let result = &typed[0];
         let inner = result.as_declared_variable();
         assert_eq!(result.inferred, InferredType::String);
-        assert_eq!(inner.symbol, SymbolId(1));
+        assert_eq!(inner.variable, SymbolId(1));
         assert_eq!(ctx.str_get(inner.value.as_literal_string().value), "Elo");
 
         assert!(ctx.symbol_is_string(SymbolId(1)));
@@ -89,7 +89,7 @@ mod tests {
         let result = &typed[0];
         let inner = result.as_declared_variable();
         assert_eq!(result.inferred, InferredType::Boolean);
-        assert_eq!(inner.symbol, SymbolId(1));
+        assert_eq!(inner.variable, SymbolId(1));
         assert_eq!(inner.value.as_literal_boolean().value, true);
 
         assert!(ctx.symbol_is_boolean(SymbolId(1)));

@@ -6,7 +6,7 @@ use crate::common::context::Context;
 use crate::frontend::ast_from_str;
 use crate::ir::analyse::analyse;
 use crate::ir::generate::generate;
-use crate::ir::node::IrTreeNode;
+pub use crate::ir::node::*;
 
 mod analyse;
 mod generate;

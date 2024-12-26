@@ -6,6 +6,7 @@ use crate::ir::analyse::{TypedTreeNode, TypeNode};
 use crate::ir::analyse::scope::Scope;
 
 mod variable;
+mod call;
 
 pub(crate) struct Inferrer<'a> {
     string_table: &'a mut StringTable,
@@ -37,7 +38,8 @@ impl<'a> Inferrer<'a> {
 
     pub(crate) fn node(&mut self, node: &mut TypedTreeNode) -> crate::ir::analyse::Result<()> {
         match node.node() {
-            TypeNode::DeclareVariable(_) => { self.declare_variable(node) }
+            TypeNode::CallFunctionOfPackage(_) => self.call_function_of_package(node),
+            TypeNode::DeclareVariable(_) => self.declare_variable(node),
             TypeNode::LiteralBoolean(_) |
             TypeNode::LiteralNumber(_) |
             TypeNode::LiteralString(_) => { Ok(()) }

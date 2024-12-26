@@ -161,7 +161,11 @@ pub struct IrCallFunctionOfObjectNode {}
 impl CallFunctionOfObjectNode<IrVariant> for IrCallFunctionOfObjectNode {}
 
 #[derive(Debug, Clone, PartialEq)]
-pub struct IrCallFunctionOfPackageNode {}
+pub struct IrCallFunctionOfPackageNode {
+    pub package: SymbolId,
+    pub function: SymbolId,
+    pub arguments: Box<[Rc<IrTreeNode>]>,
+}
 
 impl CallFunctionOfPackageNode<IrVariant> for IrCallFunctionOfPackageNode {}
 

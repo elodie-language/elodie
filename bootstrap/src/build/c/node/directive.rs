@@ -1,6 +1,8 @@
+use std::hash::{Hash, Hasher};
+
 use crate::build::c::Indent;
 
-#[derive(Debug)]
+#[derive(Debug, Hash, Eq, PartialEq)]
 pub enum DirectiveNode {
     IncludeSystemDirective(IncludeSystemDirectiveNode),
     IncludeLocalDirective(IncludeLocalDirectiveNode),
@@ -12,8 +14,36 @@ pub struct IncludeSystemDirectiveNode {
     pub path: String,
 }
 
+impl Eq for IncludeSystemDirectiveNode {}
+
+impl PartialEq for IncludeSystemDirectiveNode {
+    fn eq(&self, other: &Self) -> bool {
+        self.path.eq(&other.path)
+    }
+}
+
+impl Hash for IncludeSystemDirectiveNode {
+    fn hash<H: Hasher>(&self, state: &mut H) {
+        self.path.hash(state)
+    }
+}
+
 #[derive(Debug)]
 pub struct IncludeLocalDirectiveNode {
     pub indent: Indent,
     pub path: String,
+}
+
+impl Eq for IncludeLocalDirectiveNode {}
+
+impl PartialEq for IncludeLocalDirectiveNode {
+    fn eq(&self, other: &Self) -> bool {
+        self.path.eq(&other.path)
+    }
+}
+
+impl Hash for IncludeLocalDirectiveNode {
+    fn hash<H: Hasher>(&self, state: &mut H) {
+        self.path.hash(state)
+    }
 }

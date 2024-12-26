@@ -169,7 +169,11 @@ pub struct TypeCallFunctionOfObjectNode {}
 impl CallFunctionOfObjectNode<TypeVariant> for TypeCallFunctionOfObjectNode {}
 
 #[derive(Debug, Clone, PartialEq)]
-pub struct TypeCallFunctionOfPackageNode {}
+pub struct TypeCallFunctionOfPackageNode {
+    pub package: SymbolId,
+    pub function: SymbolId,
+    pub arguments: Box<[TypedTreeNode]>,
+}
 
 impl CallFunctionOfPackageNode<TypeVariant> for TypeCallFunctionOfPackageNode {}
 
@@ -186,16 +190,12 @@ impl ContinueLoopNode<TypeVariant> for TypeContinueLoopNode {}
 #[derive(Debug, Clone, PartialEq)]
 pub struct TypeDeclareExternalFunctionNode {}
 
-impl DeclareExternalFunctionNode<TypeVariant> for TypeDeclareExternalFunctionNode {
-
-}
+impl DeclareExternalFunctionNode<TypeVariant> for TypeDeclareExternalFunctionNode {}
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct TypeDeclareFunctionNode {}
 
-impl DeclareFunctionNode<TypeVariant> for TypeDeclareFunctionNode {
-
-}
+impl DeclareFunctionNode<TypeVariant> for TypeDeclareFunctionNode {}
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct TypeDeclarePackageNode {}
@@ -214,7 +214,7 @@ impl DefineTypeNode<TypeVariant> for TypeDefineTypeNode {}
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct TypeDeclareVariableNode {
-    pub symbol: SymbolId,
+    pub variable: SymbolId,
     pub value: Box<TypedTreeNode>,
 }
 

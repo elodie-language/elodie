@@ -12,20 +12,20 @@ impl AsRef<StringTableId> for StringTableId {
 
 #[derive(Debug)]
 pub struct StringTable {
-    indexes: HashMap<Rc<str>, StringTableId>,
+    index: HashMap<Rc<str>, StringTableId>,
     values: Vec<Rc<str>>,
 }
 
 impl StringTable {
     pub fn new() -> StringTable {
         StringTable {
-            indexes: HashMap::new(),
+            index: HashMap::new(),
             values: Vec::new(),
         }
     }
 
     pub fn push_str(&mut self, string: &str) -> StringTableId {
-        match self.indexes.entry(string.into()) {
+        match self.index.entry(string.into()) {
             std::collections::hash_map::Entry::Occupied(entry) => *entry.get(),
             std::collections::hash_map::Entry::Vacant(entry) => {
                 let idx = StringTableId(self.values.len());
@@ -42,6 +42,8 @@ impl StringTable {
             .get(idx.as_ref().0)
             .expect("StringIdx out of bounds")
     }
+
+    pub fn as_string(&self, idx: impl AsRef<StringTableId>) -> String { self.get(idx).to_string() }
 }
 
 #[cfg(test)]

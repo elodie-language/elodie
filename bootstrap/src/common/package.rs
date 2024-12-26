@@ -1,4 +1,6 @@
+use std::collections::HashMap;
 use std::ops::Deref;
+use std::rc::Rc;
 
 use crate::common::{StringTable, StringTableId};
 
@@ -47,4 +49,15 @@ impl PackagePath {
             .map(|s| cache.get(s))
             .collect()
     }
+}
+
+#[derive(Debug)]
+pub struct Package {
+
+}
+
+#[derive(Debug)]
+pub struct PackageTable {
+    index: HashMap<PackagePath, PackageId>,
+    values: Vec<Rc<Package>>,
 }

@@ -2,7 +2,6 @@ use std::collections::HashMap;
 use std::ops::Index;
 
 use crate::common::{StringTable, StringTableId};
-use crate::frontend::ast::AstType;
 
 #[derive(Debug, Eq, Hash, PartialEq, Clone, Copy)]
 pub struct TypeId(pub usize);
@@ -99,6 +98,7 @@ impl TypeTable {
     pub fn type_id_boolean(&self) -> TypeId { self.builtin(BuiltinType::Boolean) }
     pub fn type_id_number(&self) -> TypeId { self.builtin(BuiltinType::Number) }
     pub fn type_id_string(&self) -> TypeId { self.builtin(BuiltinType::String) }
+    pub fn type_id_unit(&self) -> TypeId { self.builtin(BuiltinType::Unit) }
 
     pub fn register(&mut self, parent_id: TypeId, name: TypeName) -> TypeId {
         let id = TypeId(self.types.len() + self.offset);

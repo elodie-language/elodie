@@ -1,13 +1,31 @@
-use crate::common::Span;
+use crate::common::{Span, SymbolId};
+use crate::common::node::Node;
 use crate::frontend::ast::AstCallFunctionOfPackageNode;
+use crate::ir::analyse::{InferredType, TypeCallFunctionOfPackageNode, TypedTreeNode};
 use crate::ir::analyse::pre::Pre;
-use crate::ir::analyse::TypedTreeNode;
 
 impl<'a> Pre<'a> {
-
     pub(crate) fn call_function_of_package(&mut self, span: Span, node: &AstCallFunctionOfPackageNode) -> crate::ir::analyse::Result<TypedTreeNode> {
-        println!("{:#?}", node.package.to_strs(&self.string_table));
+        // get package
+        // get function from package
 
-        todo!()
+        let mut arguments = vec![];
+        for arg in &node.arguments {
+            arguments.push(
+                self.node(arg)?
+            )
+        }
+
+        Ok(TypedTreeNode::new(
+            Node::CallFunctionOfPackage(
+                TypeCallFunctionOfPackageNode {
+                    package: SymbolId(2),
+                    function: SymbolId(3),
+                    arguments: arguments.into_boxed_slice(),
+                }
+            ),
+            span,
+            InferredType::Package,
+        ))
     }
 }

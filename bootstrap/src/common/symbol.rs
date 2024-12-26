@@ -1,7 +1,8 @@
 use std::ops::{Index, IndexMut};
 
-use crate::common::context::Context;
 use crate::common::{StringTableId, TypeId};
+use crate::common::context::Context;
+use crate::common::package::PackageId;
 use crate::frontend::ast;
 
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
@@ -57,7 +58,7 @@ pub struct FunctionSymbol {
 pub struct PackageSymbol {
     pub id: SymbolId,
     pub name: SymbolName,
-    pub type_id: Option<TypeId>,
+    pub package_id: Option<PackageId>,
 }
 
 
@@ -108,7 +109,7 @@ impl Symbol {
         match self {
             Symbol::Argument(inner) => inner.type_id,
             Symbol::Function(inner) => inner.type_id,
-            Symbol::Package(inner) => inner.type_id,
+            Symbol::Package(inner) => unreachable!(),
             Symbol::Type(inner) => inner.type_id,
             Symbol::Variable(inner) => inner.type_id
         }
@@ -118,9 +119,16 @@ impl Symbol {
         match self {
             Symbol::Argument(inner) => inner.type_id = Some(type_id),
             Symbol::Function(inner) => inner.type_id = Some(type_id),
-            Symbol::Package(inner) => inner.type_id = Some(type_id),
+            Symbol::Package(_) => unreachable!(),
             Symbol::Type(inner) => inner.type_id = Some(type_id),
             Symbol::Variable(inner) => inner.type_id = Some(type_id)
+        }
+    }
+
+    pub fn set_package_id(&mut self, package_id: PackageId) {
+        match self {
+            Symbol::Package(inner) => inner.package_id = Some(package_id),
+            _ => unreachable!()
         }
     }
 }
@@ -166,7 +174,7 @@ impl SymbolTable {
         self.symbols.push(Symbol::Package(PackageSymbol {
             id: new_id.clone(),
             name,
-            type_id: None,
+            package_id: None,
         }));
         new_id
     }

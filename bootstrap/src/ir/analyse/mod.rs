@@ -18,13 +18,15 @@ pub enum InferredType {
     Unknown,
 
     Boolean,
+    Function(Box<[InferredType]>, Box<InferredType>),
     Number,
+    Package,
     String,
-    Tuple(Vec<InferredType>),
+    Tuple(Box<[InferredType]>),
     Type(TypeId),
 
-    OneOf(Vec<InferredType>),
-    AllOf(Vec<InferredType>),
+    OneOf(Box<[InferredType]>),
+    AllOf(Box<[InferredType]>),
 }
 
 impl InferredType {
@@ -51,7 +53,6 @@ impl Index<InferredType> for TypeTable {
         &self.index(type_id)
     }
 }
-
 
 
 #[derive(Debug, PartialEq)]

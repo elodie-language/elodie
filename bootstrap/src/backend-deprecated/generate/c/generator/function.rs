@@ -66,7 +66,7 @@ impl Generator {
         Ok(result)
     }
 
-    pub(crate) fn generate_call_function_of_package(
+    pub(crate) fn generate_call_fuznction_of_package(
         &mut self,
         node: &AstCallFunctionOfPackageNode,
     ) -> c::generator::Result<Vec<Statement>> {

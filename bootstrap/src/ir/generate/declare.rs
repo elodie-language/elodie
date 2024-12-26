@@ -1,5 +1,7 @@
 use std::rc::Rc;
 
+use Node::DeclareVariable;
+
 use crate::common::node::Node;
 use crate::common::Span;
 use crate::ir::analyse::TypeDeclareVariableNode;
@@ -11,8 +13,8 @@ impl<'a> Generator<'a> {
         let value = Rc::new(self.node(node.value.as_ref())?);
 
         Ok(IrTreeNode::new(
-            Node::DeclareVariable(IrDeclareVariableNode {
-                symbol: node.symbol,
+            DeclareVariable(IrDeclareVariableNode {
+                symbol: node.variable,
                 value: value.clone(),
             }),
             span,

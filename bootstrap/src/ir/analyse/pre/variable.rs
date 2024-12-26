@@ -41,7 +41,7 @@ impl<'a> Pre<'a> {
         }
 
         Ok(TypedTreeNode::new(
-            DeclareVariable(TypeDeclareVariableNode { symbol, value }),
+            DeclareVariable(TypeDeclareVariableNode { variable: symbol, value }),
             span,
             value_inferred,
         ))
@@ -71,7 +71,7 @@ mod tests {
         assert_eq!(result.inferred, InferredType::Number);
 
         let inner = result.as_declared_variable();
-        assert_eq!(inner.symbol, SymbolId(1));
+        assert_eq!(inner.variable, SymbolId(1));
         assert_eq!(inner.value.as_literal_number().value, BigDecimal::from(23));
     }
 
@@ -86,7 +86,7 @@ mod tests {
         assert_eq!(result.inferred, InferredType::Number);
 
         let inner = result.as_declared_variable();
-        assert_eq!(inner.symbol, SymbolId(1));
+        assert_eq!(inner.variable, SymbolId(1));
         assert_eq!(inner.value.as_literal_number().value, BigDecimal::from(23));
     }
 
@@ -101,7 +101,7 @@ mod tests {
         assert_eq!(result.inferred, InferredType::String);
 
         let inner = result.as_declared_variable();
-        assert_eq!(inner.symbol, SymbolId(1));
+        assert_eq!(inner.variable, SymbolId(1));
         assert_eq!(ctx.str_get(inner.value.as_literal_string().value), "Elo")
     }
 
@@ -116,7 +116,7 @@ mod tests {
         assert_eq!(result.inferred, InferredType::Boolean);
 
         let inner = result.as_declared_variable();
-        assert_eq!(inner.symbol, SymbolId(1));
+        assert_eq!(inner.variable, SymbolId(1));
         assert_eq!(inner.value.as_literal_boolean().value, true)
     }
 
