@@ -11,8 +11,8 @@ test('Type formatting') {
 
         describe('Instantiation with Some_Type(prop_1 = true, prop_2 = 2)') {
             let t = Some_Type( prop_1 = true, prop_2 = 2 )
-            should('t.prop_1 == true') { t.prop_1 == true }
-            should('t.prop_2 == 2') { t.prop_2 == 2 }
+            check('t.prop_1 == true') { t.prop_1 == true }
+            check('t.prop_2 == 2') { t.prop_2 == 2 }
         }
     }
 }

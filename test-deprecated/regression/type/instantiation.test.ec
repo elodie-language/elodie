@@ -12,8 +12,8 @@ test('Type instantiation') {
         )
         describe('with Point(x = 1, y = 2)') {
             let p = Point( x = 1, y = 2)
-            should('p.x == 1') { p.x == 1 }
-            should('p.y == 2') { p.y == 2 }
+            check('p.x == 1') { p.x == 1 }
+            check('p.y == 2') { p.y == 2 }
         }
     }
 }

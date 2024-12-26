@@ -5,7 +5,7 @@ test('Function formatting') {
           42
           // comment after
         }
-        should('Returns last expression'){ some_fn() == 42 }
+        check('Returns last expression'){ some_fn() == 42 }
     }
 
     describe('A function can have comments before and after return expression'){
@@ -14,7 +14,7 @@ test('Function formatting') {
           return 9924
           // comment after
         }
-        should('Returns last expression'){ some_fn() == 9924 }
+        check('Returns last expression'){ some_fn() == 9924 }
     }
 }
 

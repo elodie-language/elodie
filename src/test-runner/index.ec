@@ -56,7 +56,7 @@ function describe(description: String, body: function()) {
 }
 
 
-function should(description: String, body: function() -> Bool){
+function check(description: String, body: function() -> Bool){
     let test_result = results.get(1)
     let temp = test_result.describe_results
     let describe_result = temp.get(1)

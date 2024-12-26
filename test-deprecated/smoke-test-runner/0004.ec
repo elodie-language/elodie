@@ -1,11 +1,11 @@
-test('passing and failing assertion'){
+test('passing and failing check'){
     describe('Now its on'){
-        should('a passing assertion'){ return true }
-        should('a failing assertion'){ return false }
+        check('a passing check'){ return true }
+        check('a failing check'){ return false }
     }
 }
 
-// out: passing and failing assertion
+// out: passing and failing check
 // out:   Now its on
-// out:    \x1b[0;32mPass\x1b[0m - a passing assertion
-// out:    \x1b[0;31mFail\x1b[0m - a failing assertion
+// out:    \x1b[0;32mPass\x1b[0m - a passing check
+// out:    \x1b[0;31mFail\x1b[0m - a failing check
