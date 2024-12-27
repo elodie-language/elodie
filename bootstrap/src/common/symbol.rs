@@ -24,6 +24,12 @@ impl AsRef<SymbolName> for SymbolName {
     }
 }
 
+impl AsRef<StringTableId> for SymbolName {
+    fn as_ref(&self) -> &StringTableId {
+        &self.0
+    }
+}
+
 impl GetString<SymbolName> for StringTable {
     fn get_string(&self, idx: impl AsRef<SymbolName>) -> String {
         self.get_string(idx.as_ref().0)
@@ -91,6 +97,12 @@ pub struct VariableSymbol {
     pub type_id: Option<TypeId>,
 }
 
+impl VariableSymbol {
+    pub fn to_string(&self, string_table: &StringTable) -> String {
+        format!("{}_{}", string_table.get(self.name), self.id.0)
+    }
+}
+
 impl Symbol {
     pub fn id(&self) -> SymbolId {
         match self {
@@ -110,13 +122,13 @@ impl Symbol {
             Symbol::Variable(inner) => inner.name
         }
     }
-    pub fn name_str<'a>(&self, ctx: &'a Context) -> &'a str {
+    pub fn name_str<'a>(&self, table: &'a StringTable) -> &'a str {
         match self {
-            Symbol::Argument(inner) => ctx.str_get(inner.name.0),
-            Symbol::Function(inner) => ctx.str_get(inner.name.0),
-            Symbol::Package(inner) => ctx.str_get(inner.name.0),
-            Symbol::Type(inner) => ctx.str_get(inner.name.0),
-            Symbol::Variable(inner) => ctx.str_get(inner.name.0)
+            Symbol::Argument(inner) => table.get(inner.name.0),
+            Symbol::Function(inner) => table.get(inner.name.0),
+            Symbol::Package(inner) => table.get(inner.name.0),
+            Symbol::Type(inner) => table.get(inner.name.0),
+            Symbol::Variable(inner) => table.get(inner.name.0)
         }
     }
     pub fn type_id(&self) -> Option<TypeId> {
@@ -266,7 +278,7 @@ mod tests {
 
         let symbol = &table[1];
         assert_eq!(symbol.id(), SymbolId(1));
-        assert_eq!(symbol.name_str(&ctx), "argument");
+        assert_eq!(symbol.name_str(&ctx.string_table), "argument");
     }
 
     #[test]
@@ -280,7 +292,7 @@ mod tests {
 
         let symbol = &table[1];
         assert_eq!(symbol.id(), SymbolId(1));
-        assert_eq!(symbol.name_str(&ctx), "function");
+        assert_eq!(symbol.name_str(&ctx.string_table), "function");
     }
 
     #[test]
@@ -294,7 +306,7 @@ mod tests {
 
         let symbol = &table[1];
         assert_eq!(symbol.id(), SymbolId(1));
-        assert_eq!(symbol.name_str(&ctx), "package");
+        assert_eq!(symbol.name_str(&ctx.string_table), "package");
     }
 
     #[test]
@@ -308,7 +320,7 @@ mod tests {
 
         let symbol = &table[1];
         assert_eq!(symbol.id(), SymbolId(1));
-        assert_eq!(symbol.name_str(&ctx), "type");
+        assert_eq!(symbol.name_str(&ctx.string_table), "type");
     }
 
     #[test]
@@ -322,7 +334,7 @@ mod tests {
 
         let symbol = &table[1];
         assert_eq!(symbol.id(), SymbolId(1));
-        assert_eq!(symbol.name_str(&ctx), "variable");
+        assert_eq!(symbol.name_str(&ctx.string_table), "variable");
     }
 
     #[test]
@@ -342,14 +354,14 @@ mod tests {
 
         let symbol = &table[1];
         assert_eq!(symbol.id(), SymbolId(1));
-        assert_eq!(symbol.name_str(&ctx), "argument");
+        assert_eq!(symbol.name_str(&ctx.string_table), "argument");
 
         let symbol = &table[2];
         assert_eq!(symbol.id(), SymbolId(2));
-        assert_eq!(symbol.name_str(&ctx), "function");
+        assert_eq!(symbol.name_str(&ctx.string_table), "function");
 
         let symbol = &table[3];
         assert_eq!(symbol.id(), SymbolId(3));
-        assert_eq!(symbol.name_str(&ctx), "variable");
+        assert_eq!(symbol.name_str(&ctx.string_table), "variable");
     }
 }

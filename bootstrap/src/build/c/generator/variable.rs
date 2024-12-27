@@ -10,14 +10,14 @@ impl Generator {
         &mut self,
         node: &IrDeclareVariableNode,
     ) -> c::generator::Result<()> {
-        // let variable = self.scope.push_variable(&node.variable);
+        let variable = self.symbol_table.variable(node.variable).to_string(&self.string_table);
 
         if let LiteralString(IrLiteralStringNode { value }) = &node.value.node() {
             let value = self.string_table.get_string(value);
             self.current_function_statements().push(
                 Statement::DeclareVariable(DeclareVariableStatement {
                     indent: Indent::none(),
-                    variable: "arg_1".to_string(),
+                    variable,
                     r#type: "const char *".to_string(),
                     expression: c::Expression::Literal(c::LiteralExpression::String(
                         c::LiteralStringExpression {

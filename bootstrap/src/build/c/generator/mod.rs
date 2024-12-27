@@ -6,7 +6,7 @@ use crate::build::c;
 use crate::build::c::{BlockStatement, DeclareFunctionNode, DeclareStructNode, DefineFunctionNode, DefineStructNode, DirectiveNode, IncludeLocalDirectiveNode, IncludeSystemDirectiveNode, Indent};
 use crate::build::c::DirectiveNode::{IncludeLocalDirective, IncludeSystemDirective};
 use crate::build::c::Node::DefineFunction;
-use crate::common::Context;
+use crate::common::{Context, SymbolTable, TypeTable};
 use crate::common::node::Node;
 use crate::common::node::Node::{CallFunctionOfPackage, DeclareVariable, InterpolateString};
 use crate::common::StringTable;
@@ -30,6 +30,9 @@ pub(crate) struct FunctionPointer(usize);
 pub(crate) fn generate(ctx: Context, ir: ir::Ir) -> Result<Vec<c::Node>> {
     let mut generator = Generator {
         string_table: ctx.string_table,
+        symbol_table: ctx.symbol_table,
+        type_table: ctx.type_table,
+
         directives: HashSet::new(),
 
         function_pointer: FunctionPointer(0),
@@ -45,6 +48,9 @@ pub(crate) fn generate(ctx: Context, ir: ir::Ir) -> Result<Vec<c::Node>> {
 
 pub(crate) struct Generator {
     string_table: StringTable,
+    symbol_table: SymbolTable,
+    type_table: TypeTable,
+
     directives: HashSet<DirectiveNode>,
     function_declarations: Vec<DeclareFunctionNode>,
     function_pointer: FunctionPointer,

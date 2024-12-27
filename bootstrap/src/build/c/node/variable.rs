@@ -20,7 +20,7 @@ pub struct DeclareVariableStatement {
 #[derive(Debug)]
 pub struct VariableExpression {
     pub indent: Indent,
-    pub identifier: String,
+    pub variable: String,
 }
 
 #[derive(Debug)]

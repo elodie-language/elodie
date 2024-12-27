@@ -22,6 +22,6 @@ impl Emitter {
     }
 
     pub(crate) fn variable(&mut self, expression: &VariableExpression) {
-        self.str(expression.identifier.as_str());
+        self.str(expression.variable.as_str());
     }
 }
