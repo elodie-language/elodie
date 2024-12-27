@@ -56,12 +56,12 @@ pub fn build_c_code_from_file(file: PathBuf) {
 
 
 const EC_FILES: [&str; 6] = [
-    "core_bool.h",
-    "core_bool.c",
-    "core_intrinsics_io.h",
-    "core_intrinsics_io.c",
-    "core_intrinsics_math.h",
-    "core_intrinsics_math.c",
+    "core/boolean.h",
+    "core/boolean.c",
+    "core/intrinsics/math.h",
+    "core/intrinsics/math.c",
+    "rt/intrinsics/io.h",
+    "rt/intrinsics/io.c",
 ];
 
 pub fn build(name: &str, c_code: &str) -> io::Result<()> {
@@ -94,7 +94,7 @@ pub fn build(name: &str, c_code: &str) -> io::Result<()> {
     let gcc_output = Command::new("gcc")
         .arg(c_file_path.to_str().unwrap())
         .args(c_files)
-        .arg(dir.join("std_io.c"))
+        .arg(dir.join("rt/io.c"))
         .arg("-lm")
         .arg("-o")
         .arg(binary_path.to_str().unwrap())
@@ -113,13 +113,11 @@ pub fn build(name: &str, c_code: &str) -> io::Result<()> {
 }
 
 fn build_std(dir: PathBuf) {
-    let mut file = File::create(&dir.join(PathBuf::from("std_io.h"))).unwrap();
+    let mut file = File::create(&dir.join(PathBuf::from("rt/io.h"))).unwrap();
     file.write_all(
         r#"
-#ifndef STD_IO_H
-#define STD_IO_H
-
-#include "core_intrinsics_io.h"
+#ifndef RT_IO_H
+#define RT_IO_H
 
 void rt_io_print(char const * message);
 void rt_io_println(char const * message);
@@ -131,14 +129,14 @@ void rt_io_println(char const * message);
         .unwrap();
     drop(file);
 
-    let mut file = File::create(&dir.join(PathBuf::from("std_io.c"))).unwrap();
+    let mut file = File::create(&dir.join(PathBuf::from("rt/io.c"))).unwrap();
     file.write_all(
         r#"
-#include "std_io.h"
-#include "core_intrinsics_io.h"
+#include "io.h"
+#include "intrinsics/io.h"
 
 void rt_io_print(char const * message) {
-    core_intrinsics_io_print(message);
+    rt_intrinsics_io_print(message);
 }
 
 void rt_io_println(char const * message) {
@@ -165,6 +163,7 @@ fn copy_sysroot(destination: PathBuf) {
         let source = file_path.join(file);
         let dest = destination.join(file);
         // Copy the file
+        fs::create_dir_all(&dest.parent().unwrap()).unwrap();
         fs::copy(&source, &dest).unwrap();
         drop(dest)
     }

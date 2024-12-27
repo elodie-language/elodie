@@ -1,6 +1,4 @@
-#include <stdio.h>
-#include "core_intrinsics_math.h"
-#include <stdbool.h>
+#include "rt/intrinsics/io.h"
 
 struct Person;
 
@@ -16,5 +14,6 @@ int main(void) {
 }
 
 void person_say_name(struct Person *self) {
-    printf("Hello, %s!", self->name);
+//    printf("Hello, %s!", self->name);
+    rt_intrinsics_io_print("Hello hello");
 }

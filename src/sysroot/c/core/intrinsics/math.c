@@ -1,4 +1,4 @@
-#include "core_intrinsics_math.h"
+#include "math.h"
 
 #include <math.h>
 

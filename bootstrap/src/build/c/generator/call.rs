@@ -17,7 +17,7 @@ impl Generator {
             result: None,
         }));
 
-        self.include_local("core_intrinsics_io.h");
+        self.include_local("rt/io.h");
 
         return Ok(());
     }
