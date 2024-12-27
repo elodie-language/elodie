@@ -10,6 +10,15 @@ impl Span {
     }
 }
 
+impl Default for Span {
+    fn default() -> Self {
+        Self {
+            start: Position::default(),
+            end: Position::default(),
+        }
+    }
+}
+
 pub trait WithSpan {
     fn span(&self) -> Span;
 }
@@ -57,5 +66,15 @@ impl Position {
 impl PartialEq<(usize, usize, usize)> for Position {
     fn eq(&self, other: &(usize, usize, usize)) -> bool {
         self.row == other.0 && self.column == other.1 && self.index == other.2
+    }
+}
+
+impl Default for Position {
+    fn default() -> Self {
+        Self {
+            row: Row(1),
+            column: Column(1),
+            index: Index(0),
+        }
     }
 }

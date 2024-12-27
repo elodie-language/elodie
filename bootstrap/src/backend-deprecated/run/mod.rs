@@ -13,7 +13,7 @@ use crate::backend::run::scope::Scope;
 use crate::backend::run::type_definitions::TypeDefinitions;
 use crate::backend::run::value::{IntrinsicFunctionValue, ListValue, ObjectValue, Value};
 use crate::backend::run::value::Value::{IntrinsicFunction, Unit};
-use crate::common::context::Context;
+use crate::common::Context;
 use crate::common::node::{CalculationOperator, CompareOperator, Node};
 use crate::frontend::{ast, ast_from_str};
 use crate::frontend::ast::AstTreeNode;

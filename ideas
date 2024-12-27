@@ -1,3 +1,6 @@
+// Secret type which ensures that a secret can never be logged
+
+
 // in nested object - if outer object is readonly, all children are readonly as well
 
 type Point (

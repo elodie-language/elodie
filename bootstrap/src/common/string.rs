@@ -1,5 +1,7 @@
 use std::collections::HashMap;
 use std::rc::Rc;
+use clap::builder::Str;
+use crate::common::SymbolName;
 
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
 pub struct StringTableId(pub usize);
@@ -8,6 +10,10 @@ impl AsRef<StringTableId> for StringTableId {
     fn as_ref(&self) -> &StringTableId {
         &self
     }
+}
+
+pub trait GetString<V> {
+    fn get_string(&self, idx: impl AsRef<V>) -> String;
 }
 
 #[derive(Debug)]
@@ -40,11 +46,16 @@ impl StringTable {
         &self
             .values
             .get(idx.as_ref().0)
-            .expect("StringIdx out of bounds")
+            .expect("Index out of bounds")
     }
-
-    pub fn as_string(&self, idx: impl AsRef<StringTableId>) -> String { self.get(idx).to_string() }
 }
+
+impl GetString<StringTableId> for StringTable {
+    fn get_string(&self, idx: impl AsRef<StringTableId>) -> String {
+        self.get(idx).to_string()
+    }
+}
+
 
 #[cfg(test)]
 mod tests {
@@ -65,7 +76,7 @@ mod tests {
     }
 
     #[test]
-    #[should_panic(expected = "StringIdx out of bounds")]
+    #[should_panic(expected = "Index out of bounds")]
     fn get_out_of_bounds() {
         let map = StringTable::new();
         map.get(StringTableId(0));

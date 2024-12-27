@@ -1,7 +1,7 @@
 BOOTSTRAP_DIR = ./bootstrap
 
 BOOTSTRAP_SMOKE_TEST_SCRIPT = ./test/smoke/bootstrap.sh
-BOOTSTRAP_TCK_TEST_SCRIPT = ./test/tck/bootstrap.sh
+BOOTSTRAP_E2E_TEST_SCRIPT = ./test/e2e/bootstrap.sh
 
 # Default target
 .PHONY: all
@@ -19,9 +19,9 @@ test-bootstrap: bootstrap
 test-smoke:
 	$(BOOTSTRAP_SMOKE_TEST_SCRIPT) ./test/smoke ./bootstrap/target/debug/bootstrap
 
-.PHONY: test-tck
-test-tck:
-	$(BOOTSTRAP_TCK_TEST_SCRIPT) ./test/tck ./bootstrap/target/debug/bootstrap
+.PHONY: test-e2e
+test-e2e:
+	$(BOOTSTRAP_E2E_TEST_SCRIPT) ./test/e2e ./bootstrap/target/debug/bootstrap
 
 .PHONY: test
-test: test-bootstrap test-smoke test-tck
+test: test-bootstrap test-smoke test-e2e

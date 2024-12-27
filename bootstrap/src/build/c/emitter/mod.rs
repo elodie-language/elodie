@@ -44,8 +44,8 @@ impl Emitter {
 
     pub(crate) fn expression(&mut self, expression: &c::Expression) {
         match expression {
-            Expression::Literal(expression) => self.literal(expression),
             Expression::Infix(expression) => self.infix(expression),
+            Expression::Literal(expression) => self.literal(expression),
             Expression::Variable(expression) => self.variable(expression),
             Expression::StructInitialisation(expression) => self.initialise_struct(expression),
         }

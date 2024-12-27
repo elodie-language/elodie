@@ -1,8 +1,10 @@
+pub use context::Context;
+pub use inferred::Inferred;
 pub use package::PackagePath;
+pub use r#type::{Type, TypeId, TypeTable};
 pub use span::*;
-pub use string::{StringTable, StringTableId};
-pub use symbol::{SymbolId, Symbol, SymbolTable, SymbolName, TypeSymbol, VariableSymbol, PackageSymbol, ArgumentSymbol};
-pub use r#type::{BuiltinType, Type, TypeId, TypeTable};
+pub use string::{GetString, StringTable, StringTableId};
+pub use symbol::{Symbol, SymbolId, SymbolName, SymbolTable, VariableSymbol};
 pub use util::*;
 
 pub mod node;
@@ -10,6 +12,7 @@ mod package;
 mod span;
 mod string;
 mod util;
-pub mod context;
+mod context;
 mod r#type;
 mod symbol;
+mod inferred;

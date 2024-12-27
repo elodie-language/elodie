@@ -12,7 +12,7 @@ use crate::backend::generate::c::{
     IncludeLocalDirectiveNode, IncludeSystemDirectiveNode, Indent, ReturnFromFunctionStatement,
     Statement, VariableExpression,
 };
-use crate::common::context::Context;
+use crate::common::Context;
 use crate::common::node::Node;
 use crate::common::StringTable;
 use crate::frontend;

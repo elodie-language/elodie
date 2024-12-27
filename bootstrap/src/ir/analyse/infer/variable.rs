@@ -1,7 +1,8 @@
 use std::ops::Deref;
 
-use crate::ir::analyse::{InferredType, TypedTreeNode};
+use crate::common::Inferred;
 use crate::ir::analyse::infer::Inferrer;
+use crate::ir::analyse::TypedTreeNode;
 
 impl<'a> Inferrer<'a> {
     pub(crate) fn declare_variable(&mut self, node: &TypedTreeNode) -> crate::ir::analyse::Result<()> {
@@ -12,13 +13,13 @@ impl<'a> Inferrer<'a> {
         self.scope.register_symbol(symbol);
 
         match node.inferred {
-            InferredType::Boolean => {
+            Inferred::Boolean => {
                 symbol.set_type_id(self.type_table.type_id_boolean())
             }
-            InferredType::Number => {
+            Inferred::Number => {
                 symbol.set_type_id(self.type_table.type_id_number())
             }
-            InferredType::String => {
+            Inferred::String => {
                 symbol.set_type_id(self.type_table.type_id_string())
             }
             _ => unimplemented!()
@@ -33,10 +34,10 @@ impl<'a> Inferrer<'a> {
 mod tests {
     use bigdecimal::BigDecimal;
 
-    use crate::common::context::Context;
-    use crate::common::SymbolId;
+    use crate::common::{Inferred, SymbolId};
+    use crate::common::Context;
     use crate::frontend::ast_from_str;
-    use crate::ir::analyse::{analyse, InferredType};
+    use crate::ir::analyse::analyse;
 
     #[test]
     fn declare_number_variable() {
@@ -56,7 +57,7 @@ mod tests {
 
         let result = &typed[0];
         let inner = result.as_declared_variable();
-        assert_eq!(result.inferred, InferredType::Number);
+        assert_eq!(result.inferred, Inferred::Number);
         assert_eq!(inner.variable, SymbolId(1));
         assert_eq!(inner.value.as_literal_number().value, BigDecimal::from(23));
 
@@ -72,7 +73,7 @@ mod tests {
 
         let result = &typed[0];
         let inner = result.as_declared_variable();
-        assert_eq!(result.inferred, InferredType::String);
+        assert_eq!(result.inferred, Inferred::String);
         assert_eq!(inner.variable, SymbolId(1));
         assert_eq!(ctx.str_get(inner.value.as_literal_string().value), "Elo");
 
@@ -88,7 +89,7 @@ mod tests {
 
         let result = &typed[0];
         let inner = result.as_declared_variable();
-        assert_eq!(result.inferred, InferredType::Boolean);
+        assert_eq!(result.inferred, Inferred::Boolean);
         assert_eq!(inner.variable, SymbolId(1));
         assert_eq!(inner.value.as_literal_boolean().value, true);
 

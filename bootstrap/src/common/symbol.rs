@@ -1,8 +1,9 @@
 use std::ops::{Index, IndexMut};
 
-use crate::common::{StringTableId, TypeId};
-use crate::common::context::Context;
+use crate::common::{Inferred, StringTable, StringTableId, TypeId};
+use crate::common::Context;
 use crate::common::package::PackageId;
+use crate::common::string::GetString;
 use crate::frontend::ast;
 
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
@@ -16,6 +17,18 @@ impl AsRef<SymbolId> for SymbolId {
 
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
 pub struct SymbolName(pub StringTableId);
+
+impl AsRef<SymbolName> for SymbolName {
+    fn as_ref(&self) -> &SymbolName {
+        &self
+    }
+}
+
+impl GetString<SymbolName> for StringTable {
+    fn get_string(&self, idx: impl AsRef<SymbolName>) -> String {
+        self.get_string(idx.as_ref().0)
+    }
+}
 
 impl From<&ast::AstIdentifier> for SymbolName {
     fn from(value: &ast::AstIdentifier) -> Self {
@@ -74,6 +87,7 @@ pub struct TypeSymbol {
 pub struct VariableSymbol {
     pub id: SymbolId,
     pub name: SymbolName,
+    pub inferred: Inferred,
     pub type_id: Option<TypeId>,
 }
 
@@ -189,14 +203,22 @@ impl SymbolTable {
         new_id
     }
 
-    pub(crate) fn register_variable(&mut self, name: SymbolName) -> SymbolId {
+    pub(crate) fn register_variable(&mut self, name: SymbolName, inferred: Inferred) -> SymbolId {
         let new_id = SymbolId(self.len() + 1);
         self.symbols.push(Symbol::Variable(VariableSymbol {
             id: new_id.clone(),
             name,
+            inferred,
             type_id: None,
         }));
         new_id
+    }
+
+    pub(crate) fn variable(&self, id: SymbolId) -> &VariableSymbol {
+        match self.index(id) {
+            Symbol::Variable(symbol) => symbol,
+            _ => panic!("Not variable symbol")
+        }
     }
 }
 
@@ -294,7 +316,7 @@ mod tests {
         let mut ctx = Context::testing();
         let mut table = SymbolTable::new();
 
-        let id = table.register_variable(SymbolName(ctx.str_push("variable")));
+        let id = table.register_variable(SymbolName(ctx.str_push("variable")), Inferred::Unknown);
         assert_eq!(id, SymbolId(1));
         assert_eq!(table.len(), 1);
 
@@ -310,7 +332,7 @@ mod tests {
 
         let arg_id = table.register_argument(SymbolName(ctx.str_push("argument")));
         let func_id = table.register_function(SymbolName(ctx.str_push("function")));
-        let var_id = table.register_variable(SymbolName(ctx.str_push("variable")));
+        let var_id = table.register_variable(SymbolName(ctx.str_push("variable")), Inferred::String);
 
         assert_eq!(arg_id, SymbolId(1));
         assert_eq!(func_id, SymbolId(2));

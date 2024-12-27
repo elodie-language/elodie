@@ -14,7 +14,7 @@ impl<'a> Generator<'a> {
 
         Ok(IrTreeNode::new(
             DeclareVariable(IrDeclareVariableNode {
-                symbol: node.variable,
+                variable: node.variable,
                 value: value.clone(),
             }),
             span,
@@ -26,7 +26,7 @@ impl<'a> Generator<'a> {
 mod tests {
     use bigdecimal::BigDecimal;
 
-    use crate::common::context::Context;
+    use crate::common::Context;
     use crate::ir::ir_from_str;
 
     #[test]
@@ -37,7 +37,7 @@ mod tests {
 
         let result = &ir[0];
         let declared_variable = result.as_declare_variable();
-        assert_eq!(ctx.symbol_name(declared_variable.symbol), "var");
+        assert_eq!(ctx.symbol_name(declared_variable.variable), "var");
 
         let value = declared_variable.value.as_literal_number();
         assert_eq!(value.value, BigDecimal::from(9924))

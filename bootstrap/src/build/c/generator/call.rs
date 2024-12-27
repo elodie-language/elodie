@@ -7,13 +7,14 @@ use crate::build::c::Statement::CallFunction;
 use crate::ir::{IrCallFunctionOfPackageNode, IrTreeNode};
 
 impl Generator {
+
     pub(crate) fn call_function_of_package(&mut self, node: &IrCallFunctionOfPackageNode) -> c::generator::Result<()> {
         let arguments = self.generate_call_arguments(&node.arguments)?;
 
         self.current_function_statements().push(CallFunction(CallFunctionStatement {
             indent: Indent::none(),
             identifier: "rt_io_println".to_string(),
-            arguments: arguments.into_boxed_slice(),
+            arguments,
             result: None,
         }));
 
@@ -22,11 +23,11 @@ impl Generator {
         return Ok(());
     }
 
-    fn generate_call_arguments(&mut self, args: &[Rc<IrTreeNode>]) -> c::generator::Result<Vec<Expression>> {
+    fn generate_call_arguments(&mut self, args: &[Rc<IrTreeNode>]) -> c::generator::Result<Box<[Expression]>> {
         let mut result = vec![];
         for arg in args {
             result.push(self.expression(arg)?)
         }
-        Ok(result)
+        Ok(result.into_boxed_slice())
     }
 }

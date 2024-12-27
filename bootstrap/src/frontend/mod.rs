@@ -1,5 +1,5 @@
 use std::ops::Index;
-use crate::common::context::Context;
+use crate::common::Context;
 
 use crate::frontend::ast::AstTreeNode;
 use crate::frontend::lex::lex;

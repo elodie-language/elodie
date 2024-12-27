@@ -116,7 +116,9 @@ impl WithSpan for IrTreeNode {
 }
 
 #[derive(Debug, Clone, PartialEq)]
-pub struct IrAccessVariableNode {}
+pub struct IrAccessVariableNode {
+    pub variable: SymbolId,
+}
 
 impl AccessVariableNode<IrVariant> for IrAccessVariableNode {}
 
@@ -206,7 +208,7 @@ impl DefineTypeNode<IrVariant> for IrDefineTypeNode {}
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct IrDeclareVariableNode {
-    pub symbol: SymbolId,
+    pub variable: SymbolId,
     pub value: Rc<IrTreeNode>,
 }
 
@@ -223,7 +225,9 @@ pub struct IrIfNode {}
 impl IfNode<IrVariant> for IrIfNode {}
 
 #[derive(Debug, Clone, PartialEq)]
-pub struct IrInterpolateStringNode {}
+pub struct IrInterpolateStringNode {
+    pub nodes: Box<[Rc<IrTreeNode>]>,
+}
 
 impl InterpolateStringNode<IrVariant> for IrInterpolateStringNode {}
 

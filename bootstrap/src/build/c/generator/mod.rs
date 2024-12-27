@@ -1,12 +1,14 @@
 use std::collections::HashSet;
 
+use Node::{LiteralBoolean, LiteralNumber, LiteralString};
+
 use crate::build::c;
 use crate::build::c::{BlockStatement, DeclareFunctionNode, DeclareStructNode, DefineFunctionNode, DefineStructNode, DirectiveNode, IncludeLocalDirectiveNode, IncludeSystemDirectiveNode, Indent};
 use crate::build::c::DirectiveNode::{IncludeLocalDirective, IncludeSystemDirective};
 use crate::build::c::Node::DefineFunction;
-use crate::common::context::Context;
+use crate::common::Context;
 use crate::common::node::Node;
-use crate::common::node::Node::CallFunctionOfPackage;
+use crate::common::node::Node::{CallFunctionOfPackage, DeclareVariable, InterpolateString};
 use crate::common::StringTable;
 use crate::ir;
 use crate::ir::node::IrTreeNode;
@@ -14,6 +16,8 @@ use crate::ir::node::IrTreeNode;
 mod call;
 mod literal;
 mod stack;
+mod variable;
+mod string;
 
 #[derive(Debug)]
 pub enum Error {}
@@ -105,6 +109,7 @@ impl Generator {
 
     pub(crate) fn nodes(&mut self, ir: &IrTreeNode) -> Result<()> {
         match ir.node() {
+            DeclareVariable(node) => self.declare_variable(node)?,
             CallFunctionOfPackage(node) => self.call_function_of_package(node)?,
             _ => unimplemented!("{ir:#?}")
         }
@@ -117,9 +122,10 @@ impl Generator {
 
     pub(crate) fn expression(&mut self, ir: &IrTreeNode) -> Result<c::Expression> {
         match ir.node() {
-            Node::LiteralBoolean(node) => Ok(c::Expression::Literal(self.literal_bool(node)?)),
-            Node::LiteralNumber(node) => Ok(c::Expression::Literal(self.literal_number(node)?)),
-            Node::LiteralString(node) => Ok(c::Expression::Literal(self.literal_string(node)?)),
+            InterpolateString(node) => Ok(c::Expression::Variable(self.interpolate_string(node)?)),
+            LiteralBoolean(node) => Ok(c::Expression::Literal(self.literal_bool(node)?)),
+            LiteralNumber(node) => Ok(c::Expression::Literal(self.literal_number(node)?)),
+            LiteralString(node) => Ok(c::Expression::Literal(self.literal_string(node)?)),
             _ => unimplemented!("{:#?}", ir)
         }
     }

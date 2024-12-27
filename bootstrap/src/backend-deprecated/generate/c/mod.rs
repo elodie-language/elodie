@@ -4,7 +4,7 @@ use crate::backend::generate::c::emitter::emit;
 use crate::backend::generate::c::generator::generate;
 use crate::frontend::Ast;
 use crate::{frontend, ir};
-use crate::common::context::Context;
+use crate::common::Context;
 
 mod emitter;
 mod generator;

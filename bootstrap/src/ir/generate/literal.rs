@@ -33,7 +33,7 @@ impl<'a> Generator<'a> {
 mod tests {
     use bigdecimal::BigDecimal;
 
-    use crate::common::context::Context;
+    use crate::common::Context;
     use crate::ir::ir_from_str;
 
     #[test]

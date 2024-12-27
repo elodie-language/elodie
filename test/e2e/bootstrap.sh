@@ -49,7 +49,7 @@ for FILE in "$TEST_DIR"/**/*.ec; do
 done
 
 echo "----------------------"
-echo -e "tck::bootstrap::c - Passed:\e[32m $OK_COUNT" "\e[0mFailed:\e[31m $ERR_COUNT\e[0m"
+echo -e "e2e::bootstrap::c - Passed:\e[32m $OK_COUNT" "\e[0mFailed:\e[31m $ERR_COUNT\e[0m"
 echo "----------------------"
 
 exit $EXIT_CODE

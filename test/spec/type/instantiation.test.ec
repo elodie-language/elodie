@@ -1,7 +1,6 @@
 test('Type instantiation') {
     describe('Instantiate empty type'){
-        type Some_Type (
-        )
+        type Some_Type ()
 
         let some_type = Some_Type()
     }

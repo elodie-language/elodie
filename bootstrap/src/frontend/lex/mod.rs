@@ -1,7 +1,6 @@
 use std::cell::RefCell;
 
-use crate::common::{Column, Index, Position, Row, Span};
-use crate::common::context::Context;
+use crate::common::{Column, Context, Index, Position, Row, Span};
 use crate::frontend::lex::token::Token;
 use crate::frontend::lex::token::TokenKind::EOF;
 use crate::frontend::lex::Error::UnexpectedEndOfFile;

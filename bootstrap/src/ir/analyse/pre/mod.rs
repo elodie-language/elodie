@@ -1,20 +1,24 @@
 use std::ops::Deref;
 
-use crate::common::{StringTable, SymbolId, SymbolName, SymbolTable, TypeTable, WithSpan};
-use crate::common::context::Context;
-use crate::common::node::Node::{CallFunctionOfPackage, DeclareVariable, LiteralBoolean, LiteralNumber, LiteralString};
+use crate::common::{GetString, Inferred, Span, StringTable, SymbolId, SymbolName, SymbolTable, TypeTable, VariableSymbol, WithSpan};
+use crate::common::Context;
+use crate::common::node::Node::{AccessVariable, CallFunctionOfPackage, DeclareVariable, InterpolateString, LiteralBoolean, LiteralNumber, LiteralString};
 use crate::frontend;
 use crate::frontend::ast::AstTreeNode;
-use crate::ir::analyse::TypedTreeNode;
+use crate::ir::analyse::{Error, TypedTreeNode, UndefinedError};
+use crate::ir::analyse::scope::Scope;
 
 mod variable;
 mod literal;
 mod call;
+mod string;
+mod access;
 
 pub(crate) struct Pre<'a> {
     string_table: &'a mut StringTable,
     symbol_table: &'a mut SymbolTable,
     type_table: &'a mut TypeTable,
+    scope: Scope,
 }
 
 impl<'a> Pre<'a> {
@@ -23,6 +27,7 @@ impl<'a> Pre<'a> {
             string_table: &mut ctx.string_table,
             symbol_table: &mut ctx.symbol_table,
             type_table: &mut ctx.type_table,
+            scope: Scope::new(),
         }
     }
 
@@ -38,20 +43,21 @@ impl<'a> Pre<'a> {
     }
 
     fn node(&mut self, ast: &AstTreeNode) -> crate::ir::analyse::Result<TypedTreeNode> {
+        self.scope.span_set(ast.span());
+
         match ast.node() {
-            CallFunctionOfPackage(node) => self.call_function_of_package(ast.span(), node),
-            DeclareVariable(node) => self.declare_variable(ast.span(), node),
-            LiteralBoolean(node) => self.literal_boolean(ast.span(), node),
-            LiteralNumber(node) => self.literal_number(ast.span(), node),
-            LiteralString(node) => self.literal_string(ast.span(), node),
+            AccessVariable(node) => self.access_variable(node),
+            CallFunctionOfPackage(node) => self.call_function_of_package(node),
+            DeclareVariable(node) => self.declare_variable(node),
+            InterpolateString(node) => self.interpolate_string(node),
+            LiteralBoolean(node) => self.literal_boolean(node),
+            LiteralNumber(node) => self.literal_number(node),
+            LiteralString(node) => self.literal_string(node),
             _ => unimplemented!("{ast:#?}"),
         }
     }
 
-    fn register_argument(&mut self, name: SymbolName) -> SymbolId {
-        // self.ctx.symbol_table.register_argument(name)
-        todo!()
-    }
+    fn span(&self) -> Span { self.scope.span_get() }
 
     // fn register_function(&mut self, name: SymbolName) -> SymbolId {
     //     self.ctx.symbol_table.register_function(name)
@@ -65,7 +71,21 @@ impl<'a> Pre<'a> {
     //     self.ctx.symbol_table.register_type(name)
     // }
     //
-    fn register_variable(&mut self, name: SymbolName) -> SymbolId {
-        self.symbol_table.register_variable(name)
+
+    fn variable_register(&mut self, name: SymbolName, inferred: Inferred) -> SymbolId {
+        let result = self.symbol_table.register_variable(name, inferred);
+        let symbol = &mut self.symbol_table[result];
+        self.scope.register_symbol(&symbol);
+        result
+    }
+
+    fn variable_get(&self, name: impl AsRef<SymbolName>) -> crate::ir::analyse::Result<&VariableSymbol> {
+        let id = self.scope.variable(name.as_ref())
+            .ok_or(Error::Undefined(UndefinedError::UndefinedVariable {
+                variable: self.string_table.get_string(name),
+                span: self.span(),
+            }))?;
+
+        Ok(self.symbol_table.variable(id))
     }
 }

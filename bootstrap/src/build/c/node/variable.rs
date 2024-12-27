@@ -12,7 +12,7 @@ pub struct DeclareArrayStatement {
 #[derive(Debug)]
 pub struct DeclareVariableStatement {
     pub indent: Indent,
-    pub identifier: String,
+    pub variable: String,
     pub r#type: String,
     pub expression: Expression,
 }

@@ -15,7 +15,7 @@ impl Emitter {
 
     pub(crate) fn declare_variable(&mut self, statement: &DeclareVariableStatement) {
         self.token(statement.r#type.as_str());
-        self.token(statement.identifier.as_str());
+        self.token(statement.variable.as_str());
         self.token("=");
         self.expression(&statement.expression);
         self.line(";");

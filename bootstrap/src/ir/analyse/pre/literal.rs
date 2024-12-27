@@ -2,18 +2,16 @@ use std::str::FromStr;
 
 use bigdecimal::BigDecimal;
 
+use crate::common::Inferred::{Boolean, Number, String};
 use crate::common::node::Node::{LiteralBoolean, LiteralNumber, LiteralString};
-use crate::common::Span;
 use crate::frontend::ast::{AstLiteralBooleanNode, AstLiteralNumberNode, AstLiteralStringNode, AstType};
 use crate::ir::analyse::{TypedTreeNode, TypeLiteralBooleanNode, TypeLiteralNumberNode, TypeLiteralStringNode};
-use crate::ir::analyse::InferredType::{Boolean, Number, String};
 use crate::ir::analyse::pre::Pre;
 
 // FIXME no unwrap
 impl<'a> Pre<'a> {
     pub(crate) fn literal_boolean(
         &mut self,
-        span: Span,
         node: &AstLiteralBooleanNode,
     ) -> crate::ir::analyse::Result<TypedTreeNode> {
         let str = self.string_table.get(node.0.value());
@@ -22,14 +20,13 @@ impl<'a> Pre<'a> {
                 value: bool::from_str(str).unwrap(),
                 value_ast_type: AstType::Boolean,
             }),
-            span,
+            self.span(),
             Boolean,
         ))
     }
 
     pub(crate) fn literal_number(
         &mut self,
-        span: Span,
         node: &AstLiteralNumberNode,
     ) -> crate::ir::analyse::Result<TypedTreeNode> {
         let str = self.string_table.get(node.0.value());
@@ -38,14 +35,13 @@ impl<'a> Pre<'a> {
                 value: BigDecimal::from_str(str).unwrap(),
                 value_ast_type: AstType::Number,
             }),
-            span,
+            self.span(),
             Number,
         ))
     }
 
     pub(crate) fn literal_string(
         &mut self,
-        span: Span,
         node: &AstLiteralStringNode,
     ) -> crate::ir::analyse::Result<TypedTreeNode> {
         Ok(TypedTreeNode::new(
@@ -53,7 +49,7 @@ impl<'a> Pre<'a> {
                 value: node.0.value(),
                 value_ast_type: AstType::String,
             }),
-            span,
+            self.span(),
             String,
         ))
     }
@@ -63,10 +59,11 @@ impl<'a> Pre<'a> {
 mod tests {
     use bigdecimal::BigDecimal;
 
-    use crate::common::context::Context;
+    use crate::common::Context;
+    use crate::common::Inferred;
     use crate::frontend::ast::AstType;
     use crate::frontend::ast_from_str;
-    use crate::ir::analyse::{InferredType, prepare};
+    use crate::ir::analyse::prepare;
 
     #[test]
     fn number_literal() {
@@ -80,7 +77,7 @@ mod tests {
         assert_eq!(inner.value, BigDecimal::from(9924));
         assert_eq!(inner.value_ast_type, AstType::Number);
 
-        assert_eq!(result.inferred, InferredType::Number);
+        assert_eq!(result.inferred, Inferred::Number);
     }
 
     #[test]
@@ -94,7 +91,7 @@ mod tests {
         let inner = result.as_literal_string();
         assert_eq!(ctx.str_get(inner.value), "Elodie");
         assert_eq!(inner.value_ast_type, AstType::String);
-        assert_eq!(result.inferred, InferredType::String);
+        assert_eq!(result.inferred, Inferred::String);
     }
 
     #[test]
@@ -108,7 +105,7 @@ mod tests {
         let inner = result.as_literal_boolean();
         assert_eq!(inner.value, true);
         assert_eq!(inner.value_ast_type, AstType::Boolean);
-        assert_eq!(result.inferred, InferredType::Boolean);
+        assert_eq!(result.inferred, Inferred::Boolean);
     }
 
     #[test]
@@ -122,6 +119,6 @@ mod tests {
         let inner = result.as_literal_boolean();
         assert_eq!(inner.value, false);
         assert_eq!(inner.value_ast_type, AstType::Boolean);
-        assert_eq!(result.inferred, InferredType::Boolean);
+        assert_eq!(result.inferred, Inferred::Boolean);
     }
 }

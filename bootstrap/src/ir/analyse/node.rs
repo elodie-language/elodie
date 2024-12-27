@@ -1,6 +1,6 @@
 use bigdecimal::BigDecimal;
 
-use crate::common::{Span, StringTableId, SymbolId, WithSpan};
+use crate::common::{Inferred, Span, StringTableId, SymbolId, WithSpan};
 use crate::common::node::{
     AccessVariableNode, AccessVariableOfObjectNode, AccessVariableOfSelfNode, BlockNode,
     BreakLoopNode, CalculateNode, CallFunctionNode, CallFunctionOfObjectNode,
@@ -11,7 +11,6 @@ use crate::common::node::{
     Node, ReturnFromFunctionNode, Variant,
 };
 use crate::frontend::ast::AstType;
-use crate::ir::analyse::InferredType;
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct TypeVariant {}
@@ -58,15 +57,31 @@ pub(crate) enum Direction {
 pub struct TypedTreeNode {
     pub node: TypeNode,
     pub span: Span,
-    pub inferred: InferredType,
+    pub inferred: Inferred,
 }
 
 impl TypedTreeNode {
+    pub fn as_access_variable(&self) -> &TypeAccessVariableNode {
+        if let Node::AccessVariable(result) = &self.node {
+            result
+        } else {
+            panic!("not access variable")
+        }
+    }
+
     pub fn as_declared_variable(&self) -> &TypeDeclareVariableNode {
         if let Node::DeclareVariable(result) = &self.node {
             result
         } else {
             panic!("not declare variable")
+        }
+    }
+
+    pub fn as_interpolate_string(&self) -> &TypeInterpolateStringNode {
+        if let Node::InterpolateString(result) = &self.node {
+            result
+        } else {
+            panic!("not interpolate string")
         }
     }
 
@@ -108,7 +123,7 @@ impl TypedTreeNode {
 }
 
 impl TypedTreeNode {
-    pub fn new(node: TypeNode, span: Span, inferred: InferredType) -> TypedTreeNode {
+    pub fn new(node: TypeNode, span: Span, inferred: Inferred) -> TypedTreeNode {
         TypedTreeNode {
             node,
             span,
@@ -124,7 +139,9 @@ impl WithSpan for TypedTreeNode {
 }
 
 #[derive(Debug, Clone, PartialEq)]
-pub struct TypeAccessVariableNode {}
+pub struct TypeAccessVariableNode {
+    pub symbol: SymbolId,
+}
 
 impl AccessVariableNode<TypeVariant> for TypeAccessVariableNode {}
 
@@ -231,7 +248,9 @@ pub struct TypeIfNode {}
 impl IfNode<TypeVariant> for TypeIfNode {}
 
 #[derive(Debug, Clone, PartialEq)]
-pub struct TypeInterpolateStringNode {}
+pub struct TypeInterpolateStringNode {
+    pub nodes: Box<[TypedTreeNode]>,
+}
 
 impl InterpolateStringNode<TypeVariant> for TypeInterpolateStringNode {}
 

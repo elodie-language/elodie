@@ -31,7 +31,7 @@ impl<'a> Parser<'a> {
 
 #[cfg(test)]
 mod tests {
-    use crate::common::context::Context;
+    use crate::common::Context;
     use crate::frontend::lex::lex;
     use crate::frontend::lex::token::{test_token_with_offset, LiteralToken, TokenKind};
     use crate::frontend::parse::node::Node::Literal;

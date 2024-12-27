@@ -1,31 +1,30 @@
 use Error::TypeMissMatch;
 use TypeMissMatchError::DeclaredTypeMissMatch;
 
+use crate::common::{Inferred, SymbolName};
 use crate::common::node::Node::DeclareVariable;
-use crate::common::{Span, SymbolName};
 use crate::frontend::ast::{AstDeclareVariableNode, AstType};
-use crate::ir::analyse::{Error, InferredType, TypeDeclareVariableNode, TypedTreeNode, TypeMissMatchError};
+use crate::ir::analyse::{Error, TypeDeclareVariableNode, TypedTreeNode, TypeMissMatchError};
 use crate::ir::analyse::pre::Pre;
 
 impl<'a> Pre<'a> {
     pub(crate) fn declare_variable(
         &mut self,
-        span: Span,
         node: &AstDeclareVariableNode,
     ) -> crate::ir::analyse::Result<TypedTreeNode> {
-        let symbol = self.register_variable(SymbolName::from(&node.variable));
-
         let value = Box::new(self.node(&node.value)?);
         let value_inferred = value.inferred.clone();
 
+        let variable = self.variable_register(SymbolName::from(&node.variable), value_inferred.clone());
+
         if let Some(expected) = &node.value_type {
-            if value_inferred != InferredType::Unknown {
+            if value_inferred != Inferred::Unknown {
                 let matches = match (expected, &value_inferred) {
-                    (&AstType::Boolean, &InferredType::Boolean) => true,
+                    (&AstType::Boolean, &Inferred::Boolean) => true,
                     (&AstType::Boolean, _) => false,
-                    (&AstType::Number, &InferredType::Number) => true,
+                    (&AstType::Number, &Inferred::Number) => true,
                     (&AstType::Number, _) => false,
-                    (&AstType::String, &InferredType::String) => true,
+                    (&AstType::String, &Inferred::String) => true,
                     (&AstType::String, _) => false,
                     (_, _) => unimplemented!()
                 };
@@ -34,15 +33,15 @@ impl<'a> Pre<'a> {
                     return Err(TypeMissMatch(DeclaredTypeMissMatch {
                         expected: expected.to_string(&self.string_table),
                         got: value_inferred.to_string(&self.string_table),
-                        span,
+                        span: self.span(),
                     }));
                 }
             }
         }
 
         Ok(TypedTreeNode::new(
-            DeclareVariable(TypeDeclareVariableNode { variable: symbol, value }),
-            span,
+            DeclareVariable(TypeDeclareVariableNode { variable, value }),
+            self.span(),
             value_inferred,
         ))
     }
@@ -54,10 +53,10 @@ mod tests {
 
     use TypeMissMatchError::DeclaredTypeMissMatch;
 
-    use crate::common::context::Context;
-    use crate::common::SymbolId;
+    use crate::common::{Inferred, SymbolId};
+    use crate::common::Context;
     use crate::frontend::ast_from_str;
-    use crate::ir::analyse::{analyse, InferredType, prepare, TypeMissMatchError};
+    use crate::ir::analyse::{analyse, prepare, TypeMissMatchError};
     use crate::ir::analyse::Error::TypeMissMatch;
 
     #[test]
@@ -68,7 +67,7 @@ mod tests {
         assert_eq!(typed.nodes.len(), 1);
 
         let result = &typed[0];
-        assert_eq!(result.inferred, InferredType::Number);
+        assert_eq!(result.inferred, Inferred::Number);
 
         let inner = result.as_declared_variable();
         assert_eq!(inner.variable, SymbolId(1));
@@ -83,7 +82,7 @@ mod tests {
         assert_eq!(typed.nodes.len(), 1);
 
         let result = &typed[0];
-        assert_eq!(result.inferred, InferredType::Number);
+        assert_eq!(result.inferred, Inferred::Number);
 
         let inner = result.as_declared_variable();
         assert_eq!(inner.variable, SymbolId(1));
@@ -98,7 +97,7 @@ mod tests {
         assert_eq!(typed.nodes.len(), 1);
 
         let result = &typed[0];
-        assert_eq!(result.inferred, InferredType::String);
+        assert_eq!(result.inferred, Inferred::String);
 
         let inner = result.as_declared_variable();
         assert_eq!(inner.variable, SymbolId(1));
@@ -113,7 +112,7 @@ mod tests {
         assert_eq!(typed.nodes.len(), 1);
 
         let result = &typed[0];
-        assert_eq!(result.inferred, InferredType::Boolean);
+        assert_eq!(result.inferred, Inferred::Boolean);
 
         let inner = result.as_declared_variable();
         assert_eq!(inner.variable, SymbolId(1));
@@ -132,5 +131,24 @@ mod tests {
         let TypeMissMatch(DeclaredTypeMissMatch { expected, got, .. }) = error else { panic!() };
         assert_eq!(expected, "String");
         assert_eq!(got, "Number");
+    }
+
+    #[test]
+    fn shadow_variable() {
+        let mut ctx = Context::testing();
+        let ast = ast_from_str(&mut ctx, r#"
+            let value = 23
+            let value = true
+            let value = 'Elodie'
+        "#).unwrap();
+        let typed = prepare(&mut ctx, ast).unwrap();
+        assert_eq!(typed.nodes.len(), 3);
+
+        let result = &typed[2];
+        assert_eq!(result.inferred, Inferred::String);
+
+        let inner = result.as_declared_variable();
+        assert_eq!(inner.variable, SymbolId(3));
+        assert_eq!(ctx.str_get(inner.value.as_literal_string().value), "Elodie");
     }
 }

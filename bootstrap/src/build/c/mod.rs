@@ -8,7 +8,7 @@ pub use node::*;
 
 use crate::build::c::emitter::emit;
 use crate::build::c::generator::generate;
-use crate::common::context::Context;
+use crate::common::Context;
 use crate::ir::ir_from_str;
 
 mod emitter;

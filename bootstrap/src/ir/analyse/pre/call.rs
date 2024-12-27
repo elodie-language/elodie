@@ -1,11 +1,11 @@
-use crate::common::{Span, SymbolId};
+use crate::common::{Inferred, Span, SymbolId};
 use crate::common::node::Node;
 use crate::frontend::ast::AstCallFunctionOfPackageNode;
-use crate::ir::analyse::{InferredType, TypeCallFunctionOfPackageNode, TypedTreeNode};
+use crate::ir::analyse::{TypeCallFunctionOfPackageNode, TypedTreeNode};
 use crate::ir::analyse::pre::Pre;
 
 impl<'a> Pre<'a> {
-    pub(crate) fn call_function_of_package(&mut self, span: Span, node: &AstCallFunctionOfPackageNode) -> crate::ir::analyse::Result<TypedTreeNode> {
+    pub(crate) fn call_function_of_package(&mut self, node: &AstCallFunctionOfPackageNode) -> crate::ir::analyse::Result<TypedTreeNode> {
         // get package
         // get function from package
 
@@ -24,8 +24,8 @@ impl<'a> Pre<'a> {
                     arguments: arguments.into_boxed_slice(),
                 }
             ),
-            span,
-            InferredType::Package,
+            self.span(),
+            Inferred::Package,
         ))
     }
 }

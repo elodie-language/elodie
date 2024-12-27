@@ -42,7 +42,7 @@ pub struct TypeTable {
 }
 
 #[derive(Debug, Eq, Hash, PartialEq)]
-pub enum BuiltinType {
+enum BuiltinType {
     Any,
     Boolean,
     Never,

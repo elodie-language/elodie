@@ -1,7 +1,7 @@
 use std::ops::Deref;
 
 use crate::common::{StringTable, SymbolTable, TypeTable, WithSpan};
-use crate::common::context::Context;
+use crate::common::Context;
 use crate::ir::analyse::{TypedTreeNode, TypeNode};
 use crate::ir::analyse::scope::Scope;
 

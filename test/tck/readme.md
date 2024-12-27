@@ -1,1 +1,0 @@
-# Technology Compatibility Kit tests
