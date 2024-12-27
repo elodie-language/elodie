@@ -6,7 +6,7 @@ set(CMAKE_C_FLAGS, "${CMAKE_C_FLAGS} -O3")
 set(COMPILER_WARNINGS
         -Wall
         -Wextra
-        -pedantic
+#        -pedantic
         -Wcast-align
         -Wcast-qual
         -Wdisabled-optimization
@@ -16,7 +16,7 @@ set(COMPILER_WARNINGS
         -Wredundant-decls
         -Wno-gnu-statement-expression
         -Wno-gnu-auto-type
-        -Wshadow
+#        -Wshadow
         -Wstrict-overflow=5
         -Wundef
         -Wno-cast-qual
@@ -58,5 +58,5 @@ endif ()
 add_custom_target(it)
 
 add_subdirectory(core)
-#add_subdirectory(playground)
+add_subdirectory(playground)
 add_subdirectory(rt)
