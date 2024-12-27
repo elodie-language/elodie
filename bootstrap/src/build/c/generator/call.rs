@@ -11,7 +11,7 @@ impl Generator {
     pub(crate) fn call_function_of_package(&mut self, node: &IrCallFunctionOfPackageNode) -> c::generator::Result<()> {
         let arguments = self.generate_call_arguments(&node.arguments)?;
 
-        self.current_function_statements().push(CallFunction(CallFunctionStatement {
+        self.statements().push(CallFunction(CallFunctionStatement {
             indent: Indent::none(),
             identifier: "rt_io_println".to_string(),
             arguments,

@@ -14,6 +14,7 @@ use crate::ir::ir_from_str;
 mod emitter;
 mod generator;
 mod node;
+mod scope;
 
 #[derive(Debug)]
 pub enum Error {

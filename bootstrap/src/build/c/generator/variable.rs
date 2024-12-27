@@ -14,7 +14,7 @@ impl Generator {
 
         if let LiteralString(IrLiteralStringNode { value }) = &node.value.node() {
             let value = self.string_table.get_string(value);
-            self.current_function_statements().push(
+            self.statements().push(
                 Statement::DeclareVariable(DeclareVariableStatement {
                     indent: Indent::none(),
                     variable,

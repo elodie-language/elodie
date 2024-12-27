@@ -6,6 +6,7 @@ use crate::build::c;
 use crate::build::c::{BlockStatement, DeclareFunctionNode, DeclareStructNode, DefineFunctionNode, DefineStructNode, DirectiveNode, IncludeLocalDirectiveNode, IncludeSystemDirectiveNode, Indent};
 use crate::build::c::DirectiveNode::{IncludeLocalDirective, IncludeSystemDirective};
 use crate::build::c::Node::DefineFunction;
+use crate::build::c::scope::Scope;
 use crate::common::{Context, SymbolTable, TypeTable};
 use crate::common::node::Node;
 use crate::common::node::Node::{CallFunctionOfPackage, DeclareVariable, InterpolateString};
@@ -15,7 +16,6 @@ use crate::ir::node::IrTreeNode;
 
 mod call;
 mod literal;
-mod stack;
 mod variable;
 mod string;
 
@@ -32,6 +32,7 @@ pub(crate) fn generate(ctx: Context, ir: ir::Ir) -> Result<Vec<c::Node>> {
         string_table: ctx.string_table,
         symbol_table: ctx.symbol_table,
         type_table: ctx.type_table,
+        scope: Scope::new(),
 
         directives: HashSet::new(),
 
@@ -50,6 +51,7 @@ pub(crate) struct Generator {
     string_table: StringTable,
     symbol_table: SymbolTable,
     type_table: TypeTable,
+    scope: Scope,
 
     directives: HashSet<DirectiveNode>,
     function_declarations: Vec<DeclareFunctionNode>,
@@ -108,7 +110,7 @@ impl Generator {
         Ok(result)
     }
 
-    pub(crate) fn current_function_statements(&mut self) -> &mut Vec<c::Statement> {
+    pub(crate) fn statements(&mut self) -> &mut Vec<c::Statement> {
         let ptr = self.function_pointer;
         &mut self.function_definitions[ptr.0].statements.statements
     }

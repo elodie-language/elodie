@@ -3,7 +3,7 @@ use std::rc::Rc;
 use crate::common::{Span, WithSpan};
 use crate::common::node::Node;
 use crate::common::node::Node::InterpolateString;
-use crate::ir::{IrAccessVariableNode, IrInterpolateStringNode, IrTreeNode};
+use crate::ir::{IrAccessVariableNode, IrInterpolateStringNode, IrLiteralStringNode, IrTreeNode};
 use crate::ir::analyse::{TypedTreeNode, TypeInterpolateStringNode};
 use crate::ir::generate::Generator;
 
@@ -24,9 +24,12 @@ impl<'a> Generator<'a> {
     pub(crate) fn convert_to_string(&mut self, node: &TypedTreeNode) -> crate::ir::generate::Result<IrTreeNode> {
         match node.node() {
             Node::AccessVariable(access_variable) => Ok(IrTreeNode::new(
-                Node::AccessVariable(IrAccessVariableNode {
-                    variable: access_variable.symbol
-                }),
+                Node::AccessVariable(IrAccessVariableNode { variable: access_variable.symbol }),
+                node.span(),
+                self.type_table.type_id_string(),
+            )),
+            Node::LiteralString(literal) => Ok(IrTreeNode::new(
+                Node::LiteralString(IrLiteralStringNode { value: literal.value }),
                 node.span(),
                 self.type_table.type_id_string(),
             )),
