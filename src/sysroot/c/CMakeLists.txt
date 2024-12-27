@@ -1,12 +1,11 @@
-cmake_minimum_required(VERSION 3.28)
-project(c C)
+cmake_minimum_required(VERSION 3.24)
+project(elodie C CXX)
 
-set(CMAKE_C_STANDARD 11)
+set(CMAKE_C_STANDARD 23)
+set(CMAKE_CXX_STANDARD 20)
 
-add_executable(c main.c
-        rt/intrinsics/io.c
-        core/intrinsics/math.c
-        core/boolean.c
-)
+#add_subdirectory(external)
+#enable_testing()
+#include(GoogleTest)
 
-target_link_libraries(c PRIVATE m)
+add_subdirectory(project)

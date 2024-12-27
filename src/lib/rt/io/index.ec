@@ -1,7 +1,7 @@
 export package io {
 
     export function print(s: String) {
-        rt::intrinsics::io::print(s)
+        sysroot::rt::io::print(s)
     }
 
     export function println(s: String) {

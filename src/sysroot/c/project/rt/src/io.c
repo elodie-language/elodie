@@ -2,6 +2,6 @@
 
 #include <stdio.h>
 
-void rt_intrinsics_io_print(const char *text) {
+void sysroot_rt_io_print(const char *text) {
     printf("%s", text);
 }
