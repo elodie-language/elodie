@@ -212,9 +212,9 @@ TEST(mem_stack, runs_out_of_mem)
 	);
 
 	ASSERT_EQ(
-		"\x1B[31mFATAL\x1B[0m \x1B[90mmem-stack.c:102\x1B[0m \x1B[31mcheck '(u1 *)self->current + size <= (u1 *)"
+    "\x1B[31mFATAL\x1B[0m \x1B[90mmem-stack.c:102\x1B[0m \x1B[31mcheck '(u1 *)self->current + size <= (u1 *)"
 		"self->end' failed\n",
-		given_output ()
+    captured_output()
 	);
 }
 
@@ -240,7 +240,7 @@ TEST(mem_stack, too_many_begin_calls)
 	);
 
 	ASSERT_EQ(
-		"\x1B[31mFATAL\x1B[0m \x1B[90mmem-stack.c:92\x1B[0m \x1B[31mcheck 'self->stack_idx + 1 < 256' failed\n",
-		given_output ()
+    "\x1B[31mFATAL\x1B[0m \x1B[90mmem-stack.c:92\x1B[0m \x1B[31mcheck 'self->stack_idx + 1 < 256' failed\n",
+    captured_output()
 	);
 }

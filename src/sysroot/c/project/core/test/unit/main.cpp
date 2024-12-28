@@ -13,7 +13,7 @@ main (int argc, char **argv)
 }
 
 std::string
-given_output ()
+captured_output ()
 {
 	std::string output = testing::internal::GetCapturedStdout ();
 	if (output.empty ())

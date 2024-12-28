@@ -5,6 +5,6 @@
 #include "core/mem/mem-api.h"
 
 std::string
-given_output ();
+captured_output ();
 
 #endif //UNIT_TEST_H

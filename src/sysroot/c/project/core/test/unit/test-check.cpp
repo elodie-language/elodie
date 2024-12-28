@@ -21,7 +21,7 @@ TEST(ABORT_, ok)
 	);
 
 	ASSERT_EQ(
-		given_output (),
+		captured_output (),
 		"\x1B[31mFATAL\x1B[0m \x1B[90mtest-check.cpp:10\x1B[0m \x1B[31mabort invoked\n"
 	);
 }
@@ -50,7 +50,7 @@ TEST(CHECK, violated)
 
 	ASSERT_EQ(
 		"\x1B[31mFATAL\x1B[0m \x1B[90mtest-check.cpp:38\x1B[0m \x1B[31mcheck 'x != 10' failed\n",
-		given_output ()
+		captured_output ()
 	);
 }
 
@@ -79,7 +79,7 @@ TEST(CHECK_NOT_NULL, violated)
 
 	ASSERT_EQ(
 		"\x1B[31mFATAL\x1B[0m \x1B[90mtest-check.cpp:67\x1B[0m \x1B[31mcheck '(intptr) != NULL' failed\n",
-		given_output ()
+		captured_output ()
 	);
 }
 
@@ -108,7 +108,7 @@ TEST(CHECK_NULL, violated)
 
 	ASSERT_EQ(
 		"\x1B[31mFATAL\x1B[0m \x1B[90mtest-check.cpp:96\x1B[0m \x1B[31mcheck '(intptr) == NULL' failed\n",
-		given_output ()
+		captured_output ()
 	);
 }
 
@@ -139,7 +139,7 @@ TEST(CHECK_EQUAL, violated)
 
 	ASSERT_EQ(
 		"\x1B[31mFATAL\x1B[0m \x1B[90mtest-check.cpp:117\x1B[0m \x1B[31mcheck '21 == 42' failed\n",
-		given_output ()
+		captured_output ()
 	);
 }
 
@@ -169,7 +169,7 @@ TEST(CHECK_NOT_EQUAL, violated)
 
 	ASSERT_EQ(
 		"\x1B[31mFATAL\x1B[0m \x1B[90mtest-check.cpp:157\x1B[0m \x1B[31mcheck '42 != 42' failed\n",
-		given_output ()
+		captured_output ()
 	);
 }
 
@@ -195,7 +195,7 @@ TEST(CHECK_GREATER_THAN, violated)
 
 	ASSERT_EQ(
 		"\x1B[31mFATAL\x1B[0m \x1B[90mtest-check.cpp:183\x1B[0m \x1B[31mcheck '21 > 42' failed\n",
-		given_output ()
+		captured_output ()
 	);
 }
 
@@ -221,7 +221,7 @@ TEST(CHECK_LESS_THAN, violated)
 
 	ASSERT_EQ(
 		"\x1B[31mFATAL\x1B[0m \x1B[90mtest-check.cpp:209\x1B[0m \x1B[31mcheck '42 < 21' failed\n",
-		given_output ()
+		captured_output ()
 	);
 }
 
@@ -248,7 +248,7 @@ TEST(CHECK_GREATER_THAN_EQUAL, violated)
 
 	ASSERT_EQ(
 		"\x1B[31mFATAL\x1B[0m \x1B[90mtest-check.cpp:236\x1B[0m \x1B[31mcheck '21 >= 42' failed\n",
-		given_output ()
+		captured_output ()
 	);
 }
 
@@ -275,7 +275,7 @@ TEST(CHECK_LESS_THAN_EQUAL, violated)
 
 	ASSERT_EQ(
 		"\x1B[31mFATAL\x1B[0m \x1B[90mtest-check.cpp:263\x1B[0m \x1B[31mcheck '42 <= 21' failed\n",
-		given_output ()
+		captured_output ()
 	);
 }
 
@@ -299,7 +299,7 @@ TEST(CHECK_TRUE, violated)
 
 	ASSERT_EQ(
 		"\x1B[31mFATAL\x1B[0m \x1B[90mtest-check.cpp:294\x1B[0m \x1B[31mcheck '(false) == true' failed\n",
-		given_output ()
+		captured_output ()
 	);
 }
 
@@ -323,7 +323,7 @@ TEST(CHECK_FALSE, violated)
 
 	ASSERT_EQ(
 		"\x1B[31mFATAL\x1B[0m \x1B[90mtest-check.cpp:318\x1B[0m \x1B[31mcheck '(true) == false' failed\n",
-		given_output ()
+		captured_output ()
 	);
 }
 

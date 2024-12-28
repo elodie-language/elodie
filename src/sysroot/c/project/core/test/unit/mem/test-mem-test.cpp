@@ -40,17 +40,16 @@ TEST(mem_test, runs_out_of_mem)
 	struct mem_test *test_instance = mem_test_new (config);
 	testing::internal::CaptureStdout ();
 
-	EXPECT_EXIT(
+	ASSERT_DEATH(
 		{
 			mem_test_allocate (test_instance, 48);
 		},
-		testing::KilledBySignal(SIGABRT),
-		""
+        ""
 	);
 
 	ASSERT_EQ(
-		"\x1B[31mFATAL\x1B[0m \x1B[90mmem-test.c:115\x1B[0m \x1B[31mcheck '(u1 *)self->start + size <= (u1 *)self->end' failed\n",
-		given_output ()
+    "\x1B[31mFATAL\x1B[0m \x1B[90mmem-test.c:115\x1B[0m \x1B[31mcheck '(u1 *)self->start + size <= (u1 *)self->end' failed\n",
+    captured_output()
 	);
 }
 
