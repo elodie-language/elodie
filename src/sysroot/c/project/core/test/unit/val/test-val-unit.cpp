@@ -49,13 +49,13 @@ TEST(val_unit_to_str, ok)
 	auto tm = mem_test_new_default (128);
 
 	struct val_unit *test_instance = val_unit_new (MEM(tm));
-	struct dep_val_str *result = val_unit_to_str (test_instance, MEM(tm));
+	struct val_str *result = val_unit_to_str (test_instance, MEM(tm));
 
-	ASSERT_EQ(4, dep_val_str_count (result));
+	ASSERT_EQ(4, val_str_count (result));
 	ASSERT_TRUE(strncmp (result->data, "unit", result->count) == 0);
 
 	val_unit_free_safe (&test_instance);
-	dep_val_str_deallocate_safe (&result);
+	val_str_deallocate_safe (&result);
 	mem_test_verify (tm);
 	mem_test_free (tm);
 }

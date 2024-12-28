@@ -49,10 +49,10 @@ mem_gen_init (struct mem_gen *self, struct mem_gen_config config)
 }
 
 struct val_ref
-mem_gen_allocate (struct mem_gen *self, struct dep_val *val)
+mem_gen_allocate (struct mem_gen *self, struct val *val)
 {
 
-	struct dep_val *result = val_copy (val, self->base.root);
+	struct val *result = val_copy (val, self->base.root);
 	ptr_list_append (&self->vals, result);
 
 	return (struct val_ref){
@@ -65,7 +65,7 @@ mem_gen_allocate (struct mem_gen *self, struct dep_val *val)
 //val_str_ng_new (struct mem_gen *self, char const *c_str)
 //{
 //	struct mem *mem = self->base.root;
-//	struct val_str_ng *result = mem_allocate (mem, sizeof (struct dep_val_str));
+//	struct val_str_ng *result = mem_allocate (mem, sizeof (struct val_str));
 ////	val_init (&result->base, VAL_KIND_STR, mem);
 //
 //	size_t count = strlen (c_str);
@@ -85,7 +85,7 @@ mem_gen_allocate (struct mem_gen *self, struct dep_val *val)
 ////}
 //}
 
-struct dep_val *
+struct val *
 mem_gen_resolve (struct mem_gen *self, struct val_ref ref)
 {
 	return ptr_list_at (&self->vals, ref.value);

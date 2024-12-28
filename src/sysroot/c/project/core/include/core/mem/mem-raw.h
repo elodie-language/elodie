@@ -7,7 +7,7 @@ struct mem_raw {
   struct mem base;
 };
 
-HAMAL_API struct mem_raw *
+ELODIE_API struct mem_raw *
 mem_raw_new (void);
 
 #endif //CORE_MEM_RAW_H

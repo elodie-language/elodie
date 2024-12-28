@@ -8,7 +8,7 @@ val_unit_new (struct mem *mem)
 	CHECK_NOT_NULL(mem);
 
 	struct val_unit *result = mem_allocate (mem, sizeof (struct val_unit));
-	dep_val_init (&result->base, VAL_KIND_UNIT, mem);
+	val_init (&result->base, VAL_KIND_UNIT, mem);
 	return result;
 }
 
@@ -20,12 +20,12 @@ val_unit_equal (struct val_unit *lhs, struct val_unit *rhs)
 	return true;
 }
 
-struct dep_val_str *
+struct val_str *
 val_unit_to_str (struct val_unit *self, struct mem *mem)
 {
 	CHECK_NOT_NULL(self);
 	CHECK_NOT_NULL(mem);
-	return dep_val_str_allocate_from_c_str (mem, "unit");
+	return val_str_allocate_from_c_str (mem, "unit");
 }
 
 void

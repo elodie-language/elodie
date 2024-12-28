@@ -7,18 +7,18 @@
 #include "core/type/type.h"
 
 struct val_fld {
-  struct dep_val base;
-  struct dep_val_str *ident;
+  struct val base;
+  struct val_str *ident;
   struct type type;
 };
 
-HAMAL_API struct val_fld *
-val_fld_new (struct mem *mem, struct dep_val_str_view ident, struct type type);
+ELODIE_API struct val_fld *
+val_fld_new (struct mem *mem, struct val_str_view ident, struct type type);
 
-HAMAL_API void
+ELODIE_API void
 val_fld_free (struct val_fld *self);
 
-HAMAL_API void
+ELODIE_API void
 val_fld_free_safe (struct val_fld **self);
 
 #endif //CORE_val_fld_H

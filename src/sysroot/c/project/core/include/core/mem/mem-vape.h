@@ -16,28 +16,28 @@ struct mem_vape {
   size_t capacity;
 };
 
-HAMAL_API struct mem_vape *
+ELODIE_API struct mem_vape *
 mem_vape_new (struct mem_vape_config config);
 
-HAMAL_API void
+ELODIE_API void
 mem_vape_init (struct mem_vape *self, struct mem_vape_config config);
 
-HAMAL_API void *
+ELODIE_API void *
 mem_vape_allocate (struct mem_vape *self, size_t size);
 
-HAMAL_API void *
+ELODIE_API void *
 mem_vape_resolve (struct mem_vape *self, struct mem_ref);
 
-HAMAL_API size_t
+ELODIE_API size_t
 mem_vape_size (struct mem_vape *self);
 
-HAMAL_API void
+ELODIE_API void
 mem_vape_reset (struct mem_vape *self);
 
-HAMAL_API void
+ELODIE_API void
 mem_vape_free (struct mem_vape *self);
 
-HAMAL_API void
+ELODIE_API void
 mem_vape_free_safe (struct mem_vape **self);
 
 #endif // CORE_MEM_VAPE_H

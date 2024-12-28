@@ -9,19 +9,19 @@ struct io {
   struct mem *mem;
 };
 
-HAMAL_API struct io *
+ELODIE_API struct io *
 io_new (struct mem *mem);
 
-HAMAL_API void
+ELODIE_API void
 io_init (struct io *self, struct mem *mem);
 
-HAMAL_API struct buffer *
-io_read_file (struct io *self, struct dep_val_str_view path);
+ELODIE_API struct buffer *
+io_read_file (struct io *self, struct val_str_view path);
 
-HAMAL_API void
+ELODIE_API void
 io_reset (struct io *self);
 
-HAMAL_API void
+ELODIE_API void
 io_free (struct io *self);
 
 #endif //CORE_IO_H

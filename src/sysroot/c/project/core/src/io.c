@@ -21,7 +21,7 @@ io_init (struct io *self, struct mem *mem)
 }
 
 struct buffer *
-io_read_file (struct io *self, struct dep_val_str_view path)
+io_read_file (struct io *self, struct val_str_view path)
 {
 	CHECK_NOT_NULL(self);
 

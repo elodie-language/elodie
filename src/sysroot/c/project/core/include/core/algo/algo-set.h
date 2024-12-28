@@ -15,31 +15,31 @@ struct set {
   struct map store;
 };
 
-HAMAL_API struct set *
+ELODIE_API struct set *
 set_new (struct set_config config);
 
-HAMAL_API void
+ELODIE_API void
 set_init (struct set *self, struct set_config config);
 
-HAMAL_API size_t
+ELODIE_API size_t
 set_count (struct set *self);
 
-HAMAL_API size_t
+ELODIE_API size_t
 set_capacity (struct set *self);
 
-HAMAL_API bool
+ELODIE_API bool
 set_set (struct set *self, struct bytes_view bytes);
 
-HAMAL_API bool
+ELODIE_API bool
 set_has (struct set *self, struct bytes_view bytes);
 
-HAMAL_API void
+ELODIE_API void
 set_reset (struct set *self);
 
-HAMAL_API void
+ELODIE_API void
 set_free (struct set *self);
 
-HAMAL_API void
+ELODIE_API void
 set_free_safe (struct set **self);
 
 #endif //CORE_ALGO_SET_H

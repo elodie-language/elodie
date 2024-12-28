@@ -4,7 +4,7 @@
 #include "core/type/type-api.h"
 
 void
-val_writer_write (struct val_writer *self, struct dep_val *val)
+val_writer_write (struct val_writer *self, struct val *val)
 {
 	CHECK_NOT_NULL(self);
 	CHECK_NOT_NULL(val);
@@ -35,7 +35,7 @@ val_writer_write_obj (struct val_writer *self, struct val_obj *obj)
 				{
 					continue;
 				}
-			struct dep_val *val = val_obj_val_of_prop (obj, prop);
+			struct val *val = val_obj_val_of_prop (obj, prop);
 			switch (val->kind)
 				{
 					case VAL_KIND_STR:
@@ -59,7 +59,7 @@ void
 val_writer_print (struct val_writer *self)
 {
 	CHECK_NOT_NULL(self);
-	struct dep_val_str_view out = {0};
+	struct val_str_view out = {0};
 	json_writer_to_str_view (&self->writer, &out);
 	printf ("%.*s", (int)out.count, out.data);
 }

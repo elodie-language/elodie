@@ -2,10 +2,10 @@
 #define CORE_MACRO_H
 
 #ifdef __cplusplus
-#define HAMAL_API extern "C"
+#define ELODIE_API extern "C"
 #define IS_UNIT_TEST 1
 #else
-#define HAMAL_API extern
+#define ELODIE_API extern
 #undef IS_UNIT_TEST
 #endif
 

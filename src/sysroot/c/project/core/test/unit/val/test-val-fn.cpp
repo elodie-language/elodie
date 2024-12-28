@@ -87,12 +87,12 @@ TEST(val_fn_new, ok)
 	auto tm = mem_test_new_default (4096);
 
 	struct val_fn *test_instance = val_fn_new (
-		MEM(tm), dep_val_str_view_from_c_str ("some_fn")
+		MEM(tm), val_str_view_from_c_str ("some_fn")
 	);
 
 	ASSERT_EQ(VAL_KIND_FN, test_instance->base.kind);
 	ASSERT_EQ(MEM (tm), test_instance->base.mem);
-	ASSERT_TRUE(dep_val_str_view_equal (dep_val_str_view_from_c_str ("some_fn"), dep_val_str_view_from_str (test_instance->ident)));
+	ASSERT_TRUE(val_str_view_equal (val_str_view_from_c_str ("some_fn"), val_str_view_from_str (test_instance->ident)));
 
 	val_fn_free_safe (&test_instance);
 
@@ -105,7 +105,7 @@ TEST(val_fn_count, ok)
 	auto tm = mem_test_new_default (4096);
 
 	struct val_fn *test_instance = val_fn_new (
-		MEM(tm), dep_val_str_view_from_c_str ("some_fn")
+		MEM(tm), val_str_view_from_c_str ("some_fn")
 	);
 
 	struct val_fn_block *first_block = val_fn_block_new (MEM(tm));
@@ -127,7 +127,7 @@ TEST(val_fn_count, empty)
 	auto tm = mem_test_new_default (256);
 
 	struct val_fn *test_instance = val_fn_new (
-		MEM(tm), dep_val_str_view_from_c_str ("some_fn")
+		MEM(tm), val_str_view_from_c_str ("some_fn")
 	);
 
 	ASSERT_EQ (0, val_fn_count (test_instance));
@@ -143,7 +143,7 @@ TEST(val_fn_append_block, ok)
 	auto tm = mem_test_new_default (4096);
 
 	struct val_fn *test_instance = val_fn_new (
-		MEM(tm), dep_val_str_view_from_c_str ("some_fn")
+		MEM(tm), val_str_view_from_c_str ("some_fn")
 	);
 
 	val_fn_append_block (test_instance, val_fn_block_new (MEM(tm)));
@@ -164,7 +164,7 @@ TEST(val_fn_get_block_at, ok)
 	auto tm = mem_test_new_default (4096);
 
 	struct val_fn *test_instance = val_fn_new (
-		MEM(tm), dep_val_str_view_from_c_str ("some_fn")
+		MEM(tm), val_str_view_from_c_str ("some_fn")
 	);
 
 	val_fn_append_block (test_instance, val_fn_block_new (MEM(tm)));
@@ -185,7 +185,7 @@ TEST(val_fn_get_block_at, ok)
 TEST(val_fn_equal, same_pointer)
 {
 	auto tm = mem_test_new_default (4096);
-	auto test_instance = val_fn_new (MEM(tm), dep_val_str_view_from_c_str ("some_fn"));
+	auto test_instance = val_fn_new (MEM(tm), val_str_view_from_c_str ("some_fn"));
 	ASSERT_TRUE (val_fn_equal (test_instance, test_instance));
 
 	val_fn_free_safe (&test_instance);
@@ -198,8 +198,8 @@ TEST(val_fn_equal, same_pointer)
 TEST(val_fn_equal, same_val)
 {
 	auto tm = mem_test_new_default (4096);
-	auto test_instance_one = val_fn_new (MEM(tm), dep_val_str_view_from_c_str ("some_fn"));
-	auto test_instance_two = val_fn_new (MEM(tm), dep_val_str_view_from_c_str ("some_fn"));
+	auto test_instance_one = val_fn_new (MEM(tm), val_str_view_from_c_str ("some_fn"));
+	auto test_instance_two = val_fn_new (MEM(tm), val_str_view_from_c_str ("some_fn"));
 	ASSERT_TRUE (val_fn_equal (test_instance_one, test_instance_two));
 
 	val_fn_free_safe (&test_instance_one);
@@ -212,8 +212,8 @@ TEST(val_fn_equal, same_val)
 TEST(val_fn_equal, different_val)
 {
 	auto tm = mem_test_new_default (4096);
-	auto test_instance_one = val_fn_new (MEM(tm), dep_val_str_view_from_c_str ("some_fn"));
-	auto test_instance_two = val_fn_new (MEM(tm), dep_val_str_view_from_c_str ("another_fn"));
+	auto test_instance_one = val_fn_new (MEM(tm), val_str_view_from_c_str ("some_fn"));
+	auto test_instance_two = val_fn_new (MEM(tm), val_str_view_from_c_str ("another_fn"));
 	ASSERT_FALSE (val_fn_equal (test_instance_one, test_instance_two));
 
 	val_fn_free_safe (&test_instance_one);
@@ -228,17 +228,17 @@ TEST(val_fn_to_str, ok)
 	auto tm = mem_test_new_default (4096);
 
 	struct val_fn *test_instance = val_fn_new (
-		MEM(tm), dep_val_str_view_from_c_str ("some_fn")
+		MEM(tm), val_str_view_from_c_str ("some_fn")
 	);
 
-	struct dep_val_str *result = val_fn_to_str (test_instance, MEM(tm));
-	struct dep_val_str *expected = dep_val_str_allocate_from_c_str (MEM(tm), "some_fn");
+	struct val_str *result = val_fn_to_str (test_instance, MEM(tm));
+	struct val_str *expected = val_str_allocate_from_c_str (MEM(tm), "some_fn");
 
-	ASSERT_TRUE (dep_val_str_equal (expected, result));
+	ASSERT_TRUE (val_str_equal (expected, result));
 
 	val_fn_free_safe (&test_instance);
-	dep_val_str_deallocate_safe (&result);
-	dep_val_str_deallocate_safe (&expected);
+	val_str_deallocate_safe (&result);
+	val_str_deallocate_safe (&expected);
 
 	mem_test_verify (tm);
 	mem_test_free (tm);
@@ -250,7 +250,7 @@ TEST(val_fn_free_safe, ok)
 	auto tm = mem_test_new_default (4096);
 
 	struct val_fn *test_instance = val_fn_new (
-		MEM(tm), dep_val_str_view_from_c_str ("some_fn")
+		MEM(tm), val_str_view_from_c_str ("some_fn")
 	);
 
 	val_fn_append_block (test_instance, val_fn_block_new (MEM(tm)));
@@ -268,7 +268,7 @@ TEST(val_fn_free_safe, empty)
 	auto tm = mem_test_new_default (256);
 
 	struct val_fn *test_instance = val_fn_new (
-		MEM(tm), dep_val_str_view_from_c_str ("some_fn")
+		MEM(tm), val_str_view_from_c_str ("some_fn")
 	);
 
 	val_fn_free_safe (&test_instance);

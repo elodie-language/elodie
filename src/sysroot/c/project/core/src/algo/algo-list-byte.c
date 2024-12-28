@@ -133,7 +133,7 @@ byte_list_append_front_byte_list (struct byte_list *self, struct byte_list *lst)
 }
 
 void
-byte_list_append_str (struct byte_list *self, struct dep_val_str *str)
+byte_list_append_str (struct byte_list *self, struct val_str *str)
 {
 	CHECK_NOT_NULL(self);
 	struct bytes_view bytes = (struct bytes_view){
@@ -143,8 +143,8 @@ byte_list_append_str (struct byte_list *self, struct dep_val_str *str)
 	byte_list_append_bytes (self, bytes);
 }
 
-HAMAL_API void
-byte_list_append_str_view (struct byte_list *self, struct dep_val_str_view str)
+ELODIE_API void
+byte_list_append_str_view (struct byte_list *self, struct val_str_view str)
 {
 	byte_list_append_bytes (self, (struct bytes_view){
 		.size = str.count,
@@ -192,7 +192,7 @@ byte_list_at_u4 (bv *self, size_t idx, u4 *out)
 }
 
 bool
-byte_list_at_str_view (struct byte_list *self, size_t idx, size_t count, struct dep_val_str_view *out)
+byte_list_at_str_view (struct byte_list *self, size_t idx, size_t count, struct val_str_view *out)
 {
 	CHECK_NOT_NULL(self);
 	void **ptr = direct_underlying_data (self, idx);
@@ -201,7 +201,7 @@ byte_list_at_str_view (struct byte_list *self, size_t idx, size_t count, struct 
 			return false;
 		}
 
-	*out = dep_val_str_view_from_bytes (
+	*out = val_str_view_from_bytes (
 		(struct bytes_view){
 			.size = count,
 			.data = (u1 *)ptr
@@ -210,7 +210,7 @@ byte_list_at_str_view (struct byte_list *self, size_t idx, size_t count, struct 
 	return true;
 }
 
-HAMAL_API bool
+ELODIE_API bool
 byte_list_at (struct byte_list *self, size_t idx, u1 **out)
 {
 	CHECK_NOT_NULL(self);

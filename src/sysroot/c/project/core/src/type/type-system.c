@@ -21,13 +21,13 @@ next_type_id (ts *self)
 static tok
 add_any_type (ts *self)
 {
-	ptr_list_append (&self->nodes, type_node_new (self->mem, type_any.id, type_any.id, DEP_VAL_STR_VIEW("any")));
+	ptr_list_append (&self->nodes, type_node_new (self->mem, type_any.id, type_any.id, VAL_STR_VIEW("any")));
 	ptr_list_append (&self->edges, type_edge_new (self->mem, type_any.id, type_any.id, NULL));
 	return type_any;
 }
 
 static tok
-add_base_type (ts *self, u2 base_id, struct dep_val_str_view ident)
+add_base_type (ts *self, u2 base_id, struct val_str_view ident)
 {
 	CHECK_NOT_NULL(self);
 	u2 new_type_id = next_type_id (self);
@@ -49,11 +49,11 @@ add_base_types (ts *self)
 	CHECK_NOT_NULL(self);
 
 	const tok any_type = add_any_type (self);
-	CHECK_EQUAL(type_nil.id, add_base_type (self, any_type.id, DEP_VAL_STR_VIEW ("nil")).id);
-	CHECK_EQUAL(type_object.id, add_base_type (self, any_type.id, DEP_VAL_STR_VIEW ("object")).id);
-	CHECK_EQUAL(type_number.id, add_base_type (self, any_type.id, DEP_VAL_STR_VIEW ("number")).id);
-	CHECK_EQUAL(type_string.id, add_base_type (self, any_type.id, DEP_VAL_STR_VIEW ("string")).id);
-	CHECK_EQUAL(type_unit.id, add_base_type (self, any_type.id, DEP_VAL_STR_VIEW ("unit")).id);
+	CHECK_EQUAL(type_nil.id, add_base_type (self, any_type.id, VAL_STR_VIEW ("nil")).id);
+	CHECK_EQUAL(type_object.id, add_base_type (self, any_type.id, VAL_STR_VIEW ("object")).id);
+	CHECK_EQUAL(type_number.id, add_base_type (self, any_type.id, VAL_STR_VIEW ("number")).id);
+	CHECK_EQUAL(type_string.id, add_base_type (self, any_type.id, VAL_STR_VIEW ("string")).id);
+	CHECK_EQUAL(type_unit.id, add_base_type (self, any_type.id, VAL_STR_VIEW ("unit")).id);
 }
 
 static void
@@ -136,7 +136,7 @@ type_system_compose (ts *self, tok base_type, tok type)
 }
 
 tok
-type_system_find_by_ident (ts *self, struct dep_val_str_view ident)
+type_system_find_by_ident (ts *self, struct val_str_view ident)
 {
 	CHECK_NOT_NULL(self);
 	for (size_t idx = 0; idx < ptr_list_count (&self->nodes); idx++)
@@ -162,7 +162,7 @@ type_system_get_info (ts *self, struct type type)
 	return (ti){
 		.id = type.id,
 		.base_id = edge->base_id,
-		.ident = DEP_VAL_STR_VIEW(base_node->ident)
+		.ident = VAL_STR_VIEW(base_node->ident)
 	};
 }
 

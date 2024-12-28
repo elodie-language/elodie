@@ -6,7 +6,7 @@ TEST(val_obj_new, ok)
 {
 	auto tm = mem_test_new_default (1024);
 
-	struct val_obj *result = val_obj_new (MEM(tm), dep_val_str_view_from_c_str ("some_obj"));
+	struct val_obj *result = val_obj_new (MEM(tm), val_str_view_from_c_str ("some_obj"));
 	ASSERT_EQ(VAL_KIND_OBJ, result->base.kind);
 	ASSERT_EQ(MEM (tm), result->base.mem);
 	ASSERT_TRUE(VAL_EQ (result->ident, "some_obj"));
@@ -24,10 +24,10 @@ TEST(val_obj, single_number)
 {
 	auto tm = mem_test_new_default (1024);
 
-	auto test_instance = val_obj_new (MEM(tm), DEP_VAL_STR_VIEW ("some_obj"));
+	auto test_instance = val_obj_new (MEM(tm), VAL_STR_VIEW ("some_obj"));
 
 	auto some_number_value = val_num_new_from_double (MEM(tm), 28.10);
-	auto some_number_field = val_fld_new (MEM(tm), DEP_VAL_STR_VIEW ("some_number"), type_number);
+	auto some_number_field = val_fld_new (MEM(tm), VAL_STR_VIEW ("some_number"), type_number);
 
 	val_obj_append (test_instance, some_number_field, AS_VAL(some_number_value));
 	ASSERT_EQ(1, ptr_list_count (&test_instance->props));
@@ -54,13 +54,13 @@ TEST(val_obj, simple_nested)
 	auto tm = mem_test_new_default (1024);
 
 	auto some_number_value = val_num_new_from_double (MEM(tm), 28.10);
-	auto some_number_field = val_fld_new (MEM(tm), DEP_VAL_STR_VIEW ("some_number"), type_number);
+	auto some_number_field = val_fld_new (MEM(tm), VAL_STR_VIEW ("some_number"), type_number);
 
-	auto inner_obj = val_obj_new (MEM(tm), DEP_VAL_STR_VIEW ("inner_obj"));
+	auto inner_obj = val_obj_new (MEM(tm), VAL_STR_VIEW ("inner_obj"));
 	val_obj_append (inner_obj, some_number_field, AS_VAL(some_number_value));
 
-	auto inner_obj_field = val_fld_new (MEM(tm), DEP_VAL_STR_VIEW ("inner_obj"), type_object);
-	auto test_instance = val_obj_new (MEM(tm), DEP_VAL_STR_VIEW ("some_obj"));
+	auto inner_obj_field = val_fld_new (MEM(tm), VAL_STR_VIEW ("inner_obj"), type_object);
+	auto test_instance = val_obj_new (MEM(tm), VAL_STR_VIEW ("some_obj"));
 
 	val_obj_append (test_instance, inner_obj_field, AS_VAL(inner_obj));
 	ASSERT_EQ(2, ptr_list_count (&test_instance->props));
@@ -94,7 +94,7 @@ TEST(val_obj_free_safe, ok)
 {
 	auto tm = mem_test_new_default (1024);
 
-	struct val_obj *test_instance = val_obj_new (MEM(tm), dep_val_str_view_from_c_str ("some_obj"));
+	struct val_obj *test_instance = val_obj_new (MEM(tm), val_str_view_from_c_str ("some_obj"));
 	val_obj_free_safe (&test_instance);
 	ASSERT_TRUE(test_instance == nullptr);
 

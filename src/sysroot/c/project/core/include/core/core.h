@@ -8,7 +8,7 @@
 #include "core/macro.h"
 
 struct mem;
-struct dep_val_str;
+struct val_str;
 
 #define U1_MAX         255
 #define U2_MAX        65535
@@ -28,7 +28,7 @@ typedef int64_t i8;
 typedef float f4;
 typedef double f8;
 
-HAMAL_API struct dep_val_str *
+ELODIE_API struct val_str *
 u2_to_str (struct mem *mem, u2 val);
 
 #endif //CORE_COMMON_H

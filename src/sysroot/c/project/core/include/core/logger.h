@@ -5,19 +5,19 @@
 #include "core.h"
 #include "util.h"
 
-HAMAL_API void
+ELODIE_API void
 logger_log_trace (FILE *out, char const *filename, size_t line, char const *fmt, ...);
 
-HAMAL_API void
+ELODIE_API void
 logger_log_debug (FILE *out, char const *filename, size_t line, char const *fmt, ...);
 
-HAMAL_API void
+ELODIE_API void
 logger_log_info (FILE *out, char const *filename, size_t line, char const *fmt, ...);
 
-HAMAL_API void
+ELODIE_API void
 logger_log_warn (FILE *out, char const *filename, size_t line, char const *fmt, ...);
 
-HAMAL_API void
+ELODIE_API void
 logger_log_fatal (FILE *out, char const *filename, size_t line, char const *fmt, ...);
 
 #define LOG_LEVEL_SILENT_ 0

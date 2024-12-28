@@ -5,7 +5,7 @@
 
 typedef struct native_context native_context_t;
 
-HAMAL_API void
+ELODIE_API void
 native_context_print (native_context_t *self);
 
 #endif //CORE_NATIVE_CONTEXT_H

@@ -14,40 +14,40 @@ struct ptr_list {
   struct list underlying_list;
 };
 
-HAMAL_API struct ptr_list_config
+ELODIE_API struct ptr_list_config
 ptr_list_default_config (struct mem *mem);
 
-HAMAL_API struct ptr_list *
+ELODIE_API struct ptr_list *
 ptr_list_new (struct ptr_list_config config);
 
-HAMAL_API void
+ELODIE_API void
 ptr_list_init (struct ptr_list *self, struct ptr_list_config config);
 
-HAMAL_API void
+ELODIE_API void
 ptr_list_append (struct ptr_list *self, void *ptr);
 
-HAMAL_API void *
+ELODIE_API void *
 ptr_list_at (struct ptr_list *self, size_t idx);
 
-HAMAL_API struct iterator
+ELODIE_API struct iterator
 ptr_list_iterator (struct ptr_list *self);
 
-HAMAL_API void
+ELODIE_API void
 ptr_list_replace (struct ptr_list *self, size_t idx, void *ptr);
 
-HAMAL_API size_t
+ELODIE_API size_t
 ptr_list_count (struct ptr_list *self);
 
-HAMAL_API size_t
+ELODIE_API size_t
 ptr_list_capacity (struct ptr_list *self);
 
-HAMAL_API void
+ELODIE_API void
 ptr_list_reset (struct ptr_list *self);
 
-HAMAL_API void
+ELODIE_API void
 ptr_list_free (struct ptr_list *self);
 
-HAMAL_API void
+ELODIE_API void
 ptr_list_free_safe (struct ptr_list **self);
 
 #endif //CORE_ALGO_LIST_PTR_H

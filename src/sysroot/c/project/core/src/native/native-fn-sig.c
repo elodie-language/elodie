@@ -78,7 +78,7 @@ native_fn_signature_ident_deallocate (sig_ident *self, m *mem)
 	mem_deallocate (mem, self);
 }
 
-HAMAL_API void
+ELODIE_API void
 native_fn_signature_ident_deallocate_safe (sig_ident **self, m *mem)
 {
 	CHECK_NOT_NULL(self);

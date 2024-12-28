@@ -8,16 +8,16 @@ struct native_registry {
   u1 idx;
 };
 
-HAMAL_API void
+ELODIE_API void
 native_registry_init (struct native_registry *self, struct mem *mem);
 
-HAMAL_API bool
+ELODIE_API bool
 native_registry_register_fn (struct native_registry *self, struct native_fn native_fn);
 
-HAMAL_API bool
+ELODIE_API bool
 native_registry_resolve_fn (struct native_registry *self, struct native_fn_signature signature, struct native_fn *out);
 
-HAMAL_API void
+ELODIE_API void
 native_registry_reset (struct native_registry *self, struct mem *mem);
 
 #endif //CORE_NATIVE_REGISTRY_H

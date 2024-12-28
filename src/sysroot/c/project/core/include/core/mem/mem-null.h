@@ -7,7 +7,7 @@ struct mem_null {
   struct mem base;
 };
 
-HAMAL_API struct mem_null *
+ELODIE_API struct mem_null *
 mem_null_new (void);
 
 #endif // CORE_MEM_NULL_H

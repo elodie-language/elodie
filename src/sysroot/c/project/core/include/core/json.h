@@ -11,25 +11,25 @@ struct json_key_view {
 
 struct val_bool;
 struct val_num;
-struct dep_val_str;
+struct val_str;
 
-typedef struct dep_val_str dep_string_t;
-typedef struct dep_val_str_view dep_str_view_t;
+typedef struct val_str string_t;
+typedef struct val_str_view str_view_t;
 
-HAMAL_API struct json_key_view
+ELODIE_API struct json_key_view
 json_key_view_from_c_str (char const *str);
 
-HAMAL_API struct json_key_view
-json_key_view_from_str (struct dep_val_str *str);
+ELODIE_API struct json_key_view
+json_key_view_from_str (struct val_str *str);
 
-HAMAL_API struct json_key_view
-json_key_view_from_str_view (struct dep_val_str_view str);
+ELODIE_API struct json_key_view
+json_key_view_from_str_view (struct val_str_view str);
 
 #define JSON_KEY(T) _Generic((T),                 \
     char  *: json_key_view_from_c_str,       \
     char const *: json_key_view_from_c_str,       \
-    dep_string_t* : json_key_view_from_str,         \
-    dep_str_view_t: json_key_view_from_str_view    \
+    string_t* : json_key_view_from_str,         \
+    str_view_t: json_key_view_from_str_view    \
 )(T)
 
 enum json_node_type {
@@ -66,73 +66,73 @@ struct json_writer {
   struct mem_vape *vape_mem;
 };
 
-HAMAL_API void
+ELODIE_API void
 json_writer_init (struct json_writer *self, struct mem *mem);
 
-HAMAL_API enum json_writer_status
+ELODIE_API enum json_writer_status
 json_writer_obj_start (struct json_writer *self);
 
-HAMAL_API enum json_writer_status
+ELODIE_API enum json_writer_status
 json_writer_obj_start_obj (struct json_writer *self, struct json_key_view key);
 
-HAMAL_API enum json_writer_status
+ELODIE_API enum json_writer_status
 json_writer_obj_start_array (struct json_writer *self, struct json_key_view key);
 
-HAMAL_API enum json_writer_status
+ELODIE_API enum json_writer_status
 json_writer_obj_null (struct json_writer *self, struct json_key_view key);
 
-HAMAL_API enum json_writer_status
+ELODIE_API enum json_writer_status
 json_writer_obj_c_str (struct json_writer *self, struct json_key_view key, char const *str);
 
-HAMAL_API enum json_writer_status
-json_writer_obj_str_view (struct json_writer *self, struct json_key_view key, struct dep_val_str_view view);
+ELODIE_API enum json_writer_status
+json_writer_obj_str_view (struct json_writer *self, struct json_key_view key, struct val_str_view view);
 
-HAMAL_API enum json_writer_status
-json_writer_obj_str (struct json_writer *self, struct json_key_view key, struct dep_val_str *val);
+ELODIE_API enum json_writer_status
+json_writer_obj_str (struct json_writer *self, struct json_key_view key, struct val_str *val);
 
-HAMAL_API enum json_writer_status
+ELODIE_API enum json_writer_status
 json_writer_obj_num (struct json_writer *self, struct json_key_view key, struct val_num *val);
 
-HAMAL_API enum json_writer_status
+ELODIE_API enum json_writer_status
 json_writer_obj_bool (struct json_writer *self, struct json_key_view key, struct val_bool *val);
 
-HAMAL_API enum json_writer_status
-json_writer_obj_val (struct json_writer *self, struct json_key_view key, struct dep_val *val);
+ELODIE_API enum json_writer_status
+json_writer_obj_val (struct json_writer *self, struct json_key_view key, struct val *val);
 
-HAMAL_API enum json_writer_status
+ELODIE_API enum json_writer_status
 json_writer_obj_end (struct json_writer *self);
 
-HAMAL_API enum json_writer_status
+ELODIE_API enum json_writer_status
 json_writer_array_start (struct json_writer *self);
 
-HAMAL_API enum json_writer_status
+ELODIE_API enum json_writer_status
 json_writer_array_end (struct json_writer *self);
 
-HAMAL_API enum json_writer_status
+ELODIE_API enum json_writer_status
 json_writer_array_null (struct json_writer *self);
 
-HAMAL_API enum json_writer_status
+ELODIE_API enum json_writer_status
 json_writer_array_c_str (struct json_writer *self, char const *str);
 
-HAMAL_API enum json_writer_status
-json_writer_array_str_view (struct json_writer *self, struct dep_val_str_view view);
+ELODIE_API enum json_writer_status
+json_writer_array_str_view (struct json_writer *self, struct val_str_view view);
 
-HAMAL_API enum json_writer_status
-json_writer_array_str (struct json_writer *self, struct dep_val_str *val);
+ELODIE_API enum json_writer_status
+json_writer_array_str (struct json_writer *self, struct val_str *val);
 
-HAMAL_API enum json_writer_status
+ELODIE_API enum json_writer_status
 json_writer_array_num (struct json_writer *self, struct val_num *val);
 
-HAMAL_API enum json_writer_status
+ELODIE_API enum json_writer_status
 json_writer_array_bool (struct json_writer *self, struct val_bool *val);
 
-HAMAL_API enum json_writer_status
-json_writer_array_val (struct json_writer *self, struct dep_val *val);
+ELODIE_API enum json_writer_status
+json_writer_array_val (struct json_writer *self, struct val *val);
 
-HAMAL_API enum json_writer_status
-json_writer_to_str_view (struct json_writer *self, struct dep_val_str_view *out);
+ELODIE_API enum json_writer_status
+json_writer_to_str_view (struct json_writer *self, struct val_str_view *out);
 
-HAMAL_API void
+ELODIE_API void
 json_writer_reset (struct json_writer *self);
 
 #endif //CORE_JSON_H

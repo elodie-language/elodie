@@ -34,7 +34,7 @@ map_key_from_bytes (map *self, struct bytes_view bytes)
 }
 
 k
-map_key_from_str (struct map *self, struct dep_val_str *str)
+map_key_from_str (struct map *self, struct val_str *str)
 {
 	CHECK_NOT_NULL(self);
 	CHECK_NOT_NULL(str);
@@ -48,7 +48,7 @@ map_key_from_str (struct map *self, struct dep_val_str *str)
 }
 
 k
-dep_map_key_from_str_view (map *self, struct dep_val_str_view view)
+map_key_from_str_view (map *self, struct val_str_view view)
 {
 	CHECK_NOT_NULL(self);
 	return map_key_from_bytes (

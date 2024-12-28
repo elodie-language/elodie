@@ -20,10 +20,10 @@ enum mem_kind {
   MEM_KIND_VAPE
 };
 
-HAMAL_API void
+ELODIE_API void
 mem_new (size_t size);
 
-HAMAL_API void
+ELODIE_API void
 mem_free (void);
 
 struct mem_allocator {
@@ -56,16 +56,16 @@ struct mem {
   u1 realm;
 };
 
-HAMAL_API void *
+ELODIE_API void *
 mem_allocator_allocate (struct mem_allocator, size_t);
 
-HAMAL_API struct mem_ref
+ELODIE_API struct mem_ref
 mem_ref_generator_next (struct mem_ref_generator referencer, u1 kind);
 
-HAMAL_API void *
+ELODIE_API void *
 mem_resolver_resolve (struct mem_resolver, struct mem_ref);
 
-HAMAL_API void
+ELODIE_API void
 mem_deallocator_deallocate (struct mem_deallocator, void *);
 
 #endif //CORE_MEM_H

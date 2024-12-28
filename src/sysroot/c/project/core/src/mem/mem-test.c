@@ -211,7 +211,7 @@ mem_test_verify (struct mem_test *self)
 		}
 }
 
-HAMAL_API size_t
+ELODIE_API size_t
 mem_test_size (struct mem_test *self)
 {
 	CHECK_NOT_NULL(self);

@@ -3,7 +3,7 @@
 
 typedef struct val_obj o;
 typedef struct val_fld f;
-typedef struct dep_val v;
+typedef struct val v;
 typedef struct val_prop p;
 
 static struct ptr_list_config
@@ -17,11 +17,11 @@ default_config (struct mem *mem)
 }
 
 o *
-val_obj_new (struct mem *mem, struct dep_val_str_view ident)
+val_obj_new (struct mem *mem, struct val_str_view ident)
 {
 	struct val_obj *result = mem_allocate (mem, sizeof (struct val_obj));
-	dep_val_init (&result->base, VAL_KIND_OBJ, mem);
-	result->ident = dep_val_str_allocate_from_view (mem, ident);
+	val_init (&result->base, VAL_KIND_OBJ, mem);
+	result->ident = val_str_allocate_from_view (mem, ident);
 
 	ptr_list_init (&result->props, default_config (mem));
 	ptr_list_init (&result->values, default_config (mem));
@@ -147,7 +147,7 @@ void
 val_obj_free (o *self)
 {
 	CHECK_NOT_NULL(self);
-	dep_val_str_deallocate_safe (&self->ident);
+	val_str_deallocate_safe (&self->ident);
 
 	for (size_t idx = 0; idx < ptr_list_count (&self->props); idx++)
 		{

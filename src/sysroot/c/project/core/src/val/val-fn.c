@@ -56,11 +56,11 @@ struct val_fn_block_ptr {
 };
 
 struct val_fn *
-val_fn_new (struct mem *mem, struct dep_val_str_view ident)
+val_fn_new (struct mem *mem, struct val_str_view ident)
 {
 	struct val_fn *result = mem_allocate (mem, sizeof (struct val_fn));
-	dep_val_init (&result->base, VAL_KIND_FN, mem);
-	result->ident = dep_val_str_allocate_from_view (mem, ident);
+	val_init (&result->base, VAL_KIND_FN, mem);
+	result->ident = val_str_allocate_from_view (mem, ident);
 
 	struct list_config blocks_config = list_default_config (mem);
 	result->blocks = list_new(blocks_config, struct val_fn_block_ptr);
@@ -99,22 +99,22 @@ val_fn_equal (struct val_fn *lhs, struct val_fn *rhs)
 	CHECK_NOT_NULL(lhs);
 	CHECK_NOT_NULL(rhs);
 	if (lhs == rhs) return true;
-	return dep_val_str_equal (lhs->ident, rhs->ident);
+	return val_str_equal (lhs->ident, rhs->ident);
 }
 
-struct dep_val_str *
+struct val_str *
 val_fn_to_str (struct val_fn *self, struct mem *mem)
 {
 	CHECK_NOT_NULL(self);
 	CHECK_NOT_NULL(mem);
-	return dep_val_str_copy (self->ident, mem);
+	return val_str_copy (self->ident, mem);
 }
 
 void
 val_fn_free (struct val_fn *self)
 {
 	CHECK_NOT_NULL(self);
-	dep_val_str_deallocate_safe (&self->ident);
+	val_str_deallocate_safe (&self->ident);
 	for (size_t idx = 0; idx < list_count (self->blocks); idx++)
 		{
 			struct val_fn_block_ptr *entry = list_at (self->blocks, idx);

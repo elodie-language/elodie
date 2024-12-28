@@ -15,7 +15,7 @@ json_key_view_from_c_str (char const *str)
 }
 
 struct json_key_view
-json_key_view_from_str (struct dep_val_str *str)
+json_key_view_from_str (struct val_str *str)
 {
 	return (struct json_key_view){
 		.data = str->data,
@@ -24,7 +24,7 @@ json_key_view_from_str (struct dep_val_str *str)
 }
 
 struct json_key_view
-json_key_view_from_str_view (struct dep_val_str_view str)
+json_key_view_from_str_view (struct val_str_view str)
 {
 	return (struct json_key_view){
 		.data = str.data,
@@ -78,7 +78,7 @@ json_writer_write_c_str (struct json_writer *self, char const *str)
 }
 
 static void
-json_writer_write_str (struct json_writer *self, struct dep_val_str *str)
+json_writer_write_str (struct json_writer *self, struct val_str *str)
 {
 	CHECK_NOT_NULL(self);
 	byte_list_append_c_str (&self->buffer, "\"");
@@ -228,7 +228,7 @@ json_writer_obj_c_str (struct json_writer *self, struct json_key_view key, char 
 }
 
 enum json_writer_status
-json_writer_obj_str_view (struct json_writer *self, struct json_key_view key, struct dep_val_str_view view)
+json_writer_obj_str_view (struct json_writer *self, struct json_key_view key, struct val_str_view view)
 {
 	CHECK_NOT_NULL(self);
 	json_writer_obj_key_colon (self, key);
@@ -246,7 +246,7 @@ json_writer_obj_null (struct json_writer *self, struct json_key_view key)
 }
 
 enum json_writer_status
-json_writer_obj_str (struct json_writer *self, struct json_key_view key, struct dep_val_str *val)
+json_writer_obj_str (struct json_writer *self, struct json_key_view key, struct val_str *val)
 {
 	CHECK_NOT_NULL(self);
 	CHECK_NOT_NULL(val);
@@ -277,17 +277,13 @@ json_writer_obj_bool (struct json_writer *self, struct json_key_view key, struct
 }
 
 enum json_writer_status
-json_writer_obj_val (struct json_writer *self, struct json_key_view key, struct dep_val *val)
+json_writer_obj_val (struct json_writer *self, struct json_key_view key, struct val *val)
 {
 	CHECK_NOT_NULL(self);
-	if (val->kind == VAL_KIND_NIL)
-		{
-			return json_writer_obj_null (self, key);
-		}
 	json_writer_obj_key_colon (self, key);
 	if (val->kind == VAL_KIND_STR)
 		{
-			json_writer_write_str (self, (struct dep_val_str *)val);
+			json_writer_write_str (self, (struct val_str *)val);
 		}
 	else if (val->kind == VAL_KIND_UNIT)
 		{
@@ -341,7 +337,7 @@ json_writer_array_null (struct json_writer *self)
 }
 
 enum json_writer_status
-json_writer_array_str (struct json_writer *self, struct dep_val_str *val)
+json_writer_array_str (struct json_writer *self, struct val_str *val)
 {
 	CHECK_NOT_NULL(self);
 	CHECK_NOT_NULL(val);
@@ -352,7 +348,7 @@ json_writer_array_str (struct json_writer *self, struct dep_val_str *val)
 }
 
 enum json_writer_status
-json_writer_array_str_view (struct json_writer *self, struct dep_val_str_view view)
+json_writer_array_str_view (struct json_writer *self, struct val_str_view view)
 {
 	CHECK_NOT_NULL(self);
 	json_writer_prepare_new_element (self);
@@ -369,9 +365,9 @@ json_writer_array_num (struct json_writer *self, struct val_num *val)
 	json_writer_prepare_new_element (self);
 	json_writer_ensure_node_type (self, JSON_NODE_TYPE_ARRAY);
 
-	struct dep_val_str *str = val_num_to_str (val, (struct mem *)self->vape_mem);
+	struct val_str *str = val_num_to_str (val, (struct mem *)self->vape_mem);
 	byte_list_append_str (&self->buffer, str);
-	dep_val_str_deallocate_safe (&str);
+	val_str_deallocate_safe (&str);
 
 	return self->status;
 }
@@ -388,14 +384,9 @@ json_writer_array_bool (struct json_writer *self, struct val_bool *val)
 }
 
 enum json_writer_status
-json_writer_array_val (struct json_writer *self, struct dep_val *val)
+json_writer_array_val (struct json_writer *self, struct val *val)
 {
 	CHECK_NOT_NULL(self);
-	if (val->kind == VAL_KIND_NIL)
-		{
-			return json_writer_array_null (self);
-		}
-
 	json_writer_prepare_new_element (self);
 	json_writer_ensure_node_type (self, JSON_NODE_TYPE_ARRAY);
 	if (val->kind == VAL_KIND_STR)
@@ -419,7 +410,7 @@ json_writer_array_end (struct json_writer *self)
 }
 
 enum json_writer_status
-json_writer_to_str_view (struct json_writer *self, struct dep_val_str_view *out)
+json_writer_to_str_view (struct json_writer *self, struct val_str_view *out)
 {
 	CHECK_NOT_NULL(self);
 	CHECK_NOT_NULL(out);

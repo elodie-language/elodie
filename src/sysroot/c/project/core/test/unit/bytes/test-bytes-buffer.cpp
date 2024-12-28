@@ -159,7 +159,7 @@ TEST(buffer_bytes, ok)
 	auto test_instance = buffer_new (MEM(mem_raw_new ()), 6);
 
 	struct bytes_view input{};
-	input.data = (u1 *)"HAMAL\0";
+	input.data = (u1 *)"ELODIE\0";
 	input.size = 6;
 
 	buffer_write_bytes (test_instance, input);
@@ -172,8 +172,8 @@ TEST(buffer_bytes, ok)
 	ASSERT_EQ(0, buffer_available (test_instance));
 
 	ASSERT_EQ(6, output.size);
-	struct dep_val_str_view input_view = dep_val_str_view_from_bytes (input);
-	struct dep_val_str_view output_view = dep_val_str_view_from_bytes (output);
+	struct val_str_view input_view = val_str_view_from_bytes (input);
+	struct val_str_view output_view = val_str_view_from_bytes (output);
 
 	ASSERT_TRUE(VAL_EQ (input_view, output_view));
 

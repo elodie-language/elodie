@@ -18,7 +18,7 @@ enum type_id {
   TYPE_ID_UNIT = 5
 };
 
-HAMAL_API  bool
+ELODIE_API  bool
 type_equal (struct type lhs, struct type rhs);
 
 extern const struct type type_any;
@@ -31,7 +31,7 @@ extern const struct type type_unit;
 struct type_info {
   u2 id;
   u2 base_id;
-  struct dep_val_str_view ident;
+  struct val_str_view ident;
 };
 
 #endif //CORE_TYPE_H

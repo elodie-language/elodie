@@ -210,7 +210,7 @@ TEST(map_get_as_entry_view, ok)
 	struct map *test_instance = map_new (config);
 
 	auto key = MAP_KEY(test_instance, "key");
-	char const *test_str = "Hamal Rocks";
+	char const *test_str = "Elodie Rocks";
 
 	map_set_bytes_view (test_instance, key, bytes_view_of_c_str (test_str));
 
@@ -218,11 +218,11 @@ TEST(map_get_as_entry_view, ok)
 	bool found = map_get_as_entry_view (test_instance, key, &result);
 	ASSERT_TRUE(found);
 	ASSERT_EQ(6938685063292419814L, result.key.hash.value);
-	ASSERT_EQ(11, result.value.size);
+	ASSERT_EQ(12, result.value.size);
 
-	char data[11];
+	char data[12];
 	memcpy (&data, result.value.data, result.value.size);
-	ASSERT_TRUE(strncmp (test_str, data, 11) == 0);
+	ASSERT_TRUE(strncmp (test_str, data, 12) == 0);
 
 	map_free_safe (&test_instance);
 	mem_test_verify (tm);
@@ -242,18 +242,18 @@ TEST(map_get_as_bytes_view, ok)
 	struct map *test_instance = map_new (config);
 
 	auto key = MAP_KEY(test_instance, "key");
-	char const *test_str = "Hamal Rocks";
+	char const *test_str = "Elodie Rocks";
 
 	map_set_bytes_view (test_instance, key, bytes_view_of_c_str (test_str));
 
 	struct bytes_view result{};
 	bool found = map_get_as_bytes_view (test_instance, key, &result);
 	ASSERT_TRUE(found);
-	ASSERT_EQ(11, result.size);
+	ASSERT_EQ(12, result.size);
 
-	char data[11];
+	char data[12];
 	memcpy (&data, result.data, result.size);
-	ASSERT_TRUE(strncmp (test_str, data, 11) == 0);
+	ASSERT_TRUE(strncmp (test_str, data, 12) == 0);
 
 	map_free_safe (&test_instance);
 	mem_test_verify (tm);
@@ -271,8 +271,8 @@ TEST(map_copy, ok)
 	};
 
 	auto test_instance = map_new (config);
-	map_set_bytes_view (test_instance, MAP_KEY(test_instance, "key"), bytes_view_of_c_str ("Hamal Rocks"));
-	ASSERT_EQ(259, mem_test_size (tm));
+	map_set_bytes_view (test_instance, MAP_KEY(test_instance, "key"), bytes_view_of_c_str ("Elodie Rocks"));
+	ASSERT_EQ(260, mem_test_size (tm));
 
 	auto result = map_copy (test_instance, MEM(tm));
 	ASSERT_NE(test_instance, result);
@@ -285,7 +285,7 @@ TEST(map_copy, ok)
 	ASSERT_EQ(test_instance_entry_view.key.hash.value, copy_entry_view.key.hash.value);
 	ASSERT_EQ(test_instance_entry_view.value.size, copy_entry_view.value.size);
 
-	ASSERT_EQ(518, mem_test_size (tm));
+	ASSERT_EQ(520, mem_test_size (tm));
 
 	map_free_safe (&test_instance);
 	map_free_safe (&result);
@@ -304,8 +304,8 @@ TEST(map_copy_into, ok)
 	};
 
 	auto test_instance = map_new (config);
-	map_set_bytes_view (test_instance, MAP_KEY(test_instance, "key"), bytes_view_of_c_str ("Hamal Rocks"));
-	ASSERT_EQ(259, mem_test_size (tm));
+	map_set_bytes_view (test_instance, MAP_KEY(test_instance, "key"), bytes_view_of_c_str ("Elodie Rocks"));
+	ASSERT_EQ(260, mem_test_size (tm));
 
 	auto target = map_new (config);
 	map_copy_into (test_instance, target);
@@ -319,7 +319,7 @@ TEST(map_copy_into, ok)
 	ASSERT_EQ(test_instance_entry_view.key.hash.value, copy_entry_view.key.hash.value);
 	ASSERT_EQ(test_instance_entry_view.value.size, copy_entry_view.value.size);
 
-	ASSERT_EQ(518, mem_test_size (tm));
+	ASSERT_EQ(520, mem_test_size (tm));
 
 	map_free_safe (&test_instance);
 	map_free_safe (&target);
@@ -340,7 +340,7 @@ TEST(map_get_as_entry_view, not_found)
 	struct map *test_instance = map_new (config);
 
 	auto key = map_key_from_size_t (test_instance, 42);
-	char const *test_str = "Hamal Rocks";
+	char const *test_str = "Elodie Rocks";
 	map_set_bytes_view (test_instance, key, bytes_view_of_c_str (test_str));
 
 	struct map_entry_view result{};
@@ -367,7 +367,7 @@ TEST(map_remove, ok)
 	struct map *test_instance = map_new (config);
 
 	auto key = map_key_from_size_t (test_instance, 42);
-	char const *test_str = "Hamal Rocks";
+	char const *test_str = "Elodie Rocks";
 	map_set_bytes_view (test_instance, key, bytes_view_of_c_str (test_str));
 
 	bool deleted = map_remove (test_instance, key);

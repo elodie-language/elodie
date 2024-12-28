@@ -18,25 +18,25 @@
 #define IS_STACK(M) mem_is_stack(M)
 #define IS_VAPE(M) mem_is_vape(M)
 
-HAMAL_API  bool
+ELODIE_API  bool
 mem_is_gc (struct mem *self);
 
-HAMAL_API  bool
+ELODIE_API  bool
 mem_is_stack (struct mem *self);
 
-HAMAL_API  bool
+ELODIE_API  bool
 mem_is_vape (struct mem *self);
 
-HAMAL_API void *
+ELODIE_API void *
 mem_allocate (struct mem *self, size_t);
 
-HAMAL_API struct mem_ref
+ELODIE_API struct mem_ref
 mem_next_ref (struct mem *self, u1);
 
-HAMAL_API void *
+ELODIE_API void *
 mem_resolve (struct mem *self, struct mem_ref ref);
 
-HAMAL_API void
+ELODIE_API void
 mem_deallocate (struct mem *self, void *ptr);
 
 #endif //CORE_MEM_API_H

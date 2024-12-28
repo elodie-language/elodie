@@ -15,37 +15,37 @@ struct ring_buffer {
   u1 *data;
 };
 
-HAMAL_API struct ring_buffer *
+ELODIE_API struct ring_buffer *
 prv_ring_buffer_new (struct mem *mem, size_t capacity, size_t stride);
 
-HAMAL_API void
+ELODIE_API void
 prv_ring_buffer_init (struct ring_buffer *self, struct mem *mem, size_t capacity, size_t stride);
 
-HAMAL_API void
+ELODIE_API void
 ring_buffer_append (struct ring_buffer *self, void *val);
 
-HAMAL_API void *
+ELODIE_API void *
 ring_buffer_at (struct ring_buffer *self, size_t idx);
 
-HAMAL_API struct iterator
+ELODIE_API struct iterator
 ring_buffer_iterator (struct ring_buffer *self);
 
-HAMAL_API bool
+ELODIE_API bool
 ring_buffer_is_full (struct ring_buffer *self);
 
-HAMAL_API size_t
+ELODIE_API size_t
 ring_buffer_count (struct ring_buffer *self);
 
-HAMAL_API size_t
+ELODIE_API size_t
 ring_buffer_capacity (struct ring_buffer *self);
 
-HAMAL_API void
+ELODIE_API void
 ring_buffer_reset (struct ring_buffer *self);
 
-HAMAL_API void
+ELODIE_API void
 ring_buffer_free (struct ring_buffer *self);
 
-HAMAL_API void
+ELODIE_API void
 ring_buffer_free_safe (struct ring_buffer **self);
 
 #define ring_buffer_new(mem, capacity, type)  prv_ring_buffer_new(mem, capacity, sizeof(type))

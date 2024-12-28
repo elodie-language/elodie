@@ -19,34 +19,34 @@ struct mem_stack {
   void *stack[MEM_STACK_MAX_COUNT];
 };
 
-HAMAL_API struct mem_stack *
+ELODIE_API struct mem_stack *
 mem_stack_new (struct mem_stack_config config);
 
-HAMAL_API void
+ELODIE_API void
 mem_stack_init (struct mem_stack *self, struct mem_stack_config config);
 
-HAMAL_API void
+ELODIE_API void
 mem_stack_push (struct mem_stack *self);
 
-HAMAL_API void *
+ELODIE_API void *
 mem_stack_allocate (struct mem_stack *self, size_t size);
 
-HAMAL_API void *
+ELODIE_API void *
 mem_stack_resolve (struct mem_stack *self, struct mem_ref);
 
-HAMAL_API void
+ELODIE_API void
 mem_stack_pop (struct mem_stack *self);
 
-HAMAL_API void
+ELODIE_API void
 mem_stack_reset (struct mem_stack *self);
 
-HAMAL_API void
+ELODIE_API void
 mem_stack_free (struct mem_stack *self);
 
-HAMAL_API void
+ELODIE_API void
 mem_stack_free_safe (struct mem_stack **self);
 
-HAMAL_API size_t
+ELODIE_API size_t
 mem_stack_size (struct mem_stack *self);
 
 #endif //CORE_MEM_STACK_H

@@ -6,7 +6,7 @@ TEST(type_node, ok)
 {
 	auto tm = mem_test_new_default (1024);
 
-	auto result = type_node_new (MEM(tm), 28, 11, DEP_VAL_STR_VIEW ("ident"));
+	auto result = type_node_new (MEM(tm), 28, 11, VAL_STR_VIEW ("ident"));
 	ASSERT_EQ(28, result->id);
 	ASSERT_EQ(11, result->base_id);
 	ASSERT_TRUE(VAL_EQ (result->ident, "ident"));

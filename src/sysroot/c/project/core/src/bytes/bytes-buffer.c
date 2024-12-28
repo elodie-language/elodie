@@ -22,7 +22,7 @@ buffer_init (bv *self, struct mem *mem, size_t capacity)
 	self->data = mem_allocate (mem, capacity);
 }
 
-HAMAL_API void
+ELODIE_API void
 buffer_flip (bv *self)
 {
 	CHECK_NOT_NULL(self);
@@ -30,7 +30,7 @@ buffer_flip (bv *self)
 	self->position = 0;
 }
 
-HAMAL_API void
+ELODIE_API void
 buffer_compact (bv *self)
 {
 	CHECK_NOT_NULL(self);

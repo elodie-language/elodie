@@ -12,7 +12,7 @@ val_prop_new (struct mem *mem, u2 id, f *field, o *of)
 	CHECK_NOT_NULL(field);
 
 	p *result = mem_allocate (mem, sizeof (p));
-	dep_val_init (&result->base, VAL_KIND_PROP, mem);
+	val_init (&result->base, VAL_KIND_PROP, mem);
 	result->id = id;
 	result->field = field;
 	result->of = of;

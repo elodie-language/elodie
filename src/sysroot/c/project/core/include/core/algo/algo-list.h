@@ -18,46 +18,46 @@ struct list {
   void *data;
 };
 
-HAMAL_API struct list_config
+ELODIE_API struct list_config
 list_default_config (struct mem *mem);
 
-HAMAL_API struct list *
+ELODIE_API struct list *
 prv_list_new (struct list_config config, size_t stride);
 
-HAMAL_API void
+ELODIE_API void
 prv_list_init (struct list *self, struct list_config config, size_t stride);
 
-HAMAL_API void
+ELODIE_API void
 list_copy_into (struct list *self, struct list *target);
 
-HAMAL_API struct list *
+ELODIE_API struct list *
 list_append (struct list *self, void *val);
 
-HAMAL_API struct list *
+ELODIE_API struct list *
 list_ensure_capacity (struct list *self, size_t required_capacity);
 
-HAMAL_API void *
+ELODIE_API void *
 list_at (struct list *self, size_t idx);
 
-HAMAL_API struct iterator
+ELODIE_API struct iterator
 list_iterator (struct list *self);
 
-HAMAL_API struct list *
+ELODIE_API struct list *
 list_replace (struct list *self, size_t idx, void *ptr);
 
-HAMAL_API size_t
+ELODIE_API size_t
 list_count (struct list *self);
 
-HAMAL_API size_t
+ELODIE_API size_t
 list_capacity (struct list *self);
 
-HAMAL_API void
+ELODIE_API void
 list_reset (struct list *self);
 
-HAMAL_API void
+ELODIE_API void
 list_free (struct list *self);
 
-HAMAL_API void
+ELODIE_API void
 list_free_safe (struct list **self);
 
 #define list_new(config, type)  prv_list_new(config, sizeof(type))

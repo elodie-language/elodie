@@ -34,8 +34,8 @@ TEST(mem_gc_allocate, ok)
 	config.root = MEM(tm);
 	config.size = 16;
 
-	auto some_val = (struct dep_val *)val_num_new_from_double (MEM(tm), 28);
-	auto another_val = (struct dep_val *)val_bool_new_from_bool (MEM(tm), true);
+	auto some_val = (struct val *)val_num_new_from_double (MEM(tm), 28);
+	auto another_val = (struct val *)val_bool_new_from_bool (MEM(tm), true);
 
 	auto test_instance = mem_gc_new (config);
 
@@ -47,7 +47,7 @@ TEST(mem_gc_allocate, ok)
 
 	auto num_val = val_lst_at_num (test_instance->vals, 0);
 	ASSERT_EQ(28, num_val->data);
-	ASSERT_TRUE(some_val != (struct dep_val *)num_val);
+	ASSERT_TRUE(some_val != (struct val *)num_val);
 
 	mem_gc_allocate (test_instance, another_val);
 	ASSERT_EQ(2, mem_gc_count (test_instance));
@@ -57,7 +57,7 @@ TEST(mem_gc_allocate, ok)
 
 	auto bool_val = val_lst_at_bool (test_instance->vals, 1);
 	ASSERT_EQ(true, bool_val->data);
-	ASSERT_TRUE(another_val != (struct dep_val *)bool_val);
+	ASSERT_TRUE(another_val != (struct val *)bool_val);
 
 	mem_gc_free_safe (&test_instance);
 	val_free_safe (&some_val);
@@ -75,7 +75,7 @@ TEST(mem_gc_free_safe, ok)
 	config.root = MEM(tm);
 	config.size = 16;
 
-	auto some_val = (struct dep_val *)val_num_new_from_double (MEM(tm), 28);
+	auto some_val = (struct val *)val_num_new_from_double (MEM(tm), 28);
 
 	auto test_instance = mem_gc_new (config);
 	mem_gc_allocate (test_instance, some_val);

@@ -85,13 +85,13 @@ TEST(val_num_to_str, floating_point)
 	auto tm = mem_test_new_default (128);
 
 	struct val_num *test_instance = val_num_new_from_double (MEM(tm), 13.37);
-	struct dep_val_str *result = val_num_to_str (test_instance, MEM(tm));
+	struct val_str *result = val_num_to_str (test_instance, MEM(tm));
 
-	ASSERT_EQ(5, dep_val_str_count (result));
+	ASSERT_EQ(5, val_str_count (result));
 	ASSERT_TRUE(strncmp (result->data, "13.37", result->count) == 0);
 
 	val_num_free_safe (&test_instance);
-	dep_val_str_deallocate_safe (&result);
+	val_str_deallocate_safe (&result);
 	mem_test_verify (tm);
 	mem_test_free (tm);
 }

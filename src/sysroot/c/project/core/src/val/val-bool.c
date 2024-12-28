@@ -8,7 +8,7 @@ val_bool_new_from_bool (struct mem *mem, bool data)
 {
 	CHECK_NOT_NULL(mem);
 	struct val_bool *result = mem_allocate (mem, sizeof (struct val_bool));
-	dep_val_init (&result->base, VAL_KIND_BOOL, mem);
+	val_init (&result->base, VAL_KIND_BOOL, mem);
 	result->data = data;
 	return result;
 }
@@ -30,16 +30,16 @@ val_bool_equal (struct val_bool *lhs, struct val_bool *rhs)
 	return lhs->data == rhs->data;
 }
 
-struct dep_val_str *
+struct val_str *
 val_bool_to_str (struct val_bool *self, struct mem *mem)
 {
 	CHECK_NOT_NULL(self);
 	CHECK_NOT_NULL(mem);
 	if (self->data)
 		{
-			return dep_val_str_allocate_from_c_str (mem, "true");
+			return val_str_allocate_from_c_str (mem, "true");
 		}
-	return dep_val_str_allocate_from_c_str (mem, "false");
+	return val_str_allocate_from_c_str (mem, "false");
 }
 
 void

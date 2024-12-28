@@ -31,13 +31,10 @@ file(GLOB SRC_FILES
         src/val/val.c
         src/val/val-api.c
         src/val/val-bool.c
-        src/val/val-clsr.c
         src/val/val-fld.c
         src/val/val-fn.c
         src/val/val-lst.c
-        src/val/val-mod.c
-        src/val/val-mod-const-pool.c
-        src/val/val-nil.c
+
         src/val/val-num.c
         src/val/val-obj.c
         src/val/val-prop.c
@@ -106,13 +103,10 @@ file(GLOB SRC_UNIT_TEST_FILES
 
         test/unit/val/test-val-api.cpp
         test/unit/val/test-val-bool.cpp
-        test/unit/val/test-val-clsr.cpp
         test/unit/val/test-val-fld.cpp
         test/unit/val/test-val-fn.cpp
         test/unit/val/test-val-lst.cpp
-        test/unit/val/test-val-mod.cpp
-        test/unit/val/test-val-mod-const-pool.cpp
-        test/unit/val/test-val-nil.cpp
+
         test/unit/val/test-val-num.cpp
         test/unit/val/test-val-obj.cpp
         test/unit/val/test-val-prop.cpp

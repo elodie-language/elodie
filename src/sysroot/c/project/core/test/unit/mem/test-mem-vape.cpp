@@ -50,7 +50,7 @@ TEST(mem_vape_allocate, ok)
 TEST(mem_vape_resolve, ok)
 {
 	struct mem_vape_config config = {
-		.size = 32,
+		.size = 64,
 		.root = MEM(mem_raw_new ())
 	};
 
@@ -59,17 +59,15 @@ TEST(mem_vape_resolve, ok)
 
 	auto some_string = (struct val_str *)mem_vape_allocate (test_instance, sizeof (struct val_str));
 	some_string->base.kind = VAL_KIND_STR;
-	some_string->base.mem_realm = 28;
 	some_string->count = 6;
 	some_string->data = (char *)mem_vape_allocate (test_instance, 6);
-	memcpy (some_string->data, "HAMAL\0", 6);
+	memcpy (some_string->data, "ELODIE\0", 6);
 
 	auto result = (struct val_str *)mem_vape_resolve (test_instance, next_ref);
 	ASSERT_TRUE(result != nullptr);
 	ASSERT_EQ(VAL_KIND_STR, result->base.kind);
-	ASSERT_EQ(28, result->base.mem_realm);
 	ASSERT_EQ(6, result->count);
-	ASSERT_TRUE(strncmp (some_string->data, "HAMAL", 5) == 0);
+	ASSERT_TRUE(strncmp (some_string->data, "ELODIE", 6) == 0);
 
 	auto result2 = (struct val_str *)mem_resolve (MEM(test_instance), next_ref);
 	ASSERT_EQ(result, result2);

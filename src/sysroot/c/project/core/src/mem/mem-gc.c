@@ -51,19 +51,18 @@ mem_gc_init (struct mem_gc *self, struct mem_gc_config config)
 
 }
 
-struct dep_val *
-mem_gc_allocate (struct mem_gc *self, struct dep_val *val)
+struct val *
+mem_gc_allocate (struct mem_gc *self, struct val *val)
 {
 	CHECK_NOT_NULL(self);
 	CHECK_NOT_NULL(val);
 
-	struct dep_val *result = val_copy (val, self->base.root);
+	struct val *result = val_copy (val, self->base.root);
 
 	switch (val->kind)
 		{
 			//
 			case VAL_KIND_BOOL:
-			case VAL_KIND_NIL:
 			case VAL_KIND_NUM:
 				{
 					list_append_rval(self->colors, MEM_GC_COLOR_WHITE);
@@ -77,14 +76,14 @@ mem_gc_allocate (struct mem_gc *self, struct dep_val *val)
 }
 
 void
-mem_gc_mark_val (struct mem_gc *self, struct dep_val *val, enum mem_gc_color color)
+mem_gc_mark_val (struct mem_gc *self, struct val *val, enum mem_gc_color color)
 {
 	CHECK_NOT_NULL(self);
 	CHECK_NOT_NULL(val);
 
 	for (size_t idx = 0; idx < val_lst_count (self->vals); idx++)
 		{
-			struct dep_val *current = NULL;
+			struct val *current = NULL;
 			if (current == val)
 				{
 					enum mem_gc_color *ptr = list_at (self->colors, idx);
@@ -95,7 +94,7 @@ mem_gc_mark_val (struct mem_gc *self, struct dep_val *val, enum mem_gc_color col
 }
 
 void
-mem_gc_mark (struct mem_gc *self, struct dep_val *val)
+mem_gc_mark (struct mem_gc *self, struct val *val)
 {
 	CHECK_NOT_NULL(self);
 	CHECK_NOT_NULL(val);
@@ -124,13 +123,13 @@ mem_gc_sweep (struct mem_gc *self)
 
 			if (color == MEM_GC_COLOR_WHITE)
 				{
-					struct dep_val *val_to_sweep = val_lst_at_base (self->vals, idx);
+					struct val *val_to_sweep = val_lst_at_base (self->vals, idx);
 					val_free_safe (&val_to_sweep);
 					sweep_counter++;
 				}
 			else
 				{
-					struct dep_val *val_to_keep = val_lst_at_base (self->vals, idx);
+					struct val *val_to_keep = val_lst_at_base (self->vals, idx);
 					list_append_rval(new_colors, MEM_GC_COLOR_WHITE);
 					val_lst_append_base (new_val_list, val_to_keep);
 					keep_counter++;

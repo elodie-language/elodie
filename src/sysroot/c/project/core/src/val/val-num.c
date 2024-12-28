@@ -8,7 +8,7 @@ val_num_new_from_double (struct mem *mem, double val)
 {
 	CHECK_NOT_NULL(mem);
 	struct val_num *result = mem_allocate (mem, sizeof (struct val_num));
-	dep_val_init (&result->base, VAL_KIND_NUM, mem);
+	val_init (&result->base, VAL_KIND_NUM, mem);
 	result->data = val;
 	return result;
 }
@@ -30,14 +30,14 @@ val_numb_equal (struct val_num *lhs, struct val_num *rhs)
 	return lhs->data == rhs->data;
 }
 
-struct dep_val_str *
+struct val_str *
 val_num_to_str (struct val_num *self, struct mem *mem)
 {
 	CHECK_NOT_NULL(self);
 	CHECK_NOT_NULL(mem);
 	char output[50] = {0};
 	snprintf(output, 50, "%g", self->data);
-	return dep_val_str_allocate_from_bytes (mem, (struct bytes_view){
+	return val_str_allocate_from_bytes (mem, (struct bytes_view){
 		.data = (u1 *)output,
 		.size = strlen (output)
 	});

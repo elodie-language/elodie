@@ -14,16 +14,16 @@ struct iterator {
   } current;
 };
 
-HAMAL_API struct iterator
+ELODIE_API struct iterator
 iterator_index (void *target, bool (*has_next) (struct iterator *), void *(*next) (struct iterator *));
 
-HAMAL_API struct iterator
+ELODIE_API struct iterator
 iterator (void *target, bool (*has_next) (struct iterator *), void *(*next) (struct iterator *), void *start);
 
-HAMAL_API bool
+ELODIE_API bool
 iterator_has_next (struct iterator *self);
 
-HAMAL_API void *
+ELODIE_API void *
 iterator_next (struct iterator *self);
 
 #endif //CORE_ALGO_ITERATOR_H

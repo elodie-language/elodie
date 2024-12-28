@@ -26,9 +26,9 @@ TEST(string_allocate_from_c_str, ok)
 {
 	auto tm = mem_test_new_default (128);
 
-	auto result = string_allocate_from_c_str (MEM(tm), "HamaL");
-	ASSERT_EQ (5, string_count (*result));
-	ASSERT_TRUE (strncmp (result->data, "HamaL", result->count) == 0);
+	auto result = string_allocate_from_c_str (MEM(tm), "Elodie");
+	ASSERT_EQ (6, string_count (*result));
+	ASSERT_TRUE (strncmp (result->data, "Elodie", result->count) == 0);
 
 	string_deallocate_safe (&result, MEM(tm));
 	mem_test_verify (tm);
@@ -39,9 +39,9 @@ TEST(string_allocate_from_view, ok)
 {
 	auto tm = mem_test_new_default (128);
 
-	auto result = string_allocate_from_view (MEM(tm), string_view_from_c_str ("HAMAL"));
-	ASSERT_EQ (5, string_count (*result));
-	ASSERT_TRUE (strncmp (result->data, "HAMAL", result->count) == 0);
+	auto result = string_allocate_from_view (MEM(tm), string_view_from_c_str ("ELODIE"));
+	ASSERT_EQ (6, string_count (*result));
+	ASSERT_TRUE (strncmp (result->data, "ELODIE", result->count) == 0);
 
 	string_deallocate_safe (&result, MEM(tm));
 	mem_test_verify (tm);
@@ -95,9 +95,9 @@ TEST(string_init_from_c_str, ok)
 	auto tm = mem_test_new_default (128);
 
 	struct string test_instance{};
-	string_init_from_c_str (&test_instance, MEM(tm), "HamaL");
-	ASSERT_EQ (5, string_count (test_instance));
-	ASSERT_TRUE (strncmp (test_instance.data, "HamaL", test_instance.count) == 0);
+	string_init_from_c_str (&test_instance, MEM(tm), "Elodie");
+	ASSERT_EQ (6, string_count (test_instance));
+	ASSERT_TRUE (strncmp (test_instance.data, "Elodie", test_instance.count) == 0);
 
 	string_reset (&test_instance, MEM(tm));
 	mem_test_verify (tm);
@@ -109,9 +109,9 @@ TEST(string_init_from_view, ok)
 	auto tm = mem_test_new_default (128);
 
 	struct string test_instance{};
-	string_init_from_view (&test_instance, MEM(tm), string_view_from_c_str ("HAMAL"));
-	ASSERT_EQ (5, string_count (test_instance));
-	ASSERT_TRUE (strncmp (test_instance.data, "HAMAL", test_instance.count) == 0);
+	string_init_from_view (&test_instance, MEM(tm), string_view_from_c_str ("ELODIE"));
+	ASSERT_EQ (6, string_count (test_instance));
+	ASSERT_TRUE (strncmp (test_instance.data, "ELODIE", test_instance.count) == 0);
 
 	string_reset (&test_instance, MEM(tm));
 	mem_test_verify (tm);
@@ -144,8 +144,8 @@ TEST(string_init_from_byte_list, ok)
 TEST(string_count, ok)
 {
 	auto tm = mem_test_new_default (128);
-	auto test_instance = string_allocate_from_c_str (MEM(tm), "!!Hamal Rocks!!\n");
-	ASSERT_EQ (16, string_count (*test_instance));
+	auto test_instance = string_allocate_from_c_str (MEM(tm), "!!Elodie Rocks!!\n");
+	ASSERT_EQ (17, string_count (*test_instance));
 	string_deallocate_safe (&test_instance, MEM(tm));
 }
 
@@ -161,7 +161,7 @@ TEST(string_equal, same_pointer)
 {
 	auto tm = mem_test_new_default (128);
 
-	auto test_instance = string_allocate_from_c_str (MEM(tm), "hamal");
+	auto test_instance = string_allocate_from_c_str (MEM(tm), "elodie");
 	ASSERT_TRUE (string_equal (*test_instance, *test_instance));
 
 	string_deallocate_safe (&test_instance, MEM(tm));
@@ -173,8 +173,8 @@ TEST(string_equal, same_value)
 {
 	auto tm = mem_test_new_default (128);
 
-	auto str_one = string_allocate_from_c_str (MEM(tm), "hamal rockz");
-	auto str_two = string_allocate_from_c_str (MEM(tm), "hamal rockz");
+	auto str_one = string_allocate_from_c_str (MEM(tm), "elodie rockz");
+	auto str_two = string_allocate_from_c_str (MEM(tm), "elodie rockz");
 	ASSERT_TRUE (string_equal (*str_one, *str_two));
 
 	string_deallocate_safe (&str_one, MEM(tm));
@@ -189,8 +189,8 @@ TEST(string_equal, string_euals_c_str)
 	auto tm = mem_test_new_default (128);
 
 	struct string str_one{};
-	string_init_from_c_str (&str_one, MEM(tm), "hamal rockz");
-	auto str_two = "hamal rockz";
+	string_init_from_c_str (&str_one, MEM(tm), "elodie rockz");
+	auto str_two = "elodie rockz";
 	ASSERT_TRUE (string_equal_c_str (str_one, str_two));
 
 	string_reset (&str_one, MEM(tm));
@@ -203,7 +203,7 @@ TEST(string_equal, different_value)
 {
 	auto tm = mem_test_new_default (128);
 
-	auto str_one = string_allocate_from_c_str (MEM(tm), "hamal");
+	auto str_one = string_allocate_from_c_str (MEM(tm), "elodie");
 	auto str_two = string_allocate_from_c_str (MEM(tm), "h4m41");
 	ASSERT_FALSE (string_equal (*str_one, *str_two));
 
@@ -218,8 +218,8 @@ TEST(string_equal, different_count)
 {
 	auto tm = mem_test_new_default (128);
 
-	auto str_one = string_allocate_from_c_str (MEM(tm), "hamal");
-	auto str_two = string_allocate_from_c_str (MEM(tm), "hamal rockz");
+	auto str_one = string_allocate_from_c_str (MEM(tm), "elodie");
+	auto str_two = string_allocate_from_c_str (MEM(tm), "elodie rockz");
 	ASSERT_FALSE (string_equal (*str_one, *str_two));
 
 	string_deallocate_safe (&str_one, MEM(tm));

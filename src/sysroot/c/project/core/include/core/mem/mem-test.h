@@ -30,34 +30,34 @@ struct mem_test {
   u4 next_id;
 };
 
-HAMAL_API struct mem_test *
+ELODIE_API struct mem_test *
 mem_test_new (struct mem_test_config config);
 
-HAMAL_API void
+ELODIE_API void
 mem_test_init (struct mem_test *self, struct mem_test_config config);
 
-HAMAL_API struct mem_test *
+ELODIE_API struct mem_test *
 mem_test_new_default (size_t size);
 
-HAMAL_API void *
+ELODIE_API void *
 mem_test_allocate (struct mem_test *self, size_t size);
 
-HAMAL_API void *
+ELODIE_API void *
 mem_test_resolve (struct mem_test *self, struct mem_ref);
 
-HAMAL_API void
+ELODIE_API void
 mem_test_deallocate (struct mem_test *self, void *ptr);
 
-HAMAL_API void
+ELODIE_API void
 mem_test_verify (struct mem_test *self);
 
-HAMAL_API void
+ELODIE_API void
 mem_test_reset (struct mem_test *self);
 
-HAMAL_API void
+ELODIE_API void
 mem_test_free (struct mem_test *self);
 
-HAMAL_API size_t
+ELODIE_API size_t
 mem_test_size (struct mem_test *self);
 
 #endif //CORE_MEM_TEST_H

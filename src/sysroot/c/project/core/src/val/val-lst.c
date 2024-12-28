@@ -9,7 +9,7 @@ val_lst_new (struct mem *mem)
 	CHECK_NOT_NULL(mem);
 
 	struct val_lst *result = mem_allocate (mem, sizeof (struct val_lst));
-	dep_val_init (&result->base, VAL_KIND_LST, mem);
+	val_init (&result->base, VAL_KIND_LST, mem);
 
 	struct ptr_list_config data_config = {
 		.initial_capacity = 8,
@@ -22,7 +22,7 @@ val_lst_new (struct mem *mem)
 }
 
 void
-val_lst_append_base (struct val_lst *self, struct dep_val *val)
+val_lst_append_base (struct val_lst *self, struct val *val)
 {
 	CHECK_NOT_NULL(self);
 	CHECK_NOT_NULL(val);
@@ -102,7 +102,7 @@ val_lst_append_obj (struct val_lst *self, struct val_obj *val)
 }
 
 void
-val_lst_append_str (struct val_lst *self, struct dep_val_str *val)
+val_lst_append_str (struct val_lst *self, struct val_str *val)
 {
 	CHECK_NOT_NULL(self);
 	CHECK_NOT_NULL(val);
@@ -116,14 +116,14 @@ direct_underlying_data (struct val_lst *self, size_t idx)
 }
 
 void
-val_lst_replace_base (struct val_lst *self, size_t idx, struct dep_val *val)
+val_lst_replace_base (struct val_lst *self, size_t idx, struct val *val)
 {
 	CHECK_NOT_NULL(self);
 	CHECK_NOT_NULL(val);
 	ptr_list_replace (self->underlying_list, idx, val);
 }
 
-struct dep_val *
+struct val *
 val_lst_at_base (struct val_lst *self, size_t idx)
 {
 	CHECK_NOT_NULL(self);
@@ -136,26 +136,16 @@ val_lst_at_bool (struct val_lst *self, size_t idx)
 {
 	CHECK_NOT_NULL(self);
 	CHECK_LESS_THAN_EQUAL(idx, val_lst_count (self));
-	struct dep_val *entry = ptr_list_at (self->underlying_list, idx);
+	struct val *entry = ptr_list_at (self->underlying_list, idx);
 	CHECK_EQUAL(VAL_KIND_BOOL, entry->kind)
 	return (struct val_bool *)entry;
-}
-
-struct val_clsr *
-val_lst_at_clsr (struct val_lst *self, size_t idx)
-{
-	CHECK_NOT_NULL(self);
-	CHECK_LESS_THAN_EQUAL(idx, val_lst_count (self));
-	struct dep_val *entry = ptr_list_at (self->underlying_list, idx);
-	CHECK_EQUAL(VAL_KIND_CLSR, entry->kind)
-	return (struct val_clsr *)entry;
 }
 
 struct val_fld *
 val_lst_at_field (struct val_lst *self, size_t idx)
 {
 	CHECK_LESS_THAN_EQUAL(idx, val_lst_count (self));
-	struct dep_val *entry = ptr_list_at (self->underlying_list, idx);
+	struct val *entry = ptr_list_at (self->underlying_list, idx);
 	CHECK_EQUAL(VAL_KIND_FLD, entry->kind)
 	return (struct val_fld *)entry;
 }
@@ -165,7 +155,7 @@ val_lst_at_fn (struct val_lst *self, size_t idx)
 {
 	CHECK_NOT_NULL(self);
 	CHECK_LESS_THAN_EQUAL(idx, val_lst_count (self));
-	struct dep_val *entry = ptr_list_at (self->underlying_list, idx);
+	struct val *entry = ptr_list_at (self->underlying_list, idx);
 	CHECK_EQUAL(VAL_KIND_FN, entry->kind)
 	return (struct val_fn *)entry;
 }
@@ -175,19 +165,9 @@ val_lst_at_list (struct val_lst *self, size_t idx)
 {
 	CHECK_NOT_NULL(self);
 	CHECK_LESS_THAN_EQUAL(idx, val_lst_count (self));
-	struct dep_val *entry = ptr_list_at (self->underlying_list, idx);
+	struct val *entry = ptr_list_at (self->underlying_list, idx);
 	CHECK_EQUAL(VAL_KIND_LST, entry->kind)
 	return (struct val_lst *)entry;
-}
-
-struct val_mod *
-val_lst_at_mod (struct val_lst *self, size_t idx)
-{
-	CHECK_NOT_NULL(self);
-	CHECK_LESS_THAN_EQUAL(idx, val_lst_count (self));
-	struct dep_val *entry = ptr_list_at (self->underlying_list, idx);
-	CHECK_EQUAL(VAL_KIND_MOD, entry->kind)
-	return (struct val_mod *)entry;
 }
 
 struct val_num *
@@ -195,7 +175,7 @@ val_lst_at_num (struct val_lst *self, size_t idx)
 {
 	CHECK_NOT_NULL(self);
 	CHECK_LESS_THAN_EQUAL(idx, val_lst_count (self));
-	struct dep_val *entry = ptr_list_at (self->underlying_list, idx);
+	struct val *entry = ptr_list_at (self->underlying_list, idx);
 	CHECK_EQUAL(VAL_KIND_NUM, entry->kind)
 	return (struct val_num *)entry;
 }
@@ -205,19 +185,19 @@ val_lst_at_obj (struct val_lst *self, size_t idx)
 {
 	CHECK_NOT_NULL(self);
 	CHECK_LESS_THAN_EQUAL(idx, val_lst_count (self));
-	struct dep_val *entry = ptr_list_at (self->underlying_list, idx);
+	struct val *entry = ptr_list_at (self->underlying_list, idx);
 	CHECK_EQUAL(VAL_KIND_OBJ, entry->kind)
 	return (struct val_obj *)entry;
 }
 
-struct dep_val_str *
+struct val_str *
 val_lst_at_str (struct val_lst *self, size_t idx)
 {
 	CHECK_NOT_NULL(self);
 	CHECK_LESS_THAN_EQUAL(idx, val_lst_count (self));
-	struct dep_val *entry = ptr_list_at (self->underlying_list, idx);
+	struct val *entry = ptr_list_at (self->underlying_list, idx);
 	CHECK_EQUAL(VAL_KIND_STR, entry->kind)
-	return (struct dep_val_str *)entry;
+	return (struct val_str *)entry;
 }
 
 size_t
@@ -240,7 +220,7 @@ val_lst_clear (struct val_lst *self)
 	CHECK_NOT_NULL(self);
 	for (size_t idx = 0; idx < ptr_list_count (self->underlying_list); idx++)
 		{
-			struct dep_val *val = val_lst_at_base (self, idx);
+			struct val *val = val_lst_at_base (self, idx);
 			val_clear (val);
 			val_free_safe (&val);
 		}

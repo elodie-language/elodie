@@ -132,19 +132,19 @@ TEST(byte_list_append_str, ok)
 	auto tm = mem_test_new_default (512);
 	auto test_instance = byte_list_new (byte_list_default_config (MEM(tm)));
 
-	auto c_str = "Hamal rockz";
-	auto str = dep_val_str_allocate_from_c_str (MEM(tm), c_str);
+	auto c_str = "Elodie rockz";
+	auto str = val_str_allocate_from_c_str (MEM(tm), c_str);
 	byte_list_append_str (test_instance, str);
 
-	ASSERT_EQ(11, byte_list_size (test_instance));
+	ASSERT_EQ(12, byte_list_size (test_instance));
 	ASSERT_EQ(16, byte_list_capacity (test_instance));
 
-	struct dep_val_str_view str_view{};
-	byte_list_at_str_view (test_instance, 0, 11, &str_view);
-	ASSERT_EQ(0, strncmp (c_str, str_view.data, 11));
+	struct val_str_view str_view{};
+	byte_list_at_str_view (test_instance, 0, 12, &str_view);
+	ASSERT_EQ(0, strncmp (c_str, str_view.data, 12));
 
 	byte_list_free_safe (&test_instance);
-	dep_val_str_deallocate_safe (&str);
+	val_str_deallocate_safe (&str);
 
 	mem_test_verify (tm);
 	mem_test_free (tm);

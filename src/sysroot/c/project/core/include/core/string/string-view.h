@@ -10,31 +10,31 @@ struct string_view {
   char const *data;
 };
 
-HAMAL_API struct string_view
+ELODIE_API struct string_view
 string_view_from_bytes (struct bytes_view bytes);
 
-HAMAL_API struct string_view
+ELODIE_API struct string_view
 string_view_from_str (struct string str);
 
-HAMAL_API struct string_view
+ELODIE_API struct string_view
 string_view_from_str_ptr (struct string *ptr);
 
-HAMAL_API struct string_view
+ELODIE_API struct string_view
 string_view_from_c_str (char const *str);
 
-HAMAL_API struct bytes_view
+ELODIE_API struct bytes_view
 string_view_as_byte_view (struct string_view self);
 
-HAMAL_API u4
+ELODIE_API u4
 string_view_count (struct string_view self);
 
-HAMAL_API bool
+ELODIE_API bool
 string_view_equal (struct string_view lhs, struct string_view rhs);
 
-HAMAL_API bool
+ELODIE_API bool
 string_view_equal_c_str (struct string_view lhs, char const *rhs);
 
-HAMAL_API bool
+ELODIE_API bool
 string_view_last_occurrence_of (struct string_view self, struct string_view pattern, u4 *position);
 
 #ifdef IS_UNIT_TEST
