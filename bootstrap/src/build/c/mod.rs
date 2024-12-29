@@ -73,7 +73,7 @@ pub fn build(name: &str, c_code: &str) -> io::Result<()> {
     let binary_path = dir.join(name);
     let gcc_err_path = dir.join("compiler.err");
 
-    copy_sysroot(dir.clone());
+    // copy_sysroot(dir.clone());
     build_std(dir.clone());
 
     let mut c_file = File::create(&c_file_path)?;
@@ -90,8 +90,11 @@ pub fn build(name: &str, c_code: &str) -> io::Result<()> {
 
     let gcc_output = Command::new("gcc")
         .arg(c_file_path.to_str().unwrap())
-        .arg(dir.join("sysroot/io.c"))
         .arg(dir.join("rt/io.c"))
+        .arg("-std=gnu2x")
+        .arg("-I/home/ddymke/repo/elodie/src/sysroot/c/project/core/include")
+        .arg("-L/home/ddymke/repo/elodie/src/sysroot/c/build/project/core")
+        .arg("-lcore")
         .arg("-lm")
         .arg("-o")
         .arg(binary_path.to_str().unwrap())
@@ -120,6 +123,8 @@ fn build_std(dir: PathBuf) {
 void rt_io_print(char const * message);
 void rt_io_println(char const * message);
 
+void test();
+
 #endif
     "#
             .as_bytes(),
@@ -131,15 +136,33 @@ void rt_io_println(char const * message);
     file.write_all(
         r#"
 #include "io.h"
-#include "../sysroot/io.h"
 
 void rt_io_print(char const * message) {
-    sysroot_rt_io_print(message);
+//    sysroot_rt_io_print(message);
 }
 
 void rt_io_println(char const * message) {
-    rt_io_print(message);
-    rt_io_print("\n");
+  //  rt_io_print(message);
+  //  rt_io_print("\n");
+}
+
+#include "core/core-api.h"
+
+
+void test(){
+	u1 input_array[] = {'H', 'A', 'M', 'A', 'L'};
+
+	auto tm = mem_test_new_default (128);
+		struct bytes_view bytes = {
+		.data = input_array,
+		.size = 2
+	};
+
+	struct string *result = string_allocate_from_bytes (MEM(tm), bytes);
+
+//	string_deallocate (result, MEM(tm));
+	mem_test_verify (tm);
+	mem_test_free (tm);
 }
 
     "#
@@ -147,25 +170,4 @@ void rt_io_println(char const * message) {
     )
         .unwrap();
     drop(file);
-}
-
-fn copy_sysroot(destination: PathBuf) {
-    let sys_root = "/home/ddymke/repo/elodie/src/sysroot/c/project";
-    let file_path = PathBuf::from(sys_root);
-
-    if !destination.exists() {
-        fs::create_dir_all(&destination.join("sysroot")).unwrap();
-    }
-
-    for file in &EC_FILES {
-        let source = file_path.join(file);
-
-        let name = PathBuf::from(file).file_name().unwrap().to_str().unwrap().to_string();
-
-        let dest = destination.join("sysroot").join(PathBuf::from(name.as_str()));
-        // Copy the file
-        fs::create_dir_all(&dest.parent().unwrap()).unwrap();
-        fs::copy(&source, &dest).unwrap();
-        drop(dest)
-    }
 }
