@@ -3,7 +3,7 @@ use std::collections::HashSet;
 use Node::{LiteralBoolean, LiteralNumber, LiteralString};
 
 use crate::build::c;
-use crate::build::c::{BlockStatement, CallFunctionStatement, DeclareFunctionNode, DeclareStructNode, DefineFunctionNode, DefineStructNode, DirectiveNode, IncludeLocalDirectiveNode, IncludeSystemDirectiveNode, Indent};
+use crate::build::c::{BlockStatement, CodeStatement, DeclareFunctionNode, DeclareStructNode, DefineFunctionNode, DefineStructNode, DirectiveNode, IncludeLocalDirectiveNode, IncludeSystemDirectiveNode, Indent};
 use crate::build::c::DirectiveNode::{IncludeLocalDirective, IncludeSystemDirective};
 use crate::build::c::Node::DefineFunction;
 use crate::build::c::scope::Scope;
@@ -71,19 +71,19 @@ impl Generator {
             statements: BlockStatement {
                 indent: Indent::none(),
                 statements: vec![
-                    c::Statement::CallFunction(CallFunctionStatement{
-                        indent: Indent::none(),
-                        identifier: "test".to_string(),
-                        arguments: Box::new([]),
-                        result: None,
-                    })
+                    // c::Statement::Code(
+                    //     CodeStatement {
+                    //         indent: Indent::none(),
+                    //         code: r#"printf("works\n");"#.to_string(),
+                    //     }
+                    // )
                 ],
             },
         });
 
-        // for node in &nodes {
-        //     self.nodes(node)?
-        // }
+        for node in &nodes {
+            self.nodes(node)?
+        }
 
         self.include_system("stdio.h");
         self.include_system("stdbool.h");

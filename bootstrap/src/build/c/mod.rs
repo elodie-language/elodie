@@ -93,8 +93,11 @@ pub fn build(name: &str, c_code: &str) -> io::Result<()> {
         .arg(dir.join("rt/io.c"))
         .arg("-std=gnu2x")
         .arg("-I/home/ddymke/repo/elodie/src/sysroot/c/project/core/include")
+        .arg("-I/home/ddymke/repo/elodie/src/sysroot/c/project/rt/include")
         .arg("-L/home/ddymke/repo/elodie/src/sysroot/c/build/project/core")
         .arg("-lcore")
+        .arg("-L/home/ddymke/repo/elodie/src/sysroot/c/build/project/rt")
+        .arg("-lrt")
         .arg("-lm")
         .arg("-o")
         .arg(binary_path.to_str().unwrap())
@@ -136,33 +139,15 @@ void test();
     file.write_all(
         r#"
 #include "io.h"
+#include "rt/io.h"
 
 void rt_io_print(char const * message) {
-//    sysroot_rt_io_print(message);
+   sysroot_rt_io_print(message);
 }
 
 void rt_io_println(char const * message) {
-  //  rt_io_print(message);
-  //  rt_io_print("\n");
-}
-
-#include "core/core-api.h"
-
-
-void test(){
-	u1 input_array[] = {'H', 'A', 'M', 'A', 'L'};
-
-	auto tm = mem_test_new_default (128);
-		struct bytes_view bytes = {
-		.data = input_array,
-		.size = 2
-	};
-
-	struct string *result = string_allocate_from_bytes (MEM(tm), bytes);
-
-//	string_deallocate (result, MEM(tm));
-	mem_test_verify (tm);
-	mem_test_free (tm);
+  rt_io_print(message);
+  rt_io_print("\n");
 }
 
     "#

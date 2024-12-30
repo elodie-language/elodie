@@ -7,6 +7,7 @@ impl Emitter {
         match statement {
             Statement::Block(statement) => self.block_statement(statement),
             Statement::CallFunction(statement) => self.call_function(statement),
+            Statement::Code(statement) => self.code_statement(statement),
             Statement::DeclareArray(statement) => self.declare_array(statement),
             Statement::DeclareVariable(statement) => self.declare_variable(statement),
             Statement::If(statement) => self.r#if(statement),

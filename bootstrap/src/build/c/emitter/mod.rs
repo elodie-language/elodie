@@ -9,6 +9,7 @@ mod literal;
 mod statement;
 mod r#struct;
 mod variable;
+mod code;
 
 pub enum Error {}
 
@@ -31,6 +32,7 @@ impl Emitter {
     pub(crate) fn emit(mut self, nodes: &[c::Node]) -> String {
         for node in nodes {
             match node {
+                Node::Code(node) => self.code_node(node),
                 Node::Directive(node) => self.directive(node),
                 Node::DeclareFunction(node) => self.declare_function(node),
                 Node::DeclareStruct(node) => self.declare_struct(node),

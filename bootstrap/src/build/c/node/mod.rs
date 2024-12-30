@@ -17,12 +17,19 @@ mod variable;
 
 #[derive(Debug)]
 pub enum Node {
+    Code(CodeNode),
     DeclareFunction(DeclareFunctionNode),
     DeclareStruct(DeclareStructNode),
     DefineFunction(DefineFunctionNode),
     DefineGlobalVariable(DefineGlobalVariableNode),
     DefineStruct(DefineStructNode),
     Directive(DirectiveNode),
+}
+
+#[derive(Debug)]
+pub struct CodeNode {
+    pub indent: Indent,
+    pub code: String,
 }
 
 #[derive(Debug)]
@@ -37,6 +44,7 @@ pub enum Expression {
 pub enum Statement {
     Block(BlockStatement),
     CallFunction(CallFunctionStatement),
+    Code(CodeStatement),
     DeclareArray(DeclareArrayStatement),
     DeclareVariable(DeclareVariableStatement),
     If(IfStatement),
@@ -47,6 +55,12 @@ pub enum Statement {
 pub struct BlockStatement {
     pub indent: Indent,
     pub statements: Vec<Statement>,
+}
+
+#[derive(Debug)]
+pub struct CodeStatement {
+    pub indent: Indent,
+    pub code: String,
 }
 
 #[derive(Debug)]
