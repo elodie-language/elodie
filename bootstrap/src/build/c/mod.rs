@@ -56,11 +56,6 @@ pub fn build_c_code_from_file(file: PathBuf) {
 }
 
 
-const EC_FILES: [&str; 2] = [
-    "rt/include/io.h",
-    "rt/src/io.c",
-];
-
 pub fn build(name: &str, c_code: &str) -> io::Result<()> {
     // FIXME needs context so that it know whichs core / std or lib to include
 
@@ -73,24 +68,15 @@ pub fn build(name: &str, c_code: &str) -> io::Result<()> {
     let binary_path = dir.join(name);
     let gcc_err_path = dir.join("compiler.err");
 
-    // copy_sysroot(dir.clone());
-    build_std(dir.clone());
-
     let mut c_file = File::create(&c_file_path)?;
     c_file.write_all(c_code.as_bytes())?;
     drop(c_file);
 
     let gcc_err_file = File::create(&gcc_err_path)?;
 
-    // let c_files: Vec<_> = EC_FILES
-    //     .into_iter()
-    //     .filter(|f| f.ends_with(".c"))
-    //     .map(|f| dir.join("sysroot").join(f))
-    //     .collect();
-
     let gcc_output = Command::new("gcc")
         .arg(c_file_path.to_str().unwrap())
-        .arg(dir.join("rt/io.c"))
+        // .arg(dir.join("rt/io.c"))
         .arg("-std=gnu2x")
         .arg("-I/home/ddymke/repo/elodie/src/sysroot/c/project/core/include")
         .arg("-I/home/ddymke/repo/elodie/src/sysroot/c/project/rt/include")
@@ -113,46 +99,4 @@ pub fn build(name: &str, c_code: &str) -> io::Result<()> {
     }
 
     Ok(())
-}
-
-fn build_std(dir: PathBuf) {
-    fs::create_dir_all(dir.join("rt")).unwrap();
-    let mut file = File::create(&dir.join(PathBuf::from("rt/io.h"))).unwrap();
-    file.write_all(
-        r#"
-#ifndef RT_IO_H
-#define RT_IO_H
-
-void rt_io_print(char const * message);
-void rt_io_println(char const * message);
-
-void test();
-
-#endif
-    "#
-            .as_bytes(),
-    )
-        .unwrap();
-    drop(file);
-
-    let mut file = File::create(&dir.join(PathBuf::from("rt/io.c"))).unwrap();
-    file.write_all(
-        r#"
-#include "io.h"
-#include "rt/io.h"
-
-void rt_io_print(char const * message) {
-   sysroot_rt_io_print(message);
-}
-
-void rt_io_println(char const * message) {
-  rt_io_print(message);
-  rt_io_print("\n");
-}
-
-    "#
-            .as_bytes(),
-    )
-        .unwrap();
-    drop(file);
 }

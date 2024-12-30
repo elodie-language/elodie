@@ -2,6 +2,11 @@
 
 #include <stdio.h>
 
-void sysroot_rt_io_print(const char *text) {
+void rt_io_print(const char *text) {
     printf("%s", text);
+}
+
+void rt_io_println(char const * message) {
+    rt_io_print(message);
+    rt_io_print("\n");
 }

@@ -21,4 +21,4 @@ Cargo.lock
 .idea/
 .run/
 cmake-build-*/
-build/
+**/sysroot/c/build/
