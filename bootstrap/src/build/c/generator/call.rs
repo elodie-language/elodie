@@ -1,7 +1,7 @@
 use std::rc::Rc;
 
 use crate::build::c;
-use crate::build::c::{CallFunctionStatement, Expression, Indent};
+use crate::build::c::{CallFunctionStatement, Expression};
 use crate::build::c::generator::Generator;
 use crate::build::c::Statement::CallFunction;
 use crate::ir::{IrCallFunctionOfPackageNode, IrTreeNode};
@@ -11,7 +11,6 @@ impl Generator {
         let arguments = self.generate_call_arguments(&node.arguments)?;
 
         self.statements().push(CallFunction(CallFunctionStatement {
-            indent: Indent::none(),
             function: "rt_io_println".to_string(),
             arguments,
             result: None,

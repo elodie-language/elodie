@@ -1,7 +1,5 @@
 use std::hash::{Hash, Hasher};
 
-use crate::build::c::Indent;
-
 #[derive(Debug, Hash, Eq, PartialEq)]
 pub enum DirectiveNode {
     IncludeSystemDirective(IncludeSystemDirectiveNode),
@@ -10,7 +8,6 @@ pub enum DirectiveNode {
 
 #[derive(Debug)]
 pub struct IncludeSystemDirectiveNode {
-    pub indent: Indent,
     pub path: String,
 }
 
@@ -30,7 +27,6 @@ impl Hash for IncludeSystemDirectiveNode {
 
 #[derive(Debug)]
 pub struct IncludeLocalDirectiveNode {
-    pub indent: Indent,
     pub path: String,
 }
 

@@ -3,9 +3,9 @@ use std::collections::HashSet;
 use Node::{AccessVariable, LiteralBoolean, LiteralNumber, LiteralString};
 
 use crate::build::c;
-use crate::build::c::{BlockStatement, CodeStatement, DeclareFunctionNode, DeclareStructNode, DefineFunctionNode, DefineStructNode, DirectiveNode, IncludeLocalDirectiveNode, IncludeSystemDirectiveNode, Indent};
+use crate::build::c::{BlockStatement, CodeStatement, DeclareFunctionNode, DeclareStructNode, DefineFunctionNode, DefineStructNode, DirectiveNode, IncludeLocalDirectiveNode, IncludeSystemDirectiveNode, Statement};
 use crate::build::c::DirectiveNode::{IncludeLocalDirective, IncludeSystemDirective};
-use crate::build::c::generator::scope::Scope;
+use crate::build::c::generator::stack::Stack;
 use crate::build::c::Node::DefineFunction;
 use crate::common::{Context, SymbolTable, TypeTable};
 use crate::common::node::Node;
@@ -18,7 +18,8 @@ mod call;
 mod literal;
 mod variable;
 mod string;
-mod scope;
+mod stack;
+mod rc;
 
 #[derive(Debug)]
 pub enum Error {}
@@ -33,7 +34,7 @@ pub(crate) fn generate(ctx: Context, ir: ir::Ir) -> Result<Vec<c::Node>> {
         string_table: ctx.string_table,
         symbol_table: ctx.symbol_table,
         type_table: ctx.type_table,
-        scope: Scope::new(),
+        stack: Stack::new(),
 
         directives: HashSet::new(),
 
@@ -52,7 +53,7 @@ pub(crate) struct Generator {
     string_table: StringTable,
     symbol_table: SymbolTable,
     type_table: TypeTable,
-    scope: Scope,
+    stack: Stack,
 
     directives: HashSet<DirectiveNode>,
     function_declarations: Vec<DeclareFunctionNode>,
@@ -65,16 +66,13 @@ pub(crate) struct Generator {
 impl Generator {
     pub(crate) fn generate(mut self, nodes: Vec<IrTreeNode>) -> Result<Vec<c::Node>> {
         self.function_definitions.push(DefineFunctionNode {
-            indent: Indent::none(),
             identifier: "main".to_string(),
             arguments: vec![].into_boxed_slice(),
             ty: "int".to_string(),
             statements: BlockStatement {
-                indent: Indent::none(),
                 statements: vec![
                     c::Statement::Code(
                         CodeStatement {
-                            indent: Indent::none(),
                             code: r#"
 auto tm = mem_test_new_default (1024 * 1024 );
                             "#.to_string(),
@@ -115,15 +113,14 @@ auto tm = mem_test_new_default (1024 * 1024 );
                 .map(|df| c::Node::DeclareFunction(df)),
         );
 
-//         self.function_definitions[0].statements.statements.extend(vec![
-//             Statement::Code(CodeStatement {
-//                 indent: Indent::none(),
-//                 code: r#"
-// mem_test_verify (tm);
-// mem_test_free (tm);
-//             "#.to_string(),
-//             })
-//         ]);
+        self.function_definitions[0].statements.statements.extend(vec![
+            Statement::Code(CodeStatement {
+                code: r#"
+mem_test_verify (tm);
+mem_test_free (tm);
+            "#.to_string(),
+            })
+        ]);
 
         result.extend(
             self.function_definitions
@@ -164,15 +161,15 @@ auto tm = mem_test_new_default (1024 * 1024 );
     }
 
     pub(crate) fn include_system(&mut self, path: &str) {
-        self.directives.insert(IncludeSystemDirective(IncludeSystemDirectiveNode { indent: Indent::none(), path: path.to_string() }));
+        self.directives.insert(IncludeSystemDirective(IncludeSystemDirectiveNode { path: path.to_string() }));
     }
 
     pub(crate) fn include_local(&mut self, path: &str) {
-        self.directives.insert(IncludeLocalDirective(IncludeLocalDirectiveNode { indent: Indent::none(), path: path.to_string() }));
+        self.directives.insert(IncludeLocalDirective(IncludeLocalDirectiveNode { path: path.to_string() }));
     }
 
     pub(crate) fn scope_leave(&mut self) {
-        let cleanup_statements = self.scope.leave();
+        let cleanup_statements = self.stack.leave();
         self.statements().extend(cleanup_statements)
     }
 }

@@ -28,7 +28,6 @@ pub enum Node {
 
 #[derive(Debug)]
 pub struct CodeNode {
-    pub indent: Indent,
     pub code: String,
 }
 
@@ -55,27 +54,15 @@ pub enum Statement {
 
 #[derive(Debug)]
 pub struct BlockStatement {
-    pub indent: Indent,
     pub statements: Vec<Statement>,
 }
 
 #[derive(Debug)]
 pub struct CodeStatement {
-    pub indent: Indent,
     pub code: String,
 }
 
 #[derive(Debug)]
 pub struct CodeExpression {
-    pub indent: Indent,
     pub code: String,
-}
-
-#[derive(Debug)]
-pub struct Indent(pub usize);
-
-impl Indent {
-    pub fn none() -> Self {
-        Indent(0)
-    }
 }

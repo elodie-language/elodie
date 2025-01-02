@@ -1,8 +1,7 @@
-use crate::build::c::{BlockStatement, Expression, Indent};
+use crate::build::c::{BlockStatement, Expression};
 
 #[derive(Debug)]
 pub struct CallFunctionStatement {
-    pub indent: Indent,
     pub function: String,
     pub arguments: Box<[Expression]>,
     pub result: Option<CallFunctionStatementResult>,
@@ -10,22 +9,19 @@ pub struct CallFunctionStatement {
 
 #[derive(Debug)]
 pub struct CallFunctionExpression {
-    pub indent: Indent,
     pub function: String,
-    pub arguments: Box<[Expression]>
+    pub arguments: Box<[Expression]>,
 }
 
 
 #[derive(Debug)]
 pub struct CallFunctionStatementResult {
-    pub indent: Indent,
     pub identifier: String,
     pub r#type: String,
 }
 
 #[derive(Debug)]
 pub struct DeclareFunctionNode {
-    pub indent: Indent,
     pub identifier: String,
     pub arguments: Box<[DeclareFunctionArgumentNode]>,
     pub ty: String,
@@ -33,14 +29,12 @@ pub struct DeclareFunctionNode {
 
 #[derive(Debug)]
 pub struct DeclareFunctionArgumentNode {
-    pub indent: Indent,
     pub identifier: String,
     pub ty: String,
 }
 
 #[derive(Debug)]
 pub struct DefineFunctionNode {
-    pub indent: Indent,
     pub identifier: String,
     pub arguments: Box<[DefineFunctionArgumentNode]>,
     pub ty: String,
@@ -49,13 +43,11 @@ pub struct DefineFunctionNode {
 
 #[derive(Debug)]
 pub struct DefineFunctionArgumentNode {
-    pub indent: Indent,
     pub identifier: String,
     pub ty: String,
 }
 
 #[derive(Debug)]
 pub struct ReturnFromFunctionStatement {
-    pub indent: Indent,
     pub node: Option<Expression>,
 }

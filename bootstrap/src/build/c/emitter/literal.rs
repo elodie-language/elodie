@@ -1,23 +1,23 @@
 use crate::build::c;
-use crate::build::c::emitter::Emitter;
 use crate::build::c::{
     LiteralBooleanExpression, LiteralDoubleExpression, LiteralExpression, LiteralIntExpression,
     LiteralStringExpression,
 };
+use crate::build::c::emitter::Emitter;
 
 impl Emitter {
     pub(crate) fn literal(&mut self, node: &c::LiteralExpression) {
         match node {
-            LiteralExpression::Bool(LiteralBooleanExpression { indent, value }) => {
+            LiteralExpression::Bool(LiteralBooleanExpression { value }) => {
                 self.str(value.to_string().as_str())
             }
-            LiteralExpression::Double(LiteralDoubleExpression { indent, value }) => {
+            LiteralExpression::Double(LiteralDoubleExpression { value }) => {
                 self.str(value.to_string().as_str())
             }
-            LiteralExpression::Int(LiteralIntExpression { indent, value }) => {
+            LiteralExpression::Int(LiteralIntExpression { value }) => {
                 self.str(value.to_string().as_str())
             }
-            LiteralExpression::String(LiteralStringExpression { indent, value }) => {
+            LiteralExpression::String(LiteralStringExpression { value }) => {
                 self.str("\"");
                 self.str(value);
                 self.str("\"");

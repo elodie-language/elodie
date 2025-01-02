@@ -1,7 +1,7 @@
 use bigdecimal::ToPrimitive;
 
 use crate::build::c;
-use crate::build::c::{CallFunctionStatement, CallFunctionStatementResult, CodeExpression, Expression, Indent, LiteralBooleanExpression, LiteralDoubleExpression, LiteralExpression, Statement, VariableExpression};
+use crate::build::c::{CallFunctionStatement, CallFunctionStatementResult, CodeExpression, Expression, LiteralBooleanExpression, LiteralDoubleExpression, LiteralExpression, Statement, VariableExpression};
 use crate::build::c::generator::Generator;
 use crate::common::GetString;
 use crate::ir::{IrLiteralBooleanNode, IrLiteralNumberNode, IrLiteralStringNode};
@@ -12,7 +12,6 @@ impl Generator {
         node: &IrLiteralBooleanNode,
     ) -> c::generator::Result<Expression> {
         Ok(Expression::Literal(LiteralExpression::Bool(LiteralBooleanExpression {
-            indent: Indent::none(),
             value: node.value,
         })))
     }
@@ -24,7 +23,6 @@ impl Generator {
 
         // FIXME becomes big decimal
         Ok(Expression::Literal(LiteralExpression::Double(LiteralDoubleExpression {
-            indent: Indent::none(),
             value: node.value.to_f64().unwrap(),
         })))
     }
@@ -37,28 +35,25 @@ impl Generator {
         //     indent: Indent::none(),
         //     value: self.string_table.get(node.value).to_string(),
         // }))
-        let temp = self.scope.push_temp();
+        let temp = self.stack.push_temp();
         let value = self.string_table.get_string(node.value);
         self.statements().push(
             Statement::CallFunction(CallFunctionStatement {
-                indent: Indent::none(),
                 function: "val_str_new_from_c_str".to_string(),
                 arguments: Box::new([
-                    c::Expression::Code(CodeExpression { indent: Indent::none(), code: "MEM(tm)".to_string() }),
+                    c::Expression::Code(CodeExpression { code: "MEM(tm)".to_string() }),
                     c::Expression::Literal(c::LiteralExpression::String(
                         c::LiteralStringExpression {
-                            indent: Indent::none(),
                             value,
                         },
                     )),
                 ]),
                 result: Some(CallFunctionStatementResult {
-                    indent: Indent::none(),
                     identifier: temp.to_string(),
                     r#type: "struct val_str *".to_string(),
                 }),
             }));
 
-        Ok(c::Expression::Variable(VariableExpression { indent: Indent::none(), variable: temp.to_string() }))
+        Ok(c::Expression::Variable(VariableExpression { variable: temp.to_string() }))
     }
 }

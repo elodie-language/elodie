@@ -1,5 +1,5 @@
 use crate::build::c;
-use crate::build::c::{Expression, Indent, Node};
+use crate::build::c::{Expression, Node};
 
 mod control;
 mod directive;
@@ -18,14 +18,12 @@ pub(crate) type Result<T> = core::result::Result<T, Error>;
 pub(crate) fn emit(nodes: &[c::Node]) -> String {
     let mut emitter = Emitter {
         output: String::new(),
-        indent: Indent::none(),
     };
     emitter.emit(nodes)
 }
 
 pub(crate) struct Emitter {
     pub(crate) output: String,
-    pub(crate) indent: Indent,
 }
 
 impl Emitter {

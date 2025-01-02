@@ -1,21 +1,18 @@
-use crate::build::c::{Expression, Indent};
+use crate::build::c::Expression;
 
 #[derive(Debug)]
 pub struct DeclareStructNode {
-    pub indent: Indent,
     pub identifier: String,
 }
 
 #[derive(Debug)]
 pub struct DefineStructNode {
-    pub indent: Indent,
     pub identifier: String,
     pub fields: Box<[DefineStructFieldNode]>,
 }
 
 #[derive(Debug)]
 pub struct DefineStructFieldNode {
-    pub indent: Indent,
     pub identifier: String,
     pub ty: String,
 }
@@ -27,7 +24,6 @@ pub struct InitialiseStructExpression {
 
 #[derive(Debug)]
 pub struct InitialiseStructField {
-    pub indent: Indent,
     pub identifier: String,
     pub expression: Expression,
 }

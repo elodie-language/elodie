@@ -1,8 +1,7 @@
-use crate::build::c::{Expression, Indent};
+use crate::build::c::Expression;
 
 #[derive(Debug)]
 pub struct DeclareArrayStatement {
-    pub indent: Indent,
     pub identifier: String,
     pub r#type: String,
     pub size: usize,
@@ -11,7 +10,6 @@ pub struct DeclareArrayStatement {
 
 #[derive(Debug)]
 pub struct DeclareVariableStatement {
-    pub indent: Indent,
     pub variable: String,
     pub r#type: String,
     pub expression: Expression,
@@ -19,13 +17,11 @@ pub struct DeclareVariableStatement {
 
 #[derive(Debug)]
 pub struct VariableExpression {
-    pub indent: Indent,
     pub variable: String,
 }
 
 #[derive(Debug)]
 pub struct DefineGlobalVariableNode {
-    pub indent: Indent,
     pub identifier: String,
     pub r#type: String,
     pub expression: Expression,
