@@ -1,3 +1,6 @@
+use crate::build::c;
+use crate::build::c::{CallFunctionStatement, Indent, Statement, VariableExpression};
+
 #[derive(Clone, Copy, Debug)]
 pub struct Argument(pub u64);
 
@@ -36,9 +39,20 @@ impl Scope {
         self.next_temps.push(Temp(1));
     }
 
-    pub(crate) fn leave(&mut self) {
-        self.next_arguments.pop().unwrap();
-        self.next_temps.pop().unwrap();
+    pub(crate) fn leave(&mut self) -> Vec<Statement> {
+        let args = self.next_arguments.pop().unwrap();
+        let temps = self.next_temps.pop().unwrap();
+
+        vec![
+            Statement::CallFunction(CallFunctionStatement {
+                indent: Indent::none(),
+                function: "val_rc_dec".to_string(),
+                arguments: Box::new([
+                    c::Expression::Variable(VariableExpression { indent: Indent::none(), variable: "temp_1".to_string() })
+                ]),
+                result: None,
+            })
+        ]
     }
 
     pub(crate) fn push_argument(&mut self) -> Argument {

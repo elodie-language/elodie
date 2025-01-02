@@ -5,8 +5,8 @@ use Node::{AccessVariable, LiteralBoolean, LiteralNumber, LiteralString};
 use crate::build::c;
 use crate::build::c::{BlockStatement, CodeStatement, DeclareFunctionNode, DeclareStructNode, DefineFunctionNode, DefineStructNode, DirectiveNode, IncludeLocalDirectiveNode, IncludeSystemDirectiveNode, Indent};
 use crate::build::c::DirectiveNode::{IncludeLocalDirective, IncludeSystemDirective};
+use crate::build::c::generator::scope::Scope;
 use crate::build::c::Node::DefineFunction;
-use crate::build::c::scope::Scope;
 use crate::common::{Context, SymbolTable, TypeTable};
 use crate::common::node::Node;
 use crate::common::node::Node::{CallFunctionOfPackage, DeclareVariable, InterpolateString};
@@ -18,6 +18,7 @@ mod call;
 mod literal;
 mod variable;
 mod string;
+mod scope;
 
 #[derive(Debug)]
 pub enum Error {}
@@ -87,6 +88,8 @@ auto tm = mem_test_new_default (1024 * 1024 );
             self.nodes(node)?
         }
 
+        self.scope_leave();
+
         self.include_system("stdio.h");
         self.include_system("stdbool.h");
         self.include_local("core/core-api.h");
@@ -111,6 +114,16 @@ auto tm = mem_test_new_default (1024 * 1024 );
                 .into_iter()
                 .map(|df| c::Node::DeclareFunction(df)),
         );
+
+//         self.function_definitions[0].statements.statements.extend(vec![
+//             Statement::Code(CodeStatement {
+//                 indent: Indent::none(),
+//                 code: r#"
+// mem_test_verify (tm);
+// mem_test_free (tm);
+//             "#.to_string(),
+//             })
+//         ]);
 
         result.extend(
             self.function_definitions
@@ -156,5 +169,10 @@ auto tm = mem_test_new_default (1024 * 1024 );
 
     pub(crate) fn include_local(&mut self, path: &str) {
         self.directives.insert(IncludeLocalDirective(IncludeLocalDirectiveNode { indent: Indent::none(), path: path.to_string() }));
+    }
+
+    pub(crate) fn scope_leave(&mut self) {
+        let cleanup_statements = self.scope.leave();
+        self.statements().extend(cleanup_statements)
     }
 }

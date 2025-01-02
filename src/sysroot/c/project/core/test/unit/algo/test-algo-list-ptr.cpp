@@ -34,7 +34,7 @@ TEST(ptr_list_new, ok)
 
 TEST(ptr_list, ok)
 {
-	auto tm = mem_test_new_default (512);
+	auto tm = mem_test_new_default (1024);
 
 	auto ptr_list_config = ptr_list_default_config (MEM(tm));
 	auto test_instance = ptr_list_new (ptr_list_config);

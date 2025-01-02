@@ -25,23 +25,6 @@ impl Generator {
     fn generate_call_arguments(&mut self, args: &[Rc<IrTreeNode>]) -> c::generator::Result<Box<[Expression]>> {
         let mut result = vec![];
         for arg in args {
-            // match self.expression(arg)? {
-            //     Expression::Literal(literal) => {
-            //         match literal {
-            //             LiteralExpression::String(_) => {
-            //                 result.push(c::Expression::CallFunction(CallFunctionExpression {
-            //                     indent: Indent::none(),
-            //                     function: "string_view_from_c_str".to_string(),
-            //                     arguments: Box::new([
-            //                         Expression::Literal(literal)
-            //                     ]),
-            //                 }))
-            //             }
-            //             _ => unimplemented!()
-            //         }
-            //     }
-            //     expr => unimplemented!("{expr:#?}")
-            // }
             result.push(self.expression(arg)?)
         }
         Ok(result.into_boxed_slice())

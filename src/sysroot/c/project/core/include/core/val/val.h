@@ -5,11 +5,18 @@
 #include "val-kind.h"
 
 struct val {
-  enum val_kind kind;
-  struct mem *mem;
+    enum val_kind kind;
+    struct mem *mem;
+    u8 rc;
 };
 
 ELODIE_API void
-val_init (struct val *self, enum val_kind kind, struct mem *mem);
+val_init(struct val *self, enum val_kind kind, struct mem *mem);
+
+ELODIE_API void
+val_rc_inc(struct val *self);
+
+ELODIE_API void
+val_rc_dec(struct val *self);
 
 #endif //CORE_VAL_H
