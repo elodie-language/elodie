@@ -1,3 +1,5 @@
+use std::rc::Rc;
+
 use bigdecimal::BigDecimal;
 
 use crate::common::{Inferred, Span, StringTableId, SymbolId, WithSpan};
@@ -243,7 +245,11 @@ pub struct TypeExportPackageNode {}
 impl ExportPackageNode<TypeVariant> for TypeExportPackageNode {}
 
 #[derive(Debug, Clone, PartialEq)]
-pub struct TypeIfNode {}
+pub struct TypeIfNode {
+    pub condition: Rc<TypedTreeNode>,
+    pub then: Rc<TypeBlockNode>,
+    pub otherwise: Rc<TypeBlockNode>,
+}
 
 impl IfNode<TypeVariant> for TypeIfNode {}
 

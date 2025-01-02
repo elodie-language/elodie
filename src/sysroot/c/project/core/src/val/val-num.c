@@ -20,7 +20,7 @@ val_num_copy(struct val_num *self, struct mem *mem) {
 }
 
 bool
-val_numb_equal(struct val_num *lhs, struct val_num *rhs) {
+val_num_equal(struct val_num *lhs, struct val_num *rhs) {
     CHECK_NOT_NULL(lhs);
     CHECK_NOT_NULL(rhs);
     if (lhs == rhs) return true;

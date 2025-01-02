@@ -15,7 +15,7 @@ ELODIE_API struct val_num *
 val_num_copy (struct val_num *self, struct mem *mem);
 
 ELODIE_API bool
-val_numb_equal (struct val_num *lhs, struct val_num *rhs);
+val_num_equal (struct val_num *lhs, struct val_num *rhs);
 
 ELODIE_API struct val_str *
 val_num_to_str (struct val_num *self, struct mem *mem);

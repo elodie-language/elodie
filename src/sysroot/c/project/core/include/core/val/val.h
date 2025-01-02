@@ -19,4 +19,7 @@ val_rc_inc(struct val *self);
 ELODIE_API void
 val_rc_dec(struct val *self);
 
+ELODIE_API void
+val_rc_dec_safe (struct val **self);
+
 #endif //CORE_VAL_H

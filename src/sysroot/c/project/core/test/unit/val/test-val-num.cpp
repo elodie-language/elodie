@@ -37,12 +37,12 @@ TEST(val_num_copy, ok)
 	mem_test_free (tm);
 }
 
-TEST(val_numb_equal, same_pointer)
+TEST(val_num_equal, same_pointer)
 {
 	auto tm = mem_test_new_default (64);
 
 	struct val_num *test_instance = val_num_new_from_double (MEM(tm), 12.34);
-	ASSERT_TRUE(val_numb_equal (test_instance, test_instance));
+	ASSERT_TRUE(val_num_equal(test_instance, test_instance));
 
 	val_num_free_safe (&test_instance);
 
@@ -50,13 +50,13 @@ TEST(val_numb_equal, same_pointer)
 	mem_test_free (tm);
 }
 
-TEST(val_numb_equal, same_val)
+TEST(val_num_equal, same_val)
 {
 	auto tm = mem_test_new_default (64);
 
 	struct val_num *num_one = val_num_new_from_double (MEM(tm), 12.34);
 	struct val_num *num_two = val_num_new_from_double (MEM(tm), 12.34);
-	ASSERT_TRUE(val_numb_equal (num_one, num_two));
+	ASSERT_TRUE(val_num_equal(num_one, num_two));
 
 	val_num_free_safe (&num_one);
 	val_num_free_safe (&num_two);
@@ -65,13 +65,13 @@ TEST(val_numb_equal, same_val)
 	mem_test_free (tm);
 }
 
-TEST(val_numb_equal, different_val)
+TEST(val_num_equal, different_val)
 {
 	auto tm = mem_test_new_default (64);
 
 	struct val_num *num_one = val_num_new_from_double (MEM(tm), 21);
 	struct val_num *num_two = val_num_new_from_double (MEM(tm), 42);
-	ASSERT_FALSE(val_numb_equal (num_one, num_two));
+	ASSERT_FALSE(val_num_equal(num_one, num_two));
 
 	val_num_free_safe (&num_one);
 	val_num_free_safe (&num_two);

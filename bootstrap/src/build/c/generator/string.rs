@@ -3,6 +3,7 @@ use crate::build::c::{CallFunctionStatement, CallFunctionStatementResult, CodeEx
 use crate::build::c::Expression::{Code, Literal, Variable};
 use crate::build::c::generator::{Generator, stack};
 use crate::build::c::generator::stack::{LocalVariable, Storage};
+use crate::build::c::Statement::CallFunction;
 use crate::common::GetString;
 use crate::common::node::Node::{AccessVariable, LiteralString};
 use crate::ir::IrInterpolateStringNode;
@@ -13,16 +14,39 @@ impl Generator {
 
         for node in &node.nodes {
             if let AccessVariable(node) = node.node() {
-                let variable = self.symbol_table.variable(node.variable).to_string(&self.string_table);
 
-                // self.statements().push(
-                //     c::Statement::DeclareVariable(DeclareVariableStatement {
-                //         variable: temp.to_string(),
-                //         r#type: "const struct val_str *".to_string(),
-                //         expression: c::Expression::Variable(VariableExpression { variable }),
-                //     })
-                // );
-                variables.push(stack::Variable::Variable(LocalVariable(variable), Storage::Memory));
+                let symbol = self.symbol_table.variable(node.variable);
+
+                if self.type_table.type_id_number() == symbol.type_id.unwrap() {
+                    let temp = self.stack.push_temp(Storage::Memory);
+
+                    let variable = symbol.to_string(&self.string_table);
+
+                    self.statements().push(CallFunction(CallFunctionStatement {
+                        function: "val_num_to_str".to_string(),
+                        arguments: Box::new([
+                            c::Expression::Variable(VariableExpression { variable }),
+                            c::Expression::Code(CodeExpression { code: "MEM(tm)".to_string() })
+                        ]),
+                        result: Some(CallFunctionStatementResult {
+                            identifier: temp.to_string(),
+                            r#type: "struct val_str *".to_string(),
+                        }),
+                    }));
+
+                    variables.push(stack::Variable::Temp(temp, Storage::Memory))
+                } else {
+                    let variable = symbol.to_string(&self.string_table);
+
+                    // self.statements().push(
+                    //     c::Statement::DeclareVariable(DeclareVariableStatement {
+                    //         variable: temp.to_string(),
+                    //         r#type: "const struct val_str *".to_string(),
+                    //         expression: c::Expression::Variable(VariableExpression { variable }),
+                    //     })
+                    // );
+                    variables.push(stack::Variable::Variable(LocalVariable(variable), Storage::Memory));
+                }
             } else if let LiteralString(node) = node.node() {
                 let temp = self.stack.push_temp(Storage::Memory);
 

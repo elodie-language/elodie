@@ -43,7 +43,7 @@ val_equal(struct val *lhs, struct val *rhs) {
         case VAL_KIND_STR:
             return val_str_equal((struct val_str *) lhs, (struct val_str *) rhs);
         case VAL_KIND_NUM:
-            return val_numb_equal((struct val_num *) lhs, (struct val_num *) rhs);
+            return val_num_equal((struct val_num *) lhs, (struct val_num *) rhs);
         case VAL_KIND_BOOL:
             return val_bool_equal((struct val_bool *) lhs, (struct val_bool *) rhs);
         case VAL_KIND_FN:

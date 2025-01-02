@@ -1,10 +1,12 @@
+use bigdecimal::ToPrimitive;
+
 use crate::build::c;
 use crate::build::c::{CallFunctionStatement, CallFunctionStatementResult, CodeExpression, Statement, VariableExpression};
 use crate::build::c::generator::Generator;
 use crate::build::c::generator::stack::Storage;
 use crate::common::GetString;
-use crate::common::node::Node::LiteralString;
-use crate::ir::{IrAccessVariableNode, IrDeclareVariableNode, IrLiteralStringNode};
+use crate::common::node::Node::{LiteralNumber, LiteralString};
+use crate::ir::{IrAccessVariableNode, IrDeclareVariableNode, IrLiteralNumberNode, IrLiteralStringNode};
 
 impl Generator {
     pub(crate) fn access_variable(
@@ -43,6 +45,26 @@ impl Generator {
                     result: Some(CallFunctionStatementResult {
                         identifier: variable,
                         r#type: "struct val_str *".to_string(),
+                    }),
+                })
+            );
+
+            Ok(())
+        } else if let LiteralNumber(IrLiteralNumberNode { value }) = &node.value.node {
+            self.statements().push(
+                Statement::CallFunction(CallFunctionStatement {
+                    function: "val_num_new_from_double".to_string(),
+                    arguments: Box::new([
+                        c::Expression::Code(CodeExpression { code: "MEM(tm)".to_string() }),
+                        c::Expression::Literal(c::LiteralExpression::Double(
+                            c::LiteralDoubleExpression {
+                                value: value.to_f64().unwrap(),
+                            },
+                        )),
+                    ]),
+                    result: Some(CallFunctionStatementResult {
+                        identifier: variable,
+                        r#type: "struct val_num *".to_string(),
                     }),
                 })
             );

@@ -1,7 +1,10 @@
 use std::ops::Deref;
 
+use Node::If;
+
 use crate::common::{GetString, Inferred, Span, StringTable, SymbolId, SymbolName, SymbolTable, TypeTable, VariableSymbol, WithSpan};
 use crate::common::Context;
+use crate::common::node::Node;
 use crate::common::node::Node::{AccessVariable, CallFunctionOfPackage, DeclareVariable, InterpolateString, LiteralBoolean, LiteralNumber, LiteralString};
 use crate::frontend;
 use crate::frontend::ast::AstTreeNode;
@@ -13,6 +16,7 @@ mod literal;
 mod call;
 mod string;
 mod access;
+mod control;
 
 pub(crate) struct Pre<'a> {
     string_table: &'a mut StringTable,
@@ -49,6 +53,7 @@ impl<'a> Pre<'a> {
             AccessVariable(node) => self.access_variable(node),
             CallFunctionOfPackage(node) => self.call_function_of_package(node),
             DeclareVariable(node) => self.declare_variable(node),
+            If(node) => self.r#if(node),
             InterpolateString(node) => self.interpolate_string(node),
             LiteralBoolean(node) => self.literal_boolean(node),
             LiteralNumber(node) => self.literal_number(node),
