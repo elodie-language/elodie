@@ -17,16 +17,16 @@ struct val_str {
 
 //expects '\0' terminated c chars
 ELODIE_API struct val_str *
-val_str_allocate_from_c_str (struct mem *mem, char const *src);
+val_str_new_from_c_str (struct mem *mem, char const *src);
 
 ELODIE_API struct val_str *
-val_str_allocate_from_bytes (struct mem *mem, struct bytes_view bytes);
+val_str_new_from_bytes (struct mem *mem, struct bytes_view bytes);
 
 ELODIE_API struct val_str *
-val_str_allocate_from_byte_list (struct mem *mem, struct byte_list *src);
+val_str_new_from_byte_list (struct mem *mem, struct byte_list *src);
 
 ELODIE_API struct val_str *
-val_str_allocate_from_view (struct mem *mem, struct val_str_view view);
+val_str_new_from_view (struct mem *mem, struct val_str_view view);
 
 ELODIE_API struct val_str *
 val_str_copy (struct val_str *src, struct mem *mem);
@@ -41,9 +41,9 @@ ELODIE_API struct val_str *
 val_str_concat (struct val_str *self, struct val_str *other, struct mem *mem);
 
 ELODIE_API void
-val_str_deallocate (struct val_str *self);
+val_str_free (struct val_str *self);
 
 ELODIE_API void
-val_str_deallocate_safe (struct val_str **self);
+val_str_free_safe (struct val_str **self);
 
 #endif //CORE_VAL_str_H

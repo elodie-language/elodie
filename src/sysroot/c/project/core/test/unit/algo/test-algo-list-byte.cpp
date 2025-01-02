@@ -133,7 +133,7 @@ TEST(byte_list_append_str, ok)
 	auto test_instance = byte_list_new (byte_list_default_config (MEM(tm)));
 
 	auto c_str = "Elodie rockz";
-	auto str = val_str_allocate_from_c_str (MEM(tm), c_str);
+	auto str = val_str_new_from_c_str (MEM(tm), c_str);
 	byte_list_append_str (test_instance, str);
 
 	ASSERT_EQ(12, byte_list_size (test_instance));
@@ -144,7 +144,7 @@ TEST(byte_list_append_str, ok)
 	ASSERT_EQ(0, strncmp (c_str, str_view.data, 12));
 
 	byte_list_free_safe (&test_instance);
-	val_str_deallocate_safe (&str);
+    val_str_free_safe(&str);
 
 	mem_test_verify (tm);
 	mem_test_free (tm);

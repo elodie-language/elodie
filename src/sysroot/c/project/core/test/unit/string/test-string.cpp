@@ -3,7 +3,7 @@
 #include "core/string/string-api.h"
 #include "core/algo/algo-list-byte.h"
 
-TEST(string_allocate_from_bytes, ok)
+TEST(string_new_from_bytes, ok)
 {
 	auto tm = mem_test_new_default (128);
 
@@ -13,42 +13,42 @@ TEST(string_allocate_from_bytes, ok)
 		.size = 2
 	};
 
-	struct string *result = string_allocate_from_bytes (MEM(tm), bytes);
+	struct string *result = string_new_from_bytes (MEM(tm), bytes);
 	ASSERT_EQ (2, result->length);
 	ASSERT_TRUE (strncmp (result->data, "HA", result->length) == 0);
 
-	string_deallocate (result, MEM(tm));
+	string_free (result, MEM(tm));
 	mem_test_verify (tm);
 	mem_test_free (tm);
 }
 
-TEST(string_allocate_from_c_str, ok)
+TEST(string_new_from_c_str, ok)
 {
 	auto tm = mem_test_new_default (128);
 
-	auto result = string_allocate_from_c_str (MEM(tm), "Elodie");
+	auto result = string_new_from_c_str (MEM(tm), "Elodie");
 	ASSERT_EQ (6, string_count (*result));
 	ASSERT_TRUE (strncmp (result->data, "Elodie", result->length) == 0);
 
-	string_deallocate_safe (&result, MEM(tm));
+	string_free_safe (&result, MEM(tm));
 	mem_test_verify (tm);
 	mem_test_free (tm);
 }
 
-TEST(string_allocate_from_view, ok)
+TEST(string_new_from_view, ok)
 {
 	auto tm = mem_test_new_default (128);
 
-	auto result = string_allocate_from_view (MEM(tm), string_view_from_c_str ("ELODIE"));
+	auto result = string_new_from_view (MEM(tm), string_view_from_c_str ("ELODIE"));
 	ASSERT_EQ (6, string_count (*result));
 	ASSERT_TRUE (strncmp (result->data, "ELODIE", result->length) == 0);
 
-	string_deallocate_safe (&result, MEM(tm));
+	string_free_safe (&result, MEM(tm));
 	mem_test_verify (tm);
 	mem_test_free (tm);
 }
 
-TEST(string_allocate_from_byte_list, ok)
+TEST(string_new_from_byte_list, ok)
 {
 	auto tm = mem_test_new_default (128);
 
@@ -60,12 +60,12 @@ TEST(string_allocate_from_byte_list, ok)
 	byte_list_append_u1 (byte_list, '4');
 	byte_list_append_u1 (byte_list, 'l');
 
-	auto result = string_allocate_from_byte_list (MEM(tm), byte_list);
+	auto result = string_new_from_byte_list (MEM(tm), byte_list);
 	ASSERT_EQ (5, string_count (*result));
 	ASSERT_TRUE (strncmp (result->data, "h4m4l", result->length) == 0);
 
 	byte_list_free_safe (&byte_list);
-	string_deallocate_safe (&result, MEM(tm));
+	string_free_safe (&result, MEM(tm));
 	mem_test_verify (tm);
 	mem_test_free (tm);
 }
@@ -144,27 +144,27 @@ TEST(string_init_from_byte_list, ok)
 TEST(string_count, ok)
 {
 	auto tm = mem_test_new_default (128);
-	auto test_instance = string_allocate_from_c_str (MEM(tm), "!!Elodie Rocks!!\n");
+	auto test_instance = string_new_from_c_str (MEM(tm), "!!Elodie Rocks!!\n");
 	ASSERT_EQ (17, string_count (*test_instance));
-	string_deallocate_safe (&test_instance, MEM(tm));
+	string_free_safe (&test_instance, MEM(tm));
 }
 
 TEST(string_count, empty)
 {
 	auto tm = mem_test_new_default (128);
-	auto test_instance = string_allocate_from_c_str (MEM(tm), "");
+	auto test_instance = string_new_from_c_str (MEM(tm), "");
 	ASSERT_EQ (0, string_count (*test_instance));
-	string_deallocate_safe (&test_instance, MEM(tm));
+	string_free_safe (&test_instance, MEM(tm));
 }
 
 TEST(string_equal, same_pointer)
 {
 	auto tm = mem_test_new_default (128);
 
-	auto test_instance = string_allocate_from_c_str (MEM(tm), "elodie");
+	auto test_instance = string_new_from_c_str (MEM(tm), "elodie");
 	ASSERT_TRUE (string_equal (*test_instance, *test_instance));
 
-	string_deallocate_safe (&test_instance, MEM(tm));
+	string_free_safe (&test_instance, MEM(tm));
 	mem_test_verify (tm);
 	mem_test_free (tm);
 }
@@ -173,12 +173,12 @@ TEST(string_equal, same_value)
 {
 	auto tm = mem_test_new_default (128);
 
-	auto str_one = string_allocate_from_c_str (MEM(tm), "elodie rockz");
-	auto str_two = string_allocate_from_c_str (MEM(tm), "elodie rockz");
+	auto str_one = string_new_from_c_str (MEM(tm), "elodie rockz");
+	auto str_two = string_new_from_c_str (MEM(tm), "elodie rockz");
 	ASSERT_TRUE (string_equal (*str_one, *str_two));
 
-	string_deallocate_safe (&str_one, MEM(tm));
-	string_deallocate_safe (&str_two, MEM(tm));
+	string_free_safe (&str_one, MEM(tm));
+	string_free_safe (&str_two, MEM(tm));
 
 	mem_test_verify (tm);
 	mem_test_free (tm);
@@ -203,12 +203,12 @@ TEST(string_equal, different_value)
 {
 	auto tm = mem_test_new_default (128);
 
-	auto str_one = string_allocate_from_c_str (MEM(tm), "elodie");
-	auto str_two = string_allocate_from_c_str (MEM(tm), "h4m41");
+	auto str_one = string_new_from_c_str (MEM(tm), "elodie");
+	auto str_two = string_new_from_c_str (MEM(tm), "h4m41");
 	ASSERT_FALSE (string_equal (*str_one, *str_two));
 
-	string_deallocate_safe (&str_one, MEM(tm));
-	string_deallocate_safe (&str_two, MEM(tm));
+	string_free_safe (&str_one, MEM(tm));
+	string_free_safe (&str_two, MEM(tm));
 
 	mem_test_verify (tm);
 	mem_test_free (tm);
@@ -218,12 +218,12 @@ TEST(string_equal, different_count)
 {
 	auto tm = mem_test_new_default (128);
 
-	auto str_one = string_allocate_from_c_str (MEM(tm), "elodie");
-	auto str_two = string_allocate_from_c_str (MEM(tm), "elodie rockz");
+	auto str_one = string_new_from_c_str (MEM(tm), "elodie");
+	auto str_two = string_new_from_c_str (MEM(tm), "elodie rockz");
 	ASSERT_FALSE (string_equal (*str_one, *str_two));
 
-	string_deallocate_safe (&str_one, MEM(tm));
-	string_deallocate_safe (&str_two, MEM(tm));
+	string_free_safe (&str_one, MEM(tm));
+	string_free_safe (&str_two, MEM(tm));
 
 	mem_test_verify (tm);
 	mem_test_free (tm);
@@ -233,29 +233,29 @@ TEST(string_concat, ok)
 {
 	auto tm = mem_test_new_default (256);
 
-	auto str_one = string_allocate_from_c_str (MEM(tm), "Hello");
-	auto str_two = string_allocate_from_c_str (MEM(tm), "World");
+	auto str_one = string_new_from_c_str (MEM(tm), "Hello");
+	auto str_two = string_new_from_c_str (MEM(tm), "World");
 
-	auto expected = string_allocate_from_c_str (MEM(tm), "HelloWorld");
+	auto expected = string_new_from_c_str (MEM(tm), "HelloWorld");
 	auto result = string_concat (*str_one, *str_two, MEM(tm));
 	ASSERT_TRUE (string_equal (*result, *expected));
 
-	string_deallocate_safe (&result, MEM(tm));
-	string_deallocate_safe (&str_one, MEM(tm));
-	string_deallocate_safe (&str_two, MEM(tm));
-	string_deallocate_safe (&expected, MEM(tm));
+	string_free_safe (&result, MEM(tm));
+	string_free_safe (&str_one, MEM(tm));
+	string_free_safe (&str_two, MEM(tm));
+	string_free_safe (&expected, MEM(tm));
 
 	mem_test_verify (tm);
 	mem_test_free (tm);
 }
 
-TEST(string_deallocate_safe, ok)
+TEST(string_free_safe, ok)
 {
 	auto tm = mem_test_new_default (128);
 
-	auto test_instance = string_allocate_from_c_str (MEM(tm), "abc");
+	auto test_instance = string_new_from_c_str (MEM(tm), "abc");
 
-	string_deallocate_safe (&test_instance, MEM(tm));
+	string_free_safe (&test_instance, MEM(tm));
 	ASSERT_TRUE (test_instance == nullptr);
 
 	mem_test_verify (tm);

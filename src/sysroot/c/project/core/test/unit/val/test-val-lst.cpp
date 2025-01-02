@@ -132,7 +132,7 @@ TEST(val_lst_append, str)
 {
 	auto tm = mem_test_new_default (1024);
 
-	auto val = val_str_allocate_from_c_str (MEM(tm), "H4M41");
+	auto val = val_str_new_from_c_str (MEM(tm), "H4M41");
 	auto test_instance = val_lst_new (MEM(tm));
 
 	val_lst_append (test_instance, val);
@@ -150,9 +150,9 @@ TEST(val_lst_replace_base, bool)
 {
 	auto tm = mem_test_new_default (1024);
 
-	auto existing_val_one = val_str_allocate_from_c_str (MEM(tm), "existing val one");
-	auto existing_val_two = val_str_allocate_from_c_str (MEM(tm), "existing val two");
-	auto existing_val_three = val_str_allocate_from_c_str (MEM(tm), "existing val three");
+	auto existing_val_one = val_str_new_from_c_str (MEM(tm), "existing val one");
+	auto existing_val_two = val_str_new_from_c_str (MEM(tm), "existing val two");
+	auto existing_val_three = val_str_new_from_c_str (MEM(tm), "existing val three");
 
 	auto test_instance = val_lst_new (MEM(tm));
 	val_lst_append_str (test_instance, existing_val_one);
@@ -167,7 +167,7 @@ TEST(val_lst_replace_base, bool)
 	ASSERT_EQ((struct val *)replacement, val_lst_at_base (test_instance, 1));
 	ASSERT_EQ((struct val *)existing_val_three, val_lst_at_base (test_instance, 2));
 
-	val_str_deallocate_safe (&existing_val_two);
+    val_str_free_safe(&existing_val_two);
 	val_lst_clear (test_instance);
 	val_lst_free_safe (&test_instance);
 
@@ -179,9 +179,9 @@ TEST(val_lst_replace_base, fld)
 {
 	auto tm = mem_test_new_default (1024);
 
-	auto existing_val_one = val_str_allocate_from_c_str (MEM(tm), "existing val one");
-	auto existing_val_two = val_str_allocate_from_c_str (MEM(tm), "existing val two");
-	auto existing_val_three = val_str_allocate_from_c_str (MEM(tm), "existing val three");
+	auto existing_val_one = val_str_new_from_c_str (MEM(tm), "existing val one");
+	auto existing_val_two = val_str_new_from_c_str (MEM(tm), "existing val two");
+	auto existing_val_three = val_str_new_from_c_str (MEM(tm), "existing val three");
 
 	auto test_instance = val_lst_new (MEM(tm));
 	val_lst_append_str (test_instance, existing_val_one);
@@ -196,7 +196,7 @@ TEST(val_lst_replace_base, fld)
 	ASSERT_EQ((struct val *)replacement, val_lst_at_base (test_instance, 1));
 	ASSERT_EQ((struct val *)existing_val_three, val_lst_at_base (test_instance, 2));
 
-	val_str_deallocate_safe (&existing_val_two);
+    val_str_free_safe(&existing_val_two);
 	val_lst_clear (test_instance);
 	val_lst_free_safe (&test_instance);
 
@@ -208,9 +208,9 @@ TEST(val_lst_replace_base, fn)
 {
 	auto tm = mem_test_new_default (1024);
 
-	auto existing_val_one = val_str_allocate_from_c_str (MEM(tm), "existing val one");
-	auto existing_val_two = val_str_allocate_from_c_str (MEM(tm), "existing val two");
-	auto existing_val_three = val_str_allocate_from_c_str (MEM(tm), "existing val three");
+	auto existing_val_one = val_str_new_from_c_str (MEM(tm), "existing val one");
+	auto existing_val_two = val_str_new_from_c_str (MEM(tm), "existing val two");
+	auto existing_val_three = val_str_new_from_c_str (MEM(tm), "existing val three");
 
 	auto test_instance = val_lst_new (MEM(tm));
 	val_lst_append_str (test_instance, existing_val_one);
@@ -225,7 +225,7 @@ TEST(val_lst_replace_base, fn)
 	ASSERT_EQ((struct val *)replacement, val_lst_at_base (test_instance, 1));
 	ASSERT_EQ((struct val *)existing_val_three, val_lst_at_base (test_instance, 2));
 
-	val_str_deallocate_safe (&existing_val_two);
+    val_str_free_safe(&existing_val_two);
 	val_lst_clear (test_instance);
 	val_lst_free_safe (&test_instance);
 
@@ -237,9 +237,9 @@ TEST(val_lst_replace_base, lst)
 {
 	auto tm = mem_test_new_default (1024);
 
-	auto existing_val_one = val_str_allocate_from_c_str (MEM(tm), "existing val one");
-	auto existing_val_two = val_str_allocate_from_c_str (MEM(tm), "existing val two");
-	auto existing_val_three = val_str_allocate_from_c_str (MEM(tm), "existing val three");
+	auto existing_val_one = val_str_new_from_c_str (MEM(tm), "existing val one");
+	auto existing_val_two = val_str_new_from_c_str (MEM(tm), "existing val two");
+	auto existing_val_three = val_str_new_from_c_str (MEM(tm), "existing val three");
 
 	auto test_instance = val_lst_new (MEM(tm));
 	val_lst_append_str (test_instance, existing_val_one);
@@ -254,7 +254,7 @@ TEST(val_lst_replace_base, lst)
 	ASSERT_EQ((struct val *)replacement, val_lst_at_base (test_instance, 1));
 	ASSERT_EQ((struct val *)existing_val_three, val_lst_at_base (test_instance, 2));
 
-	val_str_deallocate_safe (&existing_val_two);
+    val_str_free_safe(&existing_val_two);
 	val_lst_clear (test_instance);
 	val_lst_free_safe (&test_instance);
 
@@ -266,9 +266,9 @@ TEST(val_lst_replace_base, num)
 {
 	auto tm = mem_test_new_default (1024);
 
-	auto existing_val_one = val_str_allocate_from_c_str (MEM(tm), "existing val one");
-	auto existing_val_two = val_str_allocate_from_c_str (MEM(tm), "existing val two");
-	auto existing_val_three = val_str_allocate_from_c_str (MEM(tm), "existing val three");
+	auto existing_val_one = val_str_new_from_c_str (MEM(tm), "existing val one");
+	auto existing_val_two = val_str_new_from_c_str (MEM(tm), "existing val two");
+	auto existing_val_three = val_str_new_from_c_str (MEM(tm), "existing val three");
 
 	auto test_instance = val_lst_new (MEM(tm));
 	val_lst_append_str (test_instance, existing_val_one);
@@ -283,7 +283,7 @@ TEST(val_lst_replace_base, num)
 	ASSERT_EQ((struct val *)replacement, val_lst_at_base (test_instance, 1));
 	ASSERT_EQ((struct val *)existing_val_three, val_lst_at_base (test_instance, 2));
 
-	val_str_deallocate_safe (&existing_val_two);
+    val_str_free_safe(&existing_val_two);
 	val_lst_clear (test_instance);
 	val_lst_free_safe (&test_instance);
 
@@ -295,9 +295,9 @@ TEST(val_lst_replace_base, obj)
 {
 	auto tm = mem_test_new_default (1024);
 
-	auto existing_val_one = val_str_allocate_from_c_str (MEM(tm), "existing val one");
-	auto existing_val_two = val_str_allocate_from_c_str (MEM(tm), "existing val two");
-	auto existing_val_three = val_str_allocate_from_c_str (MEM(tm), "existing val three");
+	auto existing_val_one = val_str_new_from_c_str (MEM(tm), "existing val one");
+	auto existing_val_two = val_str_new_from_c_str (MEM(tm), "existing val two");
+	auto existing_val_three = val_str_new_from_c_str (MEM(tm), "existing val three");
 
 	auto test_instance = val_lst_new (MEM(tm));
 	val_lst_append_str (test_instance, existing_val_one);
@@ -312,7 +312,7 @@ TEST(val_lst_replace_base, obj)
 	ASSERT_EQ((struct val *)replacement, val_lst_at_base (test_instance, 1));
 	ASSERT_EQ((struct val *)existing_val_three, val_lst_at_base (test_instance, 2));
 
-	val_str_deallocate_safe (&existing_val_two);
+    val_str_free_safe(&existing_val_two);
 	val_lst_clear (test_instance);
 	val_lst_free_safe (&test_instance);
 
@@ -324,16 +324,16 @@ TEST(val_lst_replace_base, str)
 {
 	auto tm = mem_test_new_default (1024);
 
-	auto existing_val_one = val_str_allocate_from_c_str (MEM(tm), "existing val one");
-	auto existing_val_two = val_str_allocate_from_c_str (MEM(tm), "existing val two");
-	auto existing_val_three = val_str_allocate_from_c_str (MEM(tm), "existing val three");
+	auto existing_val_one = val_str_new_from_c_str (MEM(tm), "existing val one");
+	auto existing_val_two = val_str_new_from_c_str (MEM(tm), "existing val two");
+	auto existing_val_three = val_str_new_from_c_str (MEM(tm), "existing val three");
 
 	auto test_instance = val_lst_new (MEM(tm));
 	val_lst_append_str (test_instance, existing_val_one);
 	val_lst_append_str (test_instance, existing_val_two);
 	val_lst_append_str (test_instance, existing_val_three);
 
-	auto replacement = (struct val *)val_str_allocate_from_c_str (MEM(tm), "replacement str");
+	auto replacement = (struct val *)val_str_new_from_c_str (MEM(tm), "replacement str");
 	val_lst_replace_base (test_instance, 1, replacement);
 
 	ASSERT_EQ(3, val_lst_count (test_instance));
@@ -341,7 +341,7 @@ TEST(val_lst_replace_base, str)
 	ASSERT_EQ((struct val *)replacement, val_lst_at_base (test_instance, 1));
 	ASSERT_EQ((struct val *)existing_val_three, val_lst_at_base (test_instance, 2));
 
-	val_str_deallocate_safe (&existing_val_two);
+    val_str_free_safe(&existing_val_two);
 	val_lst_clear (test_instance);
 	val_lst_free_safe (&test_instance);
 
@@ -353,7 +353,7 @@ TEST(val_lst_at_base, ok)
 {
 	auto tm = mem_test_new_default (1024);
 
-	auto val = val_str_allocate_from_c_str (MEM(tm), "H4M41 B453");
+	auto val = val_str_new_from_c_str (MEM(tm), "H4M41 B453");
 	auto test_instance = val_lst_new (MEM(tm));
 
 	val_lst_append_str (test_instance, val);
@@ -479,7 +479,7 @@ TEST(val_lst_at_str, ok)
 {
 	auto tm = mem_test_new_default (1024);
 
-	auto val = val_str_allocate_from_c_str (MEM(tm), "H4M41");
+	auto val = val_str_new_from_c_str (MEM(tm), "H4M41");
 	auto test_instance = val_lst_new (MEM(tm));
 
 	val_lst_append_str (test_instance, val);
@@ -502,7 +502,7 @@ TEST(val_lst_count, ok)
 	ASSERT_EQ(1, val_lst_count (test_instance));
 	val_lst_append(test_instance, val_num_new_from_double (MEM (tm), 128));
 	ASSERT_EQ(2, val_lst_count (test_instance));
-	val_lst_append(test_instance, val_str_allocate_from_c_str (MEM (tm), "ELODIE"));
+	val_lst_append(test_instance, val_str_new_from_c_str (MEM (tm), "ELODIE"));
 	ASSERT_EQ(3, val_lst_count (test_instance));
 
 	val_lst_clear (test_instance);

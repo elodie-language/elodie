@@ -30,7 +30,7 @@ impl Generator {
                 self.statements().push(
                     Statement::CallFunction(CallFunctionStatement {
                         indent: Indent::none(),
-                        function: "val_str_allocate_from_c_str".to_string(),
+                        function: "val_str_new_from_c_str".to_string(),
                         arguments: Box::new([
                             c::Expression::Code(CodeExpression { indent: Indent::none(), code: "MEM(tm)".to_string() }),
                             c::Expression::Literal(c::LiteralExpression::String(
@@ -103,7 +103,7 @@ impl Generator {
 
         self.statements().push(Statement::CallFunction(CallFunctionStatement {
             indent: Indent::none(),
-            function: "val_str_allocate_from_c_str".to_string(),
+            function: "val_str_new_from_c_str".to_string(),
             arguments: Box::new([
                 c::Expression::Code(CodeExpression { indent: Indent::none(), code: "MEM(tm)".to_string() }),
                 c::Expression::Variable(VariableExpression { indent: Indent::none(), variable: temp.to_string() })

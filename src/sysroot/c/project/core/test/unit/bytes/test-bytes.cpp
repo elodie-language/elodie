@@ -1,18 +1,18 @@
 #include "../unit-test.h"
 #include "core/bytes/byte-api.h"
 
-TEST(bytes_allocate, ok)
+TEST(bytes_new, ok)
 {
 	auto tm = mem_test_new_default (128);
 
-	auto result = bytes_allocate (MEM(tm), 64);
+	auto result = bytes_new(MEM(tm), 64);
 	ASSERT_EQ(64, result->size);
 	/**
 	 * 64 byte + 16 byte (8 byte data, 4 byte size + padding)
 	 */
 	ASSERT_EQ(80, mem_test_size (tm));
 
-	bytes_deallocate_safe (&result, MEM(tm));
+	bytes_free_safe (&result, MEM(tm));
 
 	mem_test_verify (tm);
 	mem_test_free (tm);
@@ -49,13 +49,13 @@ TEST(bytes_reset, ok)
 	mem_test_free (tm);
 }
 
-TEST(bytes_deallocate_safe, ok)
+TEST(bytes_free_safe, ok)
 {
 	auto tm = mem_test_new_default (128);
 
-	auto test_instance = bytes_allocate (MEM(tm), 64);
+	auto test_instance = bytes_new(MEM(tm), 64);
 
-	bytes_deallocate_safe (&test_instance, MEM(tm));
+	bytes_free_safe (&test_instance, MEM(tm));
 	ASSERT_TRUE(test_instance == nullptr);
 
 	mem_test_verify (tm);

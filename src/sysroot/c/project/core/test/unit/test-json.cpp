@@ -186,8 +186,8 @@ TEST(json_writer, json_writer_obj_str)
 	struct json_writer test_instance{};
 	json_writer_init (&test_instance, MEM(tm));
 
-	auto str_one = val_str_allocate_from_c_str (MEM(tm), "hello");
-	auto str_two = val_str_allocate_from_c_str (MEM(tm), "world");
+	auto str_one = val_str_new_from_c_str (MEM(tm), "hello");
+	auto str_two = val_str_new_from_c_str (MEM(tm), "world");
 
 	ASSERT_EQ(JSON_WRITER_STATUS_OK, json_writer_obj_start (&test_instance));
 	ASSERT_EQ(JSON_WRITER_STATUS_OK, json_writer_obj_str (&test_instance, JSON_KEY ("lhs"), str_one));
@@ -201,8 +201,8 @@ TEST(json_writer, json_writer_obj_str)
 
 	json_writer_reset (&test_instance);
 
-	val_str_deallocate_safe (&str_one);
-	val_str_deallocate_safe (&str_two);
+    val_str_free_safe(&str_one);
+    val_str_free_safe(&str_two);
 
 	mem_test_verify (tm);
 	mem_test_free (tm);
@@ -215,7 +215,7 @@ TEST(json_writer, json_writer_obj_val)
 	struct json_writer test_instance{};
 	json_writer_init (&test_instance, MEM(tm));
 
-	auto str_val = val_str_allocate_from_c_str (MEM(tm), "elodie");
+	auto str_val = val_str_new_from_c_str (MEM(tm), "elodie");
 	auto num_val = val_num_new_from_double (MEM(tm), 1337);
 	auto bool_val = val_bool_new_from_bool (MEM(tm), true);
 
@@ -232,7 +232,7 @@ TEST(json_writer, json_writer_obj_val)
 
 	json_writer_reset (&test_instance);
 
-	val_str_deallocate_safe (&str_val);
+    val_str_free_safe(&str_val);
 	val_num_free_safe (&num_val);
 	val_bool_free_safe (&bool_val);
 
@@ -445,8 +445,8 @@ TEST(json_writer, json_writer_array_str)
 	struct json_writer test_instance{};
 	json_writer_init (&test_instance, MEM(tm));
 
-	auto str_one = val_str_allocate_from_c_str (MEM(tm), "hello");
-	auto str_two = val_str_allocate_from_c_str (MEM(tm), "world");
+	auto str_one = val_str_new_from_c_str (MEM(tm), "hello");
+	auto str_two = val_str_new_from_c_str (MEM(tm), "world");
 
 	ASSERT_EQ(JSON_WRITER_STATUS_OK, json_writer_array_start (&test_instance));
 	ASSERT_EQ(JSON_WRITER_STATUS_OK, json_writer_array_str (&test_instance, str_one));
@@ -460,8 +460,8 @@ TEST(json_writer, json_writer_array_str)
 
 	json_writer_reset (&test_instance);
 
-	val_str_deallocate_safe (&str_one);
-	val_str_deallocate_safe (&str_two);
+    val_str_free_safe(&str_one);
+    val_str_free_safe(&str_two);
 
 	mem_test_verify (tm);
 	mem_test_free (tm);
@@ -474,7 +474,7 @@ TEST(json_writer, json_writer_array_val)
 	struct json_writer test_instance{};
 	json_writer_init (&test_instance, MEM(tm));
 
-	auto str_val = val_str_allocate_from_c_str (MEM(tm), "elodie");
+	auto str_val = val_str_new_from_c_str (MEM(tm), "elodie");
 	auto num_val = val_num_new_from_double (MEM(tm), 1337);
 	auto bool_val = val_bool_new_from_bool (MEM(tm), true);
 
@@ -491,7 +491,7 @@ TEST(json_writer, json_writer_array_val)
 
 	json_writer_reset (&test_instance);
 
-	val_str_deallocate_safe (&str_val);
+    val_str_free_safe(&str_val);
 	val_num_free_safe (&num_val);
 	val_bool_free_safe (&bool_val);
 

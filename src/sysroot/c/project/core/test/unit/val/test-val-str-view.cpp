@@ -28,13 +28,13 @@ TEST(val_str_view_from_str, ok)
 {
 	auto tm = mem_test_new_default (128);
 
-	struct val_str *given_str = val_str_allocate_from_c_str (MEM(tm), "Elodie");
+	struct val_str *given_str = val_str_new_from_c_str (MEM(tm), "Elodie");
 
 	auto result = val_str_view_from_str (given_str);
 	ASSERT_EQ(6, val_str_view_count (&result));
 	ASSERT_TRUE(strncmp (result.data, "Elodie", 6) == 0);
 
-	val_str_deallocate_safe (&given_str);
+    val_str_free_safe(&given_str);
 	mem_test_verify (tm);
 	mem_test_free (tm);
 

@@ -6,7 +6,7 @@ set(CMAKE_C_FLAGS, "${CMAKE_C_FLAGS} -O3")
 set(COMPILER_WARNINGS
         -Wall
         -Wextra
-#        -pedantic
+        #        -pedantic
         -Wcast-align
         -Wcast-qual
         -Wdisabled-optimization
@@ -16,7 +16,7 @@ set(COMPILER_WARNINGS
         -Wredundant-decls
         -Wno-gnu-statement-expression
         -Wno-gnu-auto-type
-#        -Wshadow
+        #        -Wshadow
         -Wstrict-overflow=5
         -Wundef
         -Wno-cast-qual
@@ -24,7 +24,7 @@ set(COMPILER_WARNINGS
         -Wno-implicit-fallthrough
         -Wno-c11-extensions
         -Wno-gnu-label-as-value
-        )
+)
 
 if (NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE Debug)

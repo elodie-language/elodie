@@ -14,7 +14,7 @@ struct bytes {
 extern const struct bytes NO_BYTES;
 
 ELODIE_API struct bytes *
-bytes_allocate (struct mem *mem, u4 size);
+bytes_new (struct mem *mem, u4 size);
 
 ELODIE_API void
 bytes_init (struct bytes *self, struct mem *mem, u4 size);
@@ -23,9 +23,9 @@ ELODIE_API void
 bytes_reset (struct bytes *self, struct mem *mem);
 
 ELODIE_API void
-bytes_deallocate (struct bytes *self, struct mem *mem);
+bytes_free (struct bytes *self, struct mem *mem);
 
 ELODIE_API void
-bytes_deallocate_safe (struct bytes **self, struct mem *mem);
+bytes_free_safe (struct bytes **self, struct mem *mem);
 
 #endif //CORE_BYTES_H

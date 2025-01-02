@@ -64,13 +64,13 @@ TEST(val_bool_to_str, true)
 
 	struct val_bool *test_instance = val_bool_new_from_bool (MEM(tm), true);
 	struct val_str *result = val_bool_to_str (test_instance, MEM(tm));
-	struct val_str *expected = val_str_allocate_from_c_str (MEM(tm), "true");
+	struct val_str *expected = val_str_new_from_c_str (MEM(tm), "true");
 
 	ASSERT_TRUE (val_str_equal (expected, result));
 
 	val_bool_free_safe (&test_instance);
-	val_str_deallocate_safe (&result);
-	val_str_deallocate_safe (&expected);
+    val_str_free_safe(&result);
+    val_str_free_safe(&expected);
 
 	mem_test_verify (tm);
 	mem_test_free (tm);
@@ -82,13 +82,13 @@ TEST(val_bool_to_str, false)
 
 	struct val_bool *test_instance = val_bool_new_from_bool (MEM(tm), false);
 	struct val_str *result = val_bool_to_str (test_instance, MEM(tm));
-	struct val_str *expected = val_str_allocate_from_c_str (MEM(tm), "false");
+	struct val_str *expected = val_str_new_from_c_str (MEM(tm), "false");
 
 	ASSERT_TRUE (val_str_equal (expected, result));
 
 	val_bool_free_safe (&test_instance);
-	val_str_deallocate_safe (&result);
-	val_str_deallocate_safe (&expected);
+    val_str_free_safe(&result);
+    val_str_free_safe(&expected);
 
 	mem_test_verify (tm);
 	mem_test_free (tm);

@@ -55,7 +55,7 @@ TEST(val_unit_to_str, ok)
 	ASSERT_TRUE(strncmp (result->data, "unit", result->count) == 0);
 
 	val_unit_free_safe (&test_instance);
-	val_str_deallocate_safe (&result);
+    val_str_free_safe(&result);
 	mem_test_verify (tm);
 	mem_test_free (tm);
 }

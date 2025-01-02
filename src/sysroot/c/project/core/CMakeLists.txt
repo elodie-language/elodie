@@ -43,10 +43,6 @@ file(GLOB SRC_FILES
         src/val/val-str-view.c
         src/val/val-unit.c
 
-        src/native/native-fn.c
-        src/native/native-fn-sig.c
-        src/native/native-registry.c
-
         src/string/string.c
         src/string/string-view.c
 
@@ -61,7 +57,7 @@ file(GLOB SRC_FILES
         src/logger.c
         src/core.c
         src/util.c
-        )
+)
 
 add_library(core STATIC EXCLUDE_FROM_ALL ${SRC_FILES})
 target_include_directories(core PUBLIC include)
@@ -91,9 +87,6 @@ file(GLOB SRC_UNIT_TEST_FILES
         test/unit/mem/test-mem-test.cpp
         test/unit/mem/test-mem-vape.cpp
 
-        test/unit/native/test-native-fn.cpp
-        test/unit/native/test-native-fn-sig.cpp
-
         test/unit/string/test-string.cpp
         test/unit/string/test-string-view.cpp
 
@@ -119,7 +112,7 @@ file(GLOB SRC_UNIT_TEST_FILES
         test/unit/test-json.cpp
         test/unit/test-check.cpp
         test/unit/test-util.cpp
-        )
+)
 
 add_executable(core_unit_test ${SRC_UNIT_TEST_FILES})
 target_include_directories(core_unit_test PUBLIC include)

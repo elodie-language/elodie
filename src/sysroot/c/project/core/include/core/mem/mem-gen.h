@@ -30,7 +30,7 @@ ELODIE_API struct val_ref
 mem_gen_allocate (struct mem_gen *self, struct val *val);
 
 //ELODIE_API struct val_ref
-//mem_gen_allocate_from_mem (struct mem_val *self, struct mem_val *other, struct val_ref ref);
+//mem_gen_new_from_mem (struct mem_val *self, struct mem_val *other, struct val_ref ref);
 
 ELODIE_API struct val_ref
 val_str_ng_new (struct mem_gen *self, char const *c_str);
@@ -40,7 +40,7 @@ ELODIE_API struct val *
 mem_gen_resolve (struct mem_gen *self, struct val_ref ref);
 
 //ELODIE_API struct val_ref
-//mem_gen_allocate_str_from_c_str (struct mem_val *self, struct val *v);
+//mem_gen_new_str_from_c_str (struct mem_val *self, struct val *v);
 
 //ELODIE_API void
 //mem_gen_mark_val (struct mem_val *self, struct val *val, enum mem_gen_color color);

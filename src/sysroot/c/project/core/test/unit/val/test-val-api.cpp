@@ -24,9 +24,9 @@ TEST(val_str, ok)
 	auto tm = mem_test_new_default (128);
 
 	char const *str = "Elodie is about to kick... popo";
-	auto result = val_str_allocate_from_c_str (MEM(tm), const_cast<char *>(str));
+	auto result = val_str_new_from_c_str (MEM(tm), const_cast<char *>(str));
 
-	val_str_deallocate_safe (&result);
+    val_str_free_safe(&result);
 
 	mem_test_verify (tm);
 	mem_test_free (tm);
@@ -37,7 +37,7 @@ TEST(val_equal, different_types)
 	auto tm = mem_test_new_default (128);
 
 	std::string str = "elodie rockz";
-	auto val_one = (struct val *)val_str_allocate_from_c_str (MEM(tm), str.c_str ());
+	auto val_one = (struct val *)val_str_new_from_c_str (MEM(tm), str.c_str ());
 	auto val_two = (struct val *)val_num_new_from_double (MEM(tm), 42.12);
 	ASSERT_FALSE(val_equal (val_one, val_two));
 
@@ -53,8 +53,8 @@ TEST(val_equal, str_str_equal)
 	auto tm = mem_test_new_default (128);
 
 	std::string str = "elodie rockz";
-	auto val_one = (struct val *)val_str_allocate_from_c_str (MEM(tm), str.c_str ());
-	auto val_two = (struct val *)val_str_allocate_from_c_str (MEM(tm), str.c_str ());
+	auto val_one = (struct val *)val_str_new_from_c_str (MEM(tm), str.c_str ());
+	auto val_two = (struct val *)val_str_new_from_c_str (MEM(tm), str.c_str ());
 	ASSERT_TRUE(val_equal (val_one, val_two));
 
 	val_free_safe (&val_one);
@@ -68,8 +68,8 @@ TEST(val_equal, str_str_not_equal)
 {
 	auto tm = mem_test_new_default (128);
 
-	auto val_one = (struct val *)val_str_allocate_from_c_str (MEM(tm), "elodie rockz");
-	auto val_two = (struct val *)val_str_allocate_from_c_str (MEM(tm), "other val");
+	auto val_one = (struct val *)val_str_new_from_c_str (MEM(tm), "elodie rockz");
+	auto val_two = (struct val *)val_str_new_from_c_str (MEM(tm), "other val");
 	ASSERT_FALSE(val_equal (val_one, val_two));
 
 	val_free_safe (&val_one);
@@ -174,14 +174,14 @@ TEST(VAL_EQUAL, val_str_view__with__val_str)
 	auto tm = mem_test_new_default (128);
 
 	auto given_val = val_str_view_from_c_str ("val");
-	auto same_val = val_str_allocate_from_c_str (MEM(tm), "val");
-	auto another_val = val_str_allocate_from_c_str (MEM(tm), "another_val");
+	auto same_val = val_str_new_from_c_str (MEM(tm), "val");
+	auto another_val = val_str_new_from_c_str (MEM(tm), "another_val");
 
 	ASSERT_TRUE(VAL_EQ (given_val, same_val));
 	ASSERT_FALSE(VAL_EQ (given_val, another_val));
 
-	val_str_deallocate_safe (&same_val);
-	val_str_deallocate_safe (&another_val);
+    val_str_free_safe(&same_val);
+    val_str_free_safe(&another_val);
 
 	mem_test_verify (tm);
 	mem_test_free (tm);
@@ -191,14 +191,14 @@ TEST(VAL_EQUAL, val_str__with__c_str)
 {
 	auto tm = mem_test_new_default (128);
 
-	auto given_val = val_str_allocate_from_c_str (MEM(tm), "val");
+	auto given_val = val_str_new_from_c_str (MEM(tm), "val");
 	auto same_val = "val";
 	auto another_val = "another_val";
 
 	ASSERT_TRUE(VAL_EQ (given_val, same_val));
 	ASSERT_FALSE(VAL_EQ (given_val, another_val));
 
-	val_str_deallocate_safe (&given_val);
+    val_str_free_safe(&given_val);
 
 	mem_test_verify (tm);
 	mem_test_free (tm);
@@ -208,16 +208,16 @@ TEST(VAL_EQUAL, val_str__with__val_str)
 {
 	auto tm = mem_test_new_default (128);
 
-	auto given_val = val_str_allocate_from_c_str (MEM(tm), "val");
-	auto same_val = val_str_allocate_from_c_str (MEM(tm), "val");
-	auto another_val = val_str_allocate_from_c_str (MEM(tm), "another_val");
+	auto given_val = val_str_new_from_c_str (MEM(tm), "val");
+	auto same_val = val_str_new_from_c_str (MEM(tm), "val");
+	auto another_val = val_str_new_from_c_str (MEM(tm), "another_val");
 
 	ASSERT_TRUE(VAL_EQ (given_val, same_val));
 	ASSERT_FALSE(VAL_EQ (given_val, another_val));
 
-	val_str_deallocate_safe (&given_val);
-	val_str_deallocate_safe (&same_val);
-	val_str_deallocate_safe (&another_val);
+    val_str_free_safe(&given_val);
+    val_str_free_safe(&same_val);
+    val_str_free_safe(&another_val);
 
 	mem_test_verify (tm);
 	mem_test_free (tm);
@@ -227,14 +227,14 @@ TEST(VAL_EQUAL, val_str__with__val_str_view)
 {
 	auto tm = mem_test_new_default (128);
 
-	auto given_val = val_str_allocate_from_c_str (MEM(tm), "val");
+	auto given_val = val_str_new_from_c_str (MEM(tm), "val");
 	auto same_val = val_str_view_from_c_str ("val");
 	auto another_val = val_str_view_from_c_str ("another_val");
 
 	ASSERT_TRUE(VAL_EQ (given_val, same_val));
 	ASSERT_FALSE(VAL_EQ (given_val, another_val));
 
-	val_str_deallocate_safe (&given_val);
+    val_str_free_safe(&given_val);
 
 	mem_test_verify (tm);
 	mem_test_free (tm);

@@ -26,6 +26,6 @@ val_rc_dec(struct val *self) {
     self->rc -= 1;
     LOG_TRACE("RC %p: %d", self, self->rc);
     if (self->rc == 0) {
-        val_str_deallocate_safe((struct val_str **) &self);
+        val_str_free_safe((struct val_str **) &self);
     }
 }

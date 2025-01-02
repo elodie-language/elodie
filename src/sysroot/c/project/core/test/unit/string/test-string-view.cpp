@@ -20,13 +20,13 @@ TEST(string_view_from_str_ptr, ok)
 {
 	auto tm = mem_test_new_default (128);
 
-	auto given_str = string_allocate_from_c_str (MEM(tm), "Elodie");
+	auto given_str = string_new_from_c_str (MEM(tm), "Elodie");
 
 	auto result = string_view_from_str_ptr (given_str);
 	ASSERT_EQ(6, string_view_count (result));
 	ASSERT_TRUE(strncmp (result.data, "Elodie", 6) == 0);
 
-	string_deallocate_safe (&given_str, MEM(tm));
+    string_free_safe(&given_str, MEM(tm));
 	mem_test_verify (tm);
 	mem_test_free (tm);
 }
