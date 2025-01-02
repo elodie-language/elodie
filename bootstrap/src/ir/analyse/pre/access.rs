@@ -13,7 +13,7 @@ impl<'a> Pre<'a> {
 
         Ok(TypedTreeNode::new(
             AccessVariable(TypeAccessVariableNode {
-                symbol: variable.id.clone()
+                variable: variable.id.clone()
             }),
             self.span(),
             variable.inferred.clone(),
@@ -42,7 +42,7 @@ mod tests {
 
         let result = &typed[2];
         let inner = result.as_access_variable();
-        assert_eq!(inner.symbol, SymbolId(2));
+        assert_eq!(inner.variable, SymbolId(2));
 
         assert_eq!(result.inferred, Inferred::Boolean);
     }

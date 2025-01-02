@@ -1,6 +1,6 @@
 use std::collections::HashSet;
 
-use Node::{LiteralBoolean, LiteralNumber, LiteralString};
+use Node::{AccessVariable, LiteralBoolean, LiteralNumber, LiteralString};
 
 use crate::build::c;
 use crate::build::c::{BlockStatement, CodeStatement, DeclareFunctionNode, DeclareStructNode, DefineFunctionNode, DefineStructNode, DirectiveNode, IncludeLocalDirectiveNode, IncludeSystemDirectiveNode, Indent};
@@ -71,12 +71,14 @@ impl Generator {
             statements: BlockStatement {
                 indent: Indent::none(),
                 statements: vec![
-                    // c::Statement::Code(
-                    //     CodeStatement {
-                    //         indent: Indent::none(),
-                    //         code: r#"printf("works\n");"#.to_string(),
-                    //     }
-                    // )
+                    c::Statement::Code(
+                        CodeStatement {
+                            indent: Indent::none(),
+                            code: r#"
+auto tm = mem_test_new_default (1024 * 1024 );
+                            "#.to_string(),
+                        }
+                    )
                 ],
             },
         });
@@ -87,6 +89,8 @@ impl Generator {
 
         self.include_system("stdio.h");
         self.include_system("stdbool.h");
+        self.include_local("core/core-api.h");
+        self.include_local("core/string/string-api.h");
 
         let mut result = vec![];
         result.extend(self.directives.into_iter().map(|d| c::Node::Directive(d)));
@@ -137,10 +141,11 @@ impl Generator {
 
     pub(crate) fn expression(&mut self, ir: &IrTreeNode) -> Result<c::Expression> {
         match ir.node() {
+            AccessVariable(node) => Ok(c::Expression::Variable(self.access_variable(node)?)),
             InterpolateString(node) => Ok(c::Expression::Variable(self.interpolate_string(node)?)),
-            LiteralBoolean(node) => Ok(c::Expression::Literal(self.literal_bool(node)?)),
-            LiteralNumber(node) => Ok(c::Expression::Literal(self.literal_number(node)?)),
-            LiteralString(node) => Ok(c::Expression::Literal(self.literal_string(node)?)),
+            LiteralBoolean(node) => Ok(self.literal_bool(node)?),
+            LiteralNumber(node) => Ok(self.literal_number(node)?),
+            LiteralString(node) => Ok(self.literal_string(node)?),
             _ => unimplemented!("{:#?}", ir)
         }
     }

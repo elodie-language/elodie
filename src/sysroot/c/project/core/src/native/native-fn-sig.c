@@ -33,7 +33,7 @@ native_fn_signature_ident_init (sig_ident *self, m *mem, sv ident)
 	CHECK_TRUE(string_view_last_occurrence_of (ident, STRING_VIEW ("::"), &position));
 	CHECK_LESS_THAN(position, U2_MAX);
 	self->marker = position;
-	CHECK_LESS_THAN(self->marker + MARKER_COUNT, ident.count);
+	CHECK_LESS_THAN(self->marker + MARKER_COUNT, ident.length);
 }
 
 sv
@@ -41,7 +41,7 @@ native_fn_signature_ident_package_ident (sig_ident self)
 {
 	return (sv){
 		.data = self.ident.data,
-		.count = self.marker
+		.length = self.marker
 	};
 }
 
@@ -49,7 +49,7 @@ sv
 native_fn_signature_ident_fn_ident (sig_ident self)
 {
 	return (sv){
-		.count = self.ident.count - self.marker - MARKER_COUNT,
+		.length = self.ident.length - self.marker - MARKER_COUNT,
 		.data = self.ident.data + self.marker + MARKER_COUNT
 	};
 }

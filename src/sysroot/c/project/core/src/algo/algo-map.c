@@ -68,7 +68,7 @@ map_key_from_string_view (struct map *self, struct string_view view)
 		self,
 		(struct bytes_view){
 			.data = (u1 *)view.data,
-			.size = view.count
+			.size = view.length
 		}
 	);
 }

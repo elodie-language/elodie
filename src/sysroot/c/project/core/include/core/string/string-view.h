@@ -6,7 +6,7 @@
 struct string;
 
 struct string_view {
-  u4 count;
+  u4 length;
   char const *data;
 };
 

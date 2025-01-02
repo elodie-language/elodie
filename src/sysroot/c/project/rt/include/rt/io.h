@@ -1,7 +1,10 @@
 #ifndef RT_IO_H
 #define RT_IO_H
 
-void rt_io_print(const char* text);
-void rt_io_println(char const * message);
+struct val_str;
+
+void rt_io_print(const struct val_str *message);
+
+void rt_io_println(const struct val_str *message);
 
 #endif

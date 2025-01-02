@@ -3,7 +3,7 @@
 set -eu
 
 DIFF_TOOL="${DIFF_TOOL:-diff --ignore-blank-lines --ignore-all-space}"
-TEST_DIR="${1:-./test/smoke}"
+TEST_DIR="${1:-./test/e2e}"
 BIN="${2:-../bootstrap/target/debug/bootstrap}"
 
 EXIT_CODE=0

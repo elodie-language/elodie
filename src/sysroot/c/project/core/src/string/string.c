@@ -44,7 +44,7 @@ string_allocate_from_view (m *mem, sv view)
 	CHECK_NOT_NULL(mem);
 	return string_allocate_from_bytes (mem, (bv){
 		.data = (u1 *)view.data,
-		.size = view.count
+		.size = view.length
 	});
 }
 
@@ -53,7 +53,7 @@ string_init_from_bytes (struct string *self, struct mem *mem, struct bytes_view 
 {
 	CHECK_NOT_NULL(self);
 	CHECK_NOT_NULL(mem);
-	self->count = bytes.size;
+	self->length = bytes.size;
 	self->data = mem_allocate (mem, bytes.size + 1);
 	memcpy (self->data, bytes.data, bytes.size);
 	self->data[bytes.size] = '\0';
@@ -86,41 +86,41 @@ string_init_from_view (struct string *self, struct mem *mem, struct string_view 
 	CHECK_NOT_NULL(mem);
 	string_init_from_bytes (self, mem, (bv){
 		.data = (u1 *)view.data,
-		.size = view.count
+		.size = view.length
 	});
 }
 
 u4
 string_count (s self)
 {
-	return self.count;
+	return self.length;
 }
 
 bool
 string_equal (s lhs, s rhs)
 {
-	if (lhs.count != rhs.count) return false;
-	return strncmp (lhs.data, rhs.data, lhs.count) == 0;
+	if (lhs.length != rhs.length) return false;
+	return strncmp (lhs.data, rhs.data, lhs.length) == 0;
 }
 
 bool
 string_equal_c_str (struct string lhs, char const *rhs)
 {
-	if (lhs.count != strlen (rhs)) return false;
-	return strncmp (lhs.data, rhs, lhs.count) == 0;
+	if (lhs.length != strlen (rhs)) return false;
+	return strncmp (lhs.data, rhs, lhs.length) == 0;
 }
 
 s *
 string_concat (s self, s other, m *mem)
 {
 	CHECK_NOT_NULL(mem);
-	size_t count = self.count + other.count;
+	size_t count = self.length + other.length;
 
 	s *result = mem_allocate (mem, sizeof (s));
-	result->count = count;
+	result->length = count;
 	result->data = mem_allocate (mem, count + 1);
-	memcpy(result->data, self.data, self.count);
-	memcpy(result->data + self.count, other.data, other.count);
+	memcpy(result->data, self.data, self.length);
+	memcpy(result->data + self.length, other.data, other.length);
 	result->data[count] = '\0';
 	return result;
 }
@@ -132,7 +132,7 @@ string_reset (struct string *self, struct mem *mem)
 	CHECK_NOT_NULL(mem);
 	CHECK_NOT_NULL(self->data);
 	mem_deallocate (mem, self->data);
-	self->count = 0;
+	self->length = 0;
 	self->data = NULL;
 }
 

@@ -10,7 +10,7 @@ impl Emitter {
             self.token("=");
         }
 
-        self.str(node.identifier.as_str());
+        self.str(node.function.as_str());
         self.str("(");
 
         for (idx, arg) in node.arguments.iter().enumerate() {
@@ -20,6 +20,19 @@ impl Emitter {
             self.expression(arg)
         }
         self.line(");");
+    }
+
+    pub(crate) fn call_function_expression(&mut self, node: &c::CallFunctionExpression) {
+        self.str(node.function.as_str());
+        self.str("(");
+
+        for (idx, arg) in node.arguments.iter().enumerate() {
+            if idx > 0 {
+                self.token(",");
+            }
+            self.expression(arg)
+        }
+        self.str(")");
     }
 
     pub(crate) fn declare_function(&mut self, node: &c::DeclareFunctionNode) {

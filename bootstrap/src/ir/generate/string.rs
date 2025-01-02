@@ -24,7 +24,7 @@ impl<'a> Generator<'a> {
     pub(crate) fn convert_to_string(&mut self, node: &TypedTreeNode) -> crate::ir::generate::Result<IrTreeNode> {
         match node.node() {
             Node::AccessVariable(access_variable) => Ok(IrTreeNode::new(
-                Node::AccessVariable(IrAccessVariableNode { variable: access_variable.symbol }),
+                Node::AccessVariable(IrAccessVariableNode { variable: access_variable.variable }),
                 node.span(),
                 self.type_table.type_id_string(),
             )),

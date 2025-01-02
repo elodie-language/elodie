@@ -34,6 +34,8 @@ pub struct CodeNode {
 
 #[derive(Debug)]
 pub enum Expression {
+    Code(CodeExpression),
+    CallFunction(CallFunctionExpression),
     Infix(InfixExpression),
     Literal(LiteralExpression),
     Variable(VariableExpression),
@@ -59,6 +61,12 @@ pub struct BlockStatement {
 
 #[derive(Debug)]
 pub struct CodeStatement {
+    pub indent: Indent,
+    pub code: String,
+}
+
+#[derive(Debug)]
+pub struct CodeExpression {
     pub indent: Indent,
     pub code: String,
 }

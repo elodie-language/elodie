@@ -12,7 +12,7 @@ string_view_from_bytes (bv bytes)
 {
 	return (sv){
 		.data = (char const *)bytes.data,
-		.count = bytes.size
+		.length = bytes.size
 	};
 }
 
@@ -21,7 +21,7 @@ string_view_from_str (struct string str)
 {
 	return (sv){
 		.data = (char const *)str.data,
-		.count = str.count
+		.length = str.length
 	};
 }
 
@@ -31,7 +31,7 @@ string_view_from_str_ptr (s *ptr)
 	CHECK_NOT_NULL(ptr);
 	return (sv){
 		.data = (char const *)ptr->data,
-		.count = ptr->count
+		.length = ptr->length
 	};
 }
 
@@ -41,27 +41,27 @@ string_view_from_c_str (char const *str)
 	CHECK_NOT_NULL(str);
 	return (sv){
 		.data = str,
-		.count = strlen (str)
+		.length = strlen (str)
 	};
 }
 
 bv
 string_view_as_byte_view (sv self)
 {
-	return (bv){.data = (u1 *)self.data, .size = self.count};
+	return (bv){.data = (u1 *)self.data, .size = self.length};
 }
 
 u4
 string_view_count (sv self)
 {
-	return self.count;
+	return self.length;
 }
 
 bool
 string_view_equal (sv lhs, sv rhs)
 {
-	if (lhs.count != rhs.count) return false;
-	return strncmp (lhs.data, rhs.data, lhs.count) == 0;
+	if (lhs.length != rhs.length) return false;
+	return strncmp (lhs.data, rhs.data, lhs.length) == 0;
 }
 
 bool
@@ -73,11 +73,11 @@ string_view_equal_c_str (struct string_view lhs, char const *rhs)
 bool
 string_view_last_occurrence_of (struct string_view self, struct string_view pattern, u4 *position)
 {
-	CHECK_GREATER_THAN(self.count, 0);
-	CHECK_GREATER_THAN(pattern.count, 0);
+	CHECK_GREATER_THAN(self.length, 0);
+	CHECK_GREATER_THAN(pattern.length, 0);
 
-	const char *self_to_test = self.data + self.count;
-	char const *pattern_to_test = pattern.data + pattern.count;
+	const char *self_to_test = self.data + self.length;
+	char const *pattern_to_test = pattern.data + pattern.length;
 
 	while (self_to_test - self.data >= pattern_to_test - pattern.data)
 		{

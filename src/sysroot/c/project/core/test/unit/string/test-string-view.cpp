@@ -13,7 +13,7 @@ TEST(string_view_from_bytes, ok)
 
 	auto result = string_view_from_bytes (bytes);
 	ASSERT_EQ(2, string_view_count (result));
-	ASSERT_TRUE(strncmp (result.data, "HA", result.count) == 0);
+	ASSERT_TRUE(strncmp (result.data, "HA", result.length) == 0);
 }
 
 TEST(string_view_from_str_ptr, ok)

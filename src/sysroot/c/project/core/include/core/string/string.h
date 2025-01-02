@@ -8,7 +8,7 @@
 struct byte_list;
 
 struct string {
-  u4 count;
+  u4 length;
   char *data;
 };
 

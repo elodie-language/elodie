@@ -14,8 +14,8 @@ TEST(string_allocate_from_bytes, ok)
 	};
 
 	struct string *result = string_allocate_from_bytes (MEM(tm), bytes);
-	ASSERT_EQ (2, result->count);
-	ASSERT_TRUE (strncmp (result->data, "HA", result->count) == 0);
+	ASSERT_EQ (2, result->length);
+	ASSERT_TRUE (strncmp (result->data, "HA", result->length) == 0);
 
 	string_deallocate (result, MEM(tm));
 	mem_test_verify (tm);
@@ -28,7 +28,7 @@ TEST(string_allocate_from_c_str, ok)
 
 	auto result = string_allocate_from_c_str (MEM(tm), "Elodie");
 	ASSERT_EQ (6, string_count (*result));
-	ASSERT_TRUE (strncmp (result->data, "Elodie", result->count) == 0);
+	ASSERT_TRUE (strncmp (result->data, "Elodie", result->length) == 0);
 
 	string_deallocate_safe (&result, MEM(tm));
 	mem_test_verify (tm);
@@ -41,7 +41,7 @@ TEST(string_allocate_from_view, ok)
 
 	auto result = string_allocate_from_view (MEM(tm), string_view_from_c_str ("ELODIE"));
 	ASSERT_EQ (6, string_count (*result));
-	ASSERT_TRUE (strncmp (result->data, "ELODIE", result->count) == 0);
+	ASSERT_TRUE (strncmp (result->data, "ELODIE", result->length) == 0);
 
 	string_deallocate_safe (&result, MEM(tm));
 	mem_test_verify (tm);
@@ -62,7 +62,7 @@ TEST(string_allocate_from_byte_list, ok)
 
 	auto result = string_allocate_from_byte_list (MEM(tm), byte_list);
 	ASSERT_EQ (5, string_count (*result));
-	ASSERT_TRUE (strncmp (result->data, "h4m4l", result->count) == 0);
+	ASSERT_TRUE (strncmp (result->data, "h4m4l", result->length) == 0);
 
 	byte_list_free_safe (&byte_list);
 	string_deallocate_safe (&result, MEM(tm));
@@ -82,8 +82,8 @@ TEST(string_init_from_bytes, ok)
 
 	struct string test_instance{};
 	string_init_from_bytes (&test_instance, MEM(tm), bytes);
-	ASSERT_EQ (2, test_instance.count);
-	ASSERT_TRUE (strncmp (test_instance.data, "HA", test_instance.count) == 0);
+	ASSERT_EQ (2, test_instance.length);
+	ASSERT_TRUE (strncmp (test_instance.data, "HA", test_instance.length) == 0);
 
 	string_reset (&test_instance, MEM(tm));
 	mem_test_verify (tm);
@@ -97,7 +97,7 @@ TEST(string_init_from_c_str, ok)
 	struct string test_instance{};
 	string_init_from_c_str (&test_instance, MEM(tm), "Elodie");
 	ASSERT_EQ (6, string_count (test_instance));
-	ASSERT_TRUE (strncmp (test_instance.data, "Elodie", test_instance.count) == 0);
+	ASSERT_TRUE (strncmp (test_instance.data, "Elodie", test_instance.length) == 0);
 
 	string_reset (&test_instance, MEM(tm));
 	mem_test_verify (tm);
@@ -111,7 +111,7 @@ TEST(string_init_from_view, ok)
 	struct string test_instance{};
 	string_init_from_view (&test_instance, MEM(tm), string_view_from_c_str ("ELODIE"));
 	ASSERT_EQ (6, string_count (test_instance));
-	ASSERT_TRUE (strncmp (test_instance.data, "ELODIE", test_instance.count) == 0);
+	ASSERT_TRUE (strncmp (test_instance.data, "ELODIE", test_instance.length) == 0);
 
 	string_reset (&test_instance, MEM(tm));
 	mem_test_verify (tm);
@@ -133,7 +133,7 @@ TEST(string_init_from_byte_list, ok)
 	struct string test_instance{};
 	string_init_from_byte_list (&test_instance, MEM(tm), byte_list);
 	ASSERT_EQ (5, string_count (test_instance));
-	ASSERT_TRUE (strncmp (test_instance.data, "h4m4l", test_instance.count) == 0);
+	ASSERT_TRUE (strncmp (test_instance.data, "h4m4l", test_instance.length) == 0);
 
 	byte_list_free_safe (&byte_list);
 	string_reset (&test_instance, MEM(tm));

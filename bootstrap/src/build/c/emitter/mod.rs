@@ -46,6 +46,8 @@ impl Emitter {
 
     pub(crate) fn expression(&mut self, expression: &c::Expression) {
         match expression {
+            Expression::CallFunction(expression) => self.call_function_expression(expression),
+            Expression::Code(expression) => self.code_expression(expression),
             Expression::Infix(expression) => self.infix(expression),
             Expression::Literal(expression) => self.literal(expression),
             Expression::Variable(expression) => self.variable(expression),

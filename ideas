@@ -1,3 +1,20 @@
+// no closures - override () operator like
+type Not_A_Closure(value: String)
+
+define Not_A_Closure{
+    operator function call(arg: Number) -> Unit {
+        // do something with value
+        //
+    }
+
+    operator function call() -> Unit {
+    }
+}
+
+let x = Not_A_Closure("")
+x.call(1)
+x(2)
+
 // Secret type which ensures that a secret can never be logged
 
 

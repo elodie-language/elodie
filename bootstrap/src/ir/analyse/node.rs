@@ -140,7 +140,7 @@ impl WithSpan for TypedTreeNode {
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct TypeAccessVariableNode {
-    pub symbol: SymbolId,
+    pub variable: SymbolId,
 }
 
 impl AccessVariableNode<TypeVariant> for TypeAccessVariableNode {}
