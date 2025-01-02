@@ -2,7 +2,7 @@ use crate::build::c;
 use crate::build::c::{CallFunctionStatement, CallFunctionStatementResult, CodeExpression, DeclareArrayStatement, LiteralExpression, LiteralIntExpression, LiteralStringExpression, Statement, VariableExpression};
 use crate::build::c::Expression::{Code, Literal, Variable};
 use crate::build::c::generator::{Generator, stack};
-use crate::build::c::generator::stack::LocalVariable;
+use crate::build::c::generator::stack::{LocalVariable, Storage};
 use crate::common::GetString;
 use crate::common::node::Node::{AccessVariable, LiteralString};
 use crate::ir::IrInterpolateStringNode;
@@ -22,9 +22,9 @@ impl Generator {
                 //         expression: c::Expression::Variable(VariableExpression { variable }),
                 //     })
                 // );
-                variables.push(stack::Variable::Variable(LocalVariable(variable)));
+                variables.push(stack::Variable::Variable(LocalVariable(variable), Storage::Memory));
             } else if let LiteralString(node) = node.node() {
-                let temp = self.stack.push_temp();
+                let temp = self.stack.push_temp(Storage::Memory);
 
                 let value = self.string_table.get_string(node.value);
 
@@ -55,11 +55,11 @@ impl Generator {
                 //     })
                 // );
 
-                variables.push(stack::Variable::Temp(temp))
+                variables.push(stack::Variable::Temp(temp, Storage::Memory))
             }
         }
 
-        let temp = self.stack.push_temp();
+        let temp = self.stack.push_temp(Storage::Stack);
         self.statements().push(Statement::DeclareArray(DeclareArrayStatement {
             identifier: temp.to_string(),
             r#type: "char".to_string(),
@@ -93,7 +93,7 @@ impl Generator {
             result: None,
         }));
 
-        let arg = self.stack.push_argument();
+        let arg = self.stack.push_argument(Storage::Memory);
 
         self.statements().push(Statement::CallFunction(CallFunctionStatement {
             function: "val_str_new_from_c_str".to_string(),

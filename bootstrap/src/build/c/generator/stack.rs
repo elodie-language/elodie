@@ -44,18 +44,24 @@ impl Into<String> for Temp {
     }
 }
 
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub enum Storage {
+    Memory,
+    Stack,
+}
+
 pub enum Variable {
-    Argument(Argument),
-    Variable(LocalVariable),
-    Temp(Temp),
+    Argument(Argument, Storage),
+    Variable(LocalVariable, Storage),
+    Temp(Temp, Storage),
 }
 
 impl Variable {
     pub fn to_string(&self) -> String {
         match self {
-            Variable::Argument(a) => a.to_string(),
-            Variable::Variable(v) => v.to_string(),
-            Variable::Temp(t) => t.to_string()
+            Variable::Argument(a, ..) => a.to_string(),
+            Variable::Variable(v, ..) => v.to_string(),
+            Variable::Temp(t, ..) => t.to_string()
         }
     }
 }
@@ -68,32 +74,41 @@ impl Into<String> for Variable {
 
 pub(crate) struct Frame {
     args: u16,
+    args_storage: Vec<Storage>,
     local_variables: Vec<LocalVariable>,
+    local_variables_storage: Vec<Storage>,
     temps: u16,
+    temps_storage: Vec<Storage>,
 }
 
 impl Frame {
     fn new() -> Self {
         Self {
             args: 0,
+            args_storage: vec![],
             local_variables: vec![],
+            local_variables_storage: vec![],
             temps: 0,
+            temps_storage: vec![],
         }
     }
 
-    fn push_argument(&mut self) -> Argument {
+    fn push_argument(&mut self, storage: Storage) -> Argument {
         self.args += 1;
+        self.args_storage.push(storage);
         Argument(self.args)
     }
 
-    fn push_local_variable(&mut self, variable: String) -> LocalVariable {
+    fn push_local_variable(&mut self, variable: String, storage: Storage) -> LocalVariable {
         let result = LocalVariable(variable);
         self.local_variables.push(result.clone());
+        self.local_variables_storage.push(storage);
         result
     }
 
-    fn push_temp(&mut self) -> Temp {
+    fn push_temp(&mut self, storage: Storage) -> Temp {
         self.temps += 1;
+        self.temps_storage.push(storage);
         Temp(self.temps)
     }
 
@@ -101,15 +116,23 @@ impl Frame {
         let mut result = vec![];
 
         for arg in 0..self.args {
-            result.push(Statement::rc_dec(Argument(arg + 1)))
+            if self.args_storage[arg as usize] == Storage::Memory {
+                result.push(Statement::rc_dec(Argument(arg + 1)))
+            }
         }
 
+        let mut counter = 0;
         while let Some(local) = self.local_variables.pop() {
-            result.push(Statement::rc_dec(local))
+            if self.local_variables_storage[counter] == Storage::Memory {
+                result.push(Statement::rc_dec(local))
+            }
+            counter += 1
         }
 
         for temp in 0..self.temps {
-            result.push(Statement::rc_dec(Temp(temp + 1)))
+            if self.temps_storage[temp as usize] == Storage::Memory {
+                result.push(Statement::rc_dec(Temp(temp + 1)))
+            }
         }
 
         result
@@ -136,15 +159,15 @@ impl Stack {
         frame.cleanup()
     }
 
-    pub(crate) fn push_argument(&mut self) -> Argument {
-        self.frames.last_mut().unwrap().push_argument()
+    pub(crate) fn push_argument(&mut self, storage: Storage) -> Argument {
+        self.frames.last_mut().unwrap().push_argument(storage)
     }
 
-    pub(crate) fn push_local_variable(&mut self, variable: String) -> LocalVariable {
-        self.frames.last_mut().unwrap().push_local_variable(variable)
+    pub(crate) fn push_local_variable(&mut self, variable: String, storage: Storage) -> LocalVariable {
+        self.frames.last_mut().unwrap().push_local_variable(variable, storage)
     }
 
-    pub(crate) fn push_temp(&mut self) -> Temp {
-        self.frames.last_mut().unwrap().push_temp()
+    pub(crate) fn push_temp(&mut self, storage: Storage) -> Temp {
+        self.frames.last_mut().unwrap().push_temp(storage)
     }
 }

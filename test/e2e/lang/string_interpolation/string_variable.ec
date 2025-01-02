@@ -8,8 +8,8 @@ rt::io::println('Hallo ${name}')
 let greeting = 'Howdy'
 rt::io::println('${greeting} ${name}')
 
-//let separator = '-'
-//rt::io::println('${separator}${separator}${separator}${separator}${separator}${separator}${separator}${separator}${separator}${separator}${separator}${separator}')
+let separator = '-'
+rt::io::println('${separator}${separator}${separator}${separator}${separator}${separator}${separator}${separator}${separator}${separator}${separator}${separator}')
 
 //// out: Hello Elodie
 //// out: Hallo Elodie

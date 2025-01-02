@@ -1,6 +1,7 @@
 use crate::build::c;
 use crate::build::c::{CallFunctionStatement, CallFunctionStatementResult, CodeExpression, Statement, VariableExpression};
 use crate::build::c::generator::Generator;
+use crate::build::c::generator::stack::Storage;
 use crate::common::GetString;
 use crate::common::node::Node::LiteralString;
 use crate::ir::{IrAccessVariableNode, IrDeclareVariableNode, IrLiteralStringNode};
@@ -23,7 +24,7 @@ impl Generator {
     ) -> c::generator::Result<()> {
         let variable = self.symbol_table.variable(node.variable).to_string(&self.string_table);
 
-        self.stack.push_local_variable(variable.clone());
+        self.stack.push_local_variable(variable.clone(), Storage::Memory);
 
         if let LiteralString(IrLiteralStringNode { value }) = &node.value.node() {
             let value = self.string_table.get_string(value);
