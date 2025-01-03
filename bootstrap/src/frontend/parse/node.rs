@@ -66,10 +66,22 @@ impl Node {
             Node::Tuple(n) => n.token.clone(),
             Node::Type(n) => match n {
                 TypeNode::Boolean(t) => t.clone(),
-                TypeNode::Type(n) => n.clone(),
+                TypeNode::Function(n) => n.token.clone(),
+                TypeNode::Float4(t) => t.clone(),
+                TypeNode::Float8(t) => t.clone(),
+                TypeNode::Int1(t) => t.clone(),
+                TypeNode::Int2(t) => t.clone(),
+                TypeNode::Int4(t) => t.clone(),
+                TypeNode::Int8(t) => t.clone(),
+                TypeNode::Int16(t) => t.clone(),
                 TypeNode::Number(t) => t.clone(),
                 TypeNode::String(t) => t.clone(),
-                TypeNode::Function(n) => n.token.clone(),
+                TypeNode::Type(n) => n.clone(),
+                TypeNode::Uint1(t) => t.clone(),
+                TypeNode::Uint2(t) => t.clone(),
+                TypeNode::Uint4(t) => t.clone(),
+                TypeNode::Uint8(t) => t.clone(),
+                TypeNode::Uint16(t) => t.clone(),
             },
             Node::TypeDeclaration(n) => n.token.clone(),
             Node::VariableDeclaration(n) => n.token.clone(),
@@ -603,9 +615,25 @@ pub(crate) struct TupleNode {
 pub(crate) enum TypeNode {
     Boolean(Token),
     Function(TypeFunctionNode),
+
+    Float4(Token),
+    Float8(Token),
+
+    Int1(Token),
+    Int2(Token),
+    Int4(Token),
+    Int8(Token),
+    Int16(Token),
+
     Number(Token),
     String(Token),
     Type(Token),
+
+    Uint1(Token),
+    Uint2(Token),
+    Uint4(Token),
+    Uint8(Token),
+    Uint16(Token),
 }
 
 #[derive(Debug, PartialEq)]

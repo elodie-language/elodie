@@ -15,10 +15,22 @@ impl<'a> Parser<'a> {
         }
         match value {
             "Bool" => Ok(TypeNode::Boolean(token)),
+            "function" => Ok(TypeNode::Function(self.parse_function_type()?)),
+            "Float4" => Ok(TypeNode::Float4(token)),
+            "Float8" => Ok(TypeNode::Float8(token)),
+            "Int1" => Ok(TypeNode::Int1(token)),
+            "Int2" => Ok(TypeNode::Int2(token)),
+            "Int4" => Ok(TypeNode::Int4(token)),
+            "Int8" => Ok(TypeNode::Int8(token)),
+            "Int16" => Ok(TypeNode::Int16(token)),
             "Number" => Ok(TypeNode::Number(token)),
             "String" => Ok(TypeNode::String(token)),
-            "function" => Ok(TypeNode::Function(self.parse_function_type()?)),
-            _ => Ok(TypeNode::Type( token )),
+            "Uint1" => Ok(TypeNode::Uint1(token)),
+            "Uint2" => Ok(TypeNode::Uint2(token)),
+            "Uint4" => Ok(TypeNode::Uint4(token)),
+            "Uint8" => Ok(TypeNode::Uint8(token)),
+            "Uint16" => Ok(TypeNode::Uint16(token)),
+            _ => Ok(TypeNode::Type(token)),
         }
     }
 
@@ -73,7 +85,7 @@ mod tests {
     use crate::frontend::lex::lex;
     use crate::frontend::parse::{Parser, TypeNode};
     use crate::frontend::parse::Error::InvalidType;
-    use crate::frontend::parse::node::{TypeFunctionArgumentNode};
+    use crate::frontend::parse::node::TypeFunctionArgumentNode;
 
     #[test]
     fn not_a_type() {
@@ -105,6 +117,116 @@ mod tests {
         let mut parser = Parser::new(&mut ctx, tokens);
         let result = parser.parse_type().unwrap();
         let TypeNode::Boolean(_) = result else {
+            panic!()
+        };
+    }
+
+    #[test]
+    fn type_float4() {
+        let mut ctx = Context::testing();
+        let tokens = lex(&mut ctx, "Float4").unwrap();
+        let mut parser = Parser::new(&mut ctx, tokens);
+        let result = parser.parse_type().unwrap();
+        let TypeNode::Float4(_) = result else {
+            panic!()
+        };
+    }
+
+    #[test]
+    fn type_float8() {
+        let mut ctx = Context::testing();
+        let tokens = lex(&mut ctx, "Float8").unwrap();
+        let mut parser = Parser::new(&mut ctx, tokens);
+        let result = parser.parse_type().unwrap();
+        let TypeNode::Float8(_) = result else {
+            panic!()
+        };
+    }
+
+    #[test]
+    fn type_int1() {
+        let mut ctx = Context::testing();
+        let tokens = lex(&mut ctx, "Int1").unwrap();
+        let mut parser = Parser::new(&mut ctx, tokens);
+        let result = parser.parse_type().unwrap();
+        let TypeNode::Int1(_) = result else {
+            panic!()
+        };
+    }
+
+    #[test]
+    fn type_int2() {
+        let mut ctx = Context::testing();
+        let tokens = lex(&mut ctx, "Int2").unwrap();
+        let mut parser = Parser::new(&mut ctx, tokens);
+        let result = parser.parse_type().unwrap();
+        let TypeNode::Int2(_) = result else {
+            panic!()
+        };
+    }
+
+    #[test]
+    fn type_int4() {
+        let mut ctx = Context::testing();
+        let tokens = lex(&mut ctx, "Int4").unwrap();
+        let mut parser = Parser::new(&mut ctx, tokens);
+        let result = parser.parse_type().unwrap();
+        let TypeNode::Int4(_) = result else {
+            panic!()
+        };
+    }
+
+    #[test]
+    fn type_int8() {
+        let mut ctx = Context::testing();
+        let tokens = lex(&mut ctx, "Int8").unwrap();
+        let mut parser = Parser::new(&mut ctx, tokens);
+        let result = parser.parse_type().unwrap();
+        let TypeNode::Int8(_) = result else {
+            panic!()
+        };
+    }
+
+    #[test]
+    fn type_uint1() {
+        let mut ctx = Context::testing();
+        let tokens = lex(&mut ctx, "Uint1").unwrap();
+        let mut parser = Parser::new(&mut ctx, tokens);
+        let result = parser.parse_type().unwrap();
+        let TypeNode::Uint1(_) = result else {
+            panic!()
+        };
+    }
+
+    #[test]
+    fn type_uint2() {
+        let mut ctx = Context::testing();
+        let tokens = lex(&mut ctx, "Uint2").unwrap();
+        let mut parser = Parser::new(&mut ctx, tokens);
+        let result = parser.parse_type().unwrap();
+        let TypeNode::Uint2(_) = result else {
+            panic!()
+        };
+    }
+
+    #[test]
+    fn type_uint4() {
+        let mut ctx = Context::testing();
+        let tokens = lex(&mut ctx, "Uint4").unwrap();
+        let mut parser = Parser::new(&mut ctx, tokens);
+        let result = parser.parse_type().unwrap();
+        let TypeNode::Uint4(_) = result else {
+            panic!()
+        };
+    }
+
+    #[test]
+    fn type_uint8() {
+        let mut ctx = Context::testing();
+        let tokens = lex(&mut ctx, "Uint8").unwrap();
+        let mut parser = Parser::new(&mut ctx, tokens);
+        let result = parser.parse_type().unwrap();
+        let TypeNode::Uint8(_) = result else {
             panic!()
         };
     }

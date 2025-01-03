@@ -329,12 +329,24 @@ pub enum AstType {
         arguments: Vec<AstType>,
         return_type: Option<Box<AstType>>,
     },
+    Float4,
+    Float8,
+    Int1,
+    Int2,
+    Int4,
+    Int8,
+    Int16,
     Number,
     String,
     Tuple(Vec<AstType>),
     Type {
         r#type: AstIdentifier
     },
+    Uint1,
+    Uint2,
+    Uint4,
+    Uint8,
+    Uint16,
 }
 
 impl AstType {
@@ -361,7 +373,6 @@ impl std::ops::Index<AstType> for TypeTable {
         &self.index(type_id)
     }
 }
-
 
 
 #[derive(Debug, Clone, PartialEq)]

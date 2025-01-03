@@ -17,14 +17,14 @@ impl<'a> Generator<'a> {
         let mut variables = Vec::with_capacity(node.properties.nodes.len());
         for node in &node.properties.nodes {
             let parse::Node::Infix(InfixNode {
-                left,
-                right,
-                operator,
-                token,
-            }) = node
-            else {
-                panic!()
-            };
+                                       left,
+                                       right,
+                                       operator,
+                                       token,
+                                   }) = node
+                else {
+                    panic!()
+                };
             assert!(matches!(operator, InfixOperator::TypeAscription(_)));
             let identifier = left.deref().as_identifier();
             let r#type = self.to_ast_type(right.deref().as_type());
@@ -47,14 +47,23 @@ impl<'a> Generator<'a> {
     pub(crate) fn to_ast_type(&self, node: &parse::TypeNode) -> AstType {
         match node {
             TypeNode::Boolean(_) => AstType::Boolean,
+            TypeNode::Float4(_) => AstType::Float4,
+            TypeNode::Float8(_) => AstType::Float8,
+
+            TypeNode::Int1(_) => AstType::Int1,
+            TypeNode::Int2(_) => AstType::Int2,
+            TypeNode::Int4(_) => AstType::Int4,
+            TypeNode::Int8(_) => AstType::Int8,
+            TypeNode::Int16(_) => AstType::Int16,
+
             TypeNode::Number(_) => AstType::Number,
             TypeNode::String(_) => AstType::String,
             TypeNode::Function(TypeFunctionNode {
-                token,
-                arguments,
-                return_type,
-                ..
-            }) => AstType::Function {
+                                   token,
+                                   arguments,
+                                   return_type,
+                                   ..
+                               }) => AstType::Function {
                 function: AstIdentifier(token.value),
                 arguments: arguments
                     .iter()
@@ -68,6 +77,12 @@ impl<'a> Generator<'a> {
             TypeNode::Type(token) => AstType::Type {
                 r#type: AstIdentifier(token.value())
             },
+
+            TypeNode::Uint1(_) => AstType::Uint1,
+            TypeNode::Uint2(_) => AstType::Uint2,
+            TypeNode::Uint4(_) => AstType::Uint4,
+            TypeNode::Uint8(_) => AstType::Uint8,
+            TypeNode::Uint16(_) => AstType::Uint16,
         }
     }
 
