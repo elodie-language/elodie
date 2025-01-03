@@ -3,7 +3,7 @@ use bigdecimal::ToPrimitive;
 use crate::build::c;
 use crate::build::c::{CallFunctionStatement, CallFunctionStatementResult, CodeExpression, Expression, LiteralBooleanExpression, LiteralDoubleExpression, LiteralExpression, Statement, VariableExpression};
 use crate::build::c::generator::Generator;
-use crate::build::c::generator::stack::Storage;
+use crate::build::c::generator::scope::Storage;
 use crate::common::GetString;
 use crate::ir::{IrLiteralBooleanNode, IrLiteralNumberNode, IrLiteralStringNode};
 
@@ -36,7 +36,7 @@ impl Generator {
         //     indent: Indent::none(),
         //     value: self.string_table.get(node.value).to_string(),
         // }))
-        let temp = self.stack.push_temp(Storage::Memory);
+        let temp = self.scope.push_temp(Storage::Memory);
         let value = self.string_table.get_string(node.value);
         self.statements().push(
             Statement::CallFunction(CallFunctionStatement {

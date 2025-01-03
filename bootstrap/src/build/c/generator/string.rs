@@ -1,8 +1,8 @@
 use crate::build::c;
 use crate::build::c::{CallFunctionStatement, CallFunctionStatementResult, CodeExpression, DeclareArrayStatement, LiteralExpression, LiteralIntExpression, LiteralStringExpression, Statement, VariableExpression};
 use crate::build::c::Expression::{Code, Literal, Variable};
-use crate::build::c::generator::{Generator, stack};
-use crate::build::c::generator::stack::{LocalVariable, Storage};
+use crate::build::c::generator::{Generator, scope};
+use crate::build::c::generator::scope::{LocalVariable, Storage};
 use crate::build::c::Statement::CallFunction;
 use crate::common::GetString;
 use crate::common::node::Node::{AccessVariable, LiteralString};
@@ -10,15 +10,14 @@ use crate::ir::IrInterpolateStringNode;
 
 impl Generator {
     pub(crate) fn interpolate_string(&mut self, node: &IrInterpolateStringNode) -> c::generator::Result<VariableExpression> {
-        let mut variables: Vec<stack::Variable> = Vec::with_capacity(node.nodes.len());
+        let mut variables: Vec<scope::Variable> = Vec::with_capacity(node.nodes.len());
 
         for node in &node.nodes {
             if let AccessVariable(node) = node.node() {
-
                 let symbol = self.symbol_table.variable(node.variable);
 
-                if self.type_table.type_id_number() == symbol.type_id.unwrap() {
-                    let temp = self.stack.push_temp(Storage::Memory);
+                if symbol.type_id.is_some() && self.type_table.type_id_number() == symbol.type_id.unwrap() {
+                    let temp = self.scope.push_temp(Storage::Memory);
 
                     let variable = symbol.to_string(&self.string_table);
 
@@ -34,7 +33,7 @@ impl Generator {
                         }),
                     }));
 
-                    variables.push(stack::Variable::Temp(temp, Storage::Memory))
+                    variables.push(scope::Variable::Temp(temp, Storage::Memory))
                 } else {
                     let variable = symbol.to_string(&self.string_table);
 
@@ -45,10 +44,10 @@ impl Generator {
                     //         expression: c::Expression::Variable(VariableExpression { variable }),
                     //     })
                     // );
-                    variables.push(stack::Variable::Variable(LocalVariable(variable), Storage::Memory));
+                    variables.push(scope::Variable::Variable(LocalVariable(variable), Storage::Memory));
                 }
             } else if let LiteralString(node) = node.node() {
-                let temp = self.stack.push_temp(Storage::Memory);
+                let temp = self.scope.push_temp(Storage::Memory);
 
                 let value = self.string_table.get_string(node.value);
 
@@ -79,11 +78,11 @@ impl Generator {
                 //     })
                 // );
 
-                variables.push(stack::Variable::Temp(temp, Storage::Memory))
+                variables.push(scope::Variable::Temp(temp, Storage::Memory))
             }
         }
 
-        let temp = self.stack.push_temp(Storage::Stack);
+        let temp = self.scope.push_temp(Storage::Stack);
         self.statements().push(Statement::DeclareArray(DeclareArrayStatement {
             identifier: temp.to_string(),
             r#type: "char".to_string(),
@@ -117,7 +116,7 @@ impl Generator {
             result: None,
         }));
 
-        let arg = self.stack.push_argument(Storage::Memory);
+        let arg = self.scope.push_argument(Storage::Memory);
 
         self.statements().push(Statement::CallFunction(CallFunctionStatement {
             function: "val_str_new_from_c_str".to_string(),

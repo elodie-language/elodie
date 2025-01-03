@@ -1,6 +1,6 @@
 use std::ops::Deref;
 
-use Node::If;
+use Node::{Block, If};
 
 use crate::common::{GetString, Inferred, Span, StringTable, SymbolId, SymbolName, SymbolTable, TypeTable, VariableSymbol, WithSpan};
 use crate::common::Context;
@@ -17,6 +17,7 @@ mod call;
 mod string;
 mod access;
 mod control;
+mod block;
 
 pub(crate) struct Pre<'a> {
     string_table: &'a mut StringTable,
@@ -51,6 +52,7 @@ impl<'a> Pre<'a> {
 
         match ast.node() {
             AccessVariable(node) => self.access_variable(node),
+            Block(node) => self.block(node),
             CallFunctionOfPackage(node) => self.call_function_of_package(node),
             DeclareVariable(node) => self.declare_variable(node),
             If(node) => self.r#if(node),

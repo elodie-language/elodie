@@ -133,7 +133,9 @@ pub struct IrAccessVariableOfSelfNode {}
 impl AccessVariableOfSelfNode<IrVariant> for IrAccessVariableOfSelfNode {}
 
 #[derive(Debug, Clone, PartialEq)]
-pub struct IrBlockNode {}
+pub struct IrBlockNode {
+    pub nodes: Box<[Rc<IrTreeNode>]>,
+}
 
 impl BlockNode<IrVariant> for IrBlockNode {}
 
@@ -220,7 +222,11 @@ pub struct IrExportPackageNode {}
 impl ExportPackageNode<IrVariant> for IrExportPackageNode {}
 
 #[derive(Debug, Clone, PartialEq)]
-pub struct IrIfNode {}
+pub struct IrIfNode {
+    pub condition: Rc<IrTreeNode>,
+    pub then: Rc<IrBlockNode>,
+    pub otherwise: Option<Rc<IrBlockNode>>,
+}
 
 impl IfNode<IrVariant> for IrIfNode {}
 

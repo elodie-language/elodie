@@ -5,7 +5,7 @@ use crate::ir::analyse::infer::Inferrer;
 use crate::ir::analyse::TypedTreeNode;
 
 impl<'a> Inferrer<'a> {
-    pub(crate) fn declare_variable(&mut self, node: &TypedTreeNode) -> crate::ir::analyse::Result<()> {
+    pub(crate) fn declare_variable(&mut self, node: &mut TypedTreeNode) -> crate::ir::analyse::Result<()> {
         let inner = node.as_declared_variable();
 
         let symbol = &mut self.symbol_table[inner.variable];
@@ -62,6 +62,40 @@ mod tests {
         assert_eq!(inner.value.as_literal_number().value, BigDecimal::from(23));
 
         assert!(ctx.symbol_is_number(SymbolId(1)));
+    }
+
+    #[test]
+    fn shadow_variable() {
+        let mut ctx = Context::testing();
+        let ast = ast_from_str(&mut ctx, r#"
+
+        let value = 23
+        {
+            let value = 9924
+        }
+
+        "#).unwrap();
+        let typed = analyse(&mut ctx, ast).unwrap();
+        assert_eq!(typed.nodes.len(), 2);
+
+        let outer = &typed[0];
+        assert_eq!(outer.inferred, Inferred::Number);
+
+        let outer = outer.as_declared_variable();
+        assert_eq!(outer.variable, SymbolId(1));
+        assert_eq!(outer.value.as_literal_number().value, BigDecimal::from(23));
+
+        let inner = &typed[1];
+        assert_eq!(inner.inferred, Inferred::Number);
+
+        let inner = inner.as_block();
+        assert_eq!(inner.nodes.len(), 1);
+        let inner = inner.nodes[0].as_declared_variable();
+        assert_eq!(inner.variable, SymbolId(2));
+        assert_eq!(inner.value.as_literal_number().value, BigDecimal::from(9924));
+
+        assert!(ctx.symbol_is_number(SymbolId(1)));
+        assert!(ctx.symbol_is_number(SymbolId(2)));
     }
 
     #[test]

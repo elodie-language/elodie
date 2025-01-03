@@ -38,7 +38,7 @@ pub struct DefineFunctionNode {
     pub identifier: String,
     pub arguments: Box<[DefineFunctionArgumentNode]>,
     pub ty: String,
-    pub statements: BlockStatement,
+    pub block: BlockStatement,
 }
 
 #[derive(Debug)]

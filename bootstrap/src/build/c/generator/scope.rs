@@ -1,5 +1,5 @@
 use crate::build::c;
-use crate::build::c::Statement;
+use crate::build::c::{BlockStatement, Statement};
 
 #[derive(Clone, Copy, Debug)]
 pub struct Argument(pub u16);
@@ -79,6 +79,7 @@ pub(crate) struct Frame {
     local_variables_storage: Vec<Storage>,
     temps: u16,
     temps_storage: Vec<Storage>,
+    pub statements: Vec<Statement>,
 }
 
 impl Frame {
@@ -90,6 +91,7 @@ impl Frame {
             local_variables_storage: vec![],
             temps: 0,
             temps_storage: vec![],
+            statements: vec![],
         }
     }
 
@@ -139,11 +141,11 @@ impl Frame {
     }
 }
 
-pub(crate) struct Stack {
+pub(crate) struct Scope {
     frames: Vec<Frame>,
 }
 
-impl Stack {
+impl Scope {
     pub(crate) fn new() -> Self {
         Self {
             frames: vec![Frame::new()]
@@ -154,10 +156,13 @@ impl Stack {
         self.frames.push(Frame::new())
     }
 
-    pub(crate) fn leave(&mut self) -> Vec<Statement> {
-        let mut frame = self.frames.pop().unwrap();
-        frame.cleanup()
+    pub(crate) fn leave(&mut self) {
+        let frame = self.frames.pop().unwrap();
+        // frame.cleanup()
+        self.statements().push(Statement::Block(BlockStatement{ statements: frame.statements}));
     }
+
+    pub(crate) fn frame(&mut self) -> Frame { self.frames.pop().unwrap() }
 
     pub(crate) fn push_argument(&mut self, storage: Storage) -> Argument {
         self.frames.last_mut().unwrap().push_argument(storage)
@@ -169,5 +174,9 @@ impl Stack {
 
     pub(crate) fn push_temp(&mut self, storage: Storage) -> Temp {
         self.frames.last_mut().unwrap().push_temp(storage)
+    }
+
+    pub(crate) fn statements(&mut self) -> &mut Vec<Statement> {
+        &mut self.frames.last_mut().unwrap().statements
     }
 }

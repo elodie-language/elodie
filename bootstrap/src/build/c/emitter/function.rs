@@ -74,7 +74,7 @@ impl Emitter {
             self.str(")");
         }
 
-        self.block_statement(&node.statements);
+        self.block_statement(&node.block);
     }
 
     pub(crate) fn return_from_function(&mut self, node: &c::ReturnFromFunctionStatement) {

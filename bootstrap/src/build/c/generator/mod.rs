@@ -1,11 +1,11 @@
 use std::collections::HashSet;
 
-use Node::{AccessVariable, LiteralBoolean, LiteralNumber, LiteralString};
+use Node::{AccessVariable, Block, If, LiteralBoolean, LiteralNumber, LiteralString};
 
 use crate::build::c;
-use crate::build::c::{BlockStatement, CodeStatement, DeclareFunctionNode, DeclareStructNode, DefineFunctionNode, DefineStructNode, DirectiveNode, IncludeLocalDirectiveNode, IncludeSystemDirectiveNode, Statement};
+use crate::build::c::{BlockStatement, CodeStatement, DeclareFunctionNode, DeclareStructNode, DefineFunctionNode, DefineStructNode, DirectiveNode, IncludeLocalDirectiveNode, IncludeSystemDirectiveNode};
 use crate::build::c::DirectiveNode::{IncludeLocalDirective, IncludeSystemDirective};
-use crate::build::c::generator::stack::Stack;
+use crate::build::c::generator::scope::Scope;
 use crate::build::c::Node::DefineFunction;
 use crate::common::{Context, SymbolTable, TypeTable};
 use crate::common::node::Node;
@@ -18,33 +18,34 @@ mod call;
 mod literal;
 mod variable;
 mod string;
-mod stack;
+mod scope;
 mod rc;
+mod block;
+mod control;
 
 #[derive(Debug)]
 pub enum Error {}
 
 type Result<T> = core::result::Result<T, Error>;
 
-#[derive(Debug, Clone, Copy)]
-pub(crate) struct FunctionPointer(usize);
+// #[derive(Debug, Clone, Copy)]
+// pub(crate) struct FunctionPointer(usize);
 
 pub(crate) fn generate(ctx: Context, ir: ir::Ir) -> Result<Vec<c::Node>> {
     let mut generator = Generator {
         string_table: ctx.string_table,
         symbol_table: ctx.symbol_table,
         type_table: ctx.type_table,
-        stack: Stack::new(),
+        scope: Scope::new(),
 
         directives: HashSet::new(),
 
-        function_pointer: FunctionPointer(0),
+        // function_pointer: FunctionPointer(0),
         function_declarations: Vec::new(),
         function_definitions: Vec::new(),
 
         struct_definitions: Vec::new(),
         struct_declarations: Vec::new(),
-
     };
     generator.generate(ir.nodes)
 }
@@ -53,11 +54,10 @@ pub(crate) struct Generator {
     string_table: StringTable,
     symbol_table: SymbolTable,
     type_table: TypeTable,
-    stack: Stack,
-
+    scope: Scope,
     directives: HashSet<DirectiveNode>,
     function_declarations: Vec<DeclareFunctionNode>,
-    function_pointer: FunctionPointer,
+    // function_pointer: FunctionPointer,
     function_definitions: Vec<DefineFunctionNode>,
     struct_declarations: Vec<DeclareStructNode>,
     struct_definitions: Vec<DefineStructNode>,
@@ -65,28 +65,47 @@ pub(crate) struct Generator {
 
 impl Generator {
     pub(crate) fn generate(mut self, nodes: Vec<IrTreeNode>) -> Result<Vec<c::Node>> {
-        self.function_definitions.push(DefineFunctionNode {
-            identifier: "main".to_string(),
-            arguments: vec![].into_boxed_slice(),
-            ty: "int".to_string(),
-            statements: BlockStatement {
-                statements: vec![
-                    c::Statement::Code(
-                        CodeStatement {
-                            code: r#"
+//         self.function_definitions.push(DefineFunctionNode {
+//             identifier: "main".to_string(),
+//             arguments: vec![].into_boxed_slice(),
+//             ty: "int".to_string(),
+//             block: BlockStatement {
+//                 statements: vec![
+//                     c::Statement::Code(
+//                         CodeStatement {
+//                             code: r#"
+// auto tm = mem_test_new_default (1024 * 1024 );
+//                             "#.to_string(),
+//                         }
+//                     )
+//                 ],
+//             },
+//         });
+
+        self.statements().push(
+            c::Statement::Code(
+                CodeStatement {
+                    code: r#"
 auto tm = mem_test_new_default (1024 * 1024 );
                             "#.to_string(),
-                        }
-                    )
-                ],
-            },
-        });
+                }
+            )
+        );
 
         for node in &nodes {
             self.nodes(node)?
         }
 
-        self.scope_leave();
+        // let mut statements = vec![];
+        // statements.extend(self.stack.leave().statements);
+
+        self.function_definitions.push(DefineFunctionNode {
+            identifier: "main".to_string(),
+            arguments: vec![].into_boxed_slice(),
+            ty: "int".to_string(),
+            block: BlockStatement { statements: self.scope.frame().statements },
+        });
+
 
         self.include_system("stdio.h");
         self.include_system("stdbool.h");
@@ -113,14 +132,14 @@ auto tm = mem_test_new_default (1024 * 1024 );
                 .map(|df| c::Node::DeclareFunction(df)),
         );
 
-        self.function_definitions[0].statements.statements.extend(vec![
-            Statement::Code(CodeStatement {
-                code: r#"
-mem_test_verify (tm);
-mem_test_free (tm);
-            "#.to_string(),
-            })
-        ]);
+//         self.function_definitions[0].block.statements.extend(vec![
+//             Statement::Code(CodeStatement {
+//                 code: r#"
+// mem_test_verify (tm);
+// mem_test_free (tm);
+//             "#.to_string(),
+//             })
+//         ]);
 
         result.extend(
             self.function_definitions
@@ -132,14 +151,18 @@ mem_test_free (tm);
     }
 
     pub(crate) fn statements(&mut self) -> &mut Vec<c::Statement> {
-        let ptr = self.function_pointer;
-        &mut self.function_definitions[ptr.0].statements.statements
+        // let ptr = self.function_pointer;
+        // &mut self.function_definitions[ptr.0].block.statements
+        // &mut self.current_block.statements
+        self.scope.statements()
     }
 
     pub(crate) fn nodes(&mut self, ir: &IrTreeNode) -> Result<()> {
         match ir.node() {
-            DeclareVariable(node) => self.declare_variable(node)?,
+            Block(node) => self.block(node)?,
             CallFunctionOfPackage(node) => self.call_function_of_package(node)?,
+            DeclareVariable(node) => self.declare_variable(node)?,
+            If(node) => self.r#if(node)?,
             _ => unimplemented!("{ir:#?}")
         }
         Ok(())
@@ -168,8 +191,13 @@ mem_test_free (tm);
         self.directives.insert(IncludeLocalDirective(IncludeLocalDirectiveNode { path: path.to_string() }));
     }
 
-    pub(crate) fn scope_leave(&mut self) {
-        let cleanup_statements = self.stack.leave();
-        self.statements().extend(cleanup_statements)
-    }
+    // pub(crate) fn stack_enter(&mut self) {
+    //     self.stack.enter()
+    // }
+    //
+    // pub(crate) fn stack_leave(&mut self) {
+    //     let frame = self.stack.leave();
+    //
+    //     self.statements().push(Statement::Block(BlockStatement { statements: frame.statements }));
+    // }
 }

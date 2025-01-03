@@ -1,4 +1,4 @@
-use std::rc::Rc;
+use std::cell::RefCell;
 
 use bigdecimal::BigDecimal;
 
@@ -68,6 +68,14 @@ impl TypedTreeNode {
             result
         } else {
             panic!("not access variable")
+        }
+    }
+
+    pub fn as_block(&self) -> &TypeBlockNode {
+        if let Node::Block(result) = &self.node {
+            result
+        } else {
+            panic!("not block")
         }
     }
 
@@ -158,7 +166,9 @@ pub struct TypeAccessVariableOfSelfNode {}
 impl AccessVariableOfSelfNode<TypeVariant> for TypeAccessVariableOfSelfNode {}
 
 #[derive(Debug, Clone, PartialEq)]
-pub struct TypeBlockNode {}
+pub struct TypeBlockNode {
+    pub nodes: Box<[TypedTreeNode]>,
+}
 
 impl BlockNode<TypeVariant> for TypeBlockNode {}
 
@@ -246,9 +256,9 @@ impl ExportPackageNode<TypeVariant> for TypeExportPackageNode {}
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct TypeIfNode {
-    pub condition: Rc<TypedTreeNode>,
-    pub then: Rc<TypeBlockNode>,
-    pub otherwise: Rc<TypeBlockNode>,
+    pub condition: Box<TypedTreeNode>,
+    pub then: RefCell<TypeBlockNode>,
+    pub otherwise: Option<RefCell<TypeBlockNode>>,
 }
 
 impl IfNode<TypeVariant> for TypeIfNode {}

@@ -2,7 +2,7 @@ use std::ops::Index;
 
 use crate::common::{StringTable, SymbolTable, TypeTable, WithSpan};
 use crate::common::Context;
-use crate::common::node::Node::{AccessVariable, CallFunctionOfPackage, DeclareVariable, InterpolateString, LiteralBoolean, LiteralNumber, LiteralString};
+use crate::common::node::Node::{AccessVariable, Block, CallFunctionOfPackage, DeclareVariable, If, InterpolateString, LiteralBoolean, LiteralNumber, LiteralString};
 use crate::ir::analyse::{TypedAst, TypedTreeNode};
 use crate::ir::Ir;
 use crate::ir::node::IrTreeNode;
@@ -12,6 +12,8 @@ mod declare;
 mod call;
 mod string;
 mod access;
+mod block;
+mod control;
 
 #[derive(Debug)]
 pub enum Error {}
@@ -44,8 +46,10 @@ impl<'a> Generator<'a> {
     pub(crate) fn node(&mut self, node: &TypedTreeNode) -> Result<IrTreeNode> {
         match &node.node {
             AccessVariable(inner) => self.access_variable(inner, node.span()),
+            Block(inner) => self.block(inner, node.span()),
             CallFunctionOfPackage(inner) => self.call_function_of_package(inner, node.span()),
             DeclareVariable(inner) => self.declare_variable(inner, node.span()),
+            If(inner) => self.r#if(inner, node.span()),
             InterpolateString(inner) => self.interpolate_string(inner, node.span()),
             LiteralBoolean(inner) => self.literal_boolean(inner, node.span()),
             LiteralNumber(inner) => self.literal_number(inner, node.span()),
