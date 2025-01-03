@@ -22,7 +22,7 @@ mod scope;
 mod rc;
 mod block;
 mod control;
-mod operator;
+mod compare;
 
 #[derive(Debug)]
 pub enum Error {}

@@ -34,6 +34,23 @@ impl Generator {
                     }));
 
                     variables.push(scope::Variable::Temp(temp, Storage::Memory))
+                } else if symbol.type_id.is_some() && self.type_table.type_id_boolean() == symbol.type_id.unwrap() {
+                    let temp = self.scope.push_temp(Storage::Memory);
+
+                    let variable = symbol.to_string(&self.string_table);
+
+                    self.statements().push(CallFunction(CallFunctionStatement {
+                        function: "val_bool_to_str".to_string(),
+                        arguments: Box::new([
+                            c::Expression::Variable(VariableExpression { variable }),
+                            c::Expression::Code(CodeExpression { code: "MEM(tm)".to_string() })
+                        ]),
+                        result: Some(CallFunctionStatementResult {
+                            identifier: temp.to_string(),
+                            r#type: "struct val_str *".to_string(),
+                        }),
+                    }));
+                    variables.push(scope::Variable::Temp(temp, Storage::Memory))
                 } else {
                     let variable = symbol.to_string(&self.string_table);
 
@@ -79,6 +96,8 @@ impl Generator {
                 // );
 
                 variables.push(scope::Variable::Temp(temp, Storage::Memory))
+            } else {
+                unimplemented!()
             }
         }
 
@@ -102,10 +121,10 @@ impl Generator {
         ];
 
         variables.iter().for_each(|t| {
-            // arguments.push(Variable(VariableExpression {
-            //     indent: Indent::none(),
-            //     variable: t.to_string(),
-            // }))
+// arguments.push(Variable(VariableExpression {
+//     indent: Indent::none(),
+//     variable: t.to_string(),
+// }))
             let s: String = t.to_string();
             arguments.push(Code(CodeExpression { code: s + "->data" }))
         });
