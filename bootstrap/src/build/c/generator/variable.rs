@@ -5,8 +5,8 @@ use crate::build::c::{CallFunctionStatement, CallFunctionStatementResult, CodeEx
 use crate::build::c::generator::Generator;
 use crate::build::c::generator::scope::Storage;
 use crate::common::GetString;
-use crate::common::node::Node::{LiteralNumber, LiteralString};
-use crate::ir::{IrAccessVariableNode, IrDeclareVariableNode, IrLiteralNumberNode, IrLiteralStringNode};
+use crate::common::node::Node::{LiteralBoolean, LiteralNumber, LiteralString};
+use crate::ir::{IrAccessVariableNode, IrDeclareVariableNode, IrLiteralBooleanNode, IrLiteralNumberNode, IrLiteralStringNode};
 
 impl Generator {
     pub(crate) fn access_variable(
@@ -65,6 +65,26 @@ impl Generator {
                     result: Some(CallFunctionStatementResult {
                         identifier: variable,
                         r#type: "struct val_num *".to_string(),
+                    }),
+                })
+            );
+
+            Ok(())
+        } else if let LiteralBoolean(IrLiteralBooleanNode { value }) = &node.value.node {
+            self.statements().push(
+                Statement::CallFunction(CallFunctionStatement {
+                    function: "val_bool_new_from_bool".to_string(),
+                    arguments: Box::new([
+                        c::Expression::Code(CodeExpression { code: "MEM(tm)".to_string() }),
+                        c::Expression::Literal(c::LiteralExpression::Bool(
+                            c::LiteralBooleanExpression {
+                                value: value.clone(),
+                            },
+                        )),
+                    ]),
+                    result: Some(CallFunctionStatementResult {
+                        identifier: variable,
+                        r#type: "struct val_bool *".to_string(),
                     }),
                 })
             );

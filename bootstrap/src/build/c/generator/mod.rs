@@ -1,6 +1,6 @@
 use std::collections::HashSet;
 
-use Node::{AccessVariable, Block, If, LiteralBoolean, LiteralNumber, LiteralString};
+use Node::{AccessVariable, Block, Compare, If, LiteralBoolean, LiteralNumber, LiteralString};
 
 use crate::build::c;
 use crate::build::c::{BlockStatement, CodeStatement, DeclareFunctionNode, DeclareStructNode, DefineFunctionNode, DefineStructNode, DirectiveNode, IncludeLocalDirectiveNode, IncludeSystemDirectiveNode};
@@ -22,6 +22,7 @@ mod scope;
 mod rc;
 mod block;
 mod control;
+mod operator;
 
 #[derive(Debug)]
 pub enum Error {}
@@ -175,6 +176,7 @@ auto tm = mem_test_new_default (1024 * 1024 );
     pub(crate) fn expression(&mut self, ir: &IrTreeNode) -> Result<c::Expression> {
         match ir.node() {
             AccessVariable(node) => Ok(c::Expression::Variable(self.access_variable(node)?)),
+            Compare(node) => Ok(self.compare(node)?),
             InterpolateString(node) => Ok(c::Expression::Variable(self.interpolate_string(node)?)),
             LiteralBoolean(node) => Ok(self.literal_bool(node)?),
             LiteralNumber(node) => Ok(self.literal_number(node)?),

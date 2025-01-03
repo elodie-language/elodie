@@ -2,7 +2,7 @@ use std::ops::Index;
 
 use crate::common::{StringTable, SymbolTable, TypeTable, WithSpan};
 use crate::common::Context;
-use crate::common::node::Node::{AccessVariable, Block, CallFunctionOfPackage, DeclareVariable, If, InterpolateString, LiteralBoolean, LiteralNumber, LiteralString};
+use crate::common::node::Node::{AccessVariable, Block, CallFunctionOfPackage, Compare, DeclareVariable, If, InterpolateString, LiteralBoolean, LiteralNumber, LiteralString};
 use crate::ir::analyse::{TypedAst, TypedTreeNode};
 use crate::ir::Ir;
 use crate::ir::node::IrTreeNode;
@@ -14,6 +14,7 @@ mod string;
 mod access;
 mod block;
 mod control;
+mod compare;
 
 #[derive(Debug)]
 pub enum Error {}
@@ -48,6 +49,7 @@ impl<'a> Generator<'a> {
             AccessVariable(inner) => self.access_variable(inner, node.span()),
             Block(inner) => self.block(inner, node.span()),
             CallFunctionOfPackage(inner) => self.call_function_of_package(inner, node.span()),
+            Compare(inner) => self.compare(inner, node.span()),
             DeclareVariable(inner) => self.declare_variable(inner, node.span()),
             If(inner) => self.r#if(inner, node.span()),
             InterpolateString(inner) => self.interpolate_string(inner, node.span()),

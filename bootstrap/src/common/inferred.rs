@@ -1,4 +1,5 @@
 use std::ops::Index;
+
 use crate::common::{StringTable, Type, TypeId, TypeTable};
 
 #[derive(Debug, Clone, PartialEq)]
@@ -12,6 +13,7 @@ pub enum Inferred {
     String,
     Tuple(Box<[Inferred]>),
     Type(TypeId),
+    Unit,
 
     OneOf(Box<[Inferred]>),
     AllOf(Box<[Inferred]>),

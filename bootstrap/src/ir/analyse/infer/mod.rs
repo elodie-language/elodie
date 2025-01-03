@@ -42,6 +42,7 @@ impl<'a> Inferrer<'a> {
         match node.node() {
             TypeNode::Block(_) => self.block(node),
             TypeNode::CallFunctionOfPackage(_) => self.call_function_of_package(node),
+            TypeNode::Compare(_) => Ok({}),
             TypeNode::DeclareVariable(_) => self.declare_variable(node),
             TypeNode::If(_) => self.r#if(node),
             TypeNode::LiteralBoolean(_) |

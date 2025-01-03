@@ -5,7 +5,7 @@ use Node::{Block, If};
 use crate::common::{GetString, Inferred, Span, StringTable, SymbolId, SymbolName, SymbolTable, TypeTable, VariableSymbol, WithSpan};
 use crate::common::Context;
 use crate::common::node::Node;
-use crate::common::node::Node::{AccessVariable, CallFunctionOfPackage, DeclareVariable, InterpolateString, LiteralBoolean, LiteralNumber, LiteralString};
+use crate::common::node::Node::{AccessVariable, CallFunctionOfPackage, Compare, DeclareVariable, InterpolateString, LiteralBoolean, LiteralNumber, LiteralString};
 use crate::frontend;
 use crate::frontend::ast::AstTreeNode;
 use crate::ir::analyse::{Error, TypedTreeNode, UndefinedError};
@@ -18,6 +18,7 @@ mod string;
 mod access;
 mod control;
 mod block;
+mod compare;
 
 pub(crate) struct Pre<'a> {
     string_table: &'a mut StringTable,
@@ -54,6 +55,7 @@ impl<'a> Pre<'a> {
             AccessVariable(node) => self.access_variable(node),
             Block(node) => self.block(node),
             CallFunctionOfPackage(node) => self.call_function_of_package(node),
+            Compare(node) => self.compare(node),
             DeclareVariable(node) => self.declare_variable(node),
             If(node) => self.r#if(node),
             InterpolateString(node) => self.interpolate_string(node),

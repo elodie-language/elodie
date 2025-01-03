@@ -1,9 +1,13 @@
+use crate::build::c::{AccessVariableOfStructExpression, DeclareArrayStatement, DeclareVariableStatement, VariableExpression};
 use crate::build::c::emitter::Emitter;
-use crate::build::c::{
-    DeclareArrayStatement, DeclareVariableStatement, VariableExpression,
-};
 
 impl Emitter {
+    pub(crate) fn access_variable_of_object(&mut self, expression: &AccessVariableOfStructExpression) {
+        self.str(expression.r#struct.as_str());
+        self.str("->");
+        self.str(expression.variable.as_str());
+    }
+
     pub(crate) fn declare_array(&mut self, statement: &DeclareArrayStatement) {
         self.token(statement.r#type.as_str());
         self.str(statement.identifier.as_str());

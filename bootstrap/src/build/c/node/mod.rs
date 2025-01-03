@@ -6,6 +6,9 @@ pub use operator::*;
 pub use r#struct::*;
 pub use variable::*;
 
+use crate::build::c;
+use crate::common::node::CompareOperator;
+
 mod control;
 mod directive;
 mod function;
@@ -33,21 +36,43 @@ pub struct CodeNode {
 
 #[derive(Debug)]
 pub enum Expression {
-    Code(CodeExpression),
+    AccessVariableOfStruct(AccessVariableOfStructExpression),
     CallFunction(CallFunctionExpression),
+    Code(CodeExpression),
+    Compare(CompareExpression),
     Infix(InfixExpression),
     Literal(LiteralExpression),
     Variable(VariableExpression),
     StructInitialisation(InitialiseStructExpression),
 }
 
+impl Expression {
+    pub fn compare_operator(op: &CompareOperator) -> c::Expression {
+        match op {
+            CompareOperator::Equal => {
+                c::Expression::Code(CodeExpression { code: "COMPARE_OPERATOR_EQUAL".to_string() })
+            }
+            CompareOperator::NotEqual => {
+                c::Expression::Code(CodeExpression { code: "COMPARE_OPERATOR_NOT_EQUAL".to_string() })
+            }
+            CompareOperator::GreaterThan => {
+                c::Expression::Code(CodeExpression { code: "COMPARE_OPERATOR_GREATER_THAN".to_string() })
+            }
+        }
+    }
+}
+
 #[derive(Debug)]
 pub enum Statement {
     Block(BlockStatement),
-    CallFunction(CallFunctionStatement),
-    Code(CodeStatement),
+    #[deprecated]
+    CallFunction(CallFunctionStatement), // Use expression
+    #[deprecated]
+    Code(CodeStatement), // Use expressions
     DeclareArray(DeclareArrayStatement),
     DeclareVariable(DeclareVariableStatement),
+    // TODO
+    // Expression(ExpressionStatement) - has optional result
     If(IfStatement),
     ReturnFromFunction(ReturnFromFunctionStatement),
 }
@@ -65,4 +90,17 @@ pub struct CodeStatement {
 #[derive(Debug)]
 pub struct CodeExpression {
     pub code: String,
+}
+
+#[derive(Debug)]
+pub struct AccessVariableOfStructExpression {
+    pub r#struct: String,
+    pub variable: String,
+}
+
+#[derive(Debug)]
+pub struct CompareExpression {
+    pub left: Box<Expression>,
+    pub operator: CompareOperator,
+    pub right: Box<Expression>,
 }

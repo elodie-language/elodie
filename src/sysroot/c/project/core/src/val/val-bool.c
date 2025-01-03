@@ -1,4 +1,5 @@
 
+#include "core/operator.h"
 #include "core/check.h"
 #include "core/val/val-bool.h"
 #include "core/val/val-str.h"
@@ -25,6 +26,35 @@ val_bool_equal(struct val_bool *lhs, struct val_bool *rhs) {
     CHECK_NOT_NULL(rhs);
     if (lhs == rhs) return true;
     return lhs->data == rhs->data;
+}
+
+bool
+val_bool_cmp(struct val_bool *lhs, enum CompareOperator op, struct val_bool *rhs) {
+    CHECK_NOT_NULL(lhs);
+    CHECK_NOT_NULL(rhs);
+    switch (op) {
+        case COMPARE_OPERATOR_EQUAL:
+            return lhs->data == rhs->data;
+        case COMPARE_OPERATOR_NOT_EQUAL:
+            return lhs->data != rhs->data;
+        default:
+            // FIXME panic
+            return false;
+    }
+}
+
+bool
+val_bool_cmp_lit(struct val_bool *lhs, enum CompareOperator op, bool rhs) {
+    CHECK_NOT_NULL(lhs);
+    switch (op) {
+        case COMPARE_OPERATOR_EQUAL:
+            return lhs->data == rhs;
+        case COMPARE_OPERATOR_NOT_EQUAL:
+            return lhs->data != rhs;
+        default:
+            // FIXME panic
+            return false;
+    }
 }
 
 struct val_str *

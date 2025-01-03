@@ -10,6 +10,7 @@ mod statement;
 mod r#struct;
 mod variable;
 mod code;
+mod operator;
 
 pub enum Error {}
 
@@ -44,8 +45,10 @@ impl Emitter {
 
     pub(crate) fn expression(&mut self, expression: &c::Expression) {
         match expression {
+            Expression::AccessVariableOfStruct(expression) => self.access_variable_of_object(expression),
             Expression::CallFunction(expression) => self.call_function_expression(expression),
             Expression::Code(expression) => self.code_expression(expression),
+            Expression::Compare(expression) => self.compare(expression),
             Expression::Infix(expression) => self.infix(expression),
             Expression::Literal(expression) => self.literal(expression),
             Expression::Variable(expression) => self.variable(expression),

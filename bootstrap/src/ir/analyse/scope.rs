@@ -46,7 +46,12 @@ impl Scope {
     }
 
     pub(crate) fn variable(&self, name: impl AsRef<SymbolName>) -> Option<SymbolId> {
-        self.frames.last().unwrap().variables.get(name.as_ref()).cloned()
+        for frame in self.frames.iter().rev() {
+            if let Some(value) = frame.variables.get(name.as_ref()).cloned() {
+                return Some(value);
+            }
+        }
+        None
     }
 
     pub(crate) fn enter(&mut self) {

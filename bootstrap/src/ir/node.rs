@@ -3,15 +3,7 @@ use std::rc::Rc;
 use bigdecimal::BigDecimal;
 
 use crate::common::{Span, StringTableId, SymbolId, TypeId, WithSpan};
-use crate::common::node::{
-    AccessVariableNode, AccessVariableOfObjectNode, AccessVariableOfSelfNode, BlockNode,
-    BreakLoopNode, CalculateNode, CallFunctionNode, CallFunctionOfObjectNode,
-    CallFunctionOfPackageNode, CallFunctionWithLambdaNode, CompareNode, ContinueLoopNode,
-    DeclareExternalFunctionNode, DeclareFunctionNode, DeclarePackageNode, DeclareTypeNode,
-    DeclareVariableNode, DefineTypeNode, ExportPackageNode, IfNode, InstantiateTypeNode,
-    InterpolateStringNode, LiteralBooleanNode, LiteralNumberNode, LiteralStringNode, LoopNode,
-    Node, ReturnFromFunctionNode, Variant,
-};
+use crate::common::node::{AccessVariableNode, AccessVariableOfObjectNode, AccessVariableOfSelfNode, BlockNode, BreakLoopNode, CalculateNode, CallFunctionNode, CallFunctionOfObjectNode, CallFunctionOfPackageNode, CallFunctionWithLambdaNode, CompareNode, CompareOperator, ContinueLoopNode, DeclareExternalFunctionNode, DeclareFunctionNode, DeclarePackageNode, DeclareTypeNode, DeclareVariableNode, DefineTypeNode, ExportPackageNode, IfNode, InstantiateTypeNode, InterpolateStringNode, LiteralBooleanNode, LiteralNumberNode, LiteralStringNode, LoopNode, Node, ReturnFromFunctionNode, Variant};
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct IrVariant {}
@@ -57,6 +49,15 @@ pub struct IrTreeNode {
 }
 
 impl IrTreeNode {
+
+    pub fn as_access_variable(&self) -> &IrAccessVariableNode {
+        if let Node::AccessVariable(result) = &self.node {
+            result
+        } else {
+            panic!("not access variable")
+        }
+    }
+
     pub fn as_declare_variable(&self) -> &IrDeclareVariableNode {
         if let Node::DeclareVariable(result) = &self.node {
             result
@@ -174,7 +175,11 @@ pub struct IrCallFunctionOfPackageNode {
 impl CallFunctionOfPackageNode<IrVariant> for IrCallFunctionOfPackageNode {}
 
 #[derive(Debug, Clone, PartialEq)]
-pub struct IrCompareNode {}
+pub struct IrCompareNode {
+    pub left: Rc<IrTreeNode>,
+    pub operator: CompareOperator,
+    pub right: Rc<IrTreeNode>,
+}
 
 impl CompareNode<IrVariant> for IrCompareNode {}
 

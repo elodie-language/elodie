@@ -29,6 +29,6 @@ typedef float f4;
 typedef double f8;
 
 ELODIE_API struct val_str *
-u2_to_str (struct mem *mem, u2 val);
+u2_to_str(struct mem *mem, u2 val);
 
 #endif //CORE_COMMON_H
