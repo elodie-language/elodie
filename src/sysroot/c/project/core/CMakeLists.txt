@@ -34,8 +34,19 @@ file(GLOB SRC_FILES
         src/val/val-fld.c
         src/val/val-fn.c
         src/val/val-lst.c
-
         src/val/val-num.c
+        src/val/val-num-f4.c
+        src/val/val-num-f8.c
+        src/val/val-num-i1.c
+        src/val/val-num-i2.c
+        src/val/val-num-i4.c
+        src/val/val-num-i8.c
+        src/val/val-num-i16.c
+        src/val/val-num-u1.c
+        src/val/val-num-u2.c
+        src/val/val-num-u4.c
+        src/val/val-num-u8.c
+        src/val/val-num-u16.c
         src/val/val-obj.c
         src/val/val-prop.c
         src/val/val-writer.c

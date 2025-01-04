@@ -1,7 +1,7 @@
 use bigdecimal::ToPrimitive;
 
 use crate::build::c;
-use crate::build::c::{CallFunctionStatement, CallFunctionStatementResult, CodeExpression, Expression, LiteralBooleanExpression, LiteralDoubleExpression, LiteralExpression, Statement, VariableExpression};
+use crate::build::c::{CallFunctionStatement, CallFunctionStatementResult, CodeExpression, Expression, LiteralBooleanExpression, LiteralFloat8Expression, LiteralExpression, Statement, VariableExpression};
 use crate::build::c::generator::Generator;
 use crate::build::c::generator::scope::Storage;
 use crate::common::GetString;
@@ -23,7 +23,7 @@ impl Generator {
     ) -> crate::build::c::generator::Result<Expression> {
 
         // FIXME becomes big decimal
-        Ok(Expression::Literal(LiteralExpression::Double(LiteralDoubleExpression {
+        Ok(Expression::Literal(LiteralExpression::Float8(LiteralFloat8Expression {
             value: node.value.to_f64().unwrap(),
         })))
     }

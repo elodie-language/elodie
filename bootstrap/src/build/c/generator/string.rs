@@ -1,10 +1,10 @@
 use crate::build::c;
-use crate::build::c::{CallFunctionStatement, CallFunctionStatementResult, CodeExpression, DeclareArrayStatement, LiteralExpression, LiteralIntExpression, LiteralStringExpression, Statement, VariableExpression};
+use crate::build::c::{CallFunctionStatement, CallFunctionStatementResult, CodeExpression, DeclareArrayStatement, LiteralExpression, LiteralInt4Expression, LiteralStringExpression, Statement, VariableExpression};
 use crate::build::c::Expression::{Code, Literal, Variable};
 use crate::build::c::generator::{Generator, scope};
 use crate::build::c::generator::scope::{LocalVariable, Storage};
 use crate::build::c::Statement::CallFunction;
-use crate::common::GetString;
+use crate::common::{GetString, TypeId};
 use crate::common::node::Node::{AccessVariable, LiteralString};
 use crate::ir::IrInterpolateStringNode;
 
@@ -16,7 +16,7 @@ impl Generator {
             if let AccessVariable(node) = node.node() {
                 let symbol = self.symbol_table.variable(node.variable);
 
-                if symbol.type_id.is_some() && self.type_table.type_id_number() == symbol.type_id.unwrap() {
+                if symbol.type_id.is_some() && TypeId::NUMBER == symbol.type_id.unwrap() {
                     let temp = self.scope.push_temp(Storage::Memory);
 
                     let variable = symbol.to_string(&self.string_table);
@@ -34,13 +34,218 @@ impl Generator {
                     }));
 
                     variables.push(scope::Variable::Temp(temp, Storage::Memory))
-                } else if symbol.type_id.is_some() && self.type_table.type_id_boolean() == symbol.type_id.unwrap() {
+                } else if symbol.type_id.is_some() && TypeId::BOOLEAN == symbol.type_id.unwrap() {
                     let temp = self.scope.push_temp(Storage::Memory);
 
                     let variable = symbol.to_string(&self.string_table);
 
                     self.statements().push(CallFunction(CallFunctionStatement {
                         function: "val_bool_to_str".to_string(),
+                        arguments: Box::new([
+                            c::Expression::Variable(VariableExpression { variable }),
+                            c::Expression::Code(CodeExpression { code: "MEM(tm)".to_string() })
+                        ]),
+                        result: Some(CallFunctionStatementResult {
+                            identifier: temp.to_string(),
+                            r#type: "struct val_str *".to_string(),
+                        }),
+                    }));
+                    variables.push(scope::Variable::Temp(temp, Storage::Memory))
+                } else if symbol.type_id.is_some() && TypeId::FLOAT4 == symbol.type_id.unwrap() {
+                    let temp = self.scope.push_temp(Storage::Memory);
+
+                    let variable = symbol.to_string(&self.string_table);
+
+                    self.statements().push(CallFunction(CallFunctionStatement {
+                        function: "val_f4_to_str".to_string(),
+                        arguments: Box::new([
+                            c::Expression::Variable(VariableExpression { variable }),
+                            c::Expression::Code(CodeExpression { code: "MEM(tm)".to_string() })
+                        ]),
+                        result: Some(CallFunctionStatementResult {
+                            identifier: temp.to_string(),
+                            r#type: "struct val_str *".to_string(),
+                        }),
+                    }));
+                    variables.push(scope::Variable::Temp(temp, Storage::Memory))
+                } else if symbol.type_id.is_some() && TypeId::FLOAT8 == symbol.type_id.unwrap() {
+                    let temp = self.scope.push_temp(Storage::Memory);
+
+                    let variable = symbol.to_string(&self.string_table);
+
+                    self.statements().push(CallFunction(CallFunctionStatement {
+                        function: "val_f8_to_str".to_string(),
+                        arguments: Box::new([
+                            c::Expression::Variable(VariableExpression { variable }),
+                            c::Expression::Code(CodeExpression { code: "MEM(tm)".to_string() })
+                        ]),
+                        result: Some(CallFunctionStatementResult {
+                            identifier: temp.to_string(),
+                            r#type: "struct val_str *".to_string(),
+                        }),
+                    }));
+                    variables.push(scope::Variable::Temp(temp, Storage::Memory))
+                } else if symbol.type_id.is_some() && TypeId::INT1 == symbol.type_id.unwrap() {
+                    let temp = self.scope.push_temp(Storage::Memory);
+
+                    let variable = symbol.to_string(&self.string_table);
+
+                    self.statements().push(CallFunction(CallFunctionStatement {
+                        function: "val_i1_to_str".to_string(),
+                        arguments: Box::new([
+                            c::Expression::Variable(VariableExpression { variable }),
+                            c::Expression::Code(CodeExpression { code: "MEM(tm)".to_string() })
+                        ]),
+                        result: Some(CallFunctionStatementResult {
+                            identifier: temp.to_string(),
+                            r#type: "struct val_str *".to_string(),
+                        }),
+                    }));
+                    variables.push(scope::Variable::Temp(temp, Storage::Memory))
+                } else if symbol.type_id.is_some() && TypeId::INT2 == symbol.type_id.unwrap() {
+                    let temp = self.scope.push_temp(Storage::Memory);
+
+                    let variable = symbol.to_string(&self.string_table);
+
+                    self.statements().push(CallFunction(CallFunctionStatement {
+                        function: "val_i2_to_str".to_string(),
+                        arguments: Box::new([
+                            c::Expression::Variable(VariableExpression { variable }),
+                            c::Expression::Code(CodeExpression { code: "MEM(tm)".to_string() })
+                        ]),
+                        result: Some(CallFunctionStatementResult {
+                            identifier: temp.to_string(),
+                            r#type: "struct val_str *".to_string(),
+                        }),
+                    }));
+                    variables.push(scope::Variable::Temp(temp, Storage::Memory))
+                } else if symbol.type_id.is_some() && TypeId::INT4 == symbol.type_id.unwrap() {
+                    let temp = self.scope.push_temp(Storage::Memory);
+
+                    let variable = symbol.to_string(&self.string_table);
+
+                    self.statements().push(CallFunction(CallFunctionStatement {
+                        function: "val_i4_to_str".to_string(),
+                        arguments: Box::new([
+                            c::Expression::Variable(VariableExpression { variable }),
+                            c::Expression::Code(CodeExpression { code: "MEM(tm)".to_string() })
+                        ]),
+                        result: Some(CallFunctionStatementResult {
+                            identifier: temp.to_string(),
+                            r#type: "struct val_str *".to_string(),
+                        }),
+                    }));
+                    variables.push(scope::Variable::Temp(temp, Storage::Memory))
+                } else if symbol.type_id.is_some() && TypeId::INT8 == symbol.type_id.unwrap() {
+                    let temp = self.scope.push_temp(Storage::Memory);
+
+                    let variable = symbol.to_string(&self.string_table);
+
+                    self.statements().push(CallFunction(CallFunctionStatement {
+                        function: "val_i8_to_str".to_string(),
+                        arguments: Box::new([
+                            c::Expression::Variable(VariableExpression { variable }),
+                            c::Expression::Code(CodeExpression { code: "MEM(tm)".to_string() })
+                        ]),
+                        result: Some(CallFunctionStatementResult {
+                            identifier: temp.to_string(),
+                            r#type: "struct val_str *".to_string(),
+                        }),
+                    }));
+                    variables.push(scope::Variable::Temp(temp, Storage::Memory))
+                } else if symbol.type_id.is_some() && TypeId::INT16 == symbol.type_id.unwrap() {
+                    let temp = self.scope.push_temp(Storage::Memory);
+
+                    let variable = symbol.to_string(&self.string_table);
+
+                    self.statements().push(CallFunction(CallFunctionStatement {
+                        function: "val_i16_to_str".to_string(),
+                        arguments: Box::new([
+                            c::Expression::Variable(VariableExpression { variable }),
+                            c::Expression::Code(CodeExpression { code: "MEM(tm)".to_string() })
+                        ]),
+                        result: Some(CallFunctionStatementResult {
+                            identifier: temp.to_string(),
+                            r#type: "struct val_str *".to_string(),
+                        }),
+                    }));
+                    variables.push(scope::Variable::Temp(temp, Storage::Memory))
+                }
+                else if symbol.type_id.is_some() && TypeId::UINT1 == symbol.type_id.unwrap() {
+                    let temp = self.scope.push_temp(Storage::Memory);
+
+                    let variable = symbol.to_string(&self.string_table);
+
+                    self.statements().push(CallFunction(CallFunctionStatement {
+                        function: "val_i1_to_str".to_string(),
+                        arguments: Box::new([
+                            c::Expression::Variable(VariableExpression { variable }),
+                            c::Expression::Code(CodeExpression { code: "MEM(tm)".to_string() })
+                        ]),
+                        result: Some(CallFunctionStatementResult {
+                            identifier: temp.to_string(),
+                            r#type: "struct val_str *".to_string(),
+                        }),
+                    }));
+                    variables.push(scope::Variable::Temp(temp, Storage::Memory))
+                } else if symbol.type_id.is_some() && TypeId::UINT2 == symbol.type_id.unwrap() {
+                    let temp = self.scope.push_temp(Storage::Memory);
+
+                    let variable = symbol.to_string(&self.string_table);
+
+                    self.statements().push(CallFunction(CallFunctionStatement {
+                        function: "val_i2_to_str".to_string(),
+                        arguments: Box::new([
+                            c::Expression::Variable(VariableExpression { variable }),
+                            c::Expression::Code(CodeExpression { code: "MEM(tm)".to_string() })
+                        ]),
+                        result: Some(CallFunctionStatementResult {
+                            identifier: temp.to_string(),
+                            r#type: "struct val_str *".to_string(),
+                        }),
+                    }));
+                    variables.push(scope::Variable::Temp(temp, Storage::Memory))
+                } else if symbol.type_id.is_some() && TypeId::UINT4 == symbol.type_id.unwrap() {
+                    let temp = self.scope.push_temp(Storage::Memory);
+
+                    let variable = symbol.to_string(&self.string_table);
+
+                    self.statements().push(CallFunction(CallFunctionStatement {
+                        function: "val_i4_to_str".to_string(),
+                        arguments: Box::new([
+                            c::Expression::Variable(VariableExpression { variable }),
+                            c::Expression::Code(CodeExpression { code: "MEM(tm)".to_string() })
+                        ]),
+                        result: Some(CallFunctionStatementResult {
+                            identifier: temp.to_string(),
+                            r#type: "struct val_str *".to_string(),
+                        }),
+                    }));
+                    variables.push(scope::Variable::Temp(temp, Storage::Memory))
+                } else if symbol.type_id.is_some() && TypeId::UINT8 == symbol.type_id.unwrap() {
+                    let temp = self.scope.push_temp(Storage::Memory);
+
+                    let variable = symbol.to_string(&self.string_table);
+
+                    self.statements().push(CallFunction(CallFunctionStatement {
+                        function: "val_i8_to_str".to_string(),
+                        arguments: Box::new([
+                            c::Expression::Variable(VariableExpression { variable }),
+                            c::Expression::Code(CodeExpression { code: "MEM(tm)".to_string() })
+                        ]),
+                        result: Some(CallFunctionStatementResult {
+                            identifier: temp.to_string(),
+                            r#type: "struct val_str *".to_string(),
+                        }),
+                    }));
+                    variables.push(scope::Variable::Temp(temp, Storage::Memory))
+                } else if symbol.type_id.is_some() && TypeId::UINT16 == symbol.type_id.unwrap() {
+                    let temp = self.scope.push_temp(Storage::Memory);
+
+                    let variable = symbol.to_string(&self.string_table);
+
+                    self.statements().push(CallFunction(CallFunctionStatement {
+                        function: "val_i16_to_str".to_string(),
                         arguments: Box::new([
                             c::Expression::Variable(VariableExpression { variable }),
                             c::Expression::Code(CodeExpression { code: "MEM(tm)".to_string() })
@@ -112,7 +317,7 @@ impl Generator {
             Variable(VariableExpression {
                 variable: temp.to_string(),
             }),
-            Literal(LiteralExpression::Int(LiteralIntExpression {
+            Literal(LiteralExpression::Int4(LiteralInt4Expression {
                 value: 100,
             })),
             Literal(LiteralExpression::String(LiteralStringExpression {

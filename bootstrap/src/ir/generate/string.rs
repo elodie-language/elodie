@@ -1,6 +1,6 @@
 use std::rc::Rc;
 
-use crate::common::{Span, WithSpan};
+use crate::common::{Span, TypeId, WithSpan};
 use crate::common::node::Node;
 use crate::common::node::Node::InterpolateString;
 use crate::ir::{IrAccessVariableNode, IrInterpolateStringNode, IrLiteralStringNode, IrTreeNode};
@@ -17,7 +17,7 @@ impl<'a> Generator<'a> {
         Ok(IrTreeNode::new(
             InterpolateString(IrInterpolateStringNode { nodes: nodes.into_boxed_slice() }),
             span,
-            self.type_table.type_id_string(),
+            TypeId::STRING,
         ))
     }
 
@@ -26,12 +26,12 @@ impl<'a> Generator<'a> {
             Node::AccessVariable(access_variable) => Ok(IrTreeNode::new(
                 Node::AccessVariable(IrAccessVariableNode { variable: access_variable.variable }),
                 node.span(),
-                self.type_table.type_id_string(),
+                TypeId::STRING,
             )),
             Node::LiteralString(literal) => Ok(IrTreeNode::new(
                 Node::LiteralString(IrLiteralStringNode { value: literal.value }),
                 node.span(),
-                self.type_table.type_id_string(),
+                TypeId::STRING,
             )),
             _ => unimplemented!()
         }

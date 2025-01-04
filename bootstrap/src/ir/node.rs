@@ -330,35 +330,35 @@ impl LiteralStringNode<IrVariant> for IrLiteralStringNode {}
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct IrLiteralUint1Node {
-    pub value: i8,
+    pub value: u8,
 }
 
 impl LiteralUint1Node<IrVariant> for IrLiteralUint1Node {}
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct IrLiteralUint2Node {
-    pub value: i16,
+    pub value: u16,
 }
 
 impl LiteralUint2Node<IrVariant> for IrLiteralUint2Node {}
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct IrLiteralUint4Node {
-    pub value: i32,
+    pub value: u32,
 }
 
 impl LiteralUint4Node<IrVariant> for IrLiteralUint4Node {}
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct IrLiteralUint8Node {
-    pub value: i64,
+    pub value: u64,
 }
 
 impl LiteralUint8Node<IrVariant> for IrLiteralUint8Node {}
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct IrLiteralUint16Node {
-    pub value: i128,
+    pub value: u128,
 }
 
 impl LiteralUint16Node<IrVariant> for IrLiteralUint16Node {}

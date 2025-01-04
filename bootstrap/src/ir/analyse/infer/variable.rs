@@ -1,6 +1,6 @@
 use std::ops::Deref;
 
-use crate::common::Inferred;
+use crate::common::{Inferred, TypeId};
 use crate::ir::analyse::infer::Inferrer;
 use crate::ir::analyse::TypedTreeNode;
 
@@ -13,15 +13,21 @@ impl<'a> Inferrer<'a> {
         self.scope.register_symbol(symbol);
 
         match node.inferred {
-            Inferred::Boolean => {
-                symbol.set_type_id(self.type_table.type_id_boolean())
-            }
-            Inferred::Number => {
-                symbol.set_type_id(self.type_table.type_id_number())
-            }
-            Inferred::String => {
-                symbol.set_type_id(self.type_table.type_id_string())
-            }
+            Inferred::Boolean => { symbol.set_type_id(TypeId::BOOLEAN) }
+            Inferred::Float4 => { symbol.set_type_id(TypeId::FLOAT4) }
+            Inferred::Float8 => { symbol.set_type_id(TypeId::FLOAT8) }
+            Inferred::Int1 => { symbol.set_type_id(TypeId::INT1) }
+            Inferred::Int2 => { symbol.set_type_id(TypeId::INT2) }
+            Inferred::Int4 => { symbol.set_type_id(TypeId::INT4) }
+            Inferred::Int8 => { symbol.set_type_id(TypeId::INT8) }
+            Inferred::Int16 => { symbol.set_type_id(TypeId::INT16) }
+            Inferred::Number => { symbol.set_type_id(TypeId::NUMBER) }
+            Inferred::String => { symbol.set_type_id(TypeId::STRING) }
+            Inferred::Uint1 => { symbol.set_type_id(TypeId::UINT1) }
+            Inferred::Uint2 => { symbol.set_type_id(TypeId::UINT2) }
+            Inferred::Uint4 => { symbol.set_type_id(TypeId::UINT4) }
+            Inferred::Uint8 => { symbol.set_type_id(TypeId::UINT8) }
+            Inferred::Uint16 => { symbol.set_type_id(TypeId::UINT16) }
             _ => unimplemented!()
         }
 

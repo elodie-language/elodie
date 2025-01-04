@@ -21,19 +21,14 @@ impl Context {
     pub fn symbol_name(&self, id: SymbolId) -> &str { self.symbol_table[id].name_str(&self.string_table) }
     pub fn symbol_type_id(&self, id: SymbolId) -> Option<TypeId> { self.symbol_table[id].type_id().clone() }
 
-    pub fn symbol_is_boolean(&self, id: SymbolId) -> bool { self.symbol_type_id(id) == Some(self.type_id_boolean()) }
-    pub fn symbol_is_number(&self, id: SymbolId) -> bool { self.symbol_type_id(id) == Some(self.type_id_number()) }
-    pub fn symbol_is_string(&self, id: SymbolId) -> bool { self.symbol_type_id(id) == Some(self.type_id_string()) }
-
-    pub fn type_id_boolean(&self) -> TypeId { self.type_table.type_id_boolean() }
-    pub fn type_id_number(&self) -> TypeId { self.type_table.type_id_number() }
-    pub fn type_id_string(&self) -> TypeId { self.type_table.type_id_string() }
-
+    pub fn symbol_is_boolean(&self, id: SymbolId) -> bool { self.symbol_type_id(id) == Some(TypeId::BOOLEAN) }
+    pub fn symbol_is_number(&self, id: SymbolId) -> bool { self.symbol_type_id(id) == Some(TypeId::NUMBER) }
+    pub fn symbol_is_string(&self, id: SymbolId) -> bool { self.symbol_type_id(id) == Some(TypeId::STRING) }
 
     #[cfg(test)]
     pub fn testing() -> Self {
         let mut string_table = StringTable::new();
-        let type_table = TypeTable::new(&mut string_table, 1);
+        let type_table = TypeTable::new(&mut string_table);
         Self {
             string_table,
             symbol_table: SymbolTable::new(),
@@ -45,7 +40,7 @@ impl Context {
 impl Default for Context {
     fn default() -> Self {
         let mut string_table = StringTable::new();
-        let type_table = TypeTable::new(&mut string_table, 0); // FIXME seed needs to be random
+        let type_table = TypeTable::new(&mut string_table);
         Self {
             string_table,
             symbol_table: SymbolTable::new(),

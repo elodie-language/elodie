@@ -1,7 +1,7 @@
 use std::rc::Rc;
 
+use crate::common::{Span, TypeId};
 use crate::common::node::Node;
-use crate::common::Span;
 use crate::ir::{IrCompareNode, IrTreeNode};
 use crate::ir::analyse::TypeCompareNode;
 use crate::ir::generate::Generator;
@@ -19,7 +19,7 @@ impl<'a> Generator<'a> {
                     right: Rc::new(right),
                 }),
                 span.clone(),
-                self.type_table.type_id_boolean(),
+                TypeId::BOOLEAN,
             )
         )
     }

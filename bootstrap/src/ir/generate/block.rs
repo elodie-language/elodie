@@ -1,7 +1,7 @@
 use std::rc::Rc;
 
+use crate::common::{Span, TypeId};
 use crate::common::node::Node::Block;
-use crate::common::Span;
 use crate::ir::{IrBlockNode, IrTreeNode};
 use crate::ir::analyse::TypeBlockNode;
 use crate::ir::generate::Generator;
@@ -19,7 +19,7 @@ impl<'a> Generator<'a> {
                 nodes: nodes.into_boxed_slice()
             }),
             span,
-            self.type_table.type_id_unit(),
+            TypeId::UNIT,
         ))
     }
 }

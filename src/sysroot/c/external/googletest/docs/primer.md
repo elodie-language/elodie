@@ -249,7 +249,7 @@ fixture at runtime, immediately initialize it via `SetUp()`, run the test, clean
 up by calling `TearDown()`, and then delete the test fixture. Note that
 different tests in the same test suite have different test fixture objects, and
 googletest always deletes a test fixture before it creates the next one.
-googletest does **not** reuse the same test fixture for multiple tests. Any
+googletest does **not** reuse the same test fixture for multiple tests. ANY
 changes one test makes to the fixture do not affect other tests.
 
 As an example, let's write tests for a FIFO queue class named `Queue`, which has

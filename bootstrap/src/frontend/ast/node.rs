@@ -4,7 +4,7 @@ use std::rc::Rc;
 
 use node::CalculateNode;
 
-use crate::common::{Column, Index, node, PackagePath, Position, Row, Span, StringTable, StringTableId, Type, TypeTable, WithSpan};
+use crate::common::{Column, Index, node, PackagePath, Position, Row, Span, StringTable, StringTableId, Type, TypeId, TypeTable, WithSpan};
 use crate::common::node::{AccessVariableNode, AccessVariableOfObjectNode, AccessVariableOfSelfNode, BlockNode, BreakLoopNode, CallFunctionNode, CallFunctionOfObjectNode, CallFunctionOfPackageNode, CallFunctionWithLambdaNode, CompareNode, CompareOperator, ContinueLoopNode, DeclareExternalFunctionNode, DeclareFunctionNode, DeclarePackageNode, DeclareTypeNode, DeclareVariableNode, DefineTypeNode, ExportPackageNode, IfNode, InstantiateTypeNode, InterpolateStringNode, LiteralBooleanNode, LiteralFloat4Node, LiteralFloat8Node, LiteralInt16Node, LiteralInt1Node, LiteralInt2Node, LiteralInt4Node, LiteralInt8Node, LiteralNumberNode, LiteralStringNode, LiteralUint16Node, LiteralUint1Node, LiteralUint2Node, LiteralUint4Node, LiteralUint8Node, LoopNode, Node, ReturnFromFunctionNode, Source, Variant};
 use crate::frontend::lex::token::Token;
 use crate::frontend::modifier::Modifiers;
@@ -445,9 +445,9 @@ impl std::ops::Index<AstType> for TypeTable {
     type Output = Type;
     fn index(&self, index: AstType) -> &Self::Output {
         let type_id = match index {
-            AstType::Boolean => self.type_id_boolean(),
-            AstType::Number => self.type_id_number(),
-            AstType::String => self.type_id_string(),
+            AstType::Boolean => TypeId::BOOLEAN,
+            AstType::Number => TypeId::NUMBER,
+            AstType::String => TypeId::STRING,
             _ => unimplemented!()
         };
 

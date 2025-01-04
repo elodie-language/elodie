@@ -1,6 +1,6 @@
 use std::rc::Rc;
 
-use crate::common::{Span, SymbolId};
+use crate::common::{Span, SymbolId, TypeId};
 use crate::common::node::Node::CallFunctionOfPackage;
 use crate::ir::analyse::TypeCallFunctionOfPackageNode;
 use crate::ir::generate::Generator;
@@ -13,7 +13,7 @@ impl<'a> Generator<'a> {
             arguments.push(Rc::new(self.node(arg)?))
         }
 
-        let result_type = self.type_table.type_id_unit(); // FIXME derive
+        let result_type = TypeId::UNIT; // FIXME derive
 
         Ok(IrTreeNode::new(
             CallFunctionOfPackage(IrCallFunctionOfPackageNode {

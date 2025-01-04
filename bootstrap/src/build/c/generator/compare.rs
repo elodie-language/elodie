@@ -4,6 +4,7 @@ use crate::build::c;
 use crate::build::c::{CallFunctionExpression, CompareExpression, Expression};
 use crate::build::c::generator::Generator;
 use crate::common::node::Node;
+use crate::common::TypeId;
 use crate::ir::IrCompareNode;
 
 impl Generator {
@@ -18,7 +19,7 @@ impl Generator {
             (LiteralBoolean(_), AccessVariable(variable)) => {
                 let variable = self.symbol_table.variable(variable.variable);
 
-                if self.type_table.type_id_boolean() == variable.type_id.unwrap() {
+                if TypeId::BOOLEAN == variable.type_id.unwrap() {
                     Ok(Expression::CallFunction(
                         CallFunctionExpression {
                             function: "val_bool_cmp_lit".to_string(),
@@ -37,7 +38,7 @@ impl Generator {
             (AccessVariable(variable), LiteralBoolean(_)) => {
                 let variable = self.symbol_table.variable(variable.variable);
 
-                if self.type_table.type_id_boolean() == variable.type_id.unwrap() {
+                if TypeId::BOOLEAN == variable.type_id.unwrap() {
                     Ok(Expression::CallFunction(
                         CallFunctionExpression {
                             function: "val_bool_cmp_lit".to_string(),

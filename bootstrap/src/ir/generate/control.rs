@@ -1,8 +1,8 @@
 use std::ops::Deref;
 use std::rc::Rc;
 
+use crate::common::{Span, TypeId};
 use crate::common::node::Node::If;
-use crate::common::Span;
 use crate::ir::{IrBlockNode, IrIfNode, IrTreeNode};
 use crate::ir::analyse::TypeIfNode;
 use crate::ir::generate::Generator;
@@ -35,7 +35,7 @@ impl<'a> Generator<'a> {
                 otherwise,
             }),
             span,
-            self.type_table.type_id_unit(),
+            TypeId::UNIT,
         )
         )
     }

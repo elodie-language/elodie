@@ -1,12 +1,10 @@
 let number: Number = 9924
 rt::io::println('${number}')
-
 let number: Number = 99.24
 rt::io::println('${number}')
 
 let number: Float4 = 1.1
 rt::io::println('${number}')
-
 let number: Float8 = 2.2
 rt::io::println('${number}')
 
@@ -30,11 +28,12 @@ rt::io::println('${number}')
 let number: Uint8 = 8
 rt::io::println('${number}')
 let number: Uint16 = 16
+rt::io::println('${number}')
 
 // out: 9924
 // out: 99.24
-// out: 1.1
-// out: 2.2
+// out: 1.100000
+// out: 2.200000
 // out: 1
 // out: 2
 // out: 4

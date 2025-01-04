@@ -47,9 +47,9 @@ impl Index<Inferred> for TypeTable {
     type Output = Type;
     fn index(&self, index: Inferred) -> &Self::Output {
         let type_id = match index {
-            Inferred::Boolean => self.type_id_boolean(),
-            Inferred::Number => self.type_id_number(),
-            Inferred::String => self.type_id_string(),
+            Inferred::Boolean => TypeId::BOOLEAN,
+            Inferred::Number => TypeId::NUMBER,
+            Inferred::String => TypeId::STRING,
             _ => unimplemented!()
         };
 

@@ -2,7 +2,7 @@ use std::ops::Index;
 
 use crate::common::{StringTable, SymbolTable, TypeTable, WithSpan};
 use crate::common::Context;
-use crate::common::node::Node::{AccessVariable, Block, CallFunctionOfPackage, Compare, DeclareVariable, If, InterpolateString, LiteralBoolean, LiteralNumber, LiteralString};
+use crate::common::node::Node::{AccessVariable, Block, CallFunctionOfPackage, Compare, DeclareVariable, If, InterpolateString, LiteralBoolean, LiteralFloat4, LiteralFloat8, LiteralInt1, LiteralInt16, LiteralInt2, LiteralInt4, LiteralInt8, LiteralNumber, LiteralString, LiteralUint1, LiteralUint16, LiteralUint2, LiteralUint4, LiteralUint8};
 use crate::ir::analyse::{TypedAst, TypedTreeNode};
 use crate::ir::Ir;
 use crate::ir::node::IrTreeNode;
@@ -54,8 +54,20 @@ impl<'a> Generator<'a> {
             If(inner) => self.r#if(inner, node.span()),
             InterpolateString(inner) => self.interpolate_string(inner, node.span()),
             LiteralBoolean(inner) => self.literal_boolean(inner, node.span()),
+            LiteralFloat4(inner) => self.literal_float4(inner, node.span()),
+            LiteralFloat8(inner) => self.literal_float8(inner, node.span()),
+            LiteralInt1(inner) => self.literal_int1(inner, node.span()),
+            LiteralInt2(inner) => self.literal_int2(inner, node.span()),
+            LiteralInt4(inner) => self.literal_int4(inner, node.span()),
+            LiteralInt8(inner) => self.literal_int8(inner, node.span()),
+            LiteralInt16(inner) => self.literal_int16(inner, node.span()),
             LiteralNumber(inner) => self.literal_number(inner, node.span()),
             LiteralString(inner) => self.literal_string(inner, node.span()),
+            LiteralUint1(inner) => self.literal_uint1(inner, node.span()),
+            LiteralUint2(inner) => self.literal_uint2(inner, node.span()),
+            LiteralUint4(inner) => self.literal_uint4(inner, node.span()),
+            LiteralUint8(inner) => self.literal_uint8(inner, node.span()),
+            LiteralUint16(inner) => self.literal_uint16(inner, node.span()),
             _ => unimplemented!("{node:#?}")
         }
     }
