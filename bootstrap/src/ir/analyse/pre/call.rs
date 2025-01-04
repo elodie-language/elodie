@@ -25,7 +25,7 @@ impl<'a> Pre<'a> {
                 }
             ),
             self.span(),
-            Inferred::Package,
+            Inferred::Unknown,
         ))
     }
 }

@@ -3,7 +3,7 @@ use std::rc::Rc;
 use bigdecimal::BigDecimal;
 
 use crate::common::{Span, StringTableId, SymbolId, TypeId, WithSpan};
-use crate::common::node::{AccessVariableNode, AccessVariableOfObjectNode, AccessVariableOfSelfNode, BlockNode, BreakLoopNode, CalculateNode, CallFunctionNode, CallFunctionOfObjectNode, CallFunctionOfPackageNode, CallFunctionWithLambdaNode, CompareNode, CompareOperator, ContinueLoopNode, DeclareExternalFunctionNode, DeclareFunctionNode, DeclarePackageNode, DeclareTypeNode, DeclareVariableNode, DefineTypeNode, ExportPackageNode, IfNode, InstantiateTypeNode, InterpolateStringNode, LiteralBooleanNode, LiteralNumberNode, LiteralStringNode, LoopNode, Node, ReturnFromFunctionNode, Variant};
+use crate::common::node::{AccessVariableNode, AccessVariableOfObjectNode, AccessVariableOfSelfNode, BlockNode, BreakLoopNode, CalculateNode, CallFunctionNode, CallFunctionOfObjectNode, CallFunctionOfPackageNode, CallFunctionWithLambdaNode, CompareNode, CompareOperator, ContinueLoopNode, DeclareExternalFunctionNode, DeclareFunctionNode, DeclarePackageNode, DeclareTypeNode, DeclareVariableNode, DefineTypeNode, ExportPackageNode, IfNode, InstantiateTypeNode, InterpolateStringNode, LiteralBooleanNode, LiteralFloat4Node, LiteralFloat8Node, LiteralInt16Node, LiteralInt1Node, LiteralInt2Node, LiteralInt4Node, LiteralInt8Node, LiteralNumberNode, LiteralStringNode, LiteralUint16Node, LiteralUint1Node, LiteralUint2Node, LiteralUint4Node, LiteralUint8Node, LoopNode, Node, ReturnFromFunctionNode, Variant};
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct IrVariant {}
@@ -35,8 +35,20 @@ pub type IrNode = Node<
     IrInterpolateStringNode,
     IrInstantiateTypeNode,
     IrLiteralBooleanNode,
+    IrLiteralFloat4Node,
+    IrLiteralFloat8Node,
+    IrLiteralInt1Node,
+    IrLiteralInt2Node,
+    IrLiteralInt4Node,
+    IrLiteralInt8Node,
+    IrLiteralInt16Node,
     IrLiteralNumberNode,
     IrLiteralStringNode,
+    IrLiteralUint1Node,
+    IrLiteralUint2Node,
+    IrLiteralUint4Node,
+    IrLiteralUint8Node,
+    IrLiteralUint16Node,
     IrLoopNode,
     IrReturnFromFunctionNode,
 >;
@@ -49,7 +61,6 @@ pub struct IrTreeNode {
 }
 
 impl IrTreeNode {
-
     pub fn as_access_variable(&self) -> &IrAccessVariableNode {
         if let Node::AccessVariable(result) = &self.node {
             result
@@ -255,6 +266,55 @@ pub struct IrLiteralBooleanNode {
 impl LiteralBooleanNode<IrVariant> for IrLiteralBooleanNode {}
 
 #[derive(Debug, Clone, PartialEq)]
+pub struct IrLiteralFloat4Node {
+    pub value: f32,
+}
+
+impl LiteralFloat4Node<IrVariant> for IrLiteralFloat4Node {}
+
+#[derive(Debug, Clone, PartialEq)]
+pub struct IrLiteralFloat8Node {
+    pub value: f64,
+}
+
+impl LiteralFloat8Node<IrVariant> for IrLiteralFloat8Node {}
+
+#[derive(Debug, Clone, PartialEq)]
+pub struct IrLiteralInt1Node {
+    pub value: i8,
+}
+
+impl LiteralInt1Node<IrVariant> for IrLiteralInt1Node {}
+
+#[derive(Debug, Clone, PartialEq)]
+pub struct IrLiteralInt2Node {
+    pub value: i16,
+}
+
+impl LiteralInt2Node<IrVariant> for IrLiteralInt2Node {}
+
+#[derive(Debug, Clone, PartialEq)]
+pub struct IrLiteralInt4Node {
+    pub value: i32,
+}
+
+impl LiteralInt4Node<IrVariant> for IrLiteralInt4Node {}
+
+#[derive(Debug, Clone, PartialEq)]
+pub struct IrLiteralInt8Node {
+    pub value: i64,
+}
+
+impl LiteralInt8Node<IrVariant> for IrLiteralInt8Node {}
+
+#[derive(Debug, Clone, PartialEq)]
+pub struct IrLiteralInt16Node {
+    pub value: i128,
+}
+
+impl LiteralInt16Node<IrVariant> for IrLiteralInt16Node {}
+
+#[derive(Debug, Clone, PartialEq)]
 pub struct IrLiteralNumberNode {
     pub value: BigDecimal,
 }
@@ -267,6 +327,41 @@ pub struct IrLiteralStringNode {
 }
 
 impl LiteralStringNode<IrVariant> for IrLiteralStringNode {}
+
+#[derive(Debug, Clone, PartialEq)]
+pub struct IrLiteralUint1Node {
+    pub value: i8,
+}
+
+impl LiteralUint1Node<IrVariant> for IrLiteralUint1Node {}
+
+#[derive(Debug, Clone, PartialEq)]
+pub struct IrLiteralUint2Node {
+    pub value: i16,
+}
+
+impl LiteralUint2Node<IrVariant> for IrLiteralUint2Node {}
+
+#[derive(Debug, Clone, PartialEq)]
+pub struct IrLiteralUint4Node {
+    pub value: i32,
+}
+
+impl LiteralUint4Node<IrVariant> for IrLiteralUint4Node {}
+
+#[derive(Debug, Clone, PartialEq)]
+pub struct IrLiteralUint8Node {
+    pub value: i64,
+}
+
+impl LiteralUint8Node<IrVariant> for IrLiteralUint8Node {}
+
+#[derive(Debug, Clone, PartialEq)]
+pub struct IrLiteralUint16Node {
+    pub value: i128,
+}
+
+impl LiteralUint16Node<IrVariant> for IrLiteralUint16Node {}
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct IrLoopNode {}

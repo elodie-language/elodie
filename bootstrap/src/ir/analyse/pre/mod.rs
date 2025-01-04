@@ -1,6 +1,6 @@
 use std::ops::Deref;
 
-use Node::{Block, If};
+use Node::{Block, If, LiteralFloat4};
 
 use crate::common::{GetString, Inferred, Span, StringTable, SymbolId, SymbolName, SymbolTable, TypeTable, VariableSymbol, WithSpan};
 use crate::common::Context;
@@ -60,6 +60,7 @@ impl<'a> Pre<'a> {
             If(node) => self.r#if(node),
             InterpolateString(node) => self.interpolate_string(node),
             LiteralBoolean(node) => self.literal_boolean(node),
+            LiteralFloat4(node) => self.literal_float4(node),
             LiteralNumber(node) => self.literal_number(node),
             LiteralString(node) => self.literal_string(node),
             _ => unimplemented!("{ast:#?}"),

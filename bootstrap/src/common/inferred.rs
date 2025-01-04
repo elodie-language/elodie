@@ -8,11 +8,24 @@ pub enum Inferred {
 
     Boolean,
     Function(Box<[Inferred]>, Box<Inferred>),
+    Float4,
+    Float8,
+    Int1,
+    Int2,
+    Int4,
+    Int8,
+    Int16,
+
     Number,
-    Package,
     String,
     Tuple(Box<[Inferred]>),
     Type(TypeId),
+    Uint1,
+    Uint2,
+    Uint4,
+    Uint8,
+    Uint16,
+
     Unit,
 
     OneOf(Box<[Inferred]>),

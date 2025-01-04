@@ -10,7 +10,7 @@ rt::io::println('${number}')
 let number: Float8 = 2.2
 rt::io::println('${number}')
 
-let number: I1 = 1
+let number: Int1 = 1
 rt::io::println('${number}')
 let number: Int2 = 2
 rt::io::println('${number}')

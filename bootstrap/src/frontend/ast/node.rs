@@ -5,15 +5,7 @@ use std::rc::Rc;
 use node::CalculateNode;
 
 use crate::common::{Column, Index, node, PackagePath, Position, Row, Span, StringTable, StringTableId, Type, TypeTable, WithSpan};
-use crate::common::node::{
-    AccessVariableNode, AccessVariableOfObjectNode, AccessVariableOfSelfNode, BlockNode,
-    BreakLoopNode, CallFunctionNode, CallFunctionOfObjectNode, CallFunctionOfPackageNode,
-    CallFunctionWithLambdaNode, CompareNode, CompareOperator, ContinueLoopNode,
-    DeclareExternalFunctionNode, DeclareFunctionNode, DeclarePackageNode, DeclareTypeNode,
-    DeclareVariableNode, DefineTypeNode, ExportPackageNode, IfNode, InstantiateTypeNode,
-    InterpolateStringNode, LiteralBooleanNode, LiteralNumberNode, LiteralStringNode, LoopNode,
-    Node, ReturnFromFunctionNode, Source, Variant,
-};
+use crate::common::node::{AccessVariableNode, AccessVariableOfObjectNode, AccessVariableOfSelfNode, BlockNode, BreakLoopNode, CallFunctionNode, CallFunctionOfObjectNode, CallFunctionOfPackageNode, CallFunctionWithLambdaNode, CompareNode, CompareOperator, ContinueLoopNode, DeclareExternalFunctionNode, DeclareFunctionNode, DeclarePackageNode, DeclareTypeNode, DeclareVariableNode, DefineTypeNode, ExportPackageNode, IfNode, InstantiateTypeNode, InterpolateStringNode, LiteralBooleanNode, LiteralFloat4Node, LiteralFloat8Node, LiteralInt16Node, LiteralInt1Node, LiteralInt2Node, LiteralInt4Node, LiteralInt8Node, LiteralNumberNode, LiteralStringNode, LiteralUint16Node, LiteralUint1Node, LiteralUint2Node, LiteralUint4Node, LiteralUint8Node, LoopNode, Node, ReturnFromFunctionNode, Source, Variant};
 use crate::frontend::lex::token::Token;
 use crate::frontend::modifier::Modifiers;
 
@@ -47,8 +39,20 @@ pub type AstNode = Node<
     AstInterpolateStringNode,
     AstInstantiateTypeNode,
     AstLiteralBooleanNode,
+    AstLiteralFloat4Node,
+    AstLiteralFloat8Node,
+    AstLiteralInt1Node,
+    AstLiteralInt2Node,
+    AstLiteralInt4Node,
+    AstLiteralInt8Node,
+    AstLiteralInt16Node,
     AstLiteralNumberNode,
     AstLiteralStringNode,
+    AstLiteralUint1Node,
+    AstLiteralUint2Node,
+    AstLiteralUint4Node,
+    AstLiteralUint8Node,
+    AstLiteralUint16Node,
     AstLoopNode,
     AstReturnFromFunctionNode,
 >;
@@ -283,6 +287,41 @@ pub struct AstLiteralBooleanNode(pub Token);
 impl LiteralBooleanNode<AstVariant> for AstLiteralBooleanNode {}
 
 #[derive(Debug, Clone, PartialEq)]
+pub struct AstLiteralFloat4Node(pub Token);
+
+impl LiteralFloat4Node<AstVariant> for AstLiteralFloat4Node {}
+
+#[derive(Debug, Clone, PartialEq)]
+pub struct AstLiteralFloat8Node(pub Token);
+
+impl LiteralFloat8Node<AstVariant> for AstLiteralFloat8Node {}
+
+#[derive(Debug, Clone, PartialEq)]
+pub struct AstLiteralInt1Node(pub Token);
+
+impl LiteralInt1Node<AstVariant> for AstLiteralInt1Node {}
+
+#[derive(Debug, Clone, PartialEq)]
+pub struct AstLiteralInt2Node(pub Token);
+
+impl LiteralInt2Node<AstVariant> for AstLiteralInt2Node {}
+
+#[derive(Debug, Clone, PartialEq)]
+pub struct AstLiteralInt4Node(pub Token);
+
+impl LiteralInt4Node<AstVariant> for AstLiteralInt4Node {}
+
+#[derive(Debug, Clone, PartialEq)]
+pub struct AstLiteralInt8Node(pub Token);
+
+impl LiteralInt8Node<AstVariant> for AstLiteralInt8Node {}
+
+#[derive(Debug, Clone, PartialEq)]
+pub struct AstLiteralInt16Node(pub Token);
+
+impl LiteralInt16Node<AstVariant> for AstLiteralInt16Node {}
+
+#[derive(Debug, Clone, PartialEq)]
 pub struct AstLiteralNumberNode(pub Token);
 
 impl LiteralNumberNode<AstVariant> for AstLiteralNumberNode {}
@@ -291,6 +330,32 @@ impl LiteralNumberNode<AstVariant> for AstLiteralNumberNode {}
 pub struct AstLiteralStringNode(pub Token);
 
 impl LiteralStringNode<AstVariant> for AstLiteralStringNode {}
+
+#[derive(Debug, Clone, PartialEq)]
+pub struct AstLiteralUint1Node(pub Token);
+
+impl LiteralUint1Node<AstVariant> for AstLiteralUint1Node {}
+
+#[derive(Debug, Clone, PartialEq)]
+pub struct AstLiteralUint2Node(pub Token);
+
+impl LiteralUint2Node<AstVariant> for AstLiteralUint2Node {}
+
+#[derive(Debug, Clone, PartialEq)]
+pub struct AstLiteralUint4Node(pub Token);
+
+impl LiteralUint4Node<AstVariant> for AstLiteralUint4Node {}
+
+#[derive(Debug, Clone, PartialEq)]
+pub struct AstLiteralUint8Node(pub Token);
+
+impl LiteralUint8Node<AstVariant> for AstLiteralUint8Node {}
+
+#[derive(Debug, Clone, PartialEq)]
+pub struct AstLiteralUint16Node(pub Token);
+
+impl LiteralUint16Node<AstVariant> for AstLiteralUint16Node {}
+
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct AstLoopNode {
@@ -353,8 +418,24 @@ impl AstType {
     pub fn to_string(&self, string_table: &StringTable) -> String {
         match self {
             AstType::Boolean => "Boolean".to_string(),
+            AstType::Float4 => "Float4".to_string(),
+            AstType::Float8 => "Float8".to_string(),
+
+            AstType::Int1 => "Int1".to_string(),
+            AstType::Int2 => "Int2".to_string(),
+            AstType::Int4 => "Int4".to_string(),
+            AstType::Int8 => "Int8".to_string(),
+            AstType::Int16 => "Int16".to_string(),
+
             AstType::Number => "Number".to_string(),
             AstType::String => "String".to_string(),
+
+            AstType::Uint1 => "Uint1".to_string(),
+            AstType::Uint2 => "Uint2".to_string(),
+            AstType::Uint4 => "Uint4".to_string(),
+            AstType::Uint8 => "Uint8".to_string(),
+            AstType::Uint16 => "Uint16".to_string(),
+
             _ => unimplemented!("{self:#?}")
         }
     }

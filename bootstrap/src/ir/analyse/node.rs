@@ -3,7 +3,7 @@ use std::cell::RefCell;
 use bigdecimal::BigDecimal;
 
 use crate::common::{Inferred, Span, StringTableId, SymbolId, WithSpan};
-use crate::common::node::{AccessVariableNode, AccessVariableOfObjectNode, AccessVariableOfSelfNode, BlockNode, BreakLoopNode, CalculateNode, CallFunctionNode, CallFunctionOfObjectNode, CallFunctionOfPackageNode, CallFunctionWithLambdaNode, CompareNode, CompareOperator, ContinueLoopNode, DeclareExternalFunctionNode, DeclareFunctionNode, DeclarePackageNode, DeclareTypeNode, DeclareVariableNode, DefineTypeNode, ExportPackageNode, IfNode, InstantiateTypeNode, InterpolateStringNode, LiteralBooleanNode, LiteralNumberNode, LiteralStringNode, LoopNode, Node, ReturnFromFunctionNode, Variant};
+use crate::common::node::{AccessVariableNode, AccessVariableOfObjectNode, AccessVariableOfSelfNode, BlockNode, BreakLoopNode, CalculateNode, CallFunctionNode, CallFunctionOfObjectNode, CallFunctionOfPackageNode, CallFunctionWithLambdaNode, CompareNode, CompareOperator, ContinueLoopNode, DeclareExternalFunctionNode, DeclareFunctionNode, DeclarePackageNode, DeclareTypeNode, DeclareVariableNode, DefineTypeNode, ExportPackageNode, IfNode, InstantiateTypeNode, InterpolateStringNode, LiteralBooleanNode, LiteralFloat4Node, LiteralFloat8Node, LiteralInt16Node, LiteralInt1Node, LiteralInt2Node, LiteralInt4Node, LiteralInt8Node, LiteralNumberNode, LiteralStringNode, LiteralUint16Node, LiteralUint1Node, LiteralUint2Node, LiteralUint4Node, LiteralUint8Node, LoopNode, Node, ReturnFromFunctionNode, Variant};
 use crate::frontend::ast::AstType;
 
 #[derive(Clone, Debug, PartialEq)]
@@ -36,8 +36,20 @@ pub type TypeNode = crate::common::node::Node<
     TypeInterpolateStringNode,
     TypeInstantiateTypeNode,
     TypeLiteralBooleanNode,
+    TypeLiteralFloat4Node,
+    TypeLiteralFloat8Node,
+    TypeLiteralInt1Node,
+    TypeLiteralInt2Node,
+    TypeLiteralInt4Node,
+    TypeLiteralInt8Node,
+    TypeLiteralInt16Node,
     TypeLiteralNumberNode,
     TypeLiteralStringNode,
+    TypeLiteralUint1Node,
+    TypeLiteralUint2Node,
+    TypeLiteralUint4Node,
+    TypeLiteralUint8Node,
+    TypeLiteralUint16Node,
     TypeLoopNode,
     TypeReturnFromFunctionNode,
 >;
@@ -111,6 +123,62 @@ impl TypedTreeNode {
         }
     }
 
+    pub fn as_literal_float4(&self) -> &TypeLiteralFloat4Node {
+        if let Node::LiteralFloat4(result) = &self.node {
+            result
+        } else {
+            panic!("not literal float4")
+        }
+    }
+
+    pub fn as_literal_float8(&self) -> &TypeLiteralFloat8Node {
+        if let Node::LiteralFloat8(result) = &self.node {
+            result
+        } else {
+            panic!("not literal float8")
+        }
+    }
+
+    pub fn as_literal_int1(&self) -> &TypeLiteralInt1Node {
+        if let Node::LiteralInt1(result) = &self.node {
+            result
+        } else {
+            panic!("not literal int1")
+        }
+    }
+
+    pub fn as_literal_int2(&self) -> &TypeLiteralInt2Node {
+        if let Node::LiteralInt2(result) = &self.node {
+            result
+        } else {
+            panic!("not literal int2")
+        }
+    }
+
+    pub fn as_literal_int4(&self) -> &TypeLiteralInt4Node {
+        if let Node::LiteralInt4(result) = &self.node {
+            result
+        } else {
+            panic!("not literal int4")
+        }
+    }
+
+    pub fn as_literal_int8(&self) -> &TypeLiteralInt8Node {
+        if let Node::LiteralInt8(result) = &self.node {
+            result
+        } else {
+            panic!("not literal int8")
+        }
+    }
+
+    pub fn as_literal_int16(&self) -> &TypeLiteralInt16Node {
+        if let Node::LiteralInt16(result) = &self.node {
+            result
+        } else {
+            panic!("not literal int16")
+        }
+    }
+
     pub fn as_literal_number(&self) -> &TypeLiteralNumberNode {
         if let Node::LiteralNumber(result) = &self.node {
             result
@@ -124,6 +192,46 @@ impl TypedTreeNode {
             result
         } else {
             panic!("not literal string")
+        }
+    }
+
+    pub fn as_literal_uint1(&self) -> &TypeLiteralUint1Node {
+        if let Node::LiteralUint1(result) = &self.node {
+            result
+        } else {
+            panic!("not literal uint1")
+        }
+    }
+
+    pub fn as_literal_uint2(&self) -> &TypeLiteralUint2Node {
+        if let Node::LiteralUint2(result) = &self.node {
+            result
+        } else {
+            panic!("not literal uint2")
+        }
+    }
+
+    pub fn as_literal_uint4(&self) -> &TypeLiteralUint4Node {
+        if let Node::LiteralUint4(result) = &self.node {
+            result
+        } else {
+            panic!("not literal uint4")
+        }
+    }
+
+    pub fn as_literal_uint8(&self) -> &TypeLiteralUint8Node {
+        if let Node::LiteralUint8(result) = &self.node {
+            result
+        } else {
+            panic!("not literal uint8")
+        }
+    }
+
+    pub fn as_literal_uint16(&self) -> &TypeLiteralUint16Node {
+        if let Node::LiteralUint16(result) = &self.node {
+            result
+        } else {
+            panic!("not literal uint16")
         }
     }
 }
@@ -296,6 +404,62 @@ pub struct TypeLiteralBooleanNode {
 impl LiteralBooleanNode<TypeVariant> for TypeLiteralBooleanNode {}
 
 #[derive(Debug, Clone, PartialEq)]
+pub struct TypeLiteralFloat4Node {
+    pub value: f32,
+    pub value_ast_type: AstType,
+}
+
+impl LiteralFloat4Node<TypeVariant> for TypeLiteralFloat4Node {}
+
+#[derive(Debug, Clone, PartialEq)]
+pub struct TypeLiteralFloat8Node {
+    pub value: f64,
+    pub value_ast_type: AstType,
+}
+
+impl LiteralFloat8Node<TypeVariant> for TypeLiteralFloat8Node {}
+
+#[derive(Debug, Clone, PartialEq)]
+pub struct TypeLiteralInt1Node {
+    pub value: i8,
+    pub value_ast_type: AstType,
+}
+
+impl LiteralInt1Node<TypeVariant> for TypeLiteralInt1Node {}
+
+#[derive(Debug, Clone, PartialEq)]
+pub struct TypeLiteralInt2Node {
+    pub value: i16,
+    pub value_ast_type: AstType,
+}
+
+impl LiteralInt2Node<TypeVariant> for TypeLiteralInt2Node {}
+
+#[derive(Debug, Clone, PartialEq)]
+pub struct TypeLiteralInt4Node {
+    pub value: i32,
+    pub value_ast_type: AstType,
+}
+
+impl LiteralInt4Node<TypeVariant> for TypeLiteralInt4Node {}
+
+#[derive(Debug, Clone, PartialEq)]
+pub struct TypeLiteralInt8Node {
+    pub value: i64,
+    pub value_ast_type: AstType,
+}
+
+impl LiteralInt8Node<TypeVariant> for TypeLiteralInt8Node {}
+
+#[derive(Debug, Clone, PartialEq)]
+pub struct TypeLiteralInt16Node {
+    pub value: i128,
+    pub value_ast_type: AstType,
+}
+
+impl LiteralInt16Node<TypeVariant> for TypeLiteralInt16Node {}
+
+#[derive(Debug, Clone, PartialEq)]
 pub struct TypeLiteralNumberNode {
     pub value: BigDecimal,
     pub value_ast_type: AstType,
@@ -310,6 +474,46 @@ pub struct TypeLiteralStringNode {
 }
 
 impl LiteralStringNode<TypeVariant> for TypeLiteralStringNode {}
+
+#[derive(Debug, Clone, PartialEq)]
+pub struct TypeLiteralUint1Node {
+    pub value: u8,
+    pub value_ast_type: AstType,
+}
+
+impl LiteralUint1Node<TypeVariant> for TypeLiteralUint1Node {}
+
+#[derive(Debug, Clone, PartialEq)]
+pub struct TypeLiteralUint2Node {
+    pub value: u16,
+    pub value_ast_type: AstType,
+}
+
+impl LiteralUint2Node<TypeVariant> for TypeLiteralUint2Node {}
+
+#[derive(Debug, Clone, PartialEq)]
+pub struct TypeLiteralUint4Node {
+    pub value: u32,
+    pub value_ast_type: AstType,
+}
+
+impl LiteralUint4Node<TypeVariant> for TypeLiteralUint4Node {}
+
+#[derive(Debug, Clone, PartialEq)]
+pub struct TypeLiteralUint8Node {
+    pub value: u64,
+    pub value_ast_type: AstType,
+}
+
+impl LiteralUint8Node<TypeVariant> for TypeLiteralUint8Node {}
+
+#[derive(Debug, Clone, PartialEq)]
+pub struct TypeLiteralUint16Node {
+    pub value: u128,
+    pub value_ast_type: AstType,
+}
+
+impl LiteralUint16Node<TypeVariant> for TypeLiteralUint16Node {}
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct TypeLoopNode {}
