@@ -28,8 +28,14 @@ val_i1_calc(struct mem *mem, struct val_i1 *lhs, enum CalculateOperator op, stru
     switch (op) {
         case CALCULATE_OPERATOR_ADD_WRAP_AROUND:
             return val_i1_new(mem, lhs->data + rhs->data);
+        case CALCULATE_OPERATOR_SUB_WRAP_AROUND:
+            return val_i1_new(mem, lhs->data - rhs->data);
         case CALCULATE_OPERATOR_MULTIPLY_WRAP_AROUND:
             return val_i1_new(mem, lhs->data * rhs->data);
+        case CALCULATE_OPERATOR_DIV_WRAP_AROUND:
+            return val_i1_new(mem, lhs->data / rhs->data);
+        case CALCULATE_OPERATOR_MOD_WRAP_AROUND:
+            return val_i1_new(mem, lhs->data % rhs->data);
         default:
             NOT_IMPLEMENTED_YET();
     }

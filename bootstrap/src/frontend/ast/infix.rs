@@ -268,6 +268,49 @@ impl<'a> Generator<'a> {
             ));
         }
 
+        if let InfixOperator::Subtract(_) = operator {
+            let left = Rc::new(self.generate_node(left.deref())?);
+            let right = Rc::new(self.generate_node(right.deref())?);
+
+            return Ok(AstTreeNode::new(
+                Calculate(AstCalculateNode {
+                    left,
+                    operator: CalculateOperator::Subtract,
+                    right,
+                }),
+                SPAN_NOT_IMPLEMENTED.clone(),
+            ));
+        }
+
+        if let InfixOperator::Divide(_) = operator {
+            let left = Rc::new(self.generate_node(left.deref())?);
+            let right = Rc::new(self.generate_node(right.deref())?);
+
+            return Ok(AstTreeNode::new(
+                Calculate(AstCalculateNode {
+                    left,
+                    operator: CalculateOperator::Divide,
+                    right,
+                }),
+                SPAN_NOT_IMPLEMENTED.clone(),
+            ));
+        }
+
+        if let InfixOperator::Modulo(_) = operator {
+            let left = Rc::new(self.generate_node(left.deref())?);
+            let right = Rc::new(self.generate_node(right.deref())?);
+
+            return Ok(AstTreeNode::new(
+                Calculate(AstCalculateNode {
+                    left,
+                    operator: CalculateOperator::Modulo,
+                    right,
+                }),
+                SPAN_NOT_IMPLEMENTED.clone(),
+            ));
+        }
+
+
         unimplemented!("{:#?}", node);
     }
 

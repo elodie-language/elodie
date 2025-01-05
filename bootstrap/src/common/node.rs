@@ -170,7 +170,10 @@ pub trait ReturnFromFunctionNode<V: Variant> {}
 #[derive(Debug, Clone, PartialEq)]
 pub enum CalculateOperator {
     Add,
+    Divide,
+    Modulo,
     Multiply,
+    Subtract,
 }
 
 #[derive(Debug, Clone, PartialEq)]
@@ -180,7 +183,7 @@ pub enum CompareOperator {
     GreaterThan,
     GreaterThanEqual,
     LessThan,
-    LessThanEqual
+    LessThanEqual,
 }
 
 #[derive(Debug, Clone, PartialEq)]

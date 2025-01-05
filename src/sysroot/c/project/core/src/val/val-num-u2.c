@@ -29,8 +29,14 @@ val_u2_calc(struct mem *mem, struct val_u2 *lhs, enum CalculateOperator op, stru
     switch (op) {
         case CALCULATE_OPERATOR_ADD_WRAP_AROUND:
             return val_u2_new(mem, lhs->data + rhs->data);
+        case CALCULATE_OPERATOR_SUB_WRAP_AROUND:
+            return val_u2_new(mem, lhs->data - rhs->data);
         case CALCULATE_OPERATOR_MULTIPLY_WRAP_AROUND:
             return val_u2_new(mem, lhs->data * rhs->data);
+        case CALCULATE_OPERATOR_DIV_WRAP_AROUND:
+            return val_u2_new(mem, lhs->data / rhs->data);
+        case CALCULATE_OPERATOR_MOD_WRAP_AROUND:
+            return val_u2_new(mem, lhs->data % rhs->data);
         default:
             NOT_IMPLEMENTED_YET();
     }

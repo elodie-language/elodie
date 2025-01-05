@@ -52,8 +52,17 @@ impl Expression {
             CalculateOperator::Add => {
                 c::Expression::Code(CodeExpression { code: "CALCULATE_OPERATOR_ADD_WRAP_AROUND".to_string() })
             }
+            CalculateOperator::Divide => {
+                c::Expression::Code(CodeExpression { code: "CALCULATE_OPERATOR_DIV_WRAP_AROUND".to_string() })
+            }
+            CalculateOperator::Modulo => {
+                c::Expression::Code(CodeExpression { code: "CALCULATE_OPERATOR_MOD_WRAP_AROUND".to_string() })
+            }
             CalculateOperator::Multiply => {
                 c::Expression::Code(CodeExpression { code: "CALCULATE_OPERATOR_MULTIPLY_WRAP_AROUND".to_string() })
+            }
+            CalculateOperator::Subtract => {
+                c::Expression::Code(CodeExpression { code: "CALCULATE_OPERATOR_SUB_WRAP_AROUND".to_string() })
             }
         }
     }
