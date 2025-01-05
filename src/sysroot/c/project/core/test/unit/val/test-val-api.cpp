@@ -113,8 +113,8 @@ TEST(val_equal, bool_bool_equal)
 {
 	auto tm = mem_test_new_default (128);
 
-	auto val_one = (struct val *)val_bool_new_from_bool (MEM(tm), false);
-	auto val_two = (struct val *)val_bool_new_from_bool (MEM(tm), false);
+	auto val_one = (struct val *) val_bool_new(MEM(tm), false);
+	auto val_two = (struct val *) val_bool_new(MEM(tm), false);
 	ASSERT_TRUE(val_equal (val_one, val_two));
 
 	val_free_safe (&val_one);
@@ -128,8 +128,8 @@ TEST(val_equal, bool_bool_not_equal)
 {
 	auto tm = mem_test_new_default (128);
 
-	auto val_one = (struct val *)val_bool_new_from_bool (MEM(tm), true);
-	auto val_two = (struct val *)val_bool_new_from_bool (MEM(tm), false);
+	auto val_one = (struct val *) val_bool_new(MEM(tm), true);
+	auto val_two = (struct val *) val_bool_new(MEM(tm), false);
 	ASSERT_FALSE(val_equal (val_one, val_two));
 
 	val_free_safe (&val_one);

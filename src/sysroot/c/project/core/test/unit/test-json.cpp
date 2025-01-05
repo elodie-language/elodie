@@ -132,8 +132,8 @@ TEST(json_writer, json_writer_obj_bool)
 	struct json_writer test_instance{};
 	json_writer_init (&test_instance, MEM(tm));
 
-	auto bool_one = val_bool_new_from_bool (MEM(tm), true);
-	auto bool_two = val_bool_new_from_bool (MEM(tm), false);
+	auto bool_one = val_bool_new(MEM(tm), true);
+	auto bool_two = val_bool_new(MEM(tm), false);
 
 	ASSERT_EQ(JSON_WRITER_STATUS_OK, json_writer_obj_start (&test_instance));
 	ASSERT_EQ(JSON_WRITER_STATUS_OK, json_writer_obj_bool (&test_instance, JSON_KEY ("lhs"), bool_one));
@@ -217,7 +217,7 @@ TEST(json_writer, json_writer_obj_val)
 
 	auto str_val = val_str_new_from_c_str (MEM(tm), "elodie");
 	auto num_val = val_num_new_from_double (MEM(tm), 1337);
-	auto bool_val = val_bool_new_from_bool (MEM(tm), true);
+	auto bool_val = val_bool_new(MEM(tm), true);
 
 	ASSERT_EQ(JSON_WRITER_STATUS_OK, json_writer_obj_start (&test_instance));
 	ASSERT_EQ(JSON_WRITER_STATUS_OK, json_writer_obj_val (&test_instance, JSON_KEY ("str"), (struct val *)str_val));
@@ -416,8 +416,8 @@ TEST(json_writer, json_writer_array_bool)
 	struct json_writer test_instance{};
 	json_writer_init (&test_instance, MEM(tm));
 
-	auto bool_one = val_bool_new_from_bool (MEM(tm), true);
-	auto bool_two = val_bool_new_from_bool (MEM(tm), false);
+	auto bool_one = val_bool_new(MEM(tm), true);
+	auto bool_two = val_bool_new(MEM(tm), false);
 
 	ASSERT_EQ(JSON_WRITER_STATUS_OK, json_writer_array_start (&test_instance));
 	ASSERT_EQ(JSON_WRITER_STATUS_OK, json_writer_array_bool (&test_instance, bool_one));
@@ -476,7 +476,7 @@ TEST(json_writer, json_writer_array_val)
 
 	auto str_val = val_str_new_from_c_str (MEM(tm), "elodie");
 	auto num_val = val_num_new_from_double (MEM(tm), 1337);
-	auto bool_val = val_bool_new_from_bool (MEM(tm), true);
+	auto bool_val = val_bool_new(MEM(tm), true);
 
 	ASSERT_EQ(JSON_WRITER_STATUS_OK, json_writer_array_start (&test_instance));
 	ASSERT_EQ(JSON_WRITER_STATUS_OK, json_writer_array_val (&test_instance, (struct val *)str_val));

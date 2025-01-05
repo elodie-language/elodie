@@ -1,21 +1,21 @@
 use std::ops::Deref;
 use std::rc::Rc;
 
+use crate::common::node::{CalculationOperator, CompareOperator};
 use crate::common::node::Node::{
     AccessVariableOfObject, AccessVariableOfSelf, Block, Calculate, CallFunction,
     CallFunctionOfObject, CallFunctionOfPackage, CallFunctionWithLambda, Compare, InstantiateType,
 };
-use crate::common::node::{CalculationOperator, CompareOperator};
 use crate::common::PackagePath;
+use crate::frontend::{ast, parse};
 use crate::frontend::ast::{
-    AStCallFunctionNode, AstAccessVariableOfObjectNode, AstAccessVariableOfSelfNode,
-    AstCalculateNode, AstCallFunctionOfObjectNode, AstCallFunctionOfPackageNode,
+    AstAccessVariableOfObjectNode, AstAccessVariableOfSelfNode, AstCalculateNode,
+    AStCallFunctionNode, AstCallFunctionOfObjectNode, AstCallFunctionOfPackageNode,
     AstCallFunctionWithLambdaNode, AstCompareNode, AstIdentifier, AstInstantiateTypeNode,
     AstNamedArgument, AstTreeNode, Generator, SPAN_NOT_IMPLEMENTED,
 };
-use crate::frontend::parse::Node::Type;
 use crate::frontend::parse::{InfixNode, InfixOperator, Node, TypeNode};
-use crate::frontend::{ast, parse};
+use crate::frontend::parse::Node::Type;
 
 impl<'a> Generator<'a> {
     pub(crate) fn generate_infix(&mut self, node: &parse::InfixNode) -> ast::Result<AstTreeNode> {
@@ -53,9 +53,9 @@ impl<'a> Generator<'a> {
             let AccessVariableOfObject(AstAccessVariableOfObjectNode { object, variable }) = self
                 .generate_access_variable(left.as_infix())?
                 .node_to_owned()
-            else {
-                panic!()
-            };
+                else {
+                    panic!()
+                };
 
             let arguments = self.generate_arguments(right.as_tuple())?;
 
@@ -212,6 +212,48 @@ impl<'a> Generator<'a> {
             ));
         }
 
+        if let InfixOperator::GreaterThanEqual(_) = operator {
+            let left = Rc::new(self.generate_node(left.deref())?);
+            let right = Rc::new(self.generate_node(right.deref())?);
+
+            return Ok(AstTreeNode::new(
+                Compare(AstCompareNode {
+                    left,
+                    operator: CompareOperator::GreaterThanEqual,
+                    right,
+                }),
+                SPAN_NOT_IMPLEMENTED.clone(),
+            ));
+        }
+
+        if let InfixOperator::LessThan(_) = operator {
+            let left = Rc::new(self.generate_node(left.deref())?);
+            let right = Rc::new(self.generate_node(right.deref())?);
+
+            return Ok(AstTreeNode::new(
+                Compare(AstCompareNode {
+                    left,
+                    operator: CompareOperator::LessThan,
+                    right,
+                }),
+                SPAN_NOT_IMPLEMENTED.clone(),
+            ));
+        }
+
+        if let InfixOperator::LessThanEqual(_) = operator {
+            let left = Rc::new(self.generate_node(left.deref())?);
+            let right = Rc::new(self.generate_node(right.deref())?);
+
+            return Ok(AstTreeNode::new(
+                Compare(AstCompareNode {
+                    left,
+                    operator: CompareOperator::LessThanEqual,
+                    right,
+                }),
+                SPAN_NOT_IMPLEMENTED.clone(),
+            ));
+        }
+
         if let InfixOperator::Multiply(_) = operator {
             let left = Rc::new(self.generate_node(left.deref())?);
             let right = Rc::new(self.generate_node(right.deref())?);
@@ -307,14 +349,14 @@ impl<'a> Generator<'a> {
 
         for node in &node.nodes {
             let Node::Infix(InfixNode {
-                left,
-                operator,
-                right,
-                token,
-            }) = node
-            else {
-                panic!()
-            };
+                                left,
+                                operator,
+                                right,
+                                token,
+                            }) = node
+                else {
+                    panic!()
+                };
             assert!(matches!(operator, InfixOperator::Assign(_)));
             let Node::Identifier(identifier) = left.deref() else {
                 panic!()

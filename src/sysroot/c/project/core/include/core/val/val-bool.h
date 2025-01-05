@@ -10,7 +10,7 @@ struct val_bool {
 };
 
 ELODIE_API struct val_bool *
-val_bool_new_from_bool(struct mem *mem, bool data);
+val_bool_new(struct mem *mem, bool data);
 
 ELODIE_API struct val_bool *
 val_bool_copy(struct val_bool *self, struct mem *mem);

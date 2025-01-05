@@ -47,9 +47,9 @@ impl<'a> Parser<'a> {
                 OperatorToken::DoubleEqual => Ok(InfixOperator::Equal(token)),
                 OperatorToken::BangEqual => Ok(InfixOperator::NotEqual(token)),
                 OperatorToken::LeftAngle => Ok(InfixOperator::LessThan(token)),
-                OperatorToken::LeftAngleEqual => Ok(InfixOperator::LessThanOrEqual(token)),
+                OperatorToken::LeftAngleEqual => Ok(InfixOperator::LessThanEqual(token)),
                 OperatorToken::RightAngle => Ok(InfixOperator::GreaterThan(token)),
-                OperatorToken::RightAngleEqual => Ok(InfixOperator::GreaterThanOrEqual(token)),
+                OperatorToken::RightAngleEqual => Ok(InfixOperator::GreaterThanEqual(token)),
                 OperatorToken::Colon => Ok(InfixOperator::TypeAscription(token)),
                 OperatorToken::Arrow => Ok(InfixOperator::Arrow(token)),
                 OperatorToken::Dot => Ok(InfixOperator::AccessProperty(token)),
@@ -308,7 +308,7 @@ mod tests {
         };
         assert_eq!(ctx.str_get(node.value()), "1");
 
-        assert!(matches!(operator, InfixOperator::GreaterThanOrEqual(_)));
+        assert!(matches!(operator, InfixOperator::GreaterThanEqual(_)));
 
         let Literal(LiteralNode::Number(node)) = right.deref() else {
             panic!()
@@ -368,7 +368,7 @@ mod tests {
         };
         assert_eq!(ctx.str_get(node.value()), "1");
 
-        assert!(matches!(operator, InfixOperator::LessThanOrEqual(_)));
+        assert!(matches!(operator, InfixOperator::LessThanEqual(_)));
 
         let Literal(LiteralNode::Number(node)) = right.deref() else {
             panic!()

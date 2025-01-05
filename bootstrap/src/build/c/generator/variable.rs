@@ -313,7 +313,7 @@ impl Generator {
         } else if let LiteralBoolean(IrLiteralBooleanNode { value }) = &node.value.node {
             self.statements().push(
                 Statement::CallFunction(CallFunctionStatement {
-                    function: "val_bool_new_from_bool".to_string(),
+                    function: "val_bool_new".to_string(),
                     arguments: Box::new([
                         c::Expression::Code(CodeExpression { code: "MEM(tm)".to_string() }),
                         c::Expression::Literal(c::LiteralExpression::Bool(

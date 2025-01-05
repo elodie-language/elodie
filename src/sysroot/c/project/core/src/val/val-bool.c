@@ -5,7 +5,7 @@
 #include "core/val/val-str.h"
 
 struct val_bool *
-val_bool_new_from_bool(struct mem *mem, bool data) {
+val_bool_new(struct mem *mem, bool data) {
     CHECK_NOT_NULL(mem);
     struct val_bool *result = mem_allocate(mem, sizeof(struct val_bool));
     val_init(&result->base, VAL_KIND_BOOL, mem);
@@ -17,7 +17,7 @@ struct val_bool *
 val_bool_copy(struct val_bool *self, struct mem *mem) {
     CHECK_NOT_NULL(self);
     CHECK_NOT_NULL(mem);
-    return val_bool_new_from_bool(mem, self->data);
+    return val_bool_new(mem, self->data);
 }
 
 bool

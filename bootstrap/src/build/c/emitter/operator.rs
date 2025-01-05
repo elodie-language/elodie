@@ -8,7 +8,10 @@ impl Emitter {
         match node.operator {
             CompareOperator::Equal => self.str("=="),
             CompareOperator::NotEqual => self.str("!="),
-            CompareOperator::GreaterThan => self.str(">")
+            CompareOperator::GreaterThan => self.str(">"),
+            CompareOperator::GreaterThanEqual => self.str(">="),
+            CompareOperator::LessThan => self.str("<"),
+            CompareOperator::LessThanEqual => self.str("<=")
         }
         self.expression(node.right.as_ref());
     }

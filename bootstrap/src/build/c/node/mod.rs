@@ -58,6 +58,15 @@ impl Expression {
             CompareOperator::GreaterThan => {
                 c::Expression::Code(CodeExpression { code: "COMPARE_OPERATOR_GREATER_THAN".to_string() })
             }
+            CompareOperator::GreaterThanEqual => {
+                c::Expression::Code(CodeExpression { code: "COMPARE_OPERATOR_GREATER_THAN_EQUAL".to_string() })
+            }
+            CompareOperator::LessThan => {
+                c::Expression::Code(CodeExpression { code: "COMPARE_OPERATOR_LESS_THAN".to_string() })
+            }
+            CompareOperator::LessThanEqual => {
+                c::Expression::Code(CodeExpression { code: "COMPARE_OPERATOR_LESS_THAN_EQUAL".to_string() })
+            }
         }
     }
 }
@@ -71,10 +80,21 @@ pub enum Statement {
     Code(CodeStatement), // Use expressions
     DeclareArray(DeclareArrayStatement),
     DeclareVariable(DeclareVariableStatement),
-    // TODO
-    // Expression(ExpressionStatement) - has optional result
+    Expression(ExpressionStatement),
     If(IfStatement),
     ReturnFromFunction(ReturnFromFunctionStatement),
+}
+
+#[derive(Debug)]
+pub struct ExpressionStatement {
+    pub expression: Expression,
+    pub result: Option<ExpressionStatementResult>,
+}
+
+#[derive(Debug)]
+pub struct ExpressionStatementResult {
+    pub variable: String,
+    pub r#type: String,
 }
 
 #[derive(Debug)]

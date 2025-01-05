@@ -24,7 +24,7 @@ TEST(val_lst_append, bool)
 {
 	auto tm = mem_test_new_default (1024);
 
-	auto val = val_bool_new_from_bool (MEM(tm), true);
+	auto val = val_bool_new(MEM(tm), true);
 	auto test_instance = val_lst_new (MEM(tm));
 
 	val_lst_append (test_instance, val);
@@ -159,7 +159,7 @@ TEST(val_lst_replace_base, bool)
 	val_lst_append_str (test_instance, existing_val_two);
 	val_lst_append_str (test_instance, existing_val_three);
 
-	auto replacement = (struct val *)val_bool_new_from_bool (MEM(tm), true);
+	auto replacement = (struct val *) val_bool_new(MEM(tm), true);
 	val_lst_replace_base (test_instance, 1, replacement);
 
 	ASSERT_EQ(3, val_lst_count (test_instance));
@@ -371,7 +371,7 @@ TEST(val_lst_at_bool, ok)
 {
 	auto tm = mem_test_new_default (1024);
 
-	auto val = val_bool_new_from_bool (MEM(tm), true);
+	auto val = val_bool_new(MEM(tm), true);
 	auto test_instance = val_lst_new (MEM(tm));
 
 	val_lst_append_bool (test_instance, val);

@@ -1,7 +1,7 @@
-use Node::{AccessVariable, LiteralBoolean};
+use Node::{AccessVariable, LiteralBoolean, LiteralNumber};
 
 use crate::build::c;
-use crate::build::c::{CallFunctionExpression, CompareExpression, Expression};
+use crate::build::c::{CallFunctionExpression, CodeExpression, CompareExpression, Expression, VariableExpression};
 use crate::build::c::generator::Generator;
 use crate::common::node::Node;
 use crate::common::TypeId;
@@ -34,7 +34,6 @@ impl Generator {
                     unimplemented!()
                 }
             }
-
             (AccessVariable(variable), LiteralBoolean(_)) => {
                 let variable = self.symbol_table.variable(variable.variable);
 
@@ -53,8 +52,7 @@ impl Generator {
                     unimplemented!()
                 }
             }
-
-            (Node::LiteralNumber(_), Node::LiteralNumber(_)) => {
+            (LiteralNumber(_), LiteralNumber(_)) => {
                 Ok(Expression::Compare(
                     CompareExpression {
                         left: Box::new(left),
@@ -62,6 +60,40 @@ impl Generator {
                         right: Box::new(right),
                     }
                 ))
+            }
+            (AccessVariable(left), AccessVariable(right)) => {
+                let left = self.symbol_table.variable(left.variable);
+                let right = self.symbol_table.variable(right.variable);
+
+                match (left.type_id, right.type_id) {
+                    (Some(TypeId::NUMBER), Some(TypeId::NUMBER)) => {
+                        Ok(Expression::CallFunction(
+                            CallFunctionExpression {
+                                function: "val_num_cmp".to_string(),
+                                arguments: Box::new([
+                                    c::Expression::Code(CodeExpression { code: "MEM(tm)".to_string() }),
+                                    Expression::Variable(VariableExpression { variable: left.to_string(&self.string_table) }),
+                                    Expression::compare_operator(&node.operator),
+                                    Expression::Variable(VariableExpression { variable: right.to_string(&self.string_table) }),
+                                ]),
+                            }
+                        ))
+                    }
+                    (Some(TypeId::INT1), Some(TypeId::INT1)) => {
+                        Ok(Expression::CallFunction(
+                            CallFunctionExpression {
+                                function: "val_i1_cmp".to_string(),
+                                arguments: Box::new([
+                                    c::Expression::Code(CodeExpression { code: "MEM(tm)".to_string() }),
+                                    Expression::Variable(VariableExpression { variable: left.to_string(&self.string_table) }),
+                                    Expression::compare_operator(&node.operator),
+                                    Expression::Variable(VariableExpression { variable: right.to_string(&self.string_table) }),
+                                ]),
+                            }
+                        ))
+                    }
+                    _ => unimplemented!()
+                }
             }
             _ => unimplemented!()
         }

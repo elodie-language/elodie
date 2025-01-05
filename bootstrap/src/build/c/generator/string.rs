@@ -1,17 +1,18 @@
 use crate::build::c;
-use crate::build::c::{CallFunctionStatement, CallFunctionStatementResult, CodeExpression, DeclareArrayStatement, LiteralExpression, LiteralInt4Expression, LiteralStringExpression, Statement, VariableExpression};
+use crate::build::c::{CallFunctionStatement, CallFunctionStatementResult, CodeExpression, DeclareArrayStatement, ExpressionStatement, ExpressionStatementResult, LiteralExpression, LiteralInt4Expression, LiteralStringExpression, Statement, VariableExpression};
 use crate::build::c::Expression::{Code, Literal, Variable};
 use crate::build::c::generator::{Generator, scope};
 use crate::build::c::generator::scope::{LocalVariable, Storage};
 use crate::build::c::Statement::CallFunction;
 use crate::common::{GetString, TypeId};
 use crate::common::node::Node::{AccessVariable, LiteralString};
-use crate::ir::IrInterpolateStringNode;
+use crate::ir::{IrInterpolateStringNode, IrNode};
 
 impl Generator {
     pub(crate) fn interpolate_string(&mut self, node: &IrInterpolateStringNode) -> c::generator::Result<VariableExpression> {
         let mut variables: Vec<scope::Variable> = Vec::with_capacity(node.nodes.len());
 
+        // turns nodes into strings
         for node in &node.nodes {
             if let AccessVariable(node) = node.node() {
                 let symbol = self.symbol_table.variable(node.variable);
@@ -170,8 +171,7 @@ impl Generator {
                         }),
                     }));
                     variables.push(scope::Variable::Temp(temp, Storage::Memory))
-                }
-                else if symbol.type_id.is_some() && TypeId::UINT1 == symbol.type_id.unwrap() {
+                } else if symbol.type_id.is_some() && TypeId::UINT1 == symbol.type_id.unwrap() {
                     let temp = self.scope.push_temp(Storage::Memory);
 
                     let variable = symbol.to_string(&self.string_table);
@@ -302,7 +302,37 @@ impl Generator {
 
                 variables.push(scope::Variable::Temp(temp, Storage::Memory))
             } else {
-                unimplemented!()
+                match node.node() {
+                    IrNode::Compare(_) => {
+                        let string = self.scope.push_temp(Storage::Stack);
+
+                        let temp = self.scope.push_temp(Storage::Memory);
+                        let expression = self.expression(node)?;
+                        self.statements().push(Statement::Expression(ExpressionStatement {
+                            expression,
+                            result: Some(ExpressionStatementResult { variable: temp.to_string(), r#type: "struct val_bool *".to_string() }),
+                        }));
+
+
+                        self.statements().push(CallFunction(CallFunctionStatement {
+                            function: "val_bool_to_str".to_string(),
+                            arguments: Box::new([
+                                c::Expression::Variable(VariableExpression { variable: temp.to_string() }),
+                                c::Expression::Code(CodeExpression { code: "MEM(tm)".to_string() })
+                            ]),
+                            result: Some(CallFunctionStatementResult {
+                                identifier: string.to_string(),
+                                r#type: "struct val_str *".to_string(),
+                            }),
+                        }));
+
+                        variables.push(scope::Variable::Temp(string, Storage::Memory));
+                    }
+                    _ => unimplemented!("{node:#?}")
+                }
+
+
+                // unimplemented!("{node:#?}")
             }
         }
 

@@ -178,6 +178,9 @@ pub enum CompareOperator {
     Equal,
     NotEqual,
     GreaterThan,
+    GreaterThanEqual,
+    LessThan,
+    LessThanEqual
 }
 
 #[derive(Debug, Clone, PartialEq)]

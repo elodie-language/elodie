@@ -35,7 +35,7 @@ TEST(mem_gc_allocate, ok)
 	config.size = 16;
 
 	auto some_val = (struct val *)val_num_new_from_double (MEM(tm), 28);
-	auto another_val = (struct val *)val_bool_new_from_bool (MEM(tm), true);
+	auto another_val = (struct val *) val_bool_new(MEM(tm), true);
 
 	auto test_instance = mem_gc_new (config);
 

@@ -475,9 +475,9 @@ pub(crate) enum InfixOperator {
     NotEqual(Token),
     LambdaCall(Token),
     LessThan(Token),
-    LessThanOrEqual(Token),
+    LessThanEqual(Token),
     GreaterThan(Token),
-    GreaterThanOrEqual(Token),
+    GreaterThanEqual(Token),
     TypeAscription(Token),
 }
 
@@ -498,9 +498,9 @@ impl InfixOperator {
             InfixOperator::NotEqual(t) => t.clone(),
             InfixOperator::LambdaCall(t) => t.clone(),
             InfixOperator::LessThan(t) => t.clone(),
-            InfixOperator::LessThanOrEqual(t) => t.clone(),
+            InfixOperator::LessThanEqual(t) => t.clone(),
             InfixOperator::GreaterThan(t) => t.clone(),
-            InfixOperator::GreaterThanOrEqual(t) => t.clone(),
+            InfixOperator::GreaterThanEqual(t) => t.clone(),
             InfixOperator::TypeAscription(t) => t.clone(),
         }
     }
