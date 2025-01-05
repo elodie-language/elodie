@@ -15,6 +15,9 @@ val_i8_new(struct mem *mem, i8 val);
 ELODIE_API struct val_i8 *
 val_i8_copy(struct val_i8 *self, struct mem *mem);
 
+ELODIE_API struct val_bool *
+val_i8_cmp(struct mem *mem, struct val_i8 *lhs, enum CompareOperator op, struct val_i8 *rhs);
+
 ELODIE_API struct val_str *
 val_i8_to_str(struct val_i8 *self, struct mem *mem);
 

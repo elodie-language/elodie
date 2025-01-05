@@ -79,10 +79,153 @@ impl Generator {
                             }
                         ))
                     }
+                    (Some(TypeId::FLOAT4), Some(TypeId::FLOAT4)) => {
+                        Ok(Expression::CallFunction(
+                            CallFunctionExpression {
+                                function: "val_f4_cmp".to_string(),
+                                arguments: Box::new([
+                                    c::Expression::Code(CodeExpression { code: "MEM(tm)".to_string() }),
+                                    Expression::Variable(VariableExpression { variable: left.to_string(&self.string_table) }),
+                                    Expression::compare_operator(&node.operator),
+                                    Expression::Variable(VariableExpression { variable: right.to_string(&self.string_table) }),
+                                ]),
+                            }
+                        ))
+                    }
+                    (Some(TypeId::FLOAT8), Some(TypeId::FLOAT8)) => {
+                        Ok(Expression::CallFunction(
+                            CallFunctionExpression {
+                                function: "val_f8_cmp".to_string(),
+                                arguments: Box::new([
+                                    c::Expression::Code(CodeExpression { code: "MEM(tm)".to_string() }),
+                                    Expression::Variable(VariableExpression { variable: left.to_string(&self.string_table) }),
+                                    Expression::compare_operator(&node.operator),
+                                    Expression::Variable(VariableExpression { variable: right.to_string(&self.string_table) }),
+                                ]),
+                            }
+                        ))
+                    }
                     (Some(TypeId::INT1), Some(TypeId::INT1)) => {
                         Ok(Expression::CallFunction(
                             CallFunctionExpression {
                                 function: "val_i1_cmp".to_string(),
+                                arguments: Box::new([
+                                    c::Expression::Code(CodeExpression { code: "MEM(tm)".to_string() }),
+                                    Expression::Variable(VariableExpression { variable: left.to_string(&self.string_table) }),
+                                    Expression::compare_operator(&node.operator),
+                                    Expression::Variable(VariableExpression { variable: right.to_string(&self.string_table) }),
+                                ]),
+                            }
+                        ))
+                    }
+                    (Some(TypeId::INT2), Some(TypeId::INT2)) => {
+                        Ok(Expression::CallFunction(
+                            CallFunctionExpression {
+                                function: "val_i2_cmp".to_string(),
+                                arguments: Box::new([
+                                    c::Expression::Code(CodeExpression { code: "MEM(tm)".to_string() }),
+                                    Expression::Variable(VariableExpression { variable: left.to_string(&self.string_table) }),
+                                    Expression::compare_operator(&node.operator),
+                                    Expression::Variable(VariableExpression { variable: right.to_string(&self.string_table) }),
+                                ]),
+                            }
+                        ))
+                    }
+                    (Some(TypeId::INT4), Some(TypeId::INT4)) => {
+                        Ok(Expression::CallFunction(
+                            CallFunctionExpression {
+                                function: "val_i4_cmp".to_string(),
+                                arguments: Box::new([
+                                    c::Expression::Code(CodeExpression { code: "MEM(tm)".to_string() }),
+                                    Expression::Variable(VariableExpression { variable: left.to_string(&self.string_table) }),
+                                    Expression::compare_operator(&node.operator),
+                                    Expression::Variable(VariableExpression { variable: right.to_string(&self.string_table) }),
+                                ]),
+                            }
+                        ))
+                    }
+                    (Some(TypeId::INT8), Some(TypeId::INT8)) => {
+                        Ok(Expression::CallFunction(
+                            CallFunctionExpression {
+                                function: "val_i8_cmp".to_string(),
+                                arguments: Box::new([
+                                    c::Expression::Code(CodeExpression { code: "MEM(tm)".to_string() }),
+                                    Expression::Variable(VariableExpression { variable: left.to_string(&self.string_table) }),
+                                    Expression::compare_operator(&node.operator),
+                                    Expression::Variable(VariableExpression { variable: right.to_string(&self.string_table) }),
+                                ]),
+                            }
+                        ))
+                    }
+                    (Some(TypeId::INT16), Some(TypeId::INT16)) => {
+                        Ok(Expression::CallFunction(
+                            CallFunctionExpression {
+                                function: "val_i16_cmp".to_string(),
+                                arguments: Box::new([
+                                    c::Expression::Code(CodeExpression { code: "MEM(tm)".to_string() }),
+                                    Expression::Variable(VariableExpression { variable: left.to_string(&self.string_table) }),
+                                    Expression::compare_operator(&node.operator),
+                                    Expression::Variable(VariableExpression { variable: right.to_string(&self.string_table) }),
+                                ]),
+                            }
+                        ))
+                    }
+                    (Some(TypeId::UINT1), Some(TypeId::UINT1)) => {
+                        Ok(Expression::CallFunction(
+                            CallFunctionExpression {
+                                function: "val_u1_cmp".to_string(),
+                                arguments: Box::new([
+                                    c::Expression::Code(CodeExpression { code: "MEM(tm)".to_string() }),
+                                    Expression::Variable(VariableExpression { variable: left.to_string(&self.string_table) }),
+                                    Expression::compare_operator(&node.operator),
+                                    Expression::Variable(VariableExpression { variable: right.to_string(&self.string_table) }),
+                                ]),
+                            }
+                        ))
+                    }
+                    (Some(TypeId::UINT2), Some(TypeId::UINT2)) => {
+                        Ok(Expression::CallFunction(
+                            CallFunctionExpression {
+                                function: "val_u2_cmp".to_string(),
+                                arguments: Box::new([
+                                    c::Expression::Code(CodeExpression { code: "MEM(tm)".to_string() }),
+                                    Expression::Variable(VariableExpression { variable: left.to_string(&self.string_table) }),
+                                    Expression::compare_operator(&node.operator),
+                                    Expression::Variable(VariableExpression { variable: right.to_string(&self.string_table) }),
+                                ]),
+                            }
+                        ))
+                    }
+                    (Some(TypeId::UINT4), Some(TypeId::UINT4)) => {
+                        Ok(Expression::CallFunction(
+                            CallFunctionExpression {
+                                function: "val_u4_cmp".to_string(),
+                                arguments: Box::new([
+                                    c::Expression::Code(CodeExpression { code: "MEM(tm)".to_string() }),
+                                    Expression::Variable(VariableExpression { variable: left.to_string(&self.string_table) }),
+                                    Expression::compare_operator(&node.operator),
+                                    Expression::Variable(VariableExpression { variable: right.to_string(&self.string_table) }),
+                                ]),
+                            }
+                        ))
+                    }
+                    (Some(TypeId::UINT8), Some(TypeId::UINT8)) => {
+                        Ok(Expression::CallFunction(
+                            CallFunctionExpression {
+                                function: "val_u8_cmp".to_string(),
+                                arguments: Box::new([
+                                    c::Expression::Code(CodeExpression { code: "MEM(tm)".to_string() }),
+                                    Expression::Variable(VariableExpression { variable: left.to_string(&self.string_table) }),
+                                    Expression::compare_operator(&node.operator),
+                                    Expression::Variable(VariableExpression { variable: right.to_string(&self.string_table) }),
+                                ]),
+                            }
+                        ))
+                    }
+                    (Some(TypeId::UINT16), Some(TypeId::UINT16)) => {
+                        Ok(Expression::CallFunction(
+                            CallFunctionExpression {
+                                function: "val_u16_cmp".to_string(),
                                 arguments: Box::new([
                                     c::Expression::Code(CodeExpression { code: "MEM(tm)".to_string() }),
                                     Expression::Variable(VariableExpression { variable: left.to_string(&self.string_table) }),

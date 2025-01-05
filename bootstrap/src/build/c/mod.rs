@@ -73,7 +73,7 @@ pub fn build(name: &str, c_code: &str) -> io::Result<()> {
 
     let gcc_err_file = File::create(&gcc_err_path)?;
 
-    let gcc_output = Command::new("cc")
+    let gcc_output = Command::new("gcc")
         .arg(c_file_path.to_str().unwrap())
         // .arg(dir.join("rt/io.c"))
         .arg("-std=gnu2x")

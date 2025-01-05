@@ -1,5 +1,7 @@
 #include <string.h>
 #include "core/check.h"
+#include "core/operator.h"
+#include "core/val/val-bool.h"
 #include "core/val/val-num-u1.h"
 #include "core/val/val-str.h"
 
@@ -19,12 +21,26 @@ val_u1_copy(struct val_u1 *self, struct mem *mem) {
     return val_u1_new(mem, self->data);
 }
 
-bool
-val_u1_equal(struct val_u1 *lhs, struct val_u1 *rhs) {
+struct val_bool *
+val_u1_cmp(struct mem *mem, struct val_u1 *lhs, enum CompareOperator op, struct val_u1 *rhs){
     CHECK_NOT_NULL(lhs);
     CHECK_NOT_NULL(rhs);
-    if (lhs == rhs) return true;
-    return lhs->data == rhs->data;
+    switch (op) {
+        case COMPARE_OPERATOR_EQUAL:
+            return val_bool_new(mem, lhs->data == rhs->data);
+        case COMPARE_OPERATOR_NOT_EQUAL:
+            return val_bool_new(mem, lhs->data != rhs->data);
+        case COMPARE_OPERATOR_GREATER_THAN:
+            return val_bool_new(mem, lhs->data > rhs->data);
+        case COMPARE_OPERATOR_GREATER_THAN_EQUAL:
+            return val_bool_new(mem, lhs->data >= rhs->data);
+        case COMPARE_OPERATOR_LESS_THAN:
+            return val_bool_new(mem, lhs->data < rhs->data);
+        case COMPARE_OPERATOR_LESS_THAN_EQUAL:
+            return val_bool_new(mem, lhs->data <= rhs->data);
+        default:
+            NOT_IMPLEMENTED_YET();
+    }
 }
 
 struct val_str *
