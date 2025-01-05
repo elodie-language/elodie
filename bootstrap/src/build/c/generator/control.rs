@@ -13,15 +13,28 @@ impl Generator {
             self.nodes(node.as_ref())?
         }
 
-        let then_frame = self.scope.frame();
+        let mut then_frame = self.scope.leave();
+        let then_cleanup_statements = then_frame.cleanup();
+
+        let mut then_statements = vec![];
+        then_statements.extend(then_frame.statements);
+        then_statements.extend(then_cleanup_statements);
+
 
         let otherwise = if let Some(otherwise) = &node.otherwise {
             self.scope.enter();
             for node in &otherwise.nodes {
                 self.nodes(node.as_ref())?
             }
-            let otherwise_frame = self.scope.frame();
-            Some(BlockStatement { statements: otherwise_frame.statements })
+
+            let mut frame = self.scope.leave();
+            let cleanup_statements = frame.cleanup();
+
+            let mut statements = vec![];
+            statements.extend(frame.statements);
+            statements.extend(cleanup_statements);
+
+            Some(BlockStatement { statements })
         } else {
             None
         };
@@ -29,7 +42,7 @@ impl Generator {
 
         self.statements().push(If(IfStatement {
             condition,
-            then: BlockStatement { statements: then_frame.statements },
+            then: BlockStatement { statements: then_statements },
             otherwise,
         }));
 

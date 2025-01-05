@@ -3,7 +3,7 @@ use std::collections::HashSet;
 use Node::{AccessVariable, Block, Compare, If, LiteralBoolean, LiteralNumber, LiteralString};
 
 use crate::build::c;
-use crate::build::c::{BlockStatement, CodeStatement, DeclareFunctionNode, DeclareStructNode, DefineFunctionNode, DefineStructNode, DirectiveNode, IncludeLocalDirectiveNode, IncludeSystemDirectiveNode};
+use crate::build::c::{BlockStatement, CodeStatement, DeclareFunctionNode, DeclareStructNode, DefineFunctionNode, DefineStructNode, DirectiveNode, IncludeLocalDirectiveNode, IncludeSystemDirectiveNode, Statement};
 use crate::build::c::DirectiveNode::{IncludeLocalDirective, IncludeSystemDirective};
 use crate::build::c::generator::scope::Scope;
 use crate::build::c::Node::DefineFunction;
@@ -98,14 +98,18 @@ auto tm = mem_test_new_default (1024 * 1024 );
             self.nodes(node)?
         }
 
-        // let mut statements = vec![];
-        // statements.extend(self.stack.leave().statements);
+        let mut frame = self.scope.leave();
+        let cleanup_statements = frame.cleanup();
+
+        let mut statements = vec![];
+        statements.extend(frame.statements);
+        statements.extend(cleanup_statements);
 
         self.function_definitions.push(DefineFunctionNode {
             identifier: "main".to_string(),
             arguments: vec![].into_boxed_slice(),
             ty: "int".to_string(),
-            block: BlockStatement { statements: self.scope.frame().statements },
+            block: BlockStatement { statements },
         });
 
 
@@ -134,14 +138,14 @@ auto tm = mem_test_new_default (1024 * 1024 );
                 .map(|df| c::Node::DeclareFunction(df)),
         );
 
-//         self.function_definitions[0].block.statements.extend(vec![
-//             Statement::Code(CodeStatement {
-//                 code: r#"
-// mem_test_verify (tm);
-// mem_test_free (tm);
-//             "#.to_string(),
-//             })
-//         ]);
+        self.function_definitions[0].block.statements.extend(vec![
+            Statement::Code(CodeStatement {
+                code: r#"
+mem_test_verify (tm);
+mem_test_free (tm);
+            "#.to_string(),
+            })
+        ]);
 
         result.extend(
             self.function_definitions

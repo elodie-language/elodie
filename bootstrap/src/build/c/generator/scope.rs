@@ -1,5 +1,5 @@
 use crate::build::c;
-use crate::build::c::{BlockStatement, Statement};
+use crate::build::c::Statement;
 
 #[derive(Clone, Copy, Debug)]
 pub struct Argument(pub u16);
@@ -114,7 +114,7 @@ impl Frame {
         Temp(self.temps)
     }
 
-    fn cleanup(&mut self) -> Vec<c::Statement> {
+    pub fn cleanup(&mut self) -> Vec<c::Statement> {
         let mut result = vec![];
 
         for arg in 0..self.args {
@@ -156,13 +156,15 @@ impl Scope {
         self.frames.push(Frame::new())
     }
 
-    pub(crate) fn leave(&mut self) {
-        let frame = self.frames.pop().unwrap();
-        // frame.cleanup()
-        self.statements().push(Statement::Block(BlockStatement{ statements: frame.statements}));
-    }
+    // pub(crate) fn leave(&mut self) {
+    //     let frame = self.frames.pop().unwrap();
+    //     // frame.cleanup()
+    //     self.statements().push(Statement::Block(BlockStatement{ statements: frame.statements}));
+    // }
 
-    pub(crate) fn frame(&mut self) -> Frame { self.frames.pop().unwrap() }
+    pub(crate) fn leave(&mut self) -> Frame {
+        self.frames.pop().unwrap()
+    }
 
     pub(crate) fn push_argument(&mut self, storage: Storage) -> Argument {
         self.frames.last_mut().unwrap().push_argument(storage)

@@ -1,4 +1,5 @@
 use crate::build::c;
+use crate::build::c::{BlockStatement, Statement};
 use crate::build::c::generator::Generator;
 use crate::ir::IrBlockNode;
 
@@ -10,7 +11,17 @@ impl Generator {
             self.nodes(node.as_ref())?
         }
 
-        self.scope.leave();
+        // self.scope.leave();
+
+        let mut frame = self.scope.leave();
+        let cleanup_statements = frame.cleanup();
+
+        let mut statements = vec![];
+        statements.extend(frame.statements);
+        statements.extend(cleanup_statements);
+
+        self.statements().push(Statement::Block(BlockStatement { statements }));
+
         Ok(())
     }
 }

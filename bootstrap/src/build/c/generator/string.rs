@@ -306,12 +306,12 @@ impl Generator {
                     IrNode::Calculate(_) => {
                         let expression = self.expression(node)?;
 
-                        let string = self.scope.push_temp(Storage::Stack);
+                        let string = self.scope.push_temp(Storage::Memory);
 
                         let temp = self.scope.push_temp(Storage::Memory);
                         self.statements().push(Statement::Expression(ExpressionStatement {
                             expression,
-                            result: Some(ExpressionStatementResult { variable: temp.to_string(), r#type: "struct val_num *".to_string() }),
+                            result: Some(ExpressionStatementResult { variable: temp.to_string(), r#type: "struct val *".to_string() }),
                         }));
 
                         self.statements().push(CallFunction(CallFunctionStatement {
@@ -332,7 +332,7 @@ impl Generator {
                         variables.push(scope::Variable::Temp(string, Storage::Memory));
                     }
                     IrNode::Compare(_) => {
-                        let string = self.scope.push_temp(Storage::Stack);
+                        let string = self.scope.push_temp(Storage::Memory);
 
                         let temp = self.scope.push_temp(Storage::Memory);
                         let expression = self.expression(node)?;
