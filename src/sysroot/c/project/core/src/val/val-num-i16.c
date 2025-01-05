@@ -21,8 +21,24 @@ val_i16_copy(struct val_i16 *self, struct mem *mem) {
     return val_i16_new(mem, self->data);
 }
 
+struct val_i16 *
+val_i16_calc(struct mem *mem, struct val_i16 *lhs, enum CalculateOperator op, struct val_i16 *rhs) {
+    CHECK_NOT_NULL(mem);
+    CHECK_NOT_NULL(lhs);
+    CHECK_NOT_NULL(rhs);
+    switch (op) {
+        case CALCULATE_OPERATOR_ADD_WRAP_AROUND:
+            return val_i16_new(mem, lhs->data + rhs->data);
+        case CALCULATE_OPERATOR_MULTIPLY_WRAP_AROUND:
+            return val_i16_new(mem, lhs->data * rhs->data);
+        default:
+            NOT_IMPLEMENTED_YET();
+    }
+}
+
 struct val_bool *
 val_i16_cmp(struct mem *mem, struct val_i16 *lhs, enum CompareOperator op, struct val_i16 *rhs){
+    CHECK_NOT_NULL(mem);
     CHECK_NOT_NULL(lhs);
     CHECK_NOT_NULL(rhs);
     switch (op) {

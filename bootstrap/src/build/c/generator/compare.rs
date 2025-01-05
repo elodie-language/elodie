@@ -72,9 +72,9 @@ impl Generator {
                                 function: "val_num_cmp".to_string(),
                                 arguments: Box::new([
                                     c::Expression::Code(CodeExpression { code: "MEM(tm)".to_string() }),
-                                    Expression::Variable(VariableExpression { variable: left.to_string(&self.string_table) }),
+                                    Expression::Variable(VariableExpression { variable: left.to_string(&self.string_table), cast: None }),
                                     Expression::compare_operator(&node.operator),
-                                    Expression::Variable(VariableExpression { variable: right.to_string(&self.string_table) }),
+                                    Expression::Variable(VariableExpression { variable: right.to_string(&self.string_table), cast: None }),
                                 ]),
                             }
                         ))
@@ -85,9 +85,9 @@ impl Generator {
                                 function: "val_f4_cmp".to_string(),
                                 arguments: Box::new([
                                     c::Expression::Code(CodeExpression { code: "MEM(tm)".to_string() }),
-                                    Expression::Variable(VariableExpression { variable: left.to_string(&self.string_table) }),
+                                    Expression::Variable(VariableExpression { variable: left.to_string(&self.string_table), cast: None }),
                                     Expression::compare_operator(&node.operator),
-                                    Expression::Variable(VariableExpression { variable: right.to_string(&self.string_table) }),
+                                    Expression::Variable(VariableExpression { variable: right.to_string(&self.string_table), cast: None }),
                                 ]),
                             }
                         ))
@@ -98,9 +98,9 @@ impl Generator {
                                 function: "val_f8_cmp".to_string(),
                                 arguments: Box::new([
                                     c::Expression::Code(CodeExpression { code: "MEM(tm)".to_string() }),
-                                    Expression::Variable(VariableExpression { variable: left.to_string(&self.string_table) }),
+                                    Expression::Variable(VariableExpression { variable: left.to_string(&self.string_table), cast: None }),
                                     Expression::compare_operator(&node.operator),
-                                    Expression::Variable(VariableExpression { variable: right.to_string(&self.string_table) }),
+                                    Expression::Variable(VariableExpression { variable: right.to_string(&self.string_table), cast: None }),
                                 ]),
                             }
                         ))
@@ -111,9 +111,9 @@ impl Generator {
                                 function: "val_i1_cmp".to_string(),
                                 arguments: Box::new([
                                     c::Expression::Code(CodeExpression { code: "MEM(tm)".to_string() }),
-                                    Expression::Variable(VariableExpression { variable: left.to_string(&self.string_table) }),
+                                    Expression::Variable(VariableExpression { variable: left.to_string(&self.string_table), cast: None }),
                                     Expression::compare_operator(&node.operator),
-                                    Expression::Variable(VariableExpression { variable: right.to_string(&self.string_table) }),
+                                    Expression::Variable(VariableExpression { variable: right.to_string(&self.string_table), cast: None }),
                                 ]),
                             }
                         ))
@@ -124,9 +124,9 @@ impl Generator {
                                 function: "val_i2_cmp".to_string(),
                                 arguments: Box::new([
                                     c::Expression::Code(CodeExpression { code: "MEM(tm)".to_string() }),
-                                    Expression::Variable(VariableExpression { variable: left.to_string(&self.string_table) }),
+                                    Expression::Variable(VariableExpression { variable: left.to_string(&self.string_table), cast: None }),
                                     Expression::compare_operator(&node.operator),
-                                    Expression::Variable(VariableExpression { variable: right.to_string(&self.string_table) }),
+                                    Expression::Variable(VariableExpression { variable: right.to_string(&self.string_table), cast: None }),
                                 ]),
                             }
                         ))
@@ -137,9 +137,9 @@ impl Generator {
                                 function: "val_i4_cmp".to_string(),
                                 arguments: Box::new([
                                     c::Expression::Code(CodeExpression { code: "MEM(tm)".to_string() }),
-                                    Expression::Variable(VariableExpression { variable: left.to_string(&self.string_table) }),
+                                    Expression::Variable(VariableExpression { variable: left.to_string(&self.string_table), cast: None }),
                                     Expression::compare_operator(&node.operator),
-                                    Expression::Variable(VariableExpression { variable: right.to_string(&self.string_table) }),
+                                    Expression::Variable(VariableExpression { variable: right.to_string(&self.string_table), cast: None }),
                                 ]),
                             }
                         ))
@@ -150,9 +150,9 @@ impl Generator {
                                 function: "val_i8_cmp".to_string(),
                                 arguments: Box::new([
                                     c::Expression::Code(CodeExpression { code: "MEM(tm)".to_string() }),
-                                    Expression::Variable(VariableExpression { variable: left.to_string(&self.string_table) }),
+                                    Expression::Variable(VariableExpression { variable: left.to_string(&self.string_table), cast: None }),
                                     Expression::compare_operator(&node.operator),
-                                    Expression::Variable(VariableExpression { variable: right.to_string(&self.string_table) }),
+                                    Expression::Variable(VariableExpression { variable: right.to_string(&self.string_table), cast: None }),
                                 ]),
                             }
                         ))
@@ -163,9 +163,9 @@ impl Generator {
                                 function: "val_i16_cmp".to_string(),
                                 arguments: Box::new([
                                     c::Expression::Code(CodeExpression { code: "MEM(tm)".to_string() }),
-                                    Expression::Variable(VariableExpression { variable: left.to_string(&self.string_table) }),
+                                    Expression::Variable(VariableExpression { variable: left.to_string(&self.string_table), cast: None }),
                                     Expression::compare_operator(&node.operator),
-                                    Expression::Variable(VariableExpression { variable: right.to_string(&self.string_table) }),
+                                    Expression::Variable(VariableExpression { variable: right.to_string(&self.string_table), cast: None }),
                                 ]),
                             }
                         ))
@@ -176,9 +176,9 @@ impl Generator {
                                 function: "val_u1_cmp".to_string(),
                                 arguments: Box::new([
                                     c::Expression::Code(CodeExpression { code: "MEM(tm)".to_string() }),
-                                    Expression::Variable(VariableExpression { variable: left.to_string(&self.string_table) }),
+                                    Expression::Variable(VariableExpression { variable: left.to_string(&self.string_table), cast: None }),
                                     Expression::compare_operator(&node.operator),
-                                    Expression::Variable(VariableExpression { variable: right.to_string(&self.string_table) }),
+                                    Expression::Variable(VariableExpression { variable: right.to_string(&self.string_table), cast: None }),
                                 ]),
                             }
                         ))
@@ -189,9 +189,9 @@ impl Generator {
                                 function: "val_u2_cmp".to_string(),
                                 arguments: Box::new([
                                     c::Expression::Code(CodeExpression { code: "MEM(tm)".to_string() }),
-                                    Expression::Variable(VariableExpression { variable: left.to_string(&self.string_table) }),
+                                    Expression::Variable(VariableExpression { variable: left.to_string(&self.string_table), cast: None }),
                                     Expression::compare_operator(&node.operator),
-                                    Expression::Variable(VariableExpression { variable: right.to_string(&self.string_table) }),
+                                    Expression::Variable(VariableExpression { variable: right.to_string(&self.string_table), cast: None }),
                                 ]),
                             }
                         ))
@@ -202,9 +202,9 @@ impl Generator {
                                 function: "val_u4_cmp".to_string(),
                                 arguments: Box::new([
                                     c::Expression::Code(CodeExpression { code: "MEM(tm)".to_string() }),
-                                    Expression::Variable(VariableExpression { variable: left.to_string(&self.string_table) }),
+                                    Expression::Variable(VariableExpression { variable: left.to_string(&self.string_table), cast: None }),
                                     Expression::compare_operator(&node.operator),
-                                    Expression::Variable(VariableExpression { variable: right.to_string(&self.string_table) }),
+                                    Expression::Variable(VariableExpression { variable: right.to_string(&self.string_table), cast: None }),
                                 ]),
                             }
                         ))
@@ -215,9 +215,9 @@ impl Generator {
                                 function: "val_u8_cmp".to_string(),
                                 arguments: Box::new([
                                     c::Expression::Code(CodeExpression { code: "MEM(tm)".to_string() }),
-                                    Expression::Variable(VariableExpression { variable: left.to_string(&self.string_table) }),
+                                    Expression::Variable(VariableExpression { variable: left.to_string(&self.string_table), cast: None }),
                                     Expression::compare_operator(&node.operator),
-                                    Expression::Variable(VariableExpression { variable: right.to_string(&self.string_table) }),
+                                    Expression::Variable(VariableExpression { variable: right.to_string(&self.string_table), cast: None }),
                                 ]),
                             }
                         ))
@@ -228,9 +228,9 @@ impl Generator {
                                 function: "val_u16_cmp".to_string(),
                                 arguments: Box::new([
                                     c::Expression::Code(CodeExpression { code: "MEM(tm)".to_string() }),
-                                    Expression::Variable(VariableExpression { variable: left.to_string(&self.string_table) }),
+                                    Expression::Variable(VariableExpression { variable: left.to_string(&self.string_table), cast: None }),
                                     Expression::compare_operator(&node.operator),
-                                    Expression::Variable(VariableExpression { variable: right.to_string(&self.string_table) }),
+                                    Expression::Variable(VariableExpression { variable: right.to_string(&self.string_table), cast: None }),
                                 ]),
                             }
                         ))

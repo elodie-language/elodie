@@ -3,7 +3,7 @@ use std::cell::RefCell;
 use bigdecimal::BigDecimal;
 
 use crate::common::{Inferred, Span, StringTableId, SymbolId, WithSpan};
-use crate::common::node::{AccessVariableNode, AccessVariableOfObjectNode, AccessVariableOfSelfNode, BlockNode, BreakLoopNode, CalculateNode, CallFunctionNode, CallFunctionOfObjectNode, CallFunctionOfPackageNode, CallFunctionWithLambdaNode, CompareNode, CompareOperator, ContinueLoopNode, DeclareExternalFunctionNode, DeclareFunctionNode, DeclarePackageNode, DeclareTypeNode, DeclareVariableNode, DefineTypeNode, ExportPackageNode, IfNode, InstantiateTypeNode, InterpolateStringNode, LiteralBooleanNode, LiteralFloat4Node, LiteralFloat8Node, LiteralInt16Node, LiteralInt1Node, LiteralInt2Node, LiteralInt4Node, LiteralInt8Node, LiteralNumberNode, LiteralStringNode, LiteralUint16Node, LiteralUint1Node, LiteralUint2Node, LiteralUint4Node, LiteralUint8Node, LoopNode, Node, ReturnFromFunctionNode, Variant};
+use crate::common::node::{AccessVariableNode, AccessVariableOfObjectNode, AccessVariableOfSelfNode, BlockNode, BreakLoopNode, CalculateNode, CalculateOperator, CallFunctionNode, CallFunctionOfObjectNode, CallFunctionOfPackageNode, CallFunctionWithLambdaNode, CompareNode, CompareOperator, ContinueLoopNode, DeclareExternalFunctionNode, DeclareFunctionNode, DeclarePackageNode, DeclareTypeNode, DeclareVariableNode, DefineTypeNode, ExportPackageNode, IfNode, InstantiateTypeNode, InterpolateStringNode, LiteralBooleanNode, LiteralFloat4Node, LiteralFloat8Node, LiteralInt16Node, LiteralInt1Node, LiteralInt2Node, LiteralInt4Node, LiteralInt8Node, LiteralNumberNode, LiteralStringNode, LiteralUint16Node, LiteralUint1Node, LiteralUint2Node, LiteralUint4Node, LiteralUint8Node, LoopNode, Node, ReturnFromFunctionNode, Variant};
 use crate::frontend::ast::AstType;
 
 #[derive(Clone, Debug, PartialEq)]
@@ -294,7 +294,11 @@ pub struct TypeBreakLoopNode {}
 impl BreakLoopNode<TypeVariant> for TypeBreakLoopNode {}
 
 #[derive(Debug, Clone, PartialEq)]
-pub struct TypeCalculateNode {}
+pub struct TypeCalculateNode {
+    pub left: Box<TypedTreeNode>,
+    pub operator: CalculateOperator,
+    pub right: Box<TypedTreeNode>,
+}
 
 impl CalculateNode<TypeVariant> for TypeCalculateNode {}
 

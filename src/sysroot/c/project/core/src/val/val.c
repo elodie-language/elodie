@@ -1,7 +1,6 @@
 #include "core/check.h"
 #include "core/val/val.h"
-#include "core/val/val-num.h"
-#include "core/val/val-str.h"
+#include "core/val/val-api.h"
 
 void
 val_init(struct val *self, enum val_kind kind, struct mem *mem) {

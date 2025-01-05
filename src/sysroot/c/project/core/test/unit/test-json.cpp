@@ -103,8 +103,8 @@ TEST(json_writer, json_writer_obj_num)
 	struct json_writer test_instance{};
 	json_writer_init (&test_instance, MEM(tm));
 
-	auto num_one = val_num_new_from_double (MEM(tm), 23);
-	auto num_two = val_num_new_from_double (MEM(tm), 42);
+	auto num_one = val_num_new(MEM(tm), 23);
+	auto num_two = val_num_new(MEM(tm), 42);
 
 	ASSERT_EQ(JSON_WRITER_STATUS_OK, json_writer_obj_start (&test_instance));
 	ASSERT_EQ(JSON_WRITER_STATUS_OK, json_writer_obj_num (&test_instance, JSON_KEY ("lhs"), num_one));
@@ -216,7 +216,7 @@ TEST(json_writer, json_writer_obj_val)
 	json_writer_init (&test_instance, MEM(tm));
 
 	auto str_val = val_str_new_from_c_str (MEM(tm), "elodie");
-	auto num_val = val_num_new_from_double (MEM(tm), 1337);
+	auto num_val = val_num_new(MEM(tm), 1337);
 	auto bool_val = val_bool_new(MEM(tm), true);
 
 	ASSERT_EQ(JSON_WRITER_STATUS_OK, json_writer_obj_start (&test_instance));
@@ -387,8 +387,8 @@ TEST(json_writer, json_writer_array_num)
 	struct json_writer test_instance{};
 	json_writer_init (&test_instance, MEM(tm));
 
-	auto num_one = val_num_new_from_double (MEM(tm), 23);
-	auto num_two = val_num_new_from_double (MEM(tm), 42);
+	auto num_one = val_num_new(MEM(tm), 23);
+	auto num_two = val_num_new(MEM(tm), 42);
 
 	ASSERT_EQ(JSON_WRITER_STATUS_OK, json_writer_array_start (&test_instance));
 	ASSERT_EQ(JSON_WRITER_STATUS_OK, json_writer_array_num (&test_instance, num_one));
@@ -475,7 +475,7 @@ TEST(json_writer, json_writer_array_val)
 	json_writer_init (&test_instance, MEM(tm));
 
 	auto str_val = val_str_new_from_c_str (MEM(tm), "elodie");
-	auto num_val = val_num_new_from_double (MEM(tm), 1337);
+	auto num_val = val_num_new(MEM(tm), 1337);
 	auto bool_val = val_bool_new(MEM(tm), true);
 
 	ASSERT_EQ(JSON_WRITER_STATUS_OK, json_writer_array_start (&test_instance));

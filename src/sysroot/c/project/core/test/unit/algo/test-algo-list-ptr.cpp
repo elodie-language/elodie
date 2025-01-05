@@ -41,7 +41,7 @@ TEST(ptr_list, ok)
 
 	for (size_t idx = 0; idx < 10; idx++)
 		{
-			auto val = val_num_new_from_double (MEM(tm), (double)idx);
+			auto val = val_num_new(MEM(tm), (double) idx);
 			ptr_list_append (test_instance, val);
 			ASSERT_EQ(idx + 1, ptr_list_count (test_instance));
 		}
@@ -71,7 +71,7 @@ TEST(ptr_list_replace, ok)
 
 	for (size_t idx = 9; idx > 0; idx--)
 		{
-			auto val = val_num_new_from_double (MEM(tm), (10 - (double)idx));
+			auto val = val_num_new(MEM(tm), (10 - (double) idx));
 			ptr_list_replace (test_instance, idx, val);
 			// technically no item gets added
 			ASSERT_EQ(0, ptr_list_count (test_instance));
@@ -102,7 +102,7 @@ TEST(ptr_list_iterator, ok)
 
 	for (size_t idx = 0; idx < 10; idx++)
 		{
-			auto val = val_num_new_from_double (MEM(tm), (double)idx);
+			auto val = val_num_new(MEM(tm), (double) idx);
 			ptr_list_append (test_instance, val);
 			ASSERT_EQ(idx + 1, ptr_list_count (test_instance));
 		}

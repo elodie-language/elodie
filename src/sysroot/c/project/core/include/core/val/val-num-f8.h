@@ -15,6 +15,9 @@ val_f8_new(struct mem *mem, f8 val);
 ELODIE_API struct val_f8 *
 val_f8_copy(struct val_f8 *self, struct mem *mem);
 
+ELODIE_API struct val_f8 *
+val_f8_calc(struct mem *mem, struct val_f8 *lhs, enum CalculateOperator op, struct val_f8 *rhs);
+
 ELODIE_API struct val_bool *
 val_f8_cmp(struct mem *mem, struct val_f8 *lhs, enum CompareOperator op, struct val_f8 *rhs);
 

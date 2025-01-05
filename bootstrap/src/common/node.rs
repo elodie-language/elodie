@@ -168,7 +168,7 @@ pub trait LoopNode<V: Variant> {}
 pub trait ReturnFromFunctionNode<V: Variant> {}
 
 #[derive(Debug, Clone, PartialEq)]
-pub enum CalculationOperator {
+pub enum CalculateOperator {
     Add,
     Multiply,
 }

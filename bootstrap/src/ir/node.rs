@@ -3,7 +3,7 @@ use std::rc::Rc;
 use bigdecimal::BigDecimal;
 
 use crate::common::{Span, StringTableId, SymbolId, TypeId, WithSpan};
-use crate::common::node::{AccessVariableNode, AccessVariableOfObjectNode, AccessVariableOfSelfNode, BlockNode, BreakLoopNode, CalculateNode, CallFunctionNode, CallFunctionOfObjectNode, CallFunctionOfPackageNode, CallFunctionWithLambdaNode, CompareNode, CompareOperator, ContinueLoopNode, DeclareExternalFunctionNode, DeclareFunctionNode, DeclarePackageNode, DeclareTypeNode, DeclareVariableNode, DefineTypeNode, ExportPackageNode, IfNode, InstantiateTypeNode, InterpolateStringNode, LiteralBooleanNode, LiteralFloat4Node, LiteralFloat8Node, LiteralInt16Node, LiteralInt1Node, LiteralInt2Node, LiteralInt4Node, LiteralInt8Node, LiteralNumberNode, LiteralStringNode, LiteralUint16Node, LiteralUint1Node, LiteralUint2Node, LiteralUint4Node, LiteralUint8Node, LoopNode, Node, ReturnFromFunctionNode, Variant};
+use crate::common::node::{AccessVariableNode, AccessVariableOfObjectNode, AccessVariableOfSelfNode, BlockNode, BreakLoopNode, CalculateNode, CalculateOperator, CallFunctionNode, CallFunctionOfObjectNode, CallFunctionOfPackageNode, CallFunctionWithLambdaNode, CompareNode, CompareOperator, ContinueLoopNode, DeclareExternalFunctionNode, DeclareFunctionNode, DeclarePackageNode, DeclareTypeNode, DeclareVariableNode, DefineTypeNode, ExportPackageNode, IfNode, InstantiateTypeNode, InterpolateStringNode, LiteralBooleanNode, LiteralFloat4Node, LiteralFloat8Node, LiteralInt16Node, LiteralInt1Node, LiteralInt2Node, LiteralInt4Node, LiteralInt8Node, LiteralNumberNode, LiteralStringNode, LiteralUint16Node, LiteralUint1Node, LiteralUint2Node, LiteralUint4Node, LiteralUint8Node, LoopNode, Node, ReturnFromFunctionNode, Variant};
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct IrVariant {}
@@ -157,7 +157,11 @@ pub struct IrBreakLoopNode {}
 impl BreakLoopNode<IrVariant> for IrBreakLoopNode {}
 
 #[derive(Debug, Clone, PartialEq)]
-pub struct IrCalculateNode {}
+pub struct IrCalculateNode {
+    pub left: Rc<IrTreeNode>,
+    pub operator: CalculateOperator,
+    pub right: Rc<IrTreeNode>,
+}
 
 impl CalculateNode<IrVariant> for IrCalculateNode {}
 

@@ -96,7 +96,7 @@ TEST(val_lst_append, num)
 {
 	auto tm = mem_test_new_default (1024);
 
-	auto val = val_num_new_from_double (MEM(tm), 1337);
+	auto val = val_num_new(MEM(tm), 1337);
 	auto test_instance = val_lst_new (MEM(tm));
 
 	val_lst_append (test_instance, val);
@@ -275,7 +275,7 @@ TEST(val_lst_replace_base, num)
 	val_lst_append_str (test_instance, existing_val_two);
 	val_lst_append_str (test_instance, existing_val_three);
 
-	auto replacement = (struct val *)val_num_new_from_double (MEM(tm), 28);
+	auto replacement = (struct val *) val_num_new(MEM(tm), 28);
 	val_lst_replace_base (test_instance, 1, replacement);
 
 	ASSERT_EQ(3, val_lst_count (test_instance));
@@ -443,7 +443,7 @@ TEST(val_lst_at_num, ok)
 {
 	auto tm = mem_test_new_default (1024);
 
-	auto val = val_num_new_from_double (MEM(tm), 1337);
+	auto val = val_num_new(MEM(tm), 1337);
 	auto test_instance = val_lst_new (MEM(tm));
 
 	val_lst_append_num (test_instance, val);
@@ -498,9 +498,9 @@ TEST(val_lst_count, ok)
 	auto tm = mem_test_new_default (1024);
 
 	auto test_instance = val_lst_new (MEM(tm));
-	val_lst_append(test_instance, val_num_new_from_double (MEM (tm), 127));
+	val_lst_append(test_instance, val_num_new(MEM(tm), 127));
 	ASSERT_EQ(1, val_lst_count (test_instance));
-	val_lst_append(test_instance, val_num_new_from_double (MEM (tm), 128));
+	val_lst_append(test_instance, val_num_new(MEM(tm), 128));
 	ASSERT_EQ(2, val_lst_count (test_instance));
 	val_lst_append(test_instance, val_str_new_from_c_str (MEM (tm), "ELODIE"));
 	ASSERT_EQ(3, val_lst_count (test_instance));
@@ -550,7 +550,7 @@ TEST(val_lst_capacity, ok)
 
 	for (size_t idx = 0; idx < 10; idx++)
 		{
-			val_lst_append(test_instance, val_num_new_from_double (MEM (tm), idx));
+			val_lst_append(test_instance, val_num_new(MEM(tm), idx));
 		}
 
 	ASSERT_EQ(16, val_lst_capacity (test_instance));
@@ -566,7 +566,7 @@ TEST(val_lst_free_safe, ok)
 {
 	auto tm = mem_test_new_default (1024);
 
-	auto some_val = val_num_new_from_double (MEM(tm), 9);
+	auto some_val = val_num_new(MEM(tm), 9);
 	auto test_instance = val_lst_new (MEM(tm));
 	val_lst_append (test_instance, some_val);
 

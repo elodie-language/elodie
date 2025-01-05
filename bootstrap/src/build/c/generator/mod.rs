@@ -9,7 +9,7 @@ use crate::build::c::generator::scope::Scope;
 use crate::build::c::Node::DefineFunction;
 use crate::common::{Context, SymbolTable, TypeTable};
 use crate::common::node::Node;
-use crate::common::node::Node::{CallFunctionOfPackage, DeclareVariable, InterpolateString};
+use crate::common::node::Node::{Calculate, CallFunctionOfPackage, DeclareVariable, InterpolateString};
 use crate::common::StringTable;
 use crate::ir;
 use crate::ir::node::IrTreeNode;
@@ -23,6 +23,7 @@ mod rc;
 mod block;
 mod control;
 mod compare;
+mod calculate;
 
 #[derive(Debug)]
 pub enum Error {}
@@ -176,6 +177,7 @@ auto tm = mem_test_new_default (1024 * 1024 );
     pub(crate) fn expression(&mut self, ir: &IrTreeNode) -> Result<c::Expression> {
         match ir.node() {
             AccessVariable(node) => Ok(c::Expression::Variable(self.access_variable(node)?)),
+            Calculate(node) => Ok(self.calculate(node)?),
             Compare(node) => Ok(self.compare(node)?),
             InterpolateString(node) => Ok(c::Expression::Variable(self.interpolate_string(node)?)),
             LiteralBoolean(node) => Ok(self.literal_bool(node)?),

@@ -25,7 +25,7 @@ impl Generator {
                     self.statements().push(CallFunction(CallFunctionStatement {
                         function: "val_num_to_str".to_string(),
                         arguments: Box::new([
-                            c::Expression::Variable(VariableExpression { variable }),
+                            c::Expression::Variable(VariableExpression { variable, cast: None }),
                             c::Expression::Code(CodeExpression { code: "MEM(tm)".to_string() })
                         ]),
                         result: Some(CallFunctionStatementResult {
@@ -43,7 +43,7 @@ impl Generator {
                     self.statements().push(CallFunction(CallFunctionStatement {
                         function: "val_bool_to_str".to_string(),
                         arguments: Box::new([
-                            c::Expression::Variable(VariableExpression { variable }),
+                            c::Expression::Variable(VariableExpression { variable, cast: None }),
                             c::Expression::Code(CodeExpression { code: "MEM(tm)".to_string() })
                         ]),
                         result: Some(CallFunctionStatementResult {
@@ -60,7 +60,7 @@ impl Generator {
                     self.statements().push(CallFunction(CallFunctionStatement {
                         function: "val_f4_to_str".to_string(),
                         arguments: Box::new([
-                            c::Expression::Variable(VariableExpression { variable }),
+                            c::Expression::Variable(VariableExpression { variable, cast: None }),
                             c::Expression::Code(CodeExpression { code: "MEM(tm)".to_string() })
                         ]),
                         result: Some(CallFunctionStatementResult {
@@ -77,7 +77,7 @@ impl Generator {
                     self.statements().push(CallFunction(CallFunctionStatement {
                         function: "val_f8_to_str".to_string(),
                         arguments: Box::new([
-                            c::Expression::Variable(VariableExpression { variable }),
+                            c::Expression::Variable(VariableExpression { variable, cast: None }),
                             c::Expression::Code(CodeExpression { code: "MEM(tm)".to_string() })
                         ]),
                         result: Some(CallFunctionStatementResult {
@@ -94,7 +94,7 @@ impl Generator {
                     self.statements().push(CallFunction(CallFunctionStatement {
                         function: "val_i1_to_str".to_string(),
                         arguments: Box::new([
-                            c::Expression::Variable(VariableExpression { variable }),
+                            c::Expression::Variable(VariableExpression { variable, cast: None }),
                             c::Expression::Code(CodeExpression { code: "MEM(tm)".to_string() })
                         ]),
                         result: Some(CallFunctionStatementResult {
@@ -111,7 +111,7 @@ impl Generator {
                     self.statements().push(CallFunction(CallFunctionStatement {
                         function: "val_i2_to_str".to_string(),
                         arguments: Box::new([
-                            c::Expression::Variable(VariableExpression { variable }),
+                            c::Expression::Variable(VariableExpression { variable, cast: None }),
                             c::Expression::Code(CodeExpression { code: "MEM(tm)".to_string() })
                         ]),
                         result: Some(CallFunctionStatementResult {
@@ -128,7 +128,7 @@ impl Generator {
                     self.statements().push(CallFunction(CallFunctionStatement {
                         function: "val_i4_to_str".to_string(),
                         arguments: Box::new([
-                            c::Expression::Variable(VariableExpression { variable }),
+                            c::Expression::Variable(VariableExpression { variable, cast: None }),
                             c::Expression::Code(CodeExpression { code: "MEM(tm)".to_string() })
                         ]),
                         result: Some(CallFunctionStatementResult {
@@ -145,7 +145,7 @@ impl Generator {
                     self.statements().push(CallFunction(CallFunctionStatement {
                         function: "val_i8_to_str".to_string(),
                         arguments: Box::new([
-                            c::Expression::Variable(VariableExpression { variable }),
+                            c::Expression::Variable(VariableExpression { variable, cast: None }),
                             c::Expression::Code(CodeExpression { code: "MEM(tm)".to_string() })
                         ]),
                         result: Some(CallFunctionStatementResult {
@@ -162,7 +162,7 @@ impl Generator {
                     self.statements().push(CallFunction(CallFunctionStatement {
                         function: "val_i16_to_str".to_string(),
                         arguments: Box::new([
-                            c::Expression::Variable(VariableExpression { variable }),
+                            c::Expression::Variable(VariableExpression { variable, cast: None }),
                             c::Expression::Code(CodeExpression { code: "MEM(tm)".to_string() })
                         ]),
                         result: Some(CallFunctionStatementResult {
@@ -179,7 +179,7 @@ impl Generator {
                     self.statements().push(CallFunction(CallFunctionStatement {
                         function: "val_i1_to_str".to_string(),
                         arguments: Box::new([
-                            c::Expression::Variable(VariableExpression { variable }),
+                            c::Expression::Variable(VariableExpression { variable, cast: None }),
                             c::Expression::Code(CodeExpression { code: "MEM(tm)".to_string() })
                         ]),
                         result: Some(CallFunctionStatementResult {
@@ -196,7 +196,7 @@ impl Generator {
                     self.statements().push(CallFunction(CallFunctionStatement {
                         function: "val_i2_to_str".to_string(),
                         arguments: Box::new([
-                            c::Expression::Variable(VariableExpression { variable }),
+                            c::Expression::Variable(VariableExpression { variable, cast: None }),
                             c::Expression::Code(CodeExpression { code: "MEM(tm)".to_string() })
                         ]),
                         result: Some(CallFunctionStatementResult {
@@ -213,7 +213,7 @@ impl Generator {
                     self.statements().push(CallFunction(CallFunctionStatement {
                         function: "val_i4_to_str".to_string(),
                         arguments: Box::new([
-                            c::Expression::Variable(VariableExpression { variable }),
+                            c::Expression::Variable(VariableExpression { variable, cast: None }),
                             c::Expression::Code(CodeExpression { code: "MEM(tm)".to_string() })
                         ]),
                         result: Some(CallFunctionStatementResult {
@@ -230,7 +230,7 @@ impl Generator {
                     self.statements().push(CallFunction(CallFunctionStatement {
                         function: "val_i8_to_str".to_string(),
                         arguments: Box::new([
-                            c::Expression::Variable(VariableExpression { variable }),
+                            c::Expression::Variable(VariableExpression { variable, cast: None }),
                             c::Expression::Code(CodeExpression { code: "MEM(tm)".to_string() })
                         ]),
                         result: Some(CallFunctionStatementResult {
@@ -247,7 +247,7 @@ impl Generator {
                     self.statements().push(CallFunction(CallFunctionStatement {
                         function: "val_i16_to_str".to_string(),
                         arguments: Box::new([
-                            c::Expression::Variable(VariableExpression { variable }),
+                            c::Expression::Variable(VariableExpression { variable, cast: None }),
                             c::Expression::Code(CodeExpression { code: "MEM(tm)".to_string() })
                         ]),
                         result: Some(CallFunctionStatementResult {
@@ -263,7 +263,7 @@ impl Generator {
                     //     c::Statement::DeclareVariable(DeclareVariableStatement {
                     //         variable: temp.to_string(),
                     //         r#type: "const struct val_str *".to_string(),
-                    //         expression: c::Expression::Variable(VariableExpression { variable }),
+                    //         expression: c::Expression::Variable(VariableExpression { variable, cast: None }),
                     //     })
                     // );
                     variables.push(scope::Variable::Variable(LocalVariable(variable), Storage::Memory));
@@ -303,6 +303,34 @@ impl Generator {
                 variables.push(scope::Variable::Temp(temp, Storage::Memory))
             } else {
                 match node.node() {
+                    IrNode::Calculate(_) => {
+                        let expression = self.expression(node)?;
+
+                        let string = self.scope.push_temp(Storage::Stack);
+
+                        let temp = self.scope.push_temp(Storage::Memory);
+                        self.statements().push(Statement::Expression(ExpressionStatement {
+                            expression,
+                            result: Some(ExpressionStatementResult { variable: temp.to_string(), r#type: "struct val_num *".to_string() }),
+                        }));
+
+                        self.statements().push(CallFunction(CallFunctionStatement {
+                            function: "val_to_str".to_string(),
+                            arguments: Box::new([
+                                c::Expression::Variable(VariableExpression {
+                                    variable: temp.to_string(),
+                                    cast: Some("struct val *".to_string()),
+                                }),
+                                c::Expression::Code(CodeExpression { code: "MEM(tm)".to_string() })
+                            ]),
+                            result: Some(CallFunctionStatementResult {
+                                identifier: string.to_string(),
+                                r#type: "struct val_str *".to_string(),
+                            }),
+                        }));
+
+                        variables.push(scope::Variable::Temp(string, Storage::Memory));
+                    }
                     IrNode::Compare(_) => {
                         let string = self.scope.push_temp(Storage::Stack);
 
@@ -317,7 +345,7 @@ impl Generator {
                         self.statements().push(CallFunction(CallFunctionStatement {
                             function: "val_bool_to_str".to_string(),
                             arguments: Box::new([
-                                c::Expression::Variable(VariableExpression { variable: temp.to_string() }),
+                                c::Expression::Variable(VariableExpression { variable: temp.to_string(), cast: None }),
                                 c::Expression::Code(CodeExpression { code: "MEM(tm)".to_string() })
                             ]),
                             result: Some(CallFunctionStatementResult {
@@ -346,6 +374,7 @@ impl Generator {
         let mut arguments = vec![
             Variable(VariableExpression {
                 variable: temp.to_string(),
+                cast: None,
             }),
             Literal(LiteralExpression::Int4(LiteralInt4Expression {
                 value: 100,
@@ -376,7 +405,7 @@ impl Generator {
             function: "val_str_new_from_c_str".to_string(),
             arguments: Box::new([
                 c::Expression::Code(CodeExpression { code: "MEM(tm)".to_string() }),
-                c::Expression::Variable(VariableExpression { variable: temp.to_string() })
+                c::Expression::Variable(VariableExpression { variable: temp.to_string(), cast: None })
             ]),
             result: Some(CallFunctionStatementResult {
                 identifier: arg.to_string(),
@@ -387,6 +416,7 @@ impl Generator {
 
         Ok(VariableExpression {
             variable: arg.to_string(),
+            cast: None,
         })
     }
 }

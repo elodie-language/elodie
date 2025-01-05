@@ -7,7 +7,7 @@ TEST(val_copy, num)
 {
 	auto tm = mem_test_new_default (64);
 
-	auto *test_instance = (struct val *)val_num_new_from_double (MEM(tm), 12.34);
+	auto *test_instance = (struct val *) val_num_new(MEM(tm), 12.34);
 	auto *result = val_copy (test_instance, MEM(tm));
 
 	ASSERT_TRUE(val_equal (test_instance, result));
@@ -38,7 +38,7 @@ TEST(val_equal, different_types)
 
 	std::string str = "elodie rockz";
 	auto val_one = (struct val *)val_str_new_from_c_str (MEM(tm), str.c_str ());
-	auto val_two = (struct val *)val_num_new_from_double (MEM(tm), 42.12);
+	auto val_two = (struct val *) val_num_new(MEM(tm), 42.12);
 	ASSERT_FALSE(val_equal (val_one, val_two));
 
 	val_free_safe (&val_one);
@@ -83,8 +83,8 @@ TEST(val_equal, num_num_equal)
 {
 	auto tm = mem_test_new_default (128);
 
-	auto val_one = (struct val *)val_num_new_from_double (MEM(tm), 42);
-	auto val_two = (struct val *)val_num_new_from_double (MEM(tm), 42);
+	auto val_one = (struct val *) val_num_new(MEM(tm), 42);
+	auto val_two = (struct val *) val_num_new(MEM(tm), 42);
 	ASSERT_TRUE(val_equal (val_one, val_two));
 
 	val_free_safe (&val_one);
@@ -98,8 +98,8 @@ TEST(val_equal, num_num_not_equal)
 {
 	auto tm = mem_test_new_default (128);
 
-	auto val_one = (struct val *)val_num_new_from_double (MEM(tm), 42);
-	auto val_two = (struct val *)val_num_new_from_double (MEM(tm), 21);
+	auto val_one = (struct val *) val_num_new(MEM(tm), 42);
+	auto val_two = (struct val *) val_num_new(MEM(tm), 21);
 	ASSERT_FALSE(val_equal (val_one, val_two));
 
 	val_free_safe (&val_one);

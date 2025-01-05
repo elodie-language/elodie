@@ -4,6 +4,8 @@
 #include "core/mem/mem-api.h"
 #include "val-kind.h"
 
+struct val_str;
+
 struct val {
     enum val_kind kind;
     struct mem *mem;
@@ -12,6 +14,9 @@ struct val {
 
 ELODIE_API void
 val_init(struct val *self, enum val_kind kind, struct mem *mem);
+
+ELODIE_API struct val_str *
+val_to_str(struct val *self, struct mem *mem);
 
 ELODIE_API void
 val_rc_inc(struct val *self);

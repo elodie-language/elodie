@@ -15,6 +15,9 @@ val_u1_new(struct mem *mem, u1 val);
 ELODIE_API struct val_u1 *
 val_u1_copy(struct val_u1 *self, struct mem *mem);
 
+ELODIE_API struct val_u1 *
+val_u1_calc(struct mem *mem, struct val_u1 *lhs, enum CalculateOperator op, struct val_u1 *rhs);
+
 ELODIE_API struct val_bool *
 val_u1_cmp(struct mem *mem, struct val_u1 *lhs, enum CompareOperator op, struct val_u1 *rhs);
 

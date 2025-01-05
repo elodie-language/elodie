@@ -21,8 +21,24 @@ val_i2_copy(struct val_i2 *self, struct mem *mem) {
     return val_i2_new(mem, self->data);
 }
 
+struct val_i2 *
+val_i2_calc(struct mem *mem, struct val_i2 *lhs, enum CalculateOperator op, struct val_i2 *rhs) {
+    CHECK_NOT_NULL(mem);
+    CHECK_NOT_NULL(lhs);
+    CHECK_NOT_NULL(rhs);
+    switch (op) {
+        case CALCULATE_OPERATOR_ADD_WRAP_AROUND:
+            return val_i2_new(mem, lhs->data + rhs->data);
+        case CALCULATE_OPERATOR_MULTIPLY_WRAP_AROUND:
+            return val_i2_new(mem, lhs->data * rhs->data);
+        default:
+            NOT_IMPLEMENTED_YET();
+    }
+}
+
 struct val_bool *
 val_i2_cmp(struct mem *mem, struct val_i2 *lhs, enum CompareOperator op, struct val_i2 *rhs){
+    CHECK_NOT_NULL(mem);
     CHECK_NOT_NULL(lhs);
     CHECK_NOT_NULL(rhs);
     switch (op) {

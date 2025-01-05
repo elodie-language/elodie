@@ -41,6 +41,7 @@ impl<'a> Inferrer<'a> {
     pub(crate) fn node(&mut self, node: &mut TypedTreeNode) -> crate::ir::analyse::Result<()> {
         match node.node() {
             TypeNode::Block(_) => self.block(node),
+            TypeNode::Calculate(_) => Ok({}),
             TypeNode::CallFunctionOfPackage(_) => self.call_function_of_package(node),
             TypeNode::Compare(_) => Ok({}),
             TypeNode::DeclareVariable(_) => self.declare_variable(node),

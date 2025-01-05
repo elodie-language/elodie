@@ -16,19 +16,37 @@ val_copy(struct val *self, struct mem *mem) {
             NOT_IMPLEMENTED_YET();
     }
 }
-
 struct val_str *
 val_to_str(struct val *self, struct mem *mem) {
     CHECK_NOT_NULL(self);
+    CHECK_NOT_NULL(mem);
     switch (self->kind) {
-        case VAL_KIND_BOOL:
-            return val_bool_to_str((struct val_bool *) self, mem);
+        case VAL_KIND_F4:
+            return val_f4_to_str((struct val_f4 *) self, mem);
+        case VAL_KIND_F8:
+            return val_f8_to_str((struct val_f8 *) self, mem);
+        case VAL_KIND_I1:
+            return val_i1_to_str((struct val_i1 *) self, mem);
+        case VAL_KIND_I2:
+            return val_i2_to_str((struct val_i2 *) self, mem);
+        case VAL_KIND_I4:
+            return val_i4_to_str((struct val_i4 *) self, mem);
+        case VAL_KIND_I8:
+            return val_i8_to_str((struct val_i8 *) self, mem);
+        case VAL_KIND_I16:
+            return val_i16_to_str((struct val_i16 *) self, mem);
+        case VAL_KIND_U1:
+            return val_u1_to_str((struct val_u1 *) self, mem);
+        case VAL_KIND_U2:
+            return val_u2_to_str((struct val_u2 *) self, mem);
+        case VAL_KIND_U4:
+            return val_u4_to_str((struct val_u4 *) self, mem);
+        case VAL_KIND_U8:
+            return val_u8_to_str((struct val_u8 *) self, mem);
+        case VAL_KIND_U16:
+            return val_u16_to_str((struct val_u16 *) self, mem);
         case VAL_KIND_NUM:
             return val_num_to_str((struct val_num *) self, mem);
-        case VAL_KIND_STR:
-            return (struct val_str *) self;
-        case VAL_KIND_UNIT:
-            return val_unit_to_str((struct val_unit *) self, mem);
         default:
             NOT_IMPLEMENTED_YET();
     }

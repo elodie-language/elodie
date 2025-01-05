@@ -10,10 +10,13 @@ struct val_num {
 };
 
 ELODIE_API struct val_num *
-val_num_new_from_double(struct mem *mem, double val);
+val_num_new(struct mem *mem, double val);
 
 ELODIE_API struct val_num *
 val_num_copy(struct val_num *self, struct mem *mem);
+
+ELODIE_API struct val_num *
+val_num_calc(struct mem *mem, struct val_num *lhs, enum CalculateOperator op, struct val_num *rhs);
 
 ELODIE_API struct val_bool *
 val_num_cmp(struct mem *mem, struct val_num *lhs, enum CompareOperator op, struct val_num *rhs);

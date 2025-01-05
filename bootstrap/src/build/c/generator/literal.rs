@@ -55,6 +55,6 @@ impl Generator {
                 }),
             }));
 
-        Ok(c::Expression::Variable(VariableExpression { variable: temp.to_string() }))
+        Ok(c::Expression::Variable(VariableExpression { variable: temp.to_string(), cast: None }))
     }
 }

@@ -1,6 +1,6 @@
 use std::ops::Deref;
 
-use Node::{Block, If, LiteralFloat4};
+use Node::{Block, Calculate, If, LiteralFloat4};
 
 use crate::common::{GetString, Inferred, Span, StringTable, SymbolId, SymbolName, SymbolTable, TypeTable, VariableSymbol, WithSpan};
 use crate::common::Context;
@@ -19,6 +19,7 @@ mod access;
 mod control;
 mod block;
 mod compare;
+mod calculate;
 
 pub(crate) struct Pre<'a> {
     string_table: &'a mut StringTable,
@@ -54,6 +55,7 @@ impl<'a> Pre<'a> {
         match ast.node() {
             AccessVariable(node) => self.access_variable(node),
             Block(node) => self.block(node),
+            Calculate(node) => self.calculate(node),
             CallFunctionOfPackage(node) => self.call_function_of_package(node),
             Compare(node) => self.compare(node),
             DeclareVariable(node) => self.declare_variable(node),

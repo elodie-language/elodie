@@ -21,8 +21,24 @@ val_f4_copy(struct val_f4 *self, struct mem *mem) {
     return val_f4_new(mem, self->data);
 }
 
+struct val_f4 *
+val_f4_calc(struct mem *mem, struct val_f4 *lhs, enum CalculateOperator op, struct val_f4 *rhs) {
+    CHECK_NOT_NULL(mem);
+    CHECK_NOT_NULL(lhs);
+    CHECK_NOT_NULL(rhs);
+    switch (op) {
+        case CALCULATE_OPERATOR_ADD_WRAP_AROUND:
+            return val_f4_new(mem, lhs->data + rhs->data);
+        case CALCULATE_OPERATOR_MULTIPLY_WRAP_AROUND:
+            return val_f4_new(mem, lhs->data * rhs->data);
+        default:
+            NOT_IMPLEMENTED_YET();
+    }
+}
+
 struct val_bool *
 val_f4_cmp(struct mem *mem, struct val_f4 *lhs, enum CompareOperator op, struct val_f4 *rhs) {
+    CHECK_NOT_NULL(mem);
     CHECK_NOT_NULL(lhs);
     CHECK_NOT_NULL(rhs);
     switch (op) {

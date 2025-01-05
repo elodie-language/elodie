@@ -17,6 +17,7 @@ impl Generator {
 
         Ok(VariableExpression {
             variable: variable.to_string(&self.string_table),
+            cast: None
         })
     }
 
@@ -53,7 +54,7 @@ impl Generator {
         } else if let LiteralNumber(IrLiteralNumberNode { value }) = &node.value.node {
             self.statements().push(
                 Statement::CallFunction(CallFunctionStatement {
-                    function: "val_num_new_from_double".to_string(),
+                    function: "val_num_new".to_string(),
                     arguments: Box::new([
                         c::Expression::Code(CodeExpression { code: "MEM(tm)".to_string() }),
                         c::Expression::Literal(c::LiteralExpression::Float8(

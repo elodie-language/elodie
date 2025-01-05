@@ -26,7 +26,7 @@ TEST(val_obj, single_number)
 
 	auto test_instance = val_obj_new (MEM(tm), VAL_STR_VIEW ("some_obj"));
 
-	auto some_number_value = val_num_new_from_double (MEM(tm), 28.10);
+	auto some_number_value = val_num_new(MEM(tm), 28.10);
 	auto some_number_field = val_fld_new (MEM(tm), VAL_STR_VIEW ("some_number"), type_number);
 
 	val_obj_append (test_instance, some_number_field, AS_VAL(some_number_value));
@@ -53,7 +53,7 @@ TEST(val_obj, simple_nested)
 	 */
 	auto tm = mem_test_new_default (1024);
 
-	auto some_number_value = val_num_new_from_double (MEM(tm), 28.10);
+	auto some_number_value = val_num_new(MEM(tm), 28.10);
 	auto some_number_field = val_fld_new (MEM(tm), VAL_STR_VIEW ("some_number"), type_number);
 
 	auto inner_obj = val_obj_new (MEM(tm), VAL_STR_VIEW ("inner_obj"));

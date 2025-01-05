@@ -21,8 +21,24 @@ val_u16_copy(struct val_u16 *self, struct mem *mem) {
     return val_u16_new(mem, self->data);
 }
 
+struct val_u16 *
+val_u16_calc(struct mem *mem, struct val_u16 *lhs, enum CalculateOperator op, struct val_u16 *rhs) {
+    CHECK_NOT_NULL(mem);
+    CHECK_NOT_NULL(lhs);
+    CHECK_NOT_NULL(rhs);
+    switch (op) {
+        case CALCULATE_OPERATOR_ADD_WRAP_AROUND:
+            return val_u16_new(mem, lhs->data + rhs->data);
+        case CALCULATE_OPERATOR_MULTIPLY_WRAP_AROUND:
+            return val_u16_new(mem, lhs->data * rhs->data);
+        default:
+            NOT_IMPLEMENTED_YET();
+    }
+}
+
 struct val_bool *
-val_u16_cmp(struct mem *mem, struct val_u16 *lhs, enum CompareOperator op, struct val_u16 *rhs){
+val_u16_cmp(struct mem *mem, struct val_u16 *lhs, enum CompareOperator op, struct val_u16 *rhs) {
+    CHECK_NOT_NULL(mem);
     CHECK_NOT_NULL(lhs);
     CHECK_NOT_NULL(rhs);
     switch (op) {

@@ -71,7 +71,7 @@ TEST(ptr_map, ok)
 	for (size_t idx = 0; idx < 2; idx++)
 		{
 			auto key = ptr_map_key_from_size_t (test_instance, idx);
-			auto some_number = val_num_new_from_double (MEM(tm), (double)idx);
+			auto some_number = val_num_new(MEM(tm), (double) idx);
 			ASSERT_TRUE(ptr_map_set (test_instance, key, some_number));
 			ASSERT_EQ(idx + 1, ptr_map_count (test_instance));
 		}
@@ -108,7 +108,7 @@ TEST(ptr_map, resize)
 	for (size_t idx = 0; idx < 10; idx++)
 		{
 			auto key = ptr_map_key_from_size_t (test_instance, idx);
-			auto some_number = val_num_new_from_double (MEM(tm), (double)idx);
+			auto some_number = val_num_new(MEM(tm), (double) idx);
 			ASSERT_TRUE(ptr_map_set (test_instance, key, some_number));
 			ASSERT_EQ(idx + 1, ptr_map_count (test_instance));
 		}
@@ -145,7 +145,7 @@ TEST(ptr_map_remove, ok)
 	for (size_t idx = 0; idx < 10; idx++)
 		{
 			auto key = ptr_map_key_from_size_t (test_instance, idx);
-			ptr_map_set (test_instance, key, val_num_new_from_double (MEM(tm), (double)idx));
+			ptr_map_set (test_instance, key, val_num_new(MEM(tm), (double) idx));
 		}
 
 	for (size_t idx = 0; idx < 10; idx++)
@@ -182,7 +182,7 @@ TEST(ptr_map_free_safe, ok)
 
 	auto test_instance = ptr_map_new (config);
 	auto key = ptr_map_key_from_size_t (test_instance, 2810);
-	auto some_number = val_num_new_from_double (MEM(tm), (double)2810);
+	auto some_number = val_num_new(MEM(tm), (double) 2810);
 	ptr_map_set (test_instance, key, some_number);
 
 	ptr_map_free_safe (&test_instance);

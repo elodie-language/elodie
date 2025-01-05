@@ -1,7 +1,7 @@
 use std::ops::Deref;
 use std::rc::Rc;
 
-use crate::common::node::{CalculationOperator, CompareOperator};
+use crate::common::node::{CalculateOperator, CompareOperator};
 use crate::common::node::Node::{
     AccessVariableOfObject, AccessVariableOfSelf, Block, Calculate, CallFunction,
     CallFunctionOfObject, CallFunctionOfPackage, CallFunctionWithLambda, Compare, InstantiateType,
@@ -163,7 +163,7 @@ impl<'a> Generator<'a> {
             return Ok(AstTreeNode::new(
                 Calculate(AstCalculateNode {
                     left,
-                    operator: CalculationOperator::Add,
+                    operator: CalculateOperator::Add,
                     right,
                 }),
                 SPAN_NOT_IMPLEMENTED.clone(),
@@ -261,7 +261,7 @@ impl<'a> Generator<'a> {
             return Ok(AstTreeNode::new(
                 Calculate(AstCalculateNode {
                     left,
-                    operator: CalculationOperator::Multiply,
+                    operator: CalculateOperator::Multiply,
                     right,
                 }),
                 SPAN_NOT_IMPLEMENTED.clone(),

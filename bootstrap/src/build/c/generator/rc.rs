@@ -6,7 +6,7 @@ impl Statement {
         Statement::CallFunction(CallFunctionStatement {
             function: "val_rc_dec".to_string(),
             arguments: Box::new([
-                c::Expression::Variable(VariableExpression { variable: variable.into() })
+                c::Expression::Variable(VariableExpression { variable: variable.into(), cast: None })
             ]),
             result: None,
         })

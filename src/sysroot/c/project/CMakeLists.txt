@@ -7,23 +7,23 @@ set(COMPILER_WARNINGS
         -Wall
         -Wextra
         #        -pedantic
-        -Wcast-align
-        -Wcast-qual
-        -Wdisabled-optimization
-        -Wformat=2
-        -Winit-self
-        -Wmissing-include-dirs
-        -Wredundant-decls
-        -Wno-gnu-statement-expression
-        -Wno-gnu-auto-type
-        #        -Wshadow
-        -Wstrict-overflow=5
-        -Wundef
-        -Wno-cast-qual
-        -fdiagnostics-show-option
-        -Wno-implicit-fallthrough
-        -Wno-c11-extensions
-        -Wno-gnu-label-as-value
+#        -Wcast-align
+#        -Wcast-qual
+#        -Wdisabled-optimization
+#        -Wformat=2
+#        -Winit-self
+#        -Wmissing-include-dirs
+#        -Wredundant-decls
+#        -Wno-gnu-statement-expression
+#        -Wno-gnu-auto-type
+#        #        -Wshadow
+#        -Wstrict-overflow=5
+#        -Wundef
+#        -Wno-cast-qual
+#        -fdiagnostics-show-option
+#        -Wno-implicit-fallthrough
+#        -Wno-c11-extensions
+#        -Wno-gnu-label-as-value
 )
 
 if (NOT CMAKE_BUILD_TYPE)

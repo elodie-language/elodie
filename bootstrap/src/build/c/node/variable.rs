@@ -18,6 +18,7 @@ pub struct DeclareVariableStatement {
 #[derive(Debug)]
 pub struct VariableExpression {
     pub variable: String,
+    pub cast: Option<String>,
 }
 
 #[derive(Debug)]

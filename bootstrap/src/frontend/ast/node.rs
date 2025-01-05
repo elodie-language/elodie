@@ -136,7 +136,7 @@ impl BreakLoopNode<AstVariant> for AstBreakLoopNode {}
 #[derive(Debug, Clone, PartialEq)]
 pub struct AstCalculateNode {
     pub left: Rc<AstTreeNode>,
-    pub operator: node::CalculationOperator,
+    pub operator: node::CalculateOperator,
     pub right: Rc<AstTreeNode>,
 }
 

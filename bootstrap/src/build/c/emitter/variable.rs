@@ -26,6 +26,15 @@ impl Emitter {
     }
 
     pub(crate) fn variable(&mut self, expression: &VariableExpression) {
-        self.str(expression.variable.as_str());
+        if let Some(r#type) = &expression.cast {
+            self.str("(");
+            self.str("(");
+            self.str(r#type.as_str());
+            self.str(")");
+            self.str(expression.variable.as_str());
+            self.str(")");
+        } else {
+            self.str(expression.variable.as_str());
+        }
     }
 }

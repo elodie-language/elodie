@@ -5,7 +5,7 @@
 #include "core/val/val-str.h"
 
 struct val_num *
-val_num_new_from_double(struct mem *mem, double val) {
+val_num_new(struct mem *mem, double val) {
     CHECK_NOT_NULL(mem);
     struct val_num *result = mem_allocate(mem, sizeof(struct val_num));
     val_init(&result->base, VAL_KIND_NUM, mem);
@@ -17,11 +17,27 @@ struct val_num *
 val_num_copy(struct val_num *self, struct mem *mem) {
     CHECK_NOT_NULL(self);
     CHECK_NOT_NULL(mem);
-    return val_num_new_from_double(mem, self->data);
+    return val_num_new(mem, self->data);
+}
+
+struct val_num *
+val_num_calc(struct mem *mem, struct val_num *lhs, enum CalculateOperator op, struct val_num *rhs) {
+    CHECK_NOT_NULL(mem);
+    CHECK_NOT_NULL(lhs);
+    CHECK_NOT_NULL(rhs);
+    switch (op) {
+        case CALCULATE_OPERATOR_ADD_WRAP_AROUND:
+            return val_num_new(mem, lhs->data + rhs->data);
+        case CALCULATE_OPERATOR_MULTIPLY_WRAP_AROUND:
+            return val_num_new(mem, lhs->data * rhs->data);
+        default:
+            NOT_IMPLEMENTED_YET();
+    }
 }
 
 struct val_bool *
 val_num_cmp(struct mem *mem, struct val_num *lhs, enum CompareOperator op, struct val_num *rhs) {
+    CHECK_NOT_NULL(mem);
     CHECK_NOT_NULL(lhs);
     CHECK_NOT_NULL(rhs);
     switch (op) {

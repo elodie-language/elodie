@@ -7,7 +7,7 @@ pub use r#struct::*;
 pub use variable::*;
 
 use crate::build::c;
-use crate::common::node::CompareOperator;
+use crate::common::node::{CalculateOperator, CompareOperator};
 
 mod control;
 mod directive;
@@ -47,6 +47,17 @@ pub enum Expression {
 }
 
 impl Expression {
+    pub fn calculate_operator(op: &CalculateOperator) -> c::Expression {
+        match op {
+            CalculateOperator::Add => {
+                c::Expression::Code(CodeExpression { code: "CALCULATE_OPERATOR_ADD_WRAP_AROUND".to_string() })
+            }
+            CalculateOperator::Multiply => {
+                c::Expression::Code(CodeExpression { code: "CALCULATE_OPERATOR_MULTIPLY_WRAP_AROUND".to_string() })
+            }
+        }
+    }
+
     pub fn compare_operator(op: &CompareOperator) -> c::Expression {
         match op {
             CompareOperator::Equal => {
