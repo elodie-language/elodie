@@ -2,7 +2,7 @@ use std::ops::Index;
 
 use crate::common::{StringTable, SymbolTable, TypeTable, WithSpan};
 use crate::common::Context;
-use crate::common::node::Node::{AccessVariable, Block, Calculate, CallFunctionOfPackage, Compare, DeclareVariable, If, InterpolateString, LiteralBoolean, LiteralFloat4, LiteralFloat8, LiteralInt1, LiteralInt16, LiteralInt2, LiteralInt4, LiteralInt8, LiteralNumber, LiteralString, LiteralUint1, LiteralUint16, LiteralUint2, LiteralUint4, LiteralUint8};
+use crate::common::node::Node::{AccessVariable, Block, BreakLoop, Calculate, CallFunctionOfPackage, Compare, DeclareVariable, If, InterpolateString, LiteralBoolean, LiteralFloat4, LiteralFloat8, LiteralInt1, LiteralInt16, LiteralInt2, LiteralInt4, LiteralInt8, LiteralNumber, LiteralString, LiteralUint1, LiteralUint16, LiteralUint2, LiteralUint4, LiteralUint8, Loop};
 use crate::ir::analyse::{TypedAst, TypedTreeNode};
 use crate::ir::Ir;
 use crate::ir::node::IrTreeNode;
@@ -49,6 +49,7 @@ impl<'a> Generator<'a> {
         match &node.node {
             AccessVariable(inner) => self.access_variable(inner, node.span()),
             Block(inner) => self.block(inner, node.span()),
+            BreakLoop(inner) => self.r#break(inner, node.span()),
             Calculate(inner) => self.calculate(inner, node.span()),
             CallFunctionOfPackage(inner) => self.call_function_of_package(inner, node.span()),
             Compare(inner) => self.compare(inner, node.span()),
@@ -70,6 +71,7 @@ impl<'a> Generator<'a> {
             LiteralUint4(inner) => self.literal_uint4(inner, node.span()),
             LiteralUint8(inner) => self.literal_uint8(inner, node.span()),
             LiteralUint16(inner) => self.literal_uint16(inner, node.span()),
+            Loop(inner) => self.r#loop(inner, node.span()),
             _ => unimplemented!("{node:#?}")
         }
     }

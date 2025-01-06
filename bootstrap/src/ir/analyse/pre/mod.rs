@@ -1,11 +1,11 @@
 use std::ops::Deref;
 
-use Node::{Block, Calculate, If, LiteralFloat4};
+use Node::{Block, BreakLoop, Calculate, If, LiteralFloat4};
 
 use crate::common::{GetString, Inferred, Span, StringTable, SymbolId, SymbolName, SymbolTable, TypeTable, VariableSymbol, WithSpan};
 use crate::common::Context;
 use crate::common::node::Node;
-use crate::common::node::Node::{AccessVariable, CallFunctionOfPackage, Compare, DeclareVariable, InterpolateString, LiteralBoolean, LiteralNumber, LiteralString};
+use crate::common::node::Node::{AccessVariable, CallFunctionOfPackage, Compare, DeclareVariable, InterpolateString, LiteralBoolean, LiteralNumber, LiteralString, Loop};
 use crate::frontend;
 use crate::frontend::ast::AstTreeNode;
 use crate::ir::analyse::{Error, TypedTreeNode, UndefinedError};
@@ -55,6 +55,7 @@ impl<'a> Pre<'a> {
         match ast.node() {
             AccessVariable(node) => self.access_variable(node),
             Block(node) => self.block(node),
+            BreakLoop(node) => self.r#break(node),
             Calculate(node) => self.calculate(node),
             CallFunctionOfPackage(node) => self.call_function_of_package(node),
             Compare(node) => self.compare(node),
@@ -65,6 +66,7 @@ impl<'a> Pre<'a> {
             LiteralFloat4(node) => self.literal_float4(node),
             LiteralNumber(node) => self.literal_number(node),
             LiteralString(node) => self.literal_string(node),
+            Loop(node) => self.r#loop(node),
             _ => unimplemented!("{ast:#?}"),
         }
     }

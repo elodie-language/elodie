@@ -59,7 +59,7 @@ impl Expression {
                 c::Expression::Code(CodeExpression { code: "CALCULATE_OPERATOR_MOD_WRAP_AROUND".to_string() })
             }
             CalculateOperator::Multiply => {
-                c::Expression::Code(CodeExpression { code: "CALCULATE_OPERATOR_MULTIPLY_WRAP_AROUND".to_string() })
+                c::Expression::Code(CodeExpression { code: "CALCULATE_OPERATOR_MUL_WRAP_AROUND".to_string() })
             }
             CalculateOperator::Subtract => {
                 c::Expression::Code(CodeExpression { code: "CALCULATE_OPERATOR_SUB_WRAP_AROUND".to_string() })
@@ -94,6 +94,7 @@ impl Expression {
 #[derive(Debug)]
 pub enum Statement {
     Block(BlockStatement),
+    Break(BreakStatement),
     #[deprecated]
     CallFunction(CallFunctionStatement), // Use expression
     #[deprecated]
@@ -102,19 +103,35 @@ pub enum Statement {
     DeclareVariable(DeclareVariableStatement),
     Expression(ExpressionStatement),
     If(IfStatement),
+    Loop(LoopStatement),
     ReturnFromFunction(ReturnFromFunctionStatement),
 }
 
 #[derive(Debug)]
-pub struct ExpressionStatement {
-    pub expression: Expression,
-    pub result: Option<ExpressionStatementResult>,
-}
+pub struct BreakStatement {}
 
 #[derive(Debug)]
-pub struct ExpressionStatementResult {
-    pub variable: String,
-    pub r#type: String,
+pub struct LoopStatement {
+    pub block: BlockStatement,
+    pub result: Option<StatementResult>,
+}
+
+
+#[derive(Debug)]
+pub struct ExpressionStatement {
+    pub expression: Expression,
+    pub result: Option<StatementResult>,
+}
+
+#[derive(Debug, Clone)]
+pub enum StatementResult {
+    Assign {
+        variable: String
+    },
+    Declare {
+        variable: String,
+        r#type: String,
+    },
 }
 
 #[derive(Debug)]

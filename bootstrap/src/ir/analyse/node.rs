@@ -289,7 +289,9 @@ pub struct TypeBlockNode {
 impl BlockNode<TypeVariant> for TypeBlockNode {}
 
 #[derive(Debug, Clone, PartialEq)]
-pub struct TypeBreakLoopNode {}
+pub struct TypeBreakLoopNode {
+    pub node: Option<Box<TypedTreeNode>>,
+}
 
 impl BreakLoopNode<TypeVariant> for TypeBreakLoopNode {}
 
@@ -520,7 +522,9 @@ pub struct TypeLiteralUint16Node {
 impl LiteralUint16Node<TypeVariant> for TypeLiteralUint16Node {}
 
 #[derive(Debug, Clone, PartialEq)]
-pub struct TypeLoopNode {}
+pub struct TypeLoopNode {
+    pub nodes: RefCell<TypeBlockNode>,
+}
 
 impl LoopNode<TypeVariant> for TypeLoopNode {}
 

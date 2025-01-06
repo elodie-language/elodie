@@ -48,6 +48,7 @@ impl Into<String> for Temp {
 pub enum Storage {
     Memory,
     Stack,
+
 }
 
 pub enum Variable {
@@ -114,7 +115,7 @@ impl Frame {
         Temp(self.temps)
     }
 
-    pub fn cleanup(&mut self) -> Vec<c::Statement> {
+    pub fn cleanup_statements(&self) -> Vec<c::Statement> {
         let mut result = vec![];
 
         for arg in 0..self.args {
@@ -124,9 +125,9 @@ impl Frame {
         }
 
         let mut counter = 0;
-        while let Some(local) = self.local_variables.pop() {
+        for local in self.local_variables.iter() {
             if self.local_variables_storage[counter] == Storage::Memory {
-                result.push(Statement::rc_dec(local))
+                result.push(Statement::rc_dec(local.clone()))
             }
             counter += 1
         }
@@ -164,6 +165,10 @@ impl Scope {
 
     pub(crate) fn leave(&mut self) -> Frame {
         self.frames.pop().unwrap()
+    }
+
+    pub(crate) fn frame(&self) -> &Frame {
+        self.frames.last().unwrap()
     }
 
     pub(crate) fn push_argument(&mut self, storage: Storage) -> Argument {

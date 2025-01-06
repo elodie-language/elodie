@@ -14,7 +14,7 @@ impl Generator {
         // self.scope.leave();
 
         let mut frame = self.scope.leave();
-        let cleanup_statements = frame.cleanup();
+        let cleanup_statements = frame.cleanup_statements();
 
         let mut statements = vec![];
         statements.extend(frame.statements);

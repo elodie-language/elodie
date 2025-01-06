@@ -41,15 +41,29 @@ impl<'a> Inferrer<'a> {
     pub(crate) fn node(&mut self, node: &mut TypedTreeNode) -> crate::ir::analyse::Result<()> {
         match node.node() {
             TypeNode::Block(_) => self.block(node),
+            TypeNode::BreakLoop(_) => self.r#break(node),
             TypeNode::Calculate(_) => Ok({}),
             TypeNode::CallFunctionOfPackage(_) => self.call_function_of_package(node),
             TypeNode::Compare(_) => Ok({}),
             TypeNode::DeclareVariable(_) => self.declare_variable(node),
             TypeNode::If(_) => self.r#if(node),
             TypeNode::LiteralBoolean(_) |
+            TypeNode::LiteralFloat4(_) |
+            TypeNode::LiteralFloat8(_) |
+            TypeNode::LiteralInt1(_) |
+            TypeNode::LiteralInt2(_) |
+            TypeNode::LiteralInt4(_) |
+            TypeNode::LiteralInt8(_) |
+            TypeNode::LiteralInt16(_) |
+            TypeNode::LiteralUint1(_) |
+            TypeNode::LiteralUint2(_) |
+            TypeNode::LiteralUint4(_) |
+            TypeNode::LiteralUint8(_) |
+            TypeNode::LiteralUint16(_) |
             TypeNode::LiteralNumber(_) |
             TypeNode::LiteralString(_) => { Ok(()) }
-            _ => unimplemented!()
+            TypeNode::Loop(_) => self.r#loop(node),
+            _ => unimplemented!("{node:#?}")
         }
     }
 }

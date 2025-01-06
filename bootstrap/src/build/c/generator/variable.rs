@@ -1,11 +1,11 @@
 use bigdecimal::ToPrimitive;
 
 use crate::build::c;
-use crate::build::c::{CallFunctionStatement, CallFunctionStatementResult, CodeExpression, Statement, VariableExpression};
+use crate::build::c::{CallFunctionStatement, CallFunctionStatementResult, CodeExpression, DeclareVariableStatement, Expression, Statement, StatementResult, VariableExpression};
 use crate::build::c::generator::Generator;
 use crate::build::c::generator::scope::Storage;
 use crate::common::GetString;
-use crate::common::node::Node::{LiteralBoolean, LiteralFloat4, LiteralFloat8, LiteralInt1, LiteralInt16, LiteralInt2, LiteralInt4, LiteralInt8, LiteralNumber, LiteralString, LiteralUint1, LiteralUint16, LiteralUint2, LiteralUint4, LiteralUint8};
+use crate::common::node::Node::{LiteralBoolean, LiteralFloat4, LiteralFloat8, LiteralInt1, LiteralInt16, LiteralInt2, LiteralInt4, LiteralInt8, LiteralNumber, LiteralString, LiteralUint1, LiteralUint16, LiteralUint2, LiteralUint4, LiteralUint8, Loop};
 use crate::ir::{IrAccessVariableNode, IrDeclareVariableNode, IrLiteralBooleanNode, IrLiteralFloat4Node, IrLiteralFloat8Node, IrLiteralInt16Node, IrLiteralInt1Node, IrLiteralInt2Node, IrLiteralInt4Node, IrLiteralInt8Node, IrLiteralNumberNode, IrLiteralStringNode, IrLiteralUint16Node, IrLiteralUint1Node, IrLiteralUint2Node, IrLiteralUint4Node, IrLiteralUint8Node};
 
 impl Generator {
@@ -17,7 +17,7 @@ impl Generator {
 
         Ok(VariableExpression {
             variable: variable.to_string(&self.string_table),
-            cast: None
+            cast: None,
         })
     }
 
@@ -329,6 +329,16 @@ impl Generator {
                     }),
                 })
             );
+
+            Ok(())
+        } else if let Loop(r#loop) = &node.value.node() {
+            self.statements().push(Statement::DeclareVariable(DeclareVariableStatement {
+                variable: variable.clone(),
+                r#type: "struct val_num *".to_string(),
+                expression: Expression::Code(CodeExpression { code: "nullptr".to_string() }),
+            }));
+
+            self.r#loop(r#loop, Some(StatementResult::Assign { variable }))?;
 
             Ok(())
         } else {

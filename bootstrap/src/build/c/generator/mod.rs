@@ -9,7 +9,7 @@ use crate::build::c::generator::scope::Scope;
 use crate::build::c::Node::DefineFunction;
 use crate::common::{Context, SymbolTable, TypeTable};
 use crate::common::node::Node;
-use crate::common::node::Node::{Calculate, CallFunctionOfPackage, DeclareVariable, InterpolateString};
+use crate::common::node::Node::{Calculate, CallFunctionOfPackage, DeclareVariable, InterpolateString, Loop};
 use crate::common::StringTable;
 use crate::ir;
 use crate::ir::node::IrTreeNode;
@@ -88,7 +88,7 @@ impl Generator {
             c::Statement::Code(
                 CodeStatement {
                     code: r#"
-auto tm = mem_test_new_default (1024 * 1024 );
+auto tm = mem_test_new_default (1024 * 1024);
                             "#.to_string(),
                 }
             )
@@ -99,7 +99,7 @@ auto tm = mem_test_new_default (1024 * 1024 );
         }
 
         let mut frame = self.scope.leave();
-        let cleanup_statements = frame.cleanup();
+        let cleanup_statements = frame.cleanup_statements();
 
         let mut statements = vec![];
         statements.extend(frame.statements);
@@ -166,9 +166,11 @@ mem_test_free (tm);
     pub(crate) fn nodes(&mut self, ir: &IrTreeNode) -> Result<()> {
         match ir.node() {
             Block(node) => self.block(node)?,
+            // BreakLoop(node) => self.r#break(node)?,
             CallFunctionOfPackage(node) => self.call_function_of_package(node)?,
             DeclareVariable(node) => self.declare_variable(node)?,
             If(node) => self.r#if(node)?,
+            Loop(node) => self.r#loop(node, None)?,
             _ => unimplemented!("{ir:#?}")
         }
         Ok(())

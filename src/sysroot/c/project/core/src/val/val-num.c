@@ -30,7 +30,7 @@ val_num_calc(struct mem *mem, struct val_num *lhs, enum CalculateOperator op, st
             return val_num_new(mem, lhs->data + rhs->data);
         case CALCULATE_OPERATOR_SUB_WRAP_AROUND:
             return val_num_new(mem, lhs->data - rhs->data);
-        case CALCULATE_OPERATOR_MULTIPLY_WRAP_AROUND:
+        case CALCULATE_OPERATOR_MUL_WRAP_AROUND:
             return val_num_new(mem, lhs->data * rhs->data);
         case CALCULATE_OPERATOR_DIV_WRAP_AROUND:
             return val_num_new(mem, lhs->data / rhs->data);

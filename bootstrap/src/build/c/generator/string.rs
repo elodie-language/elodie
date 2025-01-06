@@ -1,5 +1,5 @@
 use crate::build::c;
-use crate::build::c::{CallFunctionStatement, CallFunctionStatementResult, CodeExpression, DeclareArrayStatement, ExpressionStatement, ExpressionStatementResult, LiteralExpression, LiteralInt4Expression, LiteralStringExpression, Statement, VariableExpression};
+use crate::build::c::{CallFunctionStatement, CallFunctionStatementResult, CodeExpression, DeclareArrayStatement, ExpressionStatement, StatementResult, LiteralExpression, LiteralInt4Expression, LiteralStringExpression, Statement, VariableExpression};
 use crate::build::c::Expression::{Code, Literal, Variable};
 use crate::build::c::generator::{Generator, scope};
 use crate::build::c::generator::scope::{LocalVariable, Storage};
@@ -259,13 +259,6 @@ impl Generator {
                 } else {
                     let variable = symbol.to_string(&self.string_table);
 
-                    // self.statements().push(
-                    //     c::Statement::DeclareVariable(DeclareVariableStatement {
-                    //         variable: temp.to_string(),
-                    //         r#type: "const struct val_str *".to_string(),
-                    //         expression: c::Expression::Variable(VariableExpression { variable, cast: None }),
-                    //     })
-                    // );
                     variables.push(scope::Variable::Variable(LocalVariable(variable), Storage::Memory));
                 }
             } else if let LiteralString(node) = node.node() {
@@ -311,7 +304,7 @@ impl Generator {
                         let temp = self.scope.push_temp(Storage::Memory);
                         self.statements().push(Statement::Expression(ExpressionStatement {
                             expression,
-                            result: Some(ExpressionStatementResult { variable: temp.to_string(), r#type: "struct val *".to_string() }),
+                            result: Some(StatementResult::Declare { variable: temp.to_string(), r#type: "struct val *".to_string() }),
                         }));
 
                         self.statements().push(CallFunction(CallFunctionStatement {
@@ -338,7 +331,7 @@ impl Generator {
                         let expression = self.expression(node)?;
                         self.statements().push(Statement::Expression(ExpressionStatement {
                             expression,
-                            result: Some(ExpressionStatementResult { variable: temp.to_string(), r#type: "struct val_bool *".to_string() }),
+                            result: Some(StatementResult::Declare { variable: temp.to_string(), r#type: "struct val_bool *".to_string() }),
                         }));
 
 

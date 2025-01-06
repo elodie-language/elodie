@@ -31,7 +31,7 @@ val_u8_calc(struct mem *mem, struct val_u8 *lhs, enum CalculateOperator op, stru
             return val_u8_new(mem, lhs->data + rhs->data);
         case CALCULATE_OPERATOR_SUB_WRAP_AROUND:
             return val_u8_new(mem, lhs->data - rhs->data);
-        case CALCULATE_OPERATOR_MULTIPLY_WRAP_AROUND:
+        case CALCULATE_OPERATOR_MUL_WRAP_AROUND:
             return val_u8_new(mem, lhs->data * rhs->data);
         case CALCULATE_OPERATOR_DIV_WRAP_AROUND:
             return val_u8_new(mem, lhs->data / rhs->data);

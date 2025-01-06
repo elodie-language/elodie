@@ -1,37 +1,47 @@
 use std::ops::Deref;
 
-use crate::common::{Inferred, TypeId};
+use crate::common::{GetString, Inferred, TypeId};
+use crate::common::node::Node;
 use crate::ir::analyse::infer::Inferrer;
 use crate::ir::analyse::TypedTreeNode;
 
 impl<'a> Inferrer<'a> {
     pub(crate) fn declare_variable(&mut self, node: &mut TypedTreeNode) -> crate::ir::analyse::Result<()> {
-        let inner = node.as_declared_variable();
+        // let mut inner = node.as_declared_variable();
 
-        let symbol = &mut self.symbol_table[inner.variable];
+        if let Node::DeclareVariable(node) = &mut node.node {
+            // result
+            self.node(&mut node.value)?;
 
-        self.scope.register_symbol(symbol);
+            let symbol = &mut self.symbol_table[node.variable];
 
-        match node.inferred {
-            Inferred::Boolean => { symbol.set_type_id(TypeId::BOOLEAN) }
-            Inferred::Float4 => { symbol.set_type_id(TypeId::FLOAT4) }
-            Inferred::Float8 => { symbol.set_type_id(TypeId::FLOAT8) }
-            Inferred::Int1 => { symbol.set_type_id(TypeId::INT1) }
-            Inferred::Int2 => { symbol.set_type_id(TypeId::INT2) }
-            Inferred::Int4 => { symbol.set_type_id(TypeId::INT4) }
-            Inferred::Int8 => { symbol.set_type_id(TypeId::INT8) }
-            Inferred::Int16 => { symbol.set_type_id(TypeId::INT16) }
-            Inferred::Number => { symbol.set_type_id(TypeId::NUMBER) }
-            Inferred::String => { symbol.set_type_id(TypeId::STRING) }
-            Inferred::Uint1 => { symbol.set_type_id(TypeId::UINT1) }
-            Inferred::Uint2 => { symbol.set_type_id(TypeId::UINT2) }
-            Inferred::Uint4 => { symbol.set_type_id(TypeId::UINT4) }
-            Inferred::Uint8 => { symbol.set_type_id(TypeId::UINT8) }
-            Inferred::Uint16 => { symbol.set_type_id(TypeId::UINT16) }
-            _ => unimplemented!()
+            self.scope.register_symbol(symbol);
+
+            match &node.value.inferred {
+                Inferred::Boolean => { symbol.set_type_id(TypeId::BOOLEAN) }
+                Inferred::Float4 => { symbol.set_type_id(TypeId::FLOAT4) }
+                Inferred::Float8 => { symbol.set_type_id(TypeId::FLOAT8) }
+                Inferred::Int1 => { symbol.set_type_id(TypeId::INT1) }
+                Inferred::Int2 => { symbol.set_type_id(TypeId::INT2) }
+                Inferred::Int4 => { symbol.set_type_id(TypeId::INT4) }
+                Inferred::Int8 => { symbol.set_type_id(TypeId::INT8) }
+                Inferred::Int16 => { symbol.set_type_id(TypeId::INT16) }
+                Inferred::Number => { symbol.set_type_id(TypeId::NUMBER) }
+                Inferred::String => { symbol.set_type_id(TypeId::STRING) }
+                Inferred::Uint1 => { symbol.set_type_id(TypeId::UINT1) }
+                Inferred::Uint2 => { symbol.set_type_id(TypeId::UINT2) }
+                Inferred::Uint4 => { symbol.set_type_id(TypeId::UINT4) }
+                Inferred::Uint8 => { symbol.set_type_id(TypeId::UINT8) }
+                Inferred::Uint16 => { symbol.set_type_id(TypeId::UINT16) }
+                inferred => unimplemented!("{inferred:#?}")
+            }
+
+            Ok(())
+        } else {
+            panic!("not declare variable")
         }
 
-        Ok(())
+        // self.node(inner.value.as_mut())?;
     }
 }
 

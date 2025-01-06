@@ -2,12 +2,49 @@ use std::cell::RefCell;
 use std::ops::Deref;
 
 use crate::common::Inferred;
-use crate::common::node::Node::If;
-use crate::frontend::ast::AstIfNode;
-use crate::ir::analyse::{TypeBlockNode, TypedTreeNode, TypeIfNode};
+use crate::common::node::Node::{BreakLoop, If, Loop};
+use crate::frontend::ast::{AstBreakLoopNode, AstIfNode, AstLoopNode};
+use crate::ir::analyse::{TypeBlockNode, TypeBreakLoopNode, TypedTreeNode, TypeIfNode, TypeLoopNode};
 use crate::ir::analyse::pre::Pre;
 
 impl<'a> Pre<'a> {
+    pub(crate) fn r#break(&mut self, node: &AstBreakLoopNode) -> crate::ir::analyse::Result<TypedTreeNode> {
+        let node = if let Some(node) = &node.node {
+            Some(Box::new(self.node(node)?))
+        } else {
+            None
+        };
+
+        let inferred = node.clone().map(|n| n.inferred).unwrap_or(Inferred::Unit);
+
+        Ok(TypedTreeNode::new(
+            BreakLoop(TypeBreakLoopNode { node }),
+            self.span(),
+            inferred,
+        ))
+    }
+
+    pub(crate) fn r#loop(&mut self, node: &AstLoopNode) -> crate::ir::analyse::Result<TypedTreeNode> {
+        let mut nodes = vec![];
+
+        self.scope.enter();
+        for node in &node.nodes {
+            nodes.push(self.node(node.deref())?)
+        }
+        self.scope.leave();
+
+        // FIXME this is not correct
+        let inferred = nodes.last().clone().map(|n| n.inferred.clone()).unwrap_or(Inferred::Unit);
+
+        Ok(TypedTreeNode::new(
+            Loop(TypeLoopNode {
+                nodes: RefCell::new(TypeBlockNode { nodes: nodes.into_boxed_slice() })
+            }),
+            self.span(),
+            inferred,
+        ))
+    }
+
     pub(crate) fn r#if(&mut self, node: &AstIfNode) -> crate::ir::analyse::Result<TypedTreeNode> {
         let condition = Box::new(self.node(node.condition.deref())?);
 

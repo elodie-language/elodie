@@ -152,7 +152,9 @@ pub struct IrBlockNode {
 impl BlockNode<IrVariant> for IrBlockNode {}
 
 #[derive(Debug, Clone, PartialEq)]
-pub struct IrBreakLoopNode {}
+pub struct IrBreakLoopNode {
+    pub node: Option<Rc<IrTreeNode>>,
+}
 
 impl BreakLoopNode<IrVariant> for IrBreakLoopNode {}
 
@@ -368,7 +370,9 @@ pub struct IrLiteralUint16Node {
 impl LiteralUint16Node<IrVariant> for IrLiteralUint16Node {}
 
 #[derive(Debug, Clone, PartialEq)]
-pub struct IrLoopNode {}
+pub struct IrLoopNode {
+    pub block: Rc<IrBlockNode>,
+}
 
 impl LoopNode<IrVariant> for IrLoopNode {}
 
